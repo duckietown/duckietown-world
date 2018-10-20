@@ -1,0 +1,12 @@
+gitpython
+texttable
+base58
+ecdsa
+python-dateutil
+whichcraft
+termcolor
+PyYAML
+docker
+psutil
+six
+networkx>=2.1
