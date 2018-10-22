@@ -1,7 +1,7 @@
 # coding=utf-8
 from abc import ABCMeta, abstractmethod
 
-from duckietown_world.serialization import Serializable
+from duckietown_serialization import Serializable
 
 __all__ = ['Sequence']
 

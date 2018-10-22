@@ -1,7 +1,8 @@
 # coding=utf-8
 import numpy as np
+from duckietown_world.geo import Transform
 
-from duckietown_world.geo import Transform, Serializable
+from duckietown_serialization import Serializable
 
 __all__ = ['TileCoords', 'TileRelativeTransform']
 

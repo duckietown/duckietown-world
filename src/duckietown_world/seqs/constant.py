@@ -1,6 +1,6 @@
 # coding=utf-8
 from .tsequence import Sequence
-from ..serialization import Serializable
+from duckietown_serialization import Serializable
 
 __all__ = ['Constant']
 

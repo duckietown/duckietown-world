@@ -2,12 +2,14 @@
 import json
 
 import yaml
+
 from comptests import comptest, run_module_tests
 
 from duckietown_world.geo import PlacedObject, SE2Transform, get_meausurements_graph
 from duckietown_world.seqs import Constant
-from duckietown_world.serialization import from_json_dict2
 from duckietown_world.world_duckietown import DuckietownWorld, create_map, load_gym_maps
+
+from duckietown_serialization import Serializable
 
 
 @comptest
@@ -37,7 +39,8 @@ def wb1():
     print(json.dumps(DW.root.as_json_dict(), indent=4))
     print(yaml.safe_dump(d, default_flow_style=False))
     print('------')
-    r1 = from_json_dict2(d)
+    r1 = Serializable.from_json_dict(d)
+    print('read: %s' % r1)
     d1 = r1.as_json_dict()
     print(yaml.safe_dump(d1, default_flow_style=False))
     assert d == d1
@@ -57,7 +60,7 @@ def wb2():
     print(yaml.safe_dump(d, default_flow_style=False))
 
     print('------')
-    r1 = from_json_dict2(d)
+    r1 = Serializable.from_json_dict(d)
     d1 = r1.as_json_dict()
     print(yaml.safe_dump(d1, default_flow_style=False))
     assert d == d1

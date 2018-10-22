@@ -1,7 +1,7 @@
 # coding=utf-8
 from ..geo import PlacedObject
 
-from ..serialization import Serializable
+from duckietown_serialization import Serializable
 
 __all__ = ['DuckietownWorld']
 

@@ -2,8 +2,7 @@
 from abc import ABCMeta
 
 import numpy as np
-from ..serialization import Serializable
-
+from duckietown_serialization import Serializable
 
 class Transform(object):
     __metaclass__ = ABCMeta

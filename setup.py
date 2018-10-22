@@ -19,27 +19,17 @@ def get_version(filename):
 
 shell_version = get_version(filename='src/duckietown_world/__init__.py')
 
-setup(name='duckietown-shell',
+setup(name='duckietown-world',
 
       version=shell_version,
       download_url='http://github.com/duckietown/duckietown-world/tarball/%s' % shell_version,
       package_dir={'': 'src'},
       packages=find_packages('src'),
       install_requires=[
-          # 'GitPython',
-          # 'texttable',
-          # 'base58',
-          # 'ecdsa',
-          # 'python-dateutil',
-          # 'whichcraft',
-          # 'termcolor',
-          # 'PyYAML',
-          # 'docker',
-          # 'six',
-          # 'psutil',
           'numpy',
           'PyYAML',
           'networkx>=2,<3',
+          'duckietown-serialization-ds1>=1,<2',
       ],
 
       tests_require=[

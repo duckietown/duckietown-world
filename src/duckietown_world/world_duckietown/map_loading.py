@@ -14,7 +14,7 @@ import os
 
 
 def create_map(H=3, W=3):
-    tile_map = TileMap(H=H, W=W)
+    tile_map = TileMap(H=H, W=W, tile_size=0.4)
 
     for i, j in itertools.product(range(H), range(W)):
         tile = Tile(kind='mykind', drivable=True)

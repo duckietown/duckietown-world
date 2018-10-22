@@ -3,7 +3,7 @@ from duckietown_world.seqs import Sequence
 
 __all__ = ['ChildObject', 'PlacedObject']
 
-from duckietown_world.serialization import Serializable
+from duckietown_serialization import Serializable
 
 
 class ChildObject(Serializable):
