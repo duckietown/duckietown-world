@@ -15,11 +15,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: APT deps
+          command: |
+            sudo apt-get install xvfb freeglut3-dev
+      - run:
           name: Install deps
           command: |
             pip install --user --upgrade -r requirements.txt
             python setup.py develop --prefix ~/.local --no-deps
-            apt-get install xvfb freeglut3-dev
             pip freeze
 
       - run:
