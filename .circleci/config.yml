@@ -33,7 +33,7 @@ jobs:
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1.json --output artifacts/log1
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1-video.json --output artifacts/log1-video
 
-    - run:
+      - run:
         name: Statistics
         when: always
         cmd: |
