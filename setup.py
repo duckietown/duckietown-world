@@ -31,6 +31,7 @@ setup(name='duckietown-world',
           'networkx>=2,<3',
           'duckietown-serialization-ds1>=1,<2',
           'svgwrite',
+          'PyGeometry',
       ],
 
       tests_require=[
