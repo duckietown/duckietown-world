@@ -1,12 +1,9 @@
 
-PyYAML
-six
-networkx>=2.1
+PyYAML==3.12
+six==1.11.0
+networkx==2.2
+svgwrite==1.1.12
 
 duckietown-serialization-ds1>=1,<2
-
 comptests==1.4.25
-
-svgwrite
-
-PyGeometry
+PyGeometry==1.4.6

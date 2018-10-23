@@ -28,7 +28,7 @@ setup(name='duckietown-world',
       install_requires=[
           'numpy',
           'PyYAML',
-          'networkx>=2,<3',
+          'networkx>=2.2,<3',
           'duckietown-serialization-ds1>=1,<2',
           'svgwrite',
           'PyGeometry',
