@@ -4,3 +4,4 @@ commands
 dist
 cli
 out-*
+*.json.out

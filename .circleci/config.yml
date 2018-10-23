@@ -1,0 +1,44 @@
+version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.7
+      - test-3.6
+      - test-3.5
+      - test-2.7
+jobs:
+  test-3.6: &test-template
+    docker:
+      - image: python:3.6
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install deps
+          command: |
+            pip install --user --upgrade -r requirements.txt
+            python setup.py develop --prefix ~/.local --no-deps
+
+      - run:
+          name: Run tests
+          command: |
+            PATH=~/.local/bin:$PATH  make tests-clean tests
+
+            PATH=~/.local/bin:$PATH dt-world-draw-maps
+            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json
+            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1.json
+            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1-video.json
+
+  test-3.5:
+    <<: *test-template
+    docker:
+      - image: python:3.5
+  test-2.7:
+    <<: *test-template
+    docker:
+    - image: python:2.7
+  test-3.7:
+    <<: *test-template
+    docker:
+      - image: python:3.7
