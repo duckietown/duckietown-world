@@ -34,11 +34,11 @@ jobs:
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1-video.json --output artifacts/log1-video
 
       - run:
-        name: Statistics
-        when: always
-        cmd: |
-          mkdir junit
-          PATH=~/.local/bin:$PATH comptests-to-junit out-comptests/compmake > junit/junit.xml
+          name: Statistics
+          when: always
+          cmd: |
+            mkdir junit
+            PATH=~/.local/bin:$PATH comptests-to-junit out-comptests/compmake > junit/junit.xml
 
       - test-results-store:
           path: junit
