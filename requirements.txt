@@ -8,5 +8,4 @@ duckietown-serialization-ds1>=1,<2
 comptests==1.4.25
 PyGeometry==1.5.3
 
-pyopengl
--e git://github.com/duckietown/gym-duckietown.git@master#egg=gym-duckietown
+-e git://github.com/duckietown/gym-duckietown.git@duckietown-world#egg=gym-duckietown
