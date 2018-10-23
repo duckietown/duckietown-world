@@ -24,6 +24,8 @@ jobs:
 
             mkdir artifacts
 
+            git lfs pull
+
       - run:
           name: Run tests
           command: |
