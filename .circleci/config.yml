@@ -16,10 +16,7 @@ jobs:
       - checkout
       - run:
           name: Install deps
-          command: |
-            vdir test-data
-            git lfs pull
-            vdir test-data
+          command: | 
 
 
             pip install -q --user --upgrade -r requirements.txt
