@@ -20,6 +20,7 @@ jobs:
             pip install -q --user --upgrade -r requirements.txt
             python setup.py develop --prefix ~/.local --no-deps
             pip freeze
+            echo PATH=$PATH
 
             mkdir artifacts
 
@@ -31,8 +32,8 @@ jobs:
       - run:
           name: Examples
           command: |
-            PATH=~/.local/bin:$PATH dt-world-draw-maps --output artificats/maps
-            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV
+            PATH=~/.local/bin:$PATH dt-world-draw-maps --output artifacts/maps
+            PATH=~/.local/bin:$PATH re --output artifacts/LFV
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1.json --output artifacts/log1
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1-video.json --output artifacts/log1-video
 

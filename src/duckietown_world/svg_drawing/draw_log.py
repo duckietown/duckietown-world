@@ -189,8 +189,12 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
 
 def read_log(filename):
     with open(filename) as i:
-        for line in i.readlines():
-            j = json.loads(line)
+        for k, line in enumerate(i.readlines()):
+            try:
+                j = json.loads(line)
+            except BaseException:
+                msg = 'Cannot interpret json in line %s: "%s"' % (k, line)
+                raise Exception(msg)
             ob = Serializable.from_json_dict(j)
             yield ob
 
