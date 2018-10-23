@@ -9,4 +9,4 @@ comptests==1.4.25
 PyGeometry==1.4.6
 
 
--e git://github.com/duckietown/gym-duckietown.git@relaxed-deps#egg=gym-duckietown
+-e git://github.com/duckietown/gym-duckietown.git@master#egg=gym-duckietown
