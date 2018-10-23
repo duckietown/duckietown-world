@@ -17,7 +17,7 @@ jobs:
       - run:
           name: APT deps
           command: |
-            sudo apt-get install xvfb freeglut3-dev
+            apt-get install xvfb freeglut3-dev
       - run:
           name: Install deps
           command: |
