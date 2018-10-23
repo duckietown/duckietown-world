@@ -21,13 +21,16 @@ jobs:
             python setup.py develop --prefix ~/.local --no-deps
             pip freeze
 
+            mkdir artifacts
+
       - run:
           name: Run tests
           command: |
             PATH=~/.local/bin:$PATH  make tests-clean tests
 
-
-            mkdir artifacts
+      - run:
+          name: Examples
+          command: |
             PATH=~/.local/bin:$PATH dt-world-draw-maps --output artificats/maps
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1.json --output artifacts/log1
