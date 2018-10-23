@@ -195,7 +195,13 @@ def read_log(filename):
             except BaseException:
                 msg = 'Cannot interpret json in line %s: "%s"' % (k, line)
                 raise Exception(msg)
-            ob = Serializable.from_json_dict(j)
+            try:
+                ob = Serializable.from_json_dict(j)
+            except BaseException:
+                msg = 'Cannot de-serialize in line %s:\n%s' % (k, j)
+                raise Exception(msg)
+            
+
             yield ob
 
 
