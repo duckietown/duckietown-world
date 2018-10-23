@@ -10,14 +10,14 @@ workflows:
 jobs:
   test-3.6: &test-template
     docker:
-      - image: circleci/python:3.5
+      - image: python:3.6
     working_directory: ~/repo
     steps:
       - checkout
-      - run:
-          name: APT deps
-          command: |
-            apt-get install xvfb freeglut3-dev
+#      - run:
+#          name: APT deps
+#          command: |
+#            apt-get install xvfb freeglut3-dev
       - run:
           name: Install deps
           command: |
