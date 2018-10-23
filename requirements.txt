@@ -5,7 +5,7 @@ networkx==2.2
 svgwrite==1.1.12
 
 duckietown-serialization-ds1>=1,<2
-comptests==1.4.25
+comptests==1.4.26
 PyGeometry==1.5.3
 
 -e git://github.com/duckietown/gym-duckietown.git@duckietown-world#egg=gym-duckietown
