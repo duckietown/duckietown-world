@@ -33,7 +33,11 @@ jobs:
           name: Examples
           command: |
             PATH=~/.local/bin:$PATH dt-world-draw-maps --output artifacts/maps
-            PATH=~/.local/bin:$PATH re --output artifacts/LFV
+
+      - run:
+          name: Examples
+          command: |
+            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1.json --output artifacts/log1
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/log1-video.json --output artifacts/log1-video
 
