@@ -7,3 +7,4 @@ svgwrite==1.1.12
 duckietown-serialization-ds1>=1,<2
 comptests==1.4.25
 PyGeometry==1.4.6
+gym_duckietown
