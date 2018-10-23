@@ -4,18 +4,18 @@ import os
 import numpy as np
 import yaml
 from comptests import comptest, run_module_tests
+from networkx import all_simple_paths
+
 from duckietown_world.geo import PlacedObject, SE2Transform, get_meausurements_graph
 from duckietown_world.seqs import Constant
 from duckietown_world.utils.gvgen_ac import ACGvGen
-from duckietown_world.world_duckietown import load_gym_maps, DuckietownWorld
-from networkx import all_simple_paths
+from duckietown_world.world_duckietown import DuckietownWorld
+from duckietown_world.world_duckietown.map_loading import load_gym_map
 
 
 @comptest
 def m1():
-    gym_maps = load_gym_maps()
-    print(list(gym_maps))
-    gm = gym_maps['udem1']
+    gm = load_gym_map('udem1')
 
     dw = DuckietownWorld()
     # for map_name, tm in gym_maps.items():
@@ -48,34 +48,40 @@ def m1():
         if paths:
             mpath = paths[0]
             path = squash_path(mpath)
-            frozen = [_.at(t=0) for _ in path]
-            print(frozen)
+            print(path)
+            # frozen = [_.at(t=0) for _ in path]
+            # print(frozen)
+
 
 class NoMeasurements(Exception):
     pass
+
+
+def squash_one(p, preference):
+    for m in p:
+        if m.sr_type in preference:
+            return m.transform
+
+    msg = 'Missing measurement of type %r' % ", ".join(preference)
+    msg += '\n\nFound:\n%r' % "\n".join(_.sr_type.__repr__() for _ in p)
+    raise NoMeasurements(msg)
+
+
 def squash_path(path, preference=('ground_truth',)):
     res = []
     for p in path:
-        for k in preference:
-            if k in p:
-                res.append(p[k])
-                break
-        else:
-            msg = 'Missing measurement %s' % ", ".join(preference)
-            msg += '\n\nFound:\n%s' % "\n".join(str(_) for _ in path)
-            raise NoMeasurements(msg)
+        res.append(squash_one(p, preference))
     return res
+
 
 def transform_from_path(G, path):
     transforms = []
     for u, v in pairwise(list(path)):
-        edges = G.get_edge_data(u, v)
-        t = {}
-        for k, edge_data in edges.items():
+        t = []
+        for k, edge_data in G.get_edge_data(u, v).items():
             attr_dict = edge_data['attr_dict']
-            transform = attr_dict['transform']
-            name = attr_dict['name']
-            t[name] = transform
+            transform = attr_dict['sr']
+            t.append(transform)
         transforms.append(t)
     return transforms
 
@@ -103,8 +109,7 @@ def plot_measurement_graph(root, G, out):
     for u, v in G.edges():
         for k, data in G.get_edge_data(u, v).items():
             attr_dict = data['attr_dict']
-            name = attr_dict['name']
-            transform = attr_dict['transform']
+            transform = attr_dict['sr']
             label = str(transform)
             src = node2item[u]
             dst = node2item[v]

@@ -11,3 +11,7 @@ class GenericObject(PlacedObject):
 
     def params_to_json_dict(self):
         return dict(kind=self.kind)
+
+    def draw_svg(self, drawing, g):
+        c = drawing.circle(center=(0, 0), r=0.1)
+        g.add(c)

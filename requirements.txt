@@ -1,15 +1,11 @@
-gitpython
-texttable
-base58
-ecdsa
-python-dateutil
-whichcraft
-termcolor
+
 PyYAML
-docker
-psutil
 six
 networkx>=2.1
 
+duckietown-serialization-ds1>=1,<2
 
 comptests==1.4.25
+
+svgwrite
+
