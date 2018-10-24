@@ -29,6 +29,9 @@ def draw_logs_main(args=None):
 
     filename = parsed.filename
     output = parsed.output
+    draw_logs_main_(output, filename)
+
+def draw_logs_main_(output, filename):
     if output is None:
         output = filename + '.out'
     if not os.path.exists(output):
