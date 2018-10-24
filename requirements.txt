@@ -1,6 +1,6 @@
 
-# PyYAML==3.12
-PyYAML==4.2b4
+PyYAML==3.13
+#PyYAML==4.2b4
 six==1.11.0
 networkx==2.2
 svgwrite==1.1.12
