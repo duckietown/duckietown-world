@@ -13,7 +13,7 @@ from duckietown_world import logger
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing.misc import get_basic_upright, draw_recursive
 from duckietown_world.world_duckietown.duckiebot import Duckiebot
-from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.map_loading import construct_map
 from duckietown_world.world_duckietown.tile import data_encoded_for_src
 from duckietown_world.world_duckietown.transformations import get_sampling_points, ChooseTime, Flatten
 
@@ -31,6 +31,7 @@ def draw_logs_main(args=None):
     output = parsed.output
     draw_logs_main_(output, filename)
 
+
 def draw_logs_main_(output, filename):
     if output is None:
         output = filename + '.out'
@@ -41,7 +42,7 @@ def draw_logs_main_(output, filename):
     duckietown_env = log.duckietown
 
     fn_svg = os.path.join(output, 'drawing.svg')
-    fn_html = os.path.join(output, 'drawing-interactive.html')
+    fn_html = os.path.join(output, 'drawing.html')
 
     tilemap = duckietown_env.children['tilemap']
     gh, gw = tilemap.H * duckietown_env.tile_size, tilemap.W * duckietown_env.tile_size
@@ -105,8 +106,6 @@ def draw_logs_main_(output, filename):
     drawing.filename = fn_svg
     drawing.save(pretty=True)
 
-    fn = fn_html
-
     other = Tag(name='div')
 
     summary = Tag(name='summary')
@@ -125,10 +124,13 @@ def draw_logs_main_(output, filename):
 
     other = str(other)
     html = make_html_slider(drawing, nkeyframes=keyframe, obs_div=str(div), other=other)
-    with open(fn, 'w') as f:
+    with open(fn_html, 'w') as f:
         f.write(html)
 
-    print(fn)
+    logger.info('Written SVG to %s' % fn_svg)
+    logger.info('Written HTML to %s' % fn_html)
+
+    return [fn_svg, fn_html]
 
 
 def make_html_slider(drawing, nkeyframes, obs_div, other):
@@ -204,7 +206,6 @@ def read_log(filename):
                 msg = 'Cannot de-serialize in line %s:\n%s' % (k, j)
                 raise Exception(msg)
 
-
             yield ob
 
 
@@ -212,20 +213,32 @@ SimulatorLog = namedtuple('SimulatorLog', 'observations duckietown')
 
 
 def read_simulator_log(filename):
-    map_name = None
+    duckietown_map = None
     curpos_timestamps = []
     curpos_values = []
 
     timestamps_observations = []
     observations = []
     for ob in read_log(filename):
-        if ob.topic == 'env_parameters':
-            map_name = ob.data['map_name']
+        if ob.topic == 'map_info':
+            map_data = ob.data['map_data']
+            tile_size = ob.data['tile_size']
+            duckietown_map = construct_map(map_data, tile_size)
+
         if ob.topic == 'observations':
             timestamps_observations.append(ob.timestamp)
             observations.append(ob.data)
         if ob.topic == 'misc':
             sim = ob.data['Simulator']
+            cur_pos = sim['cur_pos']
+            # p = [gx, gz]
+            # print(sim['cur_pos'])
+            cur_angle = sim['cur_angle']
+
+            curpos_values.append((cur_pos, cur_angle))
+            curpos_timestamps.append(ob.timestamp)
+        if ob.topic == 'Simulator':
+            sim = ob.data
             cur_pos = sim['cur_pos']
             # p = [gx, gz]
             # print(sim['cur_pos'])
@@ -240,11 +253,9 @@ def read_simulator_log(filename):
     else:
         observations = None
 
-    if not map_name:
-        msg = 'Could not find env_parameters.'
+    if not duckietown_map:
+        msg = 'Could not find duckietown_map.'
         raise Exception(msg)
-
-    duckietown_map = load_gym_map(map_name)
 
     transforms = []
     for cur_pos, cur_angle in curpos_values:

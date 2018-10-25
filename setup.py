@@ -32,6 +32,8 @@ setup(name='duckietown-world',
           'duckietown-serialization-ds1>=1,<2',
           'svgwrite',
           'PyGeometry',
+          'gym-duckietown',
+          'beautifulsoup4>=4.6.3',
       ],
 
       tests_require=[

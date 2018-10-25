@@ -41,13 +41,16 @@ def load_gym_map(map_name):
     maps_dir = get_subdir_path('maps')
     fn = os.path.join(maps_dir, map_name + '.yaml')
     data = open(fn).read()
-    tiles = interpret_gym_map(yaml.load(data))
+    yaml_data = yaml.load(data)
     from gym_duckietown.simulator import ROAD_TILE_SIZE
     tile_size = ROAD_TILE_SIZE
+    return construct_map(yaml_data, tile_size)
+
+def construct_map(yaml_data, tile_size):
+    tiles = interpret_gym_map(yaml_data)
     tilemap0 = DuckietownMap(tile_size)
     tilemap0.set_object('tilemap', tiles, ground_truth=Scale2D(tile_size))
     return tilemap0
-
 
 def interpret_gym_map(data):
     tiles = data['tiles']
