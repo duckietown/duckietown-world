@@ -62,7 +62,7 @@ def interpret_gym_map(data):
     B = len(tiles[0])
     tm = TileMap(H=B, W=A)
 
-    print(tiles)
+    # print(tiles)
     # For each row in the grid
     for a, row in enumerate(tiles):
         if len(row) != B:

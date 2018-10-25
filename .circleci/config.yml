@@ -46,7 +46,7 @@ jobs:
 
             wget https://github.com/duckietown/duckietown-world/raw/master18/test-data/LFV.json -O test-data/LFV.json
 
-            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV 
+            PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV
 
       - run:
           name: Statistics
