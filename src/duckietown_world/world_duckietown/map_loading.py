@@ -176,7 +176,7 @@ def interpret_gym_map(data):
             status = Constant("off")
             obj = TrafficLight(status)
         else:
-            print('do not know kind %s' % kind)
+            logger.debug('Do not know special kind %s' % kind)
             obj = GenericObject(kind=kind)
 
         # tile = tm[(i, j)]
