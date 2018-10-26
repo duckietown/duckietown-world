@@ -1,13 +1,30 @@
 # coding=utf-8
 import base64
+import logging
+
+from six import BytesIO
 
 from duckietown_world import logger
 from duckietown_world.geo import PlacedObject
+from duckietown_world.utils.memoizing import memoized_reset
 
 __all__ = [
     'Tile',
 ]
 draw_directions_lanes = False
+
+
+@memoized_reset
+def get_jpeg_bytes(fn):
+    from PIL import Image
+    pl = logging.getLogger('PIL')
+    pl.setLevel(logging.ERROR)
+
+    image = Image.open(fn).convert('RGB')
+
+    out = BytesIO()
+    image.save(out, format='jpeg')
+    return out.getvalue()
 
 
 class Tile(PlacedObject):
@@ -16,15 +33,14 @@ class Tile(PlacedObject):
         self.kind = kind
         self.drivable = drivable
 
-        try:
-            from duckietown_world.world_duckietown.map_loading import get_texture_file
-            self.fn = get_texture_file(kind)
+        from duckietown_world.world_duckietown.map_loading import get_texture_file
 
-            self.texture = open(self.fn, 'rb').read()
+        try:
+            self.fn = get_texture_file(kind)
         except KeyError:
             msg = 'Cannot find texture for %s' % kind
             logger.warning(msg)
-            self.texture = None
+
             self.fn = None
 
     def params_to_json_dict(self):
@@ -43,7 +59,8 @@ class Tile(PlacedObject):
         # g.add(rect)
 
         if self.fn:
-            href = data_encoded_for_src(self.texture, 'image/png')
+            texture = get_jpeg_bytes(self.fn)
+            href = data_encoded_for_src(texture, 'image/jpeg')
             img = drawing.image(href=href,
                                 size=(1, 1),
                                 insert=(-0.5, -0.5),

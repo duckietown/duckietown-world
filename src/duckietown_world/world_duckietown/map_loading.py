@@ -62,7 +62,7 @@ def interpret_gym_map(data):
     B = len(tiles[0])
     tm = TileMap(H=B, W=A)
 
-    print(tiles)
+    # print(tiles)
     # For each row in the grid
     for a, row in enumerate(tiles):
         if len(row) != B:
@@ -176,7 +176,7 @@ def interpret_gym_map(data):
             status = Constant("off")
             obj = TrafficLight(status)
         else:
-            print('do not know kind %s' % kind)
+            logger.debug('Do not know special kind %s' % kind)
             obj = GenericObject(kind=kind)
 
         # tile = tm[(i, j)]

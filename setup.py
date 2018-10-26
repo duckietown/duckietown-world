@@ -34,6 +34,7 @@ setup(name='duckietown-world',
           'PyGeometry',
           'gym-duckietown',
           'beautifulsoup4>=4.6.3',
+          'pillow',
       ],
 
       tests_require=[

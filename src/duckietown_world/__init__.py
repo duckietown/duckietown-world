@@ -1,9 +1,12 @@
 # coding=utf-8
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 import logging
+
 logger = logging.getLogger('dt-world')
 logger.setLevel(logging.DEBUG)
+
+logger.info('duckietown-world %s' % __version__)
 
 
 from .geo import *
