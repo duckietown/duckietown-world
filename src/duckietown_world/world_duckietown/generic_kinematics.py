@@ -28,7 +28,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         dt = float(dt)
         geo.se2.belongs(commands)
         v = commands
-        diff = geo.SE2.expmap((geo.SE2.identity(), dt * v))
+        diff = geo.SE2.group_from_algebra(dt * v)
         q1 = geo.SE2.multiply(self.q0, diff)
         c1 = q1, v
         t1 = self.t0 + dt

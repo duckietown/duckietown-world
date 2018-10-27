@@ -5,9 +5,13 @@ from contracts import check_isinstance
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import GenericKinematicsSE2
-from duckietown_world.world_duckietown.platform_dynamics import PlatformDynamicsFactory
+from .platform_dynamics import PlatformDynamicsFactory
 
-__all__ = ['WheelVelocityCommands']
+__all__ = [
+    'WheelVelocityCommands',
+    'DifferentialDriveDynamicsParameters',
+    'DifferentialDriveDynamics',
+]
 
 
 class WheelVelocityCommands(Serializable):

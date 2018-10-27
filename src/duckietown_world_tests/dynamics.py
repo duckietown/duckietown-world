@@ -1,9 +1,11 @@
+import numpy as np
 from comptests import comptest, run_module_tests
 from numpy.testing import assert_almost_equal
 
 import geometry as geo
 from duckietown_world.world_duckietown import Integrator2D, GenericKinematicsSE2
-from duckietown_world.world_duckietown.wheels_commands import DifferentialDriveDynamicsParameters, WheelVelocityCommands
+from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
+    WheelVelocityCommands
 
 
 @comptest
@@ -18,9 +20,6 @@ def integrator2D_test1():
     s1 = s0.integrate(dt, commands)
 
     q1, v1 = s1.TSE2_from_state()
-
-
-import numpy as np
 
 
 @comptest
@@ -95,7 +94,6 @@ def dd_test():
 
     # TODO: finish these tests
     # assert_almost_equal(p1[0], [dt * radius * omega_left / 2, 0])
-
 
 
 if __name__ == '__main__':
