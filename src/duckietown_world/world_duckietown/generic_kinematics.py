@@ -1,10 +1,13 @@
-from contracts import contract
-
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
 
 __all__ = ['GenericKinematicsSE2']
+
+# noinspection PyUnresolvedReferences
+from geometry.poses import *
+
+from contracts import contract
 
 
 class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializable):
@@ -14,7 +17,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
     def initialize(cls, c0, t0=0, seed=None):
         return GenericKinematicsSE2(c0, t0)
 
-    @contract(c='SE2')
+    @contract(c0='TSE2')
     def __init__(self, c0, t0):
         q0, v0 = c0
         geo.SE2.belongs(q0)
