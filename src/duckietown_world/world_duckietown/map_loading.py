@@ -58,8 +58,8 @@ def load_gym_map(map_name):
         raise ValueError(msg)
     data = open(fn).read()
     yaml_data = yaml.load(data)
-    from gym_duckietown.simulator import ROAD_TILE_SIZE
-    tile_size = ROAD_TILE_SIZE
+    # from gym_duckietown.simulator import ROAD_TILE_SIZE
+    tile_size = 0.61 # XXX
     return construct_map(yaml_data, tile_size)
 
 

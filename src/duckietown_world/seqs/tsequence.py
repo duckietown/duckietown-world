@@ -1,6 +1,5 @@
 # coding=utf-8
 from abc import abstractmethod
-from itertools import izip
 
 from duckietown_serialization_ds1 import Serializable
 
@@ -82,7 +81,7 @@ class SampledSequence(Sequence):
         return self.timestamps[-1]
 
     def __iter__(self):
-        return izip(self.timestamps, self.values)
+        return zip(self.timestamps, self.values)
 
     def __len__(self):
         return len(self.timestamps)
