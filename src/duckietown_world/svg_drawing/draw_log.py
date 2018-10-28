@@ -10,12 +10,18 @@ from bs4 import Tag
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
+from duckietown_world.geo.measurements_utils import get_extent_points
+from duckietown_world.geo.rectangular_area import RectangularArea
 from duckietown_world.seqs.tsequence import SampledSequence
-from duckietown_world.svg_drawing.misc import get_basic_upright, draw_recursive
+from duckietown_world.svg_drawing.misc import draw_recursive, get_basic_upright2
 from duckietown_world.world_duckietown.duckiebot import Duckiebot
 from duckietown_world.world_duckietown.map_loading import construct_map
 from duckietown_world.world_duckietown.tile import data_encoded_for_src
 from duckietown_world.world_duckietown.transformations import get_sampling_points, ChooseTime, Flatten
+
+__all__ = [
+    'draw_logs_main',
+]
 
 
 def draw_logs_main(args=None):
@@ -32,6 +38,7 @@ def draw_logs_main(args=None):
     draw_logs_main_(output, filename)
 
 
+
 def draw_logs_main_(output, filename):
     if output is None:
         output = filename + '.out'
@@ -46,12 +53,12 @@ def draw_logs_main_(output, filename):
 
     tilemap = duckietown_env.children['tilemap']
     gh, gw = tilemap.H * duckietown_env.tile_size, tilemap.W * duckietown_env.tile_size
-    # gh = int(math.ceil(gh))
-    # gw = int(math.ceil(gw))
+
     B = 640
     pixel_size = (B, B * gh / gw)
     space = (gh, gw)
-    drawing, base = get_basic_upright(fn_svg, space, pixel_size)
+    area = RectangularArea((0, 0), space)
+    drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
 
     # print(yaml.dump(duckietown_env.as_json_dict(), default_flow_style=False, allow_unicode=True))
 
@@ -138,7 +145,7 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
     controls = """\
 <p id="valBox"></p>
 <div class="slidecontainer">
-    <input type="range" min="0" max="%s" value="1" class="slider" id="myRange" onchange="showVal(this.value)"/>
+    <input type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
 </div>
 <style type='text/css'>
     .keyframe[visualize="hide"] {
@@ -178,7 +185,6 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
 {drawing}
 </td>
 <td id="obs" >
-<p>Robot observations</p>
 <div id="observation_sequence">
 {obs_div}
 </div>

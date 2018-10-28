@@ -1,10 +1,11 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-
 __all__ = ['PlacedObject']
 
 from duckietown_serialization_ds1 import Serializable
+
+import copy
 
 
 class SpatialRelation(Serializable):
@@ -25,19 +26,6 @@ class SpatialRelation(Serializable):
 
     def filter_all(self, f):
         return SpatialRelation(self.a, f(self.transform), self.b, sr_type=self.sr_type)
-
-
-import copy
-
-#
-# class MyDict(UserDict):
-#
-#     def __getitem__(self, key):
-#         try:
-#             return UserDict.__getitem__(self, key)
-#         except KeyError:
-#             msg = 'Cannot find key "{}"; I know {}.'.format(key, sorted(self.data))
-#             raise KeyError(msg)
 
 
 class PlacedObject(Serializable):
@@ -94,8 +82,13 @@ class PlacedObject(Serializable):
 
     # @abstractmethod
     def draw_svg(self, drawing, g):
-        pass
+        from duckietown_world.world_duckietown.duckiebot import draw_axes
+        draw_axes(drawing, g)
+
         # print('draw_svg not implemented for %s' % type(self).__name__)
 
     def get_drawing_children(self):
         return sorted(self.children)
+
+    def extent_points(self):
+        return [(0.0, 0.1), (0.1, 0.0)]

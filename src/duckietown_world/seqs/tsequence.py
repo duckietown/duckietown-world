@@ -1,5 +1,6 @@
 # coding=utf-8
 from abc import abstractmethod
+from itertools import izip
 
 from duckietown_serialization_ds1 import Serializable
 
@@ -45,6 +46,8 @@ class SampledSequence(Sequence):
     """ A sampled time sequence. Only defined at certain points. """
 
     def __init__(self, timestamps, values):
+        values = list(values)
+        timestamps = list(timestamps)
         if not timestamps:
             msg = 'Empty sequence.'
             raise ValueError(msg)
@@ -54,7 +57,8 @@ class SampledSequence(Sequence):
             raise ValueError(msg)
 
         for t in timestamps:
-            if not isinstance(t, float):
+            if not isinstance(t, (float, int)):
+                msg = 'I expected a number, got %s' % t
                 raise ValueError(t)
 
         self.timestamps = timestamps
@@ -76,3 +80,9 @@ class SampledSequence(Sequence):
 
     def get_end(self):
         return self.timestamps[-1]
+
+    def __iter__(self):
+        return izip(self.timestamps, self.values)
+
+    def __len__(self):
+        return len(self.timestamps)

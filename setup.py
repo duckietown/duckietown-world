@@ -35,6 +35,7 @@ setup(name='duckietown-world',
           'gym-duckietown',
           'beautifulsoup4>=4.6.3',
           'pillow',
+          'future',
       ],
 
       tests_require=[

@@ -25,18 +25,18 @@ class Duckiebot(PlacedObject):
         # print(g.tostring())
 
 
-def draw_axes(drawing, g, L=0.1):
+def draw_axes(drawing, g, L=0.1, stroke_width="0.01"):
     g2 = drawing.g()
     g2.attribs['class'] = 'axes'
     line = drawing.line(start=(0, 0),
                         end=(L, 0),
-                        stroke_width="0.01",
+                        stroke_width=stroke_width,
                         stroke="red")
     g2.add(line)
 
     line = drawing.line(start=(0, 0),
                         end=(0, L),
-                        stroke_width="0.01",
+                        stroke_width=stroke_width,
                         stroke="green")
     g2.add(line)
 

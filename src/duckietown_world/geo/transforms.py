@@ -4,17 +4,44 @@ from __future__ import unicode_literals
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
-from contracts import contract
+from contracts import contract, new_contract
+from six import with_metaclass
 
+import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 
+__all__ = [
+    'TransformSequence',
+    'Transform',
+    'SE2Transform',
+    'Scale2D',
+    'Matrix2D',
+]
 
-class Transform(object):
-    __metaclass__ = ABCMeta
+
+class Transform(with_metaclass(ABCMeta)):
 
     @abstractmethod
     def asmatrix2d(self):
         pass
+
+
+new_contract('Transform', Transform)
+
+
+class TransformSequence(object):
+
+    # @contract(transforms='list[>=1](Transform)')
+    def __init__(self, transforms):
+        self.transforms = transforms
+
+    def asmatrix2d(self):
+        ms = [_.asmatrix2d() for _ in self.transforms]
+        result = ms[0].m
+
+        for mi in ms[1:]:
+            result = np.dot(result, mi.m)
+        return Matrix2D(result)
 
 
 class SE2Transform(Transform, Serializable):
@@ -29,6 +56,12 @@ class SE2Transform(Transform, Serializable):
     @classmethod
     def identity(cls):
         return SE2Transform([0.0, 0.0], 0.0)
+
+    @classmethod
+    def from_SE2(cls, q):
+        """ From a matrix """
+        translation, angle = geo.translation_angle_from_SE2(q)
+        return SE2Transform(translation, angle)
 
     def params_to_json_dict(self):
         return dict(p=self.p, theta=self.theta)
@@ -50,6 +83,7 @@ class Scale2D(Transform, Serializable):
 
 
 class Matrix2D(Transform, Serializable):
+
     def __init__(self, m):
         self.m = np.array(m, 'float32')
         assert self.m.shape == (3, 3)

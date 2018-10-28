@@ -2,10 +2,15 @@ import argparse
 import os
 import sys
 
-from duckietown_world.svg_drawing import get_basic_upright, draw_recursive
+from duckietown_world.geo.rectangular_area import RectangularArea
+from duckietown_world.svg_drawing import get_basic_upright2, draw_recursive
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
 from duckietown_world.world_duckietown.map_loading import list_gym_maps, load_gym_map
 
+
+__all__ = [
+    'draw_maps_main',
+]
 
 def draw_maps_main(args=None):
     if args is None:
@@ -37,7 +42,8 @@ def draw_map(output, duckietown_map):
     B = 640
     pixel_size = (B, B * gw / gh)
     space = (gh, gw)
-    drawing, base = get_basic_upright('out.svg', space, pixel_size)
+    area = RectangularArea((0, 0), space)
+    drawing, base = get_basic_upright2('out.svg', area, pixel_size)
 
     gmg = drawing.g(id='duckietown_map')
     draw_recursive(drawing, duckietown_map, gmg)
