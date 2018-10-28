@@ -6,7 +6,6 @@ from six import BytesIO
 
 from duckietown_world import logger
 from duckietown_world.geo import PlacedObject
-
 from duckietown_world.utils.memoizing import memoized_reset
 
 __all__ = [
@@ -65,7 +64,10 @@ class Tile(PlacedObject):
             img = drawing.image(href=href,
                                 size=(1, 1),
                                 insert=(-0.5, -0.5),
-                                style='transform: rotate(90deg) scaleX(-1)')
+                                style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
+                                # style='transform: rotate(-180deg)'
+
+                                )
 
             g.add(img)
 

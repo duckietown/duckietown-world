@@ -1,17 +1,15 @@
 # coding=utf-8
 import itertools
+import os
 
 import numpy as np
+import oyaml as yaml
 
 from duckietown_world import Scale2D, logger, SE2Transform
 from duckietown_world.seqs import Constant
 from duckietown_world.world_duckietown import TileMap, Tile, TrafficLight, GenericObject
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
 from duckietown_world.world_duckietown.tile_template import load_tile_types
-
-import oyaml as yaml
-import os
-
 
 __all__ = ['create_map', 'list_gym_maps']
 
@@ -28,10 +26,13 @@ def create_map(H=3, W=3):
 
 def list_gym_maps():
     maps_dir = get_maps_dir()
-    for map_file in os.listdir(maps_dir):
-        map_name = map_file.split('.')[0]
-        yield map_name
 
+    def f():
+        for map_file in os.listdir(maps_dir):
+            map_name = map_file.split('.')[0]
+            yield map_name
+
+    return list(f())
 
 
 def get_maps_dir():
@@ -40,6 +41,7 @@ def get_maps_dir():
     d = os.path.join(module_dir, '../data/gd1/maps')
     assert os.path.exists(d), d
     return d
+
 
 def get_texture_dirs():
     abs_path_module = os.path.realpath(__file__)
@@ -59,7 +61,7 @@ def load_gym_map(map_name):
     data = open(fn).read()
     yaml_data = yaml.load(data)
     # from gym_duckietown.simulator import ROAD_TILE_SIZE
-    tile_size = 0.61 # XXX
+    tile_size = 0.61  # XXX
     return construct_map(yaml_data, tile_size)
 
 
@@ -238,7 +240,7 @@ def get_texture_file(tex_name):
     d = get_texture_dirs()
     suffixes = ['', '_1', '_2', '_3', '_4']
     for s in suffixes:
-        path = os.path.join(d, tex_name + s + '.png')
+        path = os.path.join(d, tex_name + s + '.jpg')
         if os.path.exists(path):
             return path
     msg = 'Could not find any texture for %s' % tex_name
