@@ -780,7 +780,7 @@ def format_property(k, v):  # @UnusedVariable
 
 
 if __name__ == "__main__":
-    graph = GvGen()
+    graph = ACGvGen()
 
     graph.smart_mode = 1
 

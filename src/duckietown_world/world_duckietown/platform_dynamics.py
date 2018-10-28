@@ -1,13 +1,12 @@
 from abc import ABCMeta, abstractmethod
 
-import numpy as np
 from contracts import contract
 from six import with_metaclass
 
-import geometry as geo
-from duckietown_serialization_ds1 import Serializable
+__all__ = [
+    'PlatformDynamicsFactory',
+    'PlatformDynamics',]
 
-__all__ = ['PlatformDynamicsFactory', 'PlatformDynamics']
 
 class PlatformDynamics(with_metaclass(ABCMeta)):
 

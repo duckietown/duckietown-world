@@ -1,14 +1,15 @@
 # coding=utf-8
 import itertools
+import os
 
 import numpy as np
+import oyaml as yaml
 
 from duckietown_world import Scale2D, logger, SE2Transform
 from duckietown_world.seqs import Constant
 from duckietown_world.world_duckietown import TileMap, Tile, TrafficLight, GenericObject
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
-from gym_duckietown import get_subdir_path
-from gym_duckietown.utils import get_file_path
+from duckietown_world.world_duckietown.tile_template import load_tile_types
 
 __all__ = ['create_map', 'list_gym_maps']
 
@@ -24,33 +25,52 @@ def create_map(H=3, W=3):
 
 
 def list_gym_maps():
-    maps_dir = get_subdir_path('maps')
-    names = []
-    for map_file in os.listdir(maps_dir):
-        map_name = map_file.split('.')[0]
-        names.append(map_name)
-    return names
+    maps_dir = get_maps_dir()
+
+    def f():
+        for map_file in os.listdir(maps_dir):
+            map_name = map_file.split('.')[0]
+            yield map_name
+
+    return list(f())
 
 
-import oyaml as yaml
-import os
+def get_maps_dir():
+    abs_path_module = os.path.realpath(__file__)
+    module_dir = os.path.dirname(abs_path_module)
+    d = os.path.join(module_dir, '../data/gd1/maps')
+    assert os.path.exists(d), d
+    return d
+
+
+def get_texture_dirs():
+    abs_path_module = os.path.realpath(__file__)
+    module_dir = os.path.dirname(abs_path_module)
+    d = os.path.join(module_dir, '../data/gd1/textures')
+    assert os.path.exists(d), d
+    return d
 
 
 def load_gym_map(map_name):
     logger.info('loading map %s' % map_name)
-    maps_dir = get_subdir_path('maps')
+    maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + '.yaml')
+    if not os.path.exists(fn):
+        msg = 'Could not find file %s' % fn
+        raise ValueError(msg)
     data = open(fn).read()
     yaml_data = yaml.load(data)
-    from gym_duckietown.simulator import ROAD_TILE_SIZE
-    tile_size = ROAD_TILE_SIZE
+    # from gym_duckietown.simulator import ROAD_TILE_SIZE
+    tile_size = 0.61  # XXX
     return construct_map(yaml_data, tile_size)
+
 
 def construct_map(yaml_data, tile_size):
     tiles = interpret_gym_map(yaml_data)
     tilemap0 = DuckietownMap(tile_size)
     tilemap0.set_object('tilemap', tiles, ground_truth=Scale2D(tile_size))
     return tilemap0
+
 
 def interpret_gym_map(data):
     tiles = data['tiles']
@@ -64,6 +84,8 @@ def interpret_gym_map(data):
 
     # print(tiles)
     # For each row in the grid
+
+    templates = load_tile_types()
     for a, row in enumerate(tiles):
         if len(row) != B:
             msg = "each row of tiles must have the same length"
@@ -101,6 +123,14 @@ def interpret_gym_map(data):
             # }
 
             tile = Tile(kind=kind, drivable=drivable)
+            if kind in templates:
+                tile.set_object('template', templates[kind],
+                                ground_truth=SE2Transform.identity())
+            else:
+                pass
+                # msg = 'Could not find %r in %s' % (kind, templates)
+                # logger.debug(msg)
+
             tm.add_tile(b, (A - 1) - a, orient, tile)
 
             # if drivable:
@@ -131,6 +161,7 @@ def interpret_gym_map(data):
     # self.collidable_safety_radii = []
 
     # For each object
+
     for obj_idx, desc in enumerate(data.get('objects', [])):
         kind = desc['kind']
 
@@ -206,9 +237,10 @@ def interpret_gym_map(data):
 
 
 def get_texture_file(tex_name):
+    d = get_texture_dirs()
     suffixes = ['', '_1', '_2', '_3', '_4']
     for s in suffixes:
-        path = get_file_path('textures', tex_name + s, 'png')
+        path = os.path.join(d, tex_name + s + '.jpg')
         if os.path.exists(path):
             return path
     msg = 'Could not find any texture for %s' % tex_name

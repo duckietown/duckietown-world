@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from networkx import MultiDiGraph
 
+
 from duckietown_world.geo.placed_object import SpatialRelation, PlacedObject
 from duckietown_world.geo.rectangular_area import RectangularArea
 
@@ -39,7 +40,7 @@ def get_meausurements_graph(po):
 import networkx as nx
 
 
-def get_flattened_measurement_graph(po):
+def get_flattened_measurement_graph(po, include_root_to_self=False):
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()
@@ -62,6 +63,12 @@ def get_flattened_measurement_graph(po):
         from duckietown_world import TransformSequence
         res = TransformSequence(transforms)
         G2.add_edge(root_name, name, transform_sequence=res)
+
+    if include_root_to_self:
+        from duckietown_world import SE2Transform
+        transform_sequence = SE2Transform.identity()
+        G2.add_edge(root_name, root_name, transform_sequence=transform_sequence)
+
     return G2
 
 
@@ -71,13 +78,16 @@ import numpy as np
 def get_extent_points(root):
     assert isinstance(root, PlacedObject)
     # iterate_in_frame(root)
-    G = get_flattened_measurement_graph(root)
+    G = get_flattened_measurement_graph(root, include_root_to_self=True)
     points = []
 
     root_name = ()
     for name in G.nodes():
-        if name == root_name:
-            continue
+        print('name: %s' % name.__repr__())
+        # if name == root_name:
+        #     from duckietown_world import SE2Transform
+        #     transform_sequence = SE2Transform.identity()
+        # else:
         transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
         extent_points = root.get_object_from_fqn(name).extent_points()
         m2d = transform_sequence.asmatrix2d()

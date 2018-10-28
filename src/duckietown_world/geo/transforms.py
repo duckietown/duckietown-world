@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod
 
@@ -45,7 +45,7 @@ class TransformSequence(object):
 
 
 class SE2Transform(Transform, Serializable):
-    @contract(p='seq(float)')
+    @contract(p='seq[2](float|int)')
     def __init__(self, p, theta):
         self.p = np.array(p, dtype='float64')
         self.theta = float(theta)
@@ -66,10 +66,30 @@ class SE2Transform(Transform, Serializable):
     def params_to_json_dict(self):
         return dict(p=self.p, theta=self.theta)
 
+    @classmethod
+    def params_from_json_dict(cls, d):
+        if d is None:
+            d = {}
+        p = d.pop('p', [0.0, 0.0])
+
+        if 'theta' in d:
+            theta = d.pop('theta')
+
+        elif 'theta_deg' in d:
+            theta_deg = d.pop('theta_deg')
+            theta = np.deg2rad(theta_deg)
+        else:
+            theta = 0.0
+
+        return dict(p=p, theta=theta)
+
     def asmatrix2d(self):
         import geometry
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
         return Matrix2D(M)
+
+
+new_contract('SE2Transform', SE2Transform)
 
 
 class Scale2D(Transform, Serializable):

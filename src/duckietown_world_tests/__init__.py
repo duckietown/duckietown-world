@@ -1,6 +1,8 @@
 # coding=utf-8
-from .world_building import *
+from .dynamics import *
 from .measurements import *
+from .svg import *
+from .world_building import *
 
 
 def jobs_comptests(context):

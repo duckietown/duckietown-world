@@ -27,6 +27,24 @@ class SpatialRelation(Serializable):
     def filter_all(self, f):
         return SpatialRelation(self.a, f(self.transform), self.b, sr_type=self.sr_type)
 
+    @classmethod
+    def params_from_json_dict(cls, d):
+        a = d.pop('a', [])
+        b = d.pop('b')
+        sr_type = d.pop('sr_type')
+        transform = d.pop('transform')
+
+        return dict(a=a, b=b, sr_type=sr_type, transform=transform)
+
+    def params_to_json_dict(self):
+        res = {}
+        if self.a:
+            res['a'] = list(self.a)
+        res['b'] = self.b
+        res['sr_type'] = self.sr_type
+        res['transform'] = self.transform
+        return res
+
 
 class PlacedObject(Serializable):
     def __init__(self, children=None, spatial_relations=None):
@@ -38,7 +56,27 @@ class PlacedObject(Serializable):
             spatial_relations = {}
 
         self.children = children
+
+        for k, v in list(spatial_relations.items()):
+            from .transforms import Transform
+            if isinstance(v, Transform):
+                if k in self.children:
+                    sr = SpatialRelation(a=(), b=(k,), sr_type='ground_truth',
+                                         transform=v)
+                    spatial_relations[k] = sr
+                else:
+                    msg = 'What is the "%s" referring to?' % k
+                    raise ValueError(msg)
+
         self.spatial_relations = spatial_relations
+
+        if not spatial_relations:
+            for child in self.children:
+                from duckietown_world import SE2Transform
+                sr = SpatialRelation(a=(), b=(child,), sr_type='ground_truth',
+                                     transform=SE2Transform.identity())
+                self.spatial_relations[child] = sr
+
         # self.children = MyDict(**children)
         # self.spatial_relations = MyDict(**spatial_relations)
 

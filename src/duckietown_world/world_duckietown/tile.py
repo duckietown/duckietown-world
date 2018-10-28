@@ -59,12 +59,14 @@ class Tile(PlacedObject):
         # g.add(rect)
 
         if self.fn:
-            texture = get_jpeg_bytes(self.fn)
+            # texture = get_jpeg_bytes(self.fn)
+            texture = open(self.fn, 'rb').read()
             href = data_encoded_for_src(texture, 'image/jpeg')
             img = drawing.image(href=href,
                                 size=(1, 1),
                                 insert=(-0.5, -0.5),
-                                style='transform: rotate(90deg) scaleX(-1)')
+                                style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
+                                )
 
             g.add(img)
 
@@ -77,6 +79,9 @@ class Tile(PlacedObject):
 
         from duckietown_world.world_duckietown.duckiebot import draw_axes
         draw_axes(drawing, g)
+
+        from duckietown_world.svg_drawing.misc import draw_children
+        draw_children(drawing, self, g)
 
 
 def data_encoded_for_src(data, mime):
