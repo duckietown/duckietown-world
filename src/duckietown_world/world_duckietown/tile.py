@@ -59,7 +59,8 @@ class Tile(PlacedObject):
         # g.add(rect)
 
         if self.fn:
-            texture = get_jpeg_bytes(self.fn)
+            # texture = get_jpeg_bytes(self.fn)
+            texture = open(self.fn, 'rb').read()
             href = data_encoded_for_src(texture, 'image/jpeg')
             img = drawing.image(href=href,
                                 size=(1, 1),
