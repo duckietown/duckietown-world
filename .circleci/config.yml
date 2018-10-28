@@ -59,8 +59,8 @@ jobs:
           path: junit
 
       - store_artifacts:
-          path: artifacts
-          destination: artifacts
+          path: out-comptests/duckietown_world_tests
+          destination: duckietown_world_tests
 
   test-3.5:
     <<: *test-template
