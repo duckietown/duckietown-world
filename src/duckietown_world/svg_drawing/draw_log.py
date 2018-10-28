@@ -10,7 +10,6 @@ from bs4 import Tag
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
-from duckietown_world.geo.measurements_utils import get_extent_points
 from duckietown_world.geo.rectangular_area import RectangularArea
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing.misc import draw_recursive, get_basic_upright2
@@ -36,7 +35,6 @@ def draw_logs_main(args=None):
     filename = parsed.filename
     output = parsed.output
     draw_logs_main_(output, filename)
-
 
 
 def draw_logs_main_(output, filename):
@@ -145,7 +143,7 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
     controls = """\
 <p id="valBox"></p>
 <div class="slidecontainer">
-    <input type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
+    <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
 </div>
 <style type='text/css'>
     .keyframe[visualize="hide"] {
@@ -162,9 +160,9 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
 </style>
 <script type='text/javascript'>
     function showVal(newVal) {
-        let elements = document.querySelectorAll('.keyframe');
+        elements = document.querySelectorAll('.keyframe');
         elements.forEach(_ => _.setAttribute('visualize', 'hide'));
-        let elements_show = document.querySelectorAll('.keyframe' + newVal );  
+        elements_show = document.querySelectorAll('.keyframe' + newVal );  
         elements_show.forEach(_ => _.setAttribute('visualize', 'show'));
     }
     document.addEventListener("DOMContentLoaded", function(event) {

@@ -10,3 +10,4 @@ from .map_loading import *
 from .platform_dynamics import *
 from .integrator2d import *
 from .generic_kinematics import *
+from .lane_segment import *

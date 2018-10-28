@@ -6,6 +6,7 @@ from six import BytesIO
 
 from duckietown_world import logger
 from duckietown_world.geo import PlacedObject
+
 from duckietown_world.utils.memoizing import memoized_reset
 
 __all__ = [
@@ -77,6 +78,9 @@ class Tile(PlacedObject):
 
         from duckietown_world.world_duckietown.duckiebot import draw_axes
         draw_axes(drawing, g)
+
+        from duckietown_world.svg_drawing.misc import draw_children
+        draw_children(drawing, self, g)
 
 
 def data_encoded_for_src(data, mime):

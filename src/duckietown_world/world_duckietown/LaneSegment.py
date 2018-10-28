@@ -1,2 +1,0 @@
-class LaneSegment(obj):
-    pass

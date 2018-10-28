@@ -46,7 +46,6 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
 
     from duckietown_world.world_duckietown.duckiebot import draw_axes
 
-
     # l = drawing.line(start=(-10, 0), end=(10, 0), stroke_width=0.01, stroke='red')
     # base.add(l)
     # l = drawing.line(start=(0, -10), end=(0, +10), stroke_width=0.01, stroke='green')
@@ -76,14 +75,14 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     draw_axes(drawing, base, L=0.5, stroke_width=0.03)
 
     inside = drawing.g()
-    tofill =drawing.g()
+    tofill = drawing.g()
     inside.add(tofill)
 
     view = drawing.rect(insert=area.pmin.tolist(),
-                     size=(area.pmax - area.pmin).tolist(),
-                     stroke_width=0.1,
-                     fill='none',
-                     stroke='gray')
+                        size=(area.pmax - area.pmin).tolist(),
+                        stroke_width=0.01,
+                        fill='none',
+                        stroke='black')
     inside.add(view)
     base.add(inside)
 
@@ -93,7 +92,10 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
 
 def draw_recursive(drawing, po, g):
     po.draw_svg(drawing, g)
+    draw_children(drawing, po, g)
 
+
+def draw_children(drawing, po, g):
     for child_name in po.get_drawing_children():
         child = po.children[child_name]
         # find transformations
@@ -130,11 +132,14 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
     fn_html = os.path.join(output_dir, 'drawing.html')
 
     timestamps = get_sampling_points(root)
-    keyframes = SampledSequence(range(len(timestamps)), timestamps)
+    if len(timestamps) == 0:
+        keyframes = SampledSequence([0], [0])
+    else:
+        keyframes = SampledSequence(range(len(timestamps)), timestamps)
     nkeyframes = len(keyframes)
 
-    t0 = timestamps[0]
-    root_t0 = root.filter_all(ChooseTime(t0))
+    # t0 = keyframes.at(0)
+    # root_t0 = root.filter_all(ChooseTime(t0))
 
     if area is None:
         areas = []
@@ -143,6 +148,7 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
             rarea = get_extent_points(root_t)
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
+        print('using area: %s' % area)
 
     drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
 

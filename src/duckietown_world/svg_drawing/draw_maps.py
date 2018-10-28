@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import sys
 
@@ -7,10 +8,10 @@ from duckietown_world.svg_drawing import get_basic_upright2, draw_recursive
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
 from duckietown_world.world_duckietown.map_loading import list_gym_maps, load_gym_map
 
-
 __all__ = [
     'draw_maps_main',
 ]
+
 
 def draw_maps_main(args=None):
     if args is None:
@@ -30,6 +31,12 @@ def draw_maps_main(args=None):
 
         draw_map(out, duckietown_map)
 
+        y = duckietown_map.as_json_dict()
+        fn = os.path.join(out, 'map.json')
+        with open(fn, 'w') as f:
+            f.write(json.dumps(y, indent=4))
+        print('written to %s' % fn)
+
 
 def draw_map(output, duckietown_map):
     if not os.path.exists(output):
@@ -41,8 +48,9 @@ def draw_map(output, duckietown_map):
     # gw = int(math.ceil(gw))
     B = 640
     pixel_size = (B, B * gw / gh)
-    space = (gh, gw)
-    area = RectangularArea((0, 0), space)
+    B = 0.24
+    space = (gh + B, gw + B)
+    area = RectangularArea((-B, -B), space)
     drawing, base = get_basic_upright2('out.svg', area, pixel_size)
 
     gmg = drawing.g(id='duckietown_map')
