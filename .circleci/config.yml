@@ -9,6 +9,8 @@ workflows:
       - test-2.7
 jobs:
   test-3.6: &test-template
+    environment:
+      COLUMNS: 160
     docker:
       - image: python:3.6
     working_directory: ~/repo
