@@ -81,7 +81,7 @@ class SampledSequence(Sequence):
         return self.timestamps[-1]
 
     def __iter__(self):
-        return zip(self.timestamps, self.values)
+        return zip(self.timestamps, self.values).__iter__()
 
     def __len__(self):
         return len(self.timestamps)

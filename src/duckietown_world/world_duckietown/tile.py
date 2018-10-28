@@ -66,8 +66,6 @@ class Tile(PlacedObject):
                                 size=(1, 1),
                                 insert=(-0.5, -0.5),
                                 style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
-                                # style='transform: rotate(-180deg)'
-
                                 )
 
             g.add(img)
