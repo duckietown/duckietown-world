@@ -271,8 +271,10 @@ def read_simulator_log(filename):
     # root = PlacedObject()
     # transform = SE2Transform([0.5, 0.5], np.deg2rad(10))
     # root.set_object('duckietown', duckietown_map, ground_truth=transform)
-
-    from gym_duckietown.simulator import ROBOT_WIDTH, ROBOT_LENGTH, ROBOT_HEIGHT
+    ROBOT_WIDTH = 0.13 + 0.02
+    ROBOT_LENGTH = 0.18
+    ROBOT_HEIGHT = 0.12
+    # from gym_duckietown.simulator import ROBOT_WIDTH, ROBOT_LENGTH, ROBOT_HEIGHT
 
     robot = Duckiebot(length=ROBOT_LENGTH, height=ROBOT_HEIGHT, width=ROBOT_WIDTH - 0.02)
     duckietown_map.set_object('duckiebot', robot, ground_truth=trajectory)

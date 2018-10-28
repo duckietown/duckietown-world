@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy as np
 from comptests import comptest, run_module_tests
 from numpy.testing import assert_almost_equal

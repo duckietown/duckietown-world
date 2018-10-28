@@ -1,5 +1,4 @@
 # coding=utf-8
-from .dw import *
 from .other_objects import *
 from .tile import *
 from .tile_coords import *

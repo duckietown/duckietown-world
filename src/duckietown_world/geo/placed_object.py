@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-
 __all__ = ['PlacedObject']
 
 from duckietown_serialization_ds1 import Serializable
@@ -28,13 +27,14 @@ class SpatialRelation(Serializable):
     def filter_all(self, f):
         return SpatialRelation(self.a, f(self.transform), self.b, sr_type=self.sr_type)
 
-    def params_from_json_dict(self, d):
+    @classmethod
+    def params_from_json_dict(cls, d):
         a = d.pop('a', [])
         b = d.pop('b')
         sr_type = d.pop('sr_type')
         transform = d.pop('transform')
 
-        return dict(a=a,b=b,sr_type=sr_type, transform=transform)
+        return dict(a=a, b=b, sr_type=sr_type, transform=transform)
 
     def params_to_json_dict(self):
         res = {}
@@ -42,7 +42,9 @@ class SpatialRelation(Serializable):
             res['a'] = list(self.a)
         res['b'] = self.b
         res['sr_type'] = self.sr_type
+        res['transform'] = self.transform
         return res
+
 
 class PlacedObject(Serializable):
     def __init__(self, children=None, spatial_relations=None):
@@ -74,7 +76,6 @@ class PlacedObject(Serializable):
                 sr = SpatialRelation(a=(), b=(child,), sr_type='ground_truth',
                                      transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
-
 
         # self.children = MyDict(**children)
         # self.spatial_relations = MyDict(**spatial_relations)

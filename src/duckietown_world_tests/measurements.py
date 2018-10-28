@@ -1,56 +1,50 @@
-import json
+# coding=utf-8
 import os
 
 import numpy as np
-import yaml
-from comptests import comptest, run_module_tests
-from networkx import all_simple_paths
+from comptests import comptest, run_module_tests, get_comptests_output_dir
 
 from duckietown_world.geo import PlacedObject, SE2Transform, get_meausurements_graph
 from duckietown_world.seqs import Constant
 from duckietown_world.utils.gvgen_ac import ACGvGen
-from duckietown_world.world_duckietown import DuckietownWorld
 from duckietown_world.world_duckietown.map_loading import load_gym_map
 
 
 @comptest
 def m1():
+    outdir = get_comptests_output_dir()
     gm = load_gym_map('udem1')
 
-    dw = DuckietownWorld()
+    # dw = DuckietownWorld()
     # for map_name, tm in gym_maps.items():
     #     DW.root.set_object(map_name, tm)
 
-    root = dw.root
+    root = PlacedObject()
 
     world = PlacedObject()
     root.set_object('world', world)
     origin = SE2Transform([1, 10], np.deg2rad(10))
     world.set_object('tile_map', gm, ground_truth=Constant(origin))
 
-    d = dw.as_json_dict()
-    print(json.dumps(d, indent=4))
-    print(yaml.safe_dump(d, default_flow_style=False))
+    # d = dw.as_json_dict()
+    # print(json.dumps(d, indent=4))
+    # print(yaml.safe_dump(d, default_flow_style=False))
     #
-    # print('------')
-    # r1 = from_json_dict2(d)
-    # d1 = r1.as_json_dict()
-    # print(yaml.safe_dump(d1, default_flow_style=False))
-    # assert d == d1
 
     G = get_meausurements_graph(root)
-    plot_measurement_graph(root, G, 'out1.pdf')
-
-    world = ('world',)
-    for node in G.nodes():
-        paths = list(all_simple_paths(G, world, node))
-        paths = [transform_from_path(G, _) for _ in paths]
-        if paths:
-            mpath = paths[0]
-            path = squash_path(mpath)
-            print(path)
-            # frozen = [_.at(t=0) for _ in path]
-            # print(frozen)
+    fn = os.path.join(outdir, 'out1.pdf')
+    plot_measurement_graph(root, G, fn)
+    #
+    # world = ('world',)
+    # for node in G.nodes():
+    #     paths = list(all_simple_paths(G, world, node))
+    #     paths = [transform_from_path(G, _) for _ in paths]
+    #     if paths:
+    #         mpath = paths[0]
+    #         path = squash_path(mpath)
+    #         print(path)
+    #         # frozen = [_.at(t=0) for _ in path]
+    #         # print(frozen)
 
 
 class NoMeasurements(Exception):
@@ -98,6 +92,9 @@ def pairwise(iterable):
 
 
 def plot_measurement_graph(root, G, out):
+    d = os.path.dirname(out)
+    if not os.path.exists(d):
+        os.makedirs(d)
     gg = ACGvGen()
 
     node2item = {}
