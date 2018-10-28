@@ -3,6 +3,7 @@ __version__ = '1.0.4'
 
 import logging
 
+logging.basicConfig()
 logger = logging.getLogger('dt-world')
 logger.setLevel(logging.DEBUG)
 
