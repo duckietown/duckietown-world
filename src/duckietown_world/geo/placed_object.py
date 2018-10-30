@@ -1,49 +1,54 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-__all__ = ['PlacedObject']
+from contracts import contract
+
+from .transforms import Transform
+
 
 from duckietown_serialization_ds1 import Serializable
 
 import copy
 
 
-class SpatialRelation(Serializable):
-    SR_TYPE_PRIOR = 'prior'
-    SR_TYPE_GT = 'ground_truth'
-    SR_TYPE_MEASUREMENT = 'measurement'
-    SR_TYPES = [SR_TYPE_PRIOR, SR_TYPE_GT, SR_TYPE_MEASUREMENT]
+__all__ = [
+    'PlacedObject',
+    'SpatialRelation',
+    'GroundTruth',
+]
 
-    def __init__(self, a, transform, b, sr_type):
-        # check_isinstance(transform, (SpatialRelation, Sequence))
-        if sr_type not in SpatialRelation.SR_TYPES:
-            msg = 'Invalid value %s' % sr_type
-            raise ValueError(msg)
+class SpatialRelation(Serializable):
+
+    @contract(a='seq(str)', b='seq(str)', transform=Transform)
+    def __init__(self, a, transform, b):
         self.a = tuple(a)
         self.transform = transform
         self.b = tuple(b)
-        self.sr_type = sr_type
 
     def filter_all(self, f):
-        return SpatialRelation(self.a, f(self.transform), self.b, sr_type=self.sr_type)
+        return SpatialRelation(self.a, f(self.transform), self.b)
 
     @classmethod
     def params_from_json_dict(cls, d):
         a = d.pop('a', [])
         b = d.pop('b')
-        sr_type = d.pop('sr_type')
+        # sr_type = d.pop('sr_type')
         transform = d.pop('transform')
 
-        return dict(a=a, b=b, sr_type=sr_type, transform=transform)
+        return dict(a=a, b=b, transform=transform)
 
     def params_to_json_dict(self):
         res = {}
         if self.a:
             res['a'] = list(self.a)
         res['b'] = self.b
-        res['sr_type'] = self.sr_type
+        # res['sr_type'] = self.sr_type
         res['transform'] = self.transform
         return res
+
+
+class GroundTruth(SpatialRelation):
+    pass
 
 
 class PlacedObject(Serializable):
@@ -61,8 +66,7 @@ class PlacedObject(Serializable):
             from .transforms import Transform
             if isinstance(v, Transform):
                 if k in self.children:
-                    sr = SpatialRelation(a=(), b=(k,), sr_type='ground_truth',
-                                         transform=v)
+                    sr = GroundTruth(a=(), b=(k,), transform=v)
                     spatial_relations[k] = sr
                 else:
                     msg = 'What is the "%s" referring to?' % k
@@ -73,8 +77,7 @@ class PlacedObject(Serializable):
         if not spatial_relations:
             for child in self.children:
                 from duckietown_world import SE2Transform
-                sr = SpatialRelation(a=(), b=(child,), sr_type='ground_truth',
-                                     transform=SE2Transform.identity())
+                sr = GroundTruth(a=(), b=(child,), transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
 
         # self.children = MyDict(**children)
@@ -113,8 +116,12 @@ class PlacedObject(Serializable):
     def set_object(self, name, ob, **transforms):
         assert self is not ob
         self.children[name] = ob
+        type2klass = {
+            'ground_truth': GroundTruth
+        }
         for k, v in transforms.items():
-            st = SpatialRelation(a=(), b=(name,), sr_type=k, transform=v)
+            klass = type2klass[k]
+            st = klass(a=(), b=(name,), transform=v)
             i = len(self.spatial_relations)
             self.spatial_relations[i] = st
 

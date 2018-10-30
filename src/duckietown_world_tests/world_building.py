@@ -23,7 +23,7 @@ def wb1():
 
     placement = Constant(SE2Transform.identity())
 
-    world.set_object('map1', tile_map, prior=placement)
+    world.set_object('map1', tile_map, ground_truth=placement)
 
     ego = PlacedObject()
     world_coordinates = Constant(SE2Transform([0, 0], 0))

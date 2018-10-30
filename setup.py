@@ -35,6 +35,7 @@ setup(name='duckietown-world',
           'beautifulsoup4>=4.6.3',
           'pillow',
           'future',
+          'scipy',
       ],
 
       tests_require=[

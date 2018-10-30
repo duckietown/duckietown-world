@@ -18,7 +18,8 @@ def iterate_measurements_relations(po_name, po):
     for sr_name, sr in po.spatial_relations.items():
         a = po_name + sr.a
         b = po_name + sr.b
-        s = SpatialRelation(a=a, b=b, sr_type=sr.sr_type, transform=sr.transform)
+        klass = type(sr)
+        s = klass(a=a, b=b, transform=sr.transform)
         yield po_name + (sr_name,), s
 
     for child_name, child in po.children.items():

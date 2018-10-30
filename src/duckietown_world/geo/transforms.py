@@ -83,9 +83,13 @@ class SE2Transform(Transform, Serializable):
 
         return dict(p=p, theta=theta)
 
-    def asmatrix2d(self):
+    def as_SE2(self):
         import geometry
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
+        return M
+
+    def asmatrix2d(self):
+        M = self.as_SE2()
         return Matrix2D(M)
 
 

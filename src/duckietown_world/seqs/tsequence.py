@@ -58,8 +58,9 @@ class SampledSequence(Sequence):
         for t in timestamps:
             if not isinstance(t, (float, int)):
                 msg = 'I expected a number, got %s' % t
-                raise ValueError(t)
+                raise ValueError(msg)
 
+        timestamps = list(map(float, timestamps))
         self.timestamps = timestamps
         self.values = values
 

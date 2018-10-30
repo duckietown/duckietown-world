@@ -12,3 +12,4 @@ PyGeometry==1.5.5
 beautifulsoup4>=4.6.3
 #lxml
 future
+scipy

@@ -1,6 +1,10 @@
-from duckietown_serialization_ds1 import Serializable
 import numpy as np
 
+from duckietown_serialization_ds1 import Serializable
+
+__all__ = [
+    'RectangularArea',
+]
 
 class RectangularArea(Serializable):
     def __init__(self, pmin, pmax):
