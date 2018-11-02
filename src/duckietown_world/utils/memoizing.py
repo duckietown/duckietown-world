@@ -32,19 +32,20 @@ class memoized_reset(object):
         self.func = func
         self.cache = {}
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
+        key = args + tuple(kwargs.items())
         try:
-            res = self.cache[args]
+            res = self.cache[key]
             # print('using cache for %s' % self.func)
             return res
         except KeyError:
-            value = self.func(*args)
-            self.cache[args] = value
+            value = self.func(*args, **kwargs)
+            self.cache[key] = value
             return value
         except TypeError:
             # uncachable -- for instance, passing a list as an argument.
             # Better to not cache than to blow up entirely.
-            return self.func(*args)
+            return self.func(*args, **kwargs)
 
     def __repr__(self):
         """Return the function's docstring."""

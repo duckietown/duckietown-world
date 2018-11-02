@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy as np
 import svgwrite
 from contracts import contract, check_isinstance, new_contract
@@ -336,6 +337,7 @@ class LaneSegment(PlacedObject):
         q = SE2_interpolate(q0, q1, alpha)
         return q
 
+    @memoized_reset
     def center_line_points(self, points_per_segment=5):
         n = len(self.control_points) - 1
         num = n * points_per_segment
@@ -345,6 +347,8 @@ class LaneSegment(PlacedObject):
             q = self.center_point(beta)
             res.append(q)
         return res
+
+    @memoized_reset
     def lane_profile(self, points_per_segment=5):
         points_left = []
         points_right = []

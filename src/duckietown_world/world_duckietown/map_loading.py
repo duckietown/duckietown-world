@@ -10,10 +10,14 @@ from duckietown_world.world_duckietown import TileMap, Tile, TrafficLight, Gener
 from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
 from duckietown_world.world_duckietown.other_objects import Duckie, SignLeftTIntersect, SignRightTIntersect, \
-    SignTIntersect, SignStop, Tree, House, Bus, Truck, Cone, Barrier, Building
+    SignTIntersect, SignStop, Tree, House, Bus, Truck, Cone, Barrier, Building, Sign4WayIntersect, SingTLightAhead
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
-__all__ = ['create_map', 'list_gym_maps']
+__all__ = [
+    'create_map',
+    'list_maps',
+    'construct_map',
+]
 
 
 def create_map(H=3, W=3):
@@ -26,7 +30,7 @@ def create_map(H=3, W=3):
     return tile_map
 
 
-def list_gym_maps():
+def list_maps():
     maps_dir = get_maps_dir()
 
     def f():
@@ -173,7 +177,7 @@ def interpret_gym_map(data):
 
         rotate = desc['rotate']
         transform = SE2Transform([float(pos[0]), float(tm.W - pos[1])], rotate)
-        
+
         # x, z = pos[0:2]
         #
         # i = int(np.floor(x))
@@ -223,6 +227,8 @@ def interpret_gym_map(data):
                 'sign_left_T_intersect': SignLeftTIntersect,
                 'sign_right_T_intersect': SignRightTIntersect,
                 'sign_T_intersect': SignTIntersect,
+                'sign_4_way_intersect': Sign4WayIntersect,
+                'sign_t_light_ahead': SingTLightAhead,
                 'sign_stop': SignStop,
                 'tree': Tree,
                 'house': House,

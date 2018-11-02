@@ -1,6 +1,10 @@
+# coding=utf-8
+import base64
 import itertools
+import logging
 import math
 import os
+from six import BytesIO
 
 import svgwrite
 import yaml
@@ -11,19 +15,23 @@ from past.builtins import reduce
 from duckietown_world import logger
 from duckietown_world.geo import RectangularArea
 from duckietown_world.geo.measurements_utils import get_extent_points, get_static_and_dynamic
-from duckietown_world.seqs.tsequence import SampledSequence
-from duckietown_world.world_duckietown.transformations import get_sampling_points, ChooseTime
+from duckietown_world.seqs.tsequence import SampledSequence, UndefinedAtTime
+from duckietown_world.utils.memoizing import memoized_reset
+from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
 
 __all__ = [
     'draw_recursive',
     'get_basic_upright2',
     'draw_static',
+    'draw_axes',
+    'draw_children',
+    'data_encoded_for_src',
 ]
 
 
 @contract(area=RectangularArea)
 def get_basic_upright2(filename, area, size=(1024, 768)):
-    drawing = svgwrite.Drawing(filename, size=size)
+    drawing = svgwrite.Drawing(filename, size=size, debug=False)
 
     origin = area.pmin
     other = area.pmax
@@ -44,13 +52,6 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     i1 = int(math.ceil(area.pmax[0]))
     j1 = int(math.ceil(area.pmax[1]))
 
-    from duckietown_world.world_duckietown.duckiebot import draw_axes
-
-    # l = drawing.line(start=(-10, 0), end=(10, 0), stroke_width=0.01, stroke='red')
-    # base.add(l)
-    # l = drawing.line(start=(0, -10), end=(0, +10), stroke_width=0.01, stroke='green')
-    # base.add(l)
-
     grid = drawing.g(id='grid')
     for i, j in itertools.product(range(i0, i1), range(j0, j1)):
         where = (i, j)
@@ -60,16 +61,6 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
                             stroke_width="0.01",
                             stroke="#eeeeee", )
         grid.add(rect)
-
-    if False:
-        for i, j in itertools.product(range(H), range(W)):
-            where = (i, j)
-            t = drawing.text('x = %s, y = %s' % (i, j), insert=where,
-                             # ,
-                             style="font-size: 0.1",
-                             # transform='scale(1,-1)'
-                             )
-            grid.add(t)
 
     base.add(grid)
     draw_axes(drawing, base, L=0.5, stroke_width=0.03)
@@ -133,9 +124,8 @@ def recurive_draw_list(draw_list, prefix):
     return res
 
 
-def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
-
-
+def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None):
+    images = images or {}
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -176,6 +166,12 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
     draw_recursive(drawing, root_t0, g_static, draw_list=static)
     base.add(g_static)
 
+    obs_div = Tag(name='div')
+    imagename2div = {}
+    for name in images:
+        imagename2div[name] = Tag(name='div')
+        obs_div.append(imagename2div[name])
+
     for i, t in keyframes:
         g_t = drawing.g()
         g_t.attribs['class'] = 'keyframe keyframe%d' % i
@@ -184,6 +180,18 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
 
         draw_recursive(drawing, root_t, g_t, draw_list=dynamic)
         base.add(g_t)
+
+        for name, sequence in images.items():
+            try:
+                obs = sequence.at(t)
+            except UndefinedAtTime as e:
+                print(str(e))
+            else:
+                img = Tag(name='img')
+                img.attrs['src'] = data_encoded_for_src(obs.bytes_contents, obs.content_type)
+                img.attrs['class'] = 'keyframe keyframe%d' % i
+                img.attrs['visualize'] = 'hide'
+                imagename2div[name].append(img)
 
     other = Tag(name='div')
 
@@ -265,8 +273,8 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
         """
     other = other2 + other1
 
-    from duckietown_world.svg_drawing.draw_log import make_html_slider
-    html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div='', other=other)
+    obs_div = str(obs_div)
+    html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div=obs_div, other=other)
     with open(fn_html, 'w') as f:
         f.write(html)
 
@@ -275,3 +283,104 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
     logger.info('Written HTML to %s' % fn_html)
 
     return [fn_svg, fn_html]
+
+
+def make_html_slider(drawing, nkeyframes, obs_div, other):
+    # language=html
+    controls = """\
+<p id="valBox"></p>
+<div class="slidecontainer">
+    <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
+</div>
+<style type='text/css'>
+    .keyframe[visualize="hide"] {
+        display: none;
+    }
+    .keyframe[visualize="show"] {
+        display: inherit;
+    }
+    td#obs {
+        padding: 1em;
+        vertical-align: top;
+    }
+    td#obs img { width: 90%%;} 
+</style>
+<script type='text/javascript'>
+    function showVal(newVal) {
+        elements = document.querySelectorAll('.keyframe');
+        elements.forEach(_ => _.setAttribute('visualize', 'hide'));
+        elements_show = document.querySelectorAll('.keyframe' + newVal );  
+        elements_show.forEach(_ => _.setAttribute('visualize', 'show'));
+    }
+    document.addEventListener("DOMContentLoaded", function(event) {
+        showVal(0);
+    });
+</script>
+""" % (nkeyframes - 1)
+
+    drawing_svg = drawing.tostring()
+    # language=html
+    doc = """\
+<html>
+<head></head>
+<body>
+{controls}
+<table>
+<tr>
+<td style="width: 640px; vertical-align:top;">
+{drawing}
+</td>
+<td id="obs" >
+<div id="observation_sequence">
+{obs_div}
+</div>
+</td>
+</tr>
+</table>
+{other}
+</body>
+</html>
+    """.format(controls=controls, drawing=drawing_svg, obs_div=obs_div, other=other)
+    return doc
+
+
+def data_encoded_for_src(data, mime):
+    """ data =
+        ext = png, jpg, ...
+
+        returns "data: ... " sttring
+    """
+    encoded = base64.b64encode(data).decode()
+    link = 'data:%s;base64,%s' % (mime, encoded)
+    return link
+
+
+def draw_axes(drawing, g, L=0.1, stroke_width=0.01):
+    g2 = drawing.g()
+    g2.attribs['class'] = 'axes'
+    line = drawing.line(start=(0, 0),
+                        end=(L, 0),
+                        stroke_width=stroke_width,
+                        stroke="red")
+    g2.add(line)
+
+    line = drawing.line(start=(0, 0),
+                        end=(0, L),
+                        stroke_width=stroke_width,
+                        stroke="green")
+    g2.add(line)
+
+    g.add(g2)
+
+
+@memoized_reset
+def get_jpeg_bytes(fn):
+    from PIL import Image
+    pl = logging.getLogger('PIL')
+    pl.setLevel(logging.ERROR)
+
+    image = Image.open(fn).convert('RGB')
+
+    out = BytesIO()
+    image.save(out, format='jpeg')
+    return out.getvalue()

@@ -1,33 +1,17 @@
 # coding=utf-8
-import base64
-import logging
 from collections import namedtuple
 
 import numpy as np
 from contracts import contract
-from six import BytesIO
 
 from duckietown_world import logger
 from duckietown_world.geo import PlacedObject, RectangularArea, SE2Transform, TransformSequence
-from duckietown_world.utils.memoizing import memoized_reset
+from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 
 __all__ = [
     'Tile',
 ]
 draw_directions_lanes = False
-
-
-@memoized_reset
-def get_jpeg_bytes(fn):
-    from PIL import Image
-    pl = logging.getLogger('PIL')
-    pl.setLevel(logging.ERROR)
-
-    image = Image.open(fn).convert('RGB')
-
-    out = BytesIO()
-    image.save(out, format='jpeg')
-    return out.getvalue()
 
 
 class Tile(PlacedObject):
@@ -83,22 +67,9 @@ class Tile(PlacedObject):
                 line = drawing.line(start=start, end=end, stroke='blue', stroke_width='0.01')
                 g.add(line)
 
-        from duckietown_world.world_duckietown.duckiebot import draw_axes
         draw_axes(drawing, g)
 
-        from duckietown_world.svg_drawing.misc import draw_children
         draw_children(drawing, self, g)
-
-
-def data_encoded_for_src(data, mime):
-    """ data =
-        ext = png, jpg, ...
-
-        returns "data: ... " sttring
-    """
-    encoded = base64.b64encode(data).decode()
-    link = 'data:%s;base64,%s' % (mime, encoded)
-    return link
 
 
 GetLanePoseResult = namedtuple('GetLanePoseResult',

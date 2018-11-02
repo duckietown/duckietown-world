@@ -4,7 +4,20 @@ from abc import abstractmethod
 from duckietown_world import logger
 from ..geo import PlacedObject
 
-__all__ = ['GenericObject']
+__all__ = [
+    'GenericObject',
+    'Duckie',
+    'Decoration',
+    'Sign',
+    'Sign4WayIntersect',
+    'SignLeftTIntersect',
+    'SignRightTIntersect',
+    'SignStop',
+    'SignTIntersect',
+    'SingTLightAhead',
+    'Bus',
+    'House',
+]
 
 
 class GenericObject(PlacedObject):
@@ -161,6 +174,12 @@ class SignTIntersect(Sign):
         return 'sign_T_intersect'
 
 
-class SignTIntersect(Sign):
+class Sign4WayIntersect(Sign):
     def get_name_texture(self):
-        return 'sign_T_intersect'
+        return 'sign_4_way_intersect'
+
+
+class SingTLightAhead(Sign):
+
+    def get_name_texture(self):
+        return 'sign_t_light_ahead'

@@ -7,7 +7,8 @@ import six
 from contracts import contract, check_isinstance
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs.tsequence import SampledSequence, UndefinedAtTime
+from duckietown_world.seqs import SampledSequence, UndefinedAtTime
+from duckietown_world.svg_drawing import draw_axes
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -20,7 +21,7 @@ __all__ = [
 
 class SpatialRelation(Serializable):
 
-    @contract(a='seq(str)', b='seq(str)')
+    @contract(a='seq(str|unicode)', b='seq(str|unicode)')
     def __init__(self, a, transform, b):
         check_isinstance(transform, (Transform, SampledSequence))
         self.a = tuple(a)
@@ -53,12 +54,8 @@ class GroundTruth(SpatialRelation):
 
 class PlacedObject(Serializable):
     def __init__(self, children=None, spatial_relations=None):
-        # name of the frame to Transform object
-        if children is None:
-            children = {}
-
-        if spatial_relations is None:
-            spatial_relations = {}
+        children = children or {}
+        spatial_relations = spatial_relations or {}
 
         self.children = children
 
@@ -80,33 +77,32 @@ class PlacedObject(Serializable):
                 sr = GroundTruth(a=(), b=(child,), transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
 
-        # self.children = MyDict(**children)
-        # self.spatial_relations = MyDict(**spatial_relations)
-
     def filter_all(self, f):
-        x = copy.deepcopy(self)
+        x = copy.copy(self)
+        children = {}
+        spatial_relations = {}
+
         no_child = []
         for child_name, child in list(x.children.items()):
             try:
                 child2 = f(child.filter_all(f))
             except UndefinedAtTime:
                 no_child.append(child_name)
-                x.children.pop(child_name)
             else:
-                x.children[child_name] = child2
-
+                children[child_name] = child2
 
         for sr_name, sr in list(x.spatial_relations.items()):
             if sr.b and sr.b[0] in no_child:
-                x.spatial_relations.pop(sr_name)
+                pass
             else:
                 try:
                     sr2 = f(sr.filter_all(f))
                 except UndefinedAtTime:
-                    x.spatial_relations.pop(sr_name)
+                    pass
                 else:
-                    x.spatial_relations[sr_name] = sr2
-
+                    spatial_relations[sr_name] = sr2
+        x.children = children
+        x.spatial_relations = spatial_relations
         return x
 
     def get_object_from_fqn(self, fqn):
@@ -144,7 +140,6 @@ class PlacedObject(Serializable):
 
     # @abstractmethod
     def draw_svg(self, drawing, g):
-        from duckietown_world.world_duckietown.duckiebot import draw_axes
         draw_axes(drawing, g)
 
     def get_drawing_children(self):

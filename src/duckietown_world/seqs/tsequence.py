@@ -3,7 +3,11 @@ from abc import abstractmethod
 
 from duckietown_serialization_ds1 import Serializable
 
-__all__ = ['Sequence']
+__all__ = [
+    'Sequence',
+    'UndefinedAtTime',
+    'SampledSequence',
+]
 
 
 class UndefinedAtTime(Exception):
@@ -24,7 +28,7 @@ class Sequence(Serializable):
 
     @abstractmethod
     def at(self, t):
-        """ Raises KeyError if not defined at t. """
+        """ Raises UndefinedAtTime if not defined at t. """
 
     @abstractmethod
     def get_start(self):

@@ -1,11 +1,9 @@
 # coding=utf-8
-import json
 
-import yaml
 from comptests import comptest, run_module_tests, get_comptests_output_dir
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import list_gym_maps
+from duckietown_world import list_maps
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.seqs import Constant
 from duckietown_world.world_duckietown import create_map
@@ -30,8 +28,6 @@ def wb1():
 
     world.set_object('ego', ego, ground_truth=world_coordinates)
 
-
-
     d = root.as_json_dict()
     # print(json.dumps(DW.root.as_json_dict(), indent=4))
     # print(yaml.safe_dump(d, default_flow_style=False))
@@ -47,7 +43,7 @@ def wb1():
 def wb2():
     root = PlacedObject()
 
-    for map_name in list_gym_maps():
+    for map_name in list_maps():
         tm = load_gym_map(map_name)
         root.set_object(map_name, tm)
 

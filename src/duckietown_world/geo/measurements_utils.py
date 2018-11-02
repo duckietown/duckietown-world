@@ -146,10 +146,10 @@ def iterate_by_test(po, testf):
     G = get_flattened_measurement_graph(po, include_root_to_self=True)
     root_name = ()
     for name in G:
-        object = po.get_object_from_fqn(name)
-        if testf(object):
+        ob = po.get_object_from_fqn(name)
+        if testf(ob):
             transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
-            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=object)
+            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=ob)
 
 
 import numpy as np

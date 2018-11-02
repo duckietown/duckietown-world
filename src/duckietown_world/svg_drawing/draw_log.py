@@ -1,22 +1,16 @@
+# coding=utf-8
 import argparse
 import json
 import os
 import sys
 from collections import namedtuple
 
-import numpy as np
-import oyaml as yaml
-from bs4 import Tag
-
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
-from duckietown_world.geo.rectangular_area import RectangularArea
 from duckietown_world.seqs.tsequence import SampledSequence
-from duckietown_world.svg_drawing.misc import draw_recursive, get_basic_upright2
-from duckietown_world.world_duckietown.duckiebot import Duckiebot
+from duckietown_world.svg_drawing.misc import draw_static
+from duckietown_world.world_duckietown import DB18
 from duckietown_world.world_duckietown.map_loading import construct_map
-from duckietown_world.world_duckietown.tile import data_encoded_for_src
-from duckietown_world.world_duckietown.transformations import get_sampling_points, ChooseTime, Flatten
 
 __all__ = [
     'draw_logs_main',
@@ -45,156 +39,13 @@ def draw_logs_main_(output, filename):
 
     log = read_simulator_log(filename)
     duckietown_env = log.duckietown
-
-    fn_svg = os.path.join(output, 'drawing.svg')
-    fn_html = os.path.join(output, 'drawing.html')
-
-    tilemap = duckietown_env.children['tilemap']
-    gh, gw = tilemap.H * duckietown_env.tile_size, tilemap.W * duckietown_env.tile_size
-
-    B = 640
-    pixel_size = (B, B * gh / gw)
-    space = (gh, gw)
-    area = RectangularArea((0, 0), space)
-    drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
-
-    # print(yaml.dump(duckietown_env.as_json_dict(), default_flow_style=False, allow_unicode=True))
-
-    timestamps = get_sampling_points(duckietown_env)
-    # print('timestamps: %s' % timestamps)
-
-    t = timestamps[0]
-    gm2 = duckietown_env.filter_all(ChooseTime(t))
-    gm2 = gm2.filter_all(Flatten())
-
-    gmg = drawing.g()
-    base.add(gmg)
-    draw_recursive(drawing, gm2, gmg)
-
-    dt = 0.3
-    last = -np.inf
-    keyframe = 0
-
-    div = Tag(name='div')
-
-    for t in timestamps:
-        if t - last < dt:
-            continue
-        last = t
-        duckietown_env2 = duckietown_env.filter_all(ChooseTime(t))
-        duckietown_env2 = duckietown_env2.filter_all(Flatten())
-
-        duckietown_env2.children = {'duckiebot': duckietown_env2.children.get('duckiebot')}
-
-        gmg = drawing.g()
-        gmg.attribs['class'] = 'keyframe keyframe%d' % keyframe
-        draw_recursive(drawing, duckietown_env2, gmg)
-        base.add(gmg)
-
-        if log.observations:
-            try:
-                obs = log.observations.at(t)
-            except KeyError as e:
-                print(str(e))
-            else:
-                img = Tag(name='img')
-                # print(obs)
-                img.attrs['src'] = data_encoded_for_src(obs.bytes_contents, obs.content_type)
-                img.attrs['class'] = 'keyframe keyframe%d' % keyframe
-                img.attrs['visualize'] = 'hide'
-                div.append(img)
-
-        keyframe += 1
-
-    # print(yaml.dump(gm2.as_json_dict(), default_flow_style=False, allow_unicode=True))
-
-    drawing.filename = fn_svg
-    drawing.save(pretty=True)
-
-    other = Tag(name='div')
-
-    summary = Tag(name='summary')
-    summary.append('Log data')
-    details = Tag(name='details')
-
-    details.append(summary)
-    pre = Tag(name='pre')
-    code = Tag(name='code')
-    pre.append(code)
-    y = yaml.safe_dump(duckietown_env.as_json_dict(), default_flow_style=False)
-    code.append(y)
-    details.append(pre)
-
-    other.append(details)
-
-    other = str(other)
-
-    html = make_html_slider(drawing, nkeyframes=keyframe, obs_div=str(div), other=other)
-    with open(fn_html, 'w') as f:
-        f.write(html)
-
-    logger.info('Written SVG to %s' % fn_svg)
-    logger.info('Written HTML to %s' % fn_html)
-
-    return [fn_svg, fn_html]
+    if log.observations:
+        images = {'observations': log.observations}
+    else:
+        images = None
+    draw_static(duckietown_env, output, images=images)
 
 
-def make_html_slider(drawing, nkeyframes, obs_div, other):
-    # language=html
-    controls = """\
-<p id="valBox"></p>
-<div class="slidecontainer">
-    <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
-</div>
-<style type='text/css'>
-    .keyframe[visualize="hide"] {
-        display: none;
-    }
-    .keyframe[visualize="show"] {
-        display: inherit;
-    }
-    td#obs {
-        padding: 1em;
-        vertical-align: top;
-    }
-    td#obs img { width: 90%%;} 
-</style>
-<script type='text/javascript'>
-    function showVal(newVal) {
-        elements = document.querySelectorAll('.keyframe');
-        elements.forEach(_ => _.setAttribute('visualize', 'hide'));
-        elements_show = document.querySelectorAll('.keyframe' + newVal );  
-        elements_show.forEach(_ => _.setAttribute('visualize', 'show'));
-    }
-    document.addEventListener("DOMContentLoaded", function(event) {
-        showVal(0);
-    });
-</script>
-""" % (nkeyframes - 1)
-
-    drawing_svg = drawing.tostring()
-    doc = """\
-<html>
-<head></head>
-<body>
-{controls}
-<table>
-<tr>
-<td style="width: 640; height: 80vh; vertical-align:top;">
-{drawing}
-</td>
-<td id="obs" >
-<div id="observation_sequence">
-{obs_div}
-</div>
-</td>
-</tr>
-</table>
-{other}
-</body>
-</html>
-    """.format(controls=controls, drawing=drawing_svg, obs_div=obs_div, other=other)
-    return doc
 
 
 def read_log(filename):
@@ -236,8 +87,6 @@ def read_simulator_log(filename):
         if ob.topic == 'misc':
             sim = ob.data['Simulator']
             cur_pos = sim['cur_pos']
-            # p = [gx, gz]
-            # print(sim['cur_pos'])
             cur_angle = sim['cur_angle']
 
             curpos_values.append((cur_pos, cur_angle))
@@ -245,8 +94,6 @@ def read_simulator_log(filename):
         if ob.topic == 'Simulator':
             sim = ob.data
             cur_pos = sim['cur_pos']
-            # p = [gx, gz]
-            # print(sim['cur_pos'])
             cur_angle = sim['cur_angle']
 
             curpos_values.append((cur_pos, cur_angle))
@@ -269,16 +116,8 @@ def read_simulator_log(filename):
 
     trajectory = SampledSequence(curpos_timestamps, transforms)
 
-    # root = PlacedObject()
-    # transform = SE2Transform([0.5, 0.5], np.deg2rad(10))
-    # root.set_object('duckietown', duckietown_map, ground_truth=transform)
-    ROBOT_WIDTH = 0.13 + 0.02
-    ROBOT_LENGTH = 0.18
-    ROBOT_HEIGHT = 0.12
-    # from gym_duckietown.simulator import ROBOT_WIDTH, ROBOT_LENGTH, ROBOT_HEIGHT
-
-    robot = Duckiebot(length=ROBOT_LENGTH, height=ROBOT_HEIGHT, width=ROBOT_WIDTH - 0.02)
-    duckietown_map.set_object('duckiebot', robot, ground_truth=trajectory)
+    robot = DB18()
+    duckietown_map.set_object('ego', robot, ground_truth=trajectory)
     return SimulatorLog(duckietown=duckietown_map, observations=observations)
 
 

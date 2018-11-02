@@ -1,5 +1,12 @@
+# coding=utf-8
 from duckietown_world.geo import PlacedObject
+from duckietown_world.svg_drawing import draw_axes
 from .other_objects import Vehicle
+
+__all__ = [
+    'Duckiebot',
+    'DB18',
+]
 
 
 class Duckiebot(Vehicle):
@@ -16,7 +23,7 @@ class Duckiebot(Vehicle):
         rect = drawing.rect(insert=(-L * 0.5, -W * 0.5),
                             size=(L, W),
                             fill="red",
-                            style='opacity:0.4',
+                            # style='opacity:0.4',
                             stroke_width="0.01",
                             stroke="black", )
         rect.width = "0.1em"
@@ -28,25 +35,8 @@ class Duckiebot(Vehicle):
 
 class DB18(Duckiebot):
     def __init__(self, *args, **kwargs):
-        width = 0.1
-        height = 0.1
-        length = 0.15
+        width = 0.13 + 0.02
+        length = 0.18
+        height = 0.12
         Duckiebot.__init__(self, width=width, length=length, height=height, *args, **kwargs)
 
-
-def draw_axes(drawing, g, L=0.1, stroke_width="0.01"):
-    g2 = drawing.g()
-    g2.attribs['class'] = 'axes'
-    line = drawing.line(start=(0, 0),
-                        end=(L, 0),
-                        stroke_width=stroke_width,
-                        stroke="red")
-    g2.add(line)
-
-    line = drawing.line(start=(0, 0),
-                        end=(0, L),
-                        stroke_width=stroke_width,
-                        stroke="green")
-    g2.add(line)
-
-    g.add(g2)

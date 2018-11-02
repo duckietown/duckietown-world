@@ -5,7 +5,7 @@ import numpy as np
 from comptests import comptest, run_module_tests, get_comptests_output_dir
 
 import geometry as geo
-from duckietown_world import SE2Transform, RectangularArea, list_gym_maps
+from duckietown_world import SE2Transform, RectangularArea, list_maps
 from duckietown_world.svg_drawing import draw_static
 from duckietown_world.svg_drawing.draw_maps import draw_map
 from duckietown_world.world_duckietown.lane_segment import LaneSegment
@@ -45,7 +45,7 @@ def svg2():
 def maps():
     outdir = get_comptests_output_dir()
 
-    map_names = list_gym_maps()
+    map_names = list_maps()
     print(map_names)
 
     for map_name in map_names:

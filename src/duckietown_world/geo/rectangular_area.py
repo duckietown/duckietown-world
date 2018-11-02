@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy as np
 
 from duckietown_serialization_ds1 import Serializable
