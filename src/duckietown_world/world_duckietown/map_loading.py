@@ -2,13 +2,15 @@
 import itertools
 import os
 
-import numpy as np
 import oyaml as yaml
 
 from duckietown_world import Scale2D, logger, SE2Transform
 from duckietown_world.seqs import Constant
 from duckietown_world.world_duckietown import TileMap, Tile, TrafficLight, GenericObject
+from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
+from duckietown_world.world_duckietown.other_objects import Duckie, SignLeftTIntersect, SignRightTIntersect, \
+    SignTIntersect, SignStop, Tree, House, Bus, Truck, Cone, Barrier, Building
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
 __all__ = ['create_map', 'list_gym_maps']
@@ -48,7 +50,9 @@ def get_texture_dirs():
     module_dir = os.path.dirname(abs_path_module)
     d = os.path.join(module_dir, '../data/gd1/textures')
     assert os.path.exists(d), d
-    return d
+    d2 = os.path.join(module_dir, '../data/gd1/meshes')
+    assert os.path.exists(d2), d2
+    return [d, d2]
 
 
 def load_gym_map(map_name):
@@ -124,7 +128,7 @@ def interpret_gym_map(data):
 
             tile = Tile(kind=kind, drivable=drivable)
             if kind in templates:
-                tile.set_object('template', templates[kind],
+                tile.set_object(kind, templates[kind],
                                 ground_truth=SE2Transform.identity())
             else:
                 pass
@@ -166,18 +170,21 @@ def interpret_gym_map(data):
         kind = desc['kind']
 
         pos = desc['pos']
-        x, z = pos[0:2]
-
-        i = int(np.floor(x))
-        j = int(np.floor(z))
-        dx = x - i
-        dy = z - j
-
-        z = pos[2] if len(pos) == 3 else 0.0
 
         rotate = desc['rotate']
-        optional = desc.get('optional', False)
-        height = desc.get('height', None)
+        transform = SE2Transform([float(pos[0]), float(tm.W - pos[1])], rotate)
+        
+        # x, z = pos[0:2]
+        #
+        # i = int(np.floor(x))
+        # j = int(np.floor(z))
+        # dx = x - i
+        # dy = z - j
+        #
+        # z = pos[2] if len(pos) == 3 else 0.0
+
+        # optional = desc.get('optional', False)
+        # height = desc.get('height', None)
 
         # pos = ROAD_TILE_SIZE * np.array((x, y, z))
 
@@ -207,14 +214,32 @@ def interpret_gym_map(data):
             status = Constant("off")
             obj = TrafficLight(status)
         else:
-            logger.debug('Do not know special kind %s' % kind)
-            obj = GenericObject(kind=kind)
-
+            kind2klass = {
+                'duckie': Duckie,
+                'cone': Cone,
+                'barrier': Barrier,
+                'building': Building,
+                'duckiebot': DB18,
+                'sign_left_T_intersect': SignLeftTIntersect,
+                'sign_right_T_intersect': SignRightTIntersect,
+                'sign_T_intersect': SignTIntersect,
+                'sign_stop': SignStop,
+                'tree': Tree,
+                'house': House,
+                'bus': Bus,
+                'truck': Truck,
+            }
+            if kind in kind2klass:
+                klass = kind2klass[kind]
+                obj = klass()
+            else:
+                logger.debug('Do not know special kind %s' % kind)
+                obj = GenericObject(kind=kind)
+        obj_name = 'ob%02d-%s' % (obj_idx, kind)
         # tile = tm[(i, j)]
         # transform = TileRelativeTransform([dx, dy], z, rotate)
-        transform = SE2Transform([float(pos[0]), float(tm.W - pos[1])], rotate)
-        tm.set_object('obj%s' % obj_idx, obj, ground_truth=transform)
-        # obj = WorldObj(obj_desc, self.domain_rand, SAFETY_RAD_MULT)
+
+        tm.set_object(obj_name, obj, ground_truth=transform)
 
         # obj = None
         # if static:
@@ -237,11 +262,16 @@ def interpret_gym_map(data):
 
 
 def get_texture_file(tex_name):
-    d = get_texture_dirs()
-    suffixes = ['', '_1', '_2', '_3', '_4']
-    for s in suffixes:
-        path = os.path.join(d, tex_name + s + '.jpg')
-        if os.path.exists(path):
-            return path
-    msg = 'Could not find any texture for %s' % tex_name
-    raise KeyError(msg)
+    res = []
+    for d in get_texture_dirs():
+        suffixes = ['', '_1', '_2', '_3', '_4']
+        for s in suffixes:
+            for ext in ['jpg', 'png']:
+                path = os.path.join(d, tex_name + s + '.' + ext)
+                if os.path.exists(path):
+                    res.append(path)
+
+    if not res:
+        msg = 'Could not find any texture for %s' % tex_name
+        raise KeyError(msg)
+    return res[0]

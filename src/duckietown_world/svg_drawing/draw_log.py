@@ -128,6 +128,7 @@ def draw_logs_main_(output, filename):
     other.append(details)
 
     other = str(other)
+
     html = make_html_slider(drawing, nkeyframes=keyframe, obs_div=str(div), other=other)
     with open(fn_html, 'w') as f:
         f.write(html)

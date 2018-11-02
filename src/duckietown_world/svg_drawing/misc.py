@@ -10,7 +10,7 @@ from past.builtins import reduce
 
 from duckietown_world import logger
 from duckietown_world.geo import RectangularArea
-from duckietown_world.geo.measurements_utils import get_extent_points
+from duckietown_world.geo.measurements_utils import get_extent_points, get_static_and_dynamic
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.world_duckietown.transformations import get_sampling_points, ChooseTime
 
@@ -90,40 +90,51 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     return drawing, tofill
 
 
-def draw_recursive(drawing, po, g):
-    po.draw_svg(drawing, g)
-    draw_children(drawing, po, g)
+def draw_recursive(drawing, po, g, draw_list=()):
+    if () in draw_list:
+        po.draw_svg(drawing, g)
+    draw_children(drawing, po, g, draw_list=draw_list)
 
 
-def draw_children(drawing, po, g):
+def draw_children(drawing, po, g, draw_list=()):
     for child_name in po.get_drawing_children():
         child = po.children[child_name]
-        # find transformations
         transforms = [_ for _ in po.spatial_relations.values() if _.a == () and _.b == (child_name,)]
-        # print('draw_recursive %s %s' % (child, transforms))
         if transforms:
-            # print('ok')
-            M = transforms[0].transform.asmatrix2d().m
 
-            # print(M)
-            svg_transform = 'matrix(%s,%s,%s,%s,%s,%s)' % (M[0, 0], M[1, 0], M[0, 1], M[1, 1], M[0, 2], M[1, 2])
-            # print(svg_transform)
-            g2 = drawing.g(id=child_name, transform=svg_transform)
+            rlist = recurive_draw_list(draw_list, child_name)
 
-            # print(g2.transform)
-            t = drawing.text(child_name, style='font-size: 0.03em; transform: scaleY(-1)')
-            t.attribs['class'] = 'labels'
-            # t.attribs['style'] = 'z-index: 1000'
-            # g2.add(t)
-            draw_recursive(drawing, child, g2)
+            if rlist:
+                M = transforms[0].transform.asmatrix2d().m
+                svg_transform = 'matrix(%s,%s,%s,%s,%s,%s)' % (M[0, 0], M[1, 0], M[0, 1], M[1, 1], M[0, 2], M[1, 2])
 
-            # print(g2.tostring())
-            g.add(g2)
+                g2 = drawing.g(id=child_name, transform=svg_transform)
+                classes = get_typenames_for_class(child)
+                if classes:
+                    g2.attribs['class'] = " ".join(classes)
+                draw_recursive(drawing, child, g2, draw_list=rlist)
+
+                g.add(g2)
+
+
+def get_typenames_for_class(ob):
+    mro = type(ob).mro()
+    names = [_.__name__ for _ in mro]
+    for n in ['Serializable', 'Serializable0', 'PlacedObject', 'object']:
+        names.remove(n)
+    return names
+
+
+def recurive_draw_list(draw_list, prefix):
+    res = []
+    for _ in draw_list:
+        if _ and _[0] == prefix:
+            res.append(_[1:])
+    return res
 
 
 def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
-    # space = (10, 10)
-    # origin = (-1, -1)
+
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -155,13 +166,23 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
     gmg = drawing.g()
     base.add(gmg)
 
+    static, dynamic = get_static_and_dynamic(root)
+
+    t0 = keyframes.values[0]
+    root_t0 = root.filter_all(ChooseTime(t0))
+    g_static = drawing.g()
+    g_static.attribs['class'] = 'static'
+
+    draw_recursive(drawing, root_t0, g_static, draw_list=static)
+    base.add(g_static)
+
     for i, t in keyframes:
         g_t = drawing.g()
         g_t.attribs['class'] = 'keyframe keyframe%d' % i
 
         root_t = root.filter_all(ChooseTime(t))
 
-        draw_recursive(drawing, root_t, g_t)
+        draw_recursive(drawing, root_t, g_t, draw_list=dynamic)
         base.add(g_t)
 
     other = Tag(name='div')
@@ -179,7 +200,70 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None):
     details.append(pre)
 
     other.append(details)
-    other = str(other)
+    other1 = str(other)
+
+    # language=html
+    other2 = """\
+            <style>
+            *[visualize_parts=false] {
+                display: none;
+            }
+            </style>
+
+            <input id='checkbox-static' type="checkbox"  onclick="hideshow(this);" checked>static data</input>
+            <input id='checkbox-textures' type="checkbox"  onclick="hideshow(this);" checked>textures</input>
+            <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
+            <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane segments</input>
+            <input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">map lane segments control points</input>
+            <input id='checkbox-current_lane' type="checkbox"  onclick="hideshow(this);">current lane</input>
+            <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>other vehicles</input>
+            <input id='checkbox-duckies' type="checkbox"  onclick="hideshow(this);" checked>duckies</input>
+            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
+            <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
+            <script>
+                var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
+                console.log(checkboxValues);
+                name2selector = {
+                    "checkbox-static": "g.static",
+                    "checkbox-textures": "g.static .tile-textures",
+                    "checkbox-axes": "g.axes",
+                    "checkbox-lane_segments": "g.static .LaneSegment",
+                    "checkbox-lane_segments-control_points": ".LaneSegment .control-point",
+                    "checkbox-current_lane": "g.keyframe .LaneSegment",
+                    "checkbox-duckies": ".Duckie",
+                    "checkbox-signs": ".Sign",
+                    "checkbox-vehicles": ".Vehicle",
+                    "checkbox-decorations": ".Decoration",
+                };
+                function hideshow(element) {
+                    console.log(element);
+                    element_name = element.id;
+                    console.log(element_name);
+                    selector = name2selector[element_name];
+                    checked = element.checked;
+                    console.log(selector);
+                    console.log(checked);
+                    elements = document.querySelectorAll(selector);
+                    elements.forEach(_ => _.setAttribute('visualize_parts', checked));
+                    checkboxValues[element_name] = checked;
+                    localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+                }
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    for(var name in name2selector) {
+                        console.log(name);
+                        element = document.getElementById(name);
+                        if(name in checkboxValues) {
+                            element.checked = checkboxValues[name];
+                        }
+                        
+                        
+                        hideshow(element);
+                    } 
+                     
+                });
+            </script>
+        """
+    other = other2 + other1
 
     from duckietown_world.svg_drawing.draw_log import make_html_slider
     html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div='', other=other)

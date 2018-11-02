@@ -6,6 +6,10 @@ from duckietown_serialization_ds1 import Serializable
 __all__ = ['Sequence']
 
 
+class UndefinedAtTime(Exception):
+    pass
+
+
 class Sequence(Serializable):
     CONTINUOUS = 'continuous-sampling'
 
@@ -21,7 +25,6 @@ class Sequence(Serializable):
     @abstractmethod
     def at(self, t):
         """ Raises KeyError if not defined at t. """
-        pass
 
     @abstractmethod
     def get_start(self):
@@ -59,7 +62,11 @@ class SampledSequence(Sequence):
             if not isinstance(t, (float, int)):
                 msg = 'I expected a number, got %s' % t
                 raise ValueError(msg)
-
+        for i in range(len(timestamps) - 1):
+            dt = timestamps[i + 1] - timestamps[i]
+            if dt <= 0:
+                msg = 'Invalid dt = %s at i = %s; ts= %s' % (dt, i, timestamps)
+                raise ValueError(msg)
         timestamps = list(map(float, timestamps))
         self.timestamps = timestamps
         self.values = values
@@ -68,7 +75,8 @@ class SampledSequence(Sequence):
         try:
             i = self.timestamps.index(t)
         except ValueError:
-            raise KeyError(t)
+            msg = 'Could not find timestamp %s in %s' % (t, self.timestamps)
+            raise UndefinedAtTime(msg)
         else:
             return self.values[i]
 
@@ -84,5 +92,39 @@ class SampledSequence(Sequence):
     def __iter__(self):
         return zip(self.timestamps, self.values).__iter__()
 
+    @classmethod
+    def from_iterator(cls, i):
+        timestamps = []
+        values = []
+        for t, v in i:
+            timestamps.append(t)
+            values.append(v)
+        return SampledSequence(timestamps, values)
+
     def __len__(self):
         return len(self.timestamps)
+
+    def transform_values(self, f):
+        values = []
+        timestamps = []
+        for t, _ in self:
+            res = f(_)
+            if res is not None:
+                values.append(res)
+                timestamps.append(t)
+
+        return SampledSequence(timestamps, values)
+
+    def upsample(self, n):
+        timestamps = []
+        values = []
+        for i in range(len(self.timestamps) - 1):
+            for k in range(n):
+                t0 = self.timestamps[i]
+                t1 = self.timestamps[i + 1]
+                t = t0 + (k * 1.0 / n) * (t1 - t0)
+                timestamps.append(t)
+                values.append(self.values[i])
+        timestamps.append(self.timestamps[-1])
+        values.append(self.values[-1])
+        return SampledSequence(timestamps, values)

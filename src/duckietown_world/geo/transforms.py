@@ -25,15 +25,18 @@ class Transform(with_metaclass(ABCMeta)):
     def asmatrix2d(self):
         pass
 
+    def as_SE2(self):
+        return self.asmatrix2d().m
+
 
 new_contract('Transform', Transform)
 
 
-class TransformSequence(object):
+class TransformSequence(Transform, Serializable):
 
     # @contract(transforms='list[>=1](Transform)')
     def __init__(self, transforms):
-        self.transforms = transforms
+        self.transforms = list(transforms)
 
     def asmatrix2d(self):
         ms = [_.asmatrix2d() for _ in self.transforms]
@@ -42,6 +45,31 @@ class TransformSequence(object):
         for mi in ms[1:]:
             result = np.dot(result, mi.m)
         return Matrix2D(result)
+
+    def __repr__(self):
+        return 'TransformSequence(%s)' % self.transforms
+
+
+from duckietown_world.seqs import Sequence
+
+
+class VariableTransformSequence(TransformSequence, Sequence):
+    def at(self, t):
+        res = []
+        for transform in self.transforms:
+            if isinstance(transform, Sequence):
+                transform = transform.at(t)
+            res.append(transform)
+        return TransformSequence(res)
+
+    def get_end(self):
+        pass
+
+    def get_start(self):
+        pass
+
+    def get_sampling_points(self):
+        pass
 
 
 class SE2Transform(Transform, Serializable):

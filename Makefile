@@ -23,6 +23,9 @@ tests-clean:
 tests:
 	comptests --nonose duckietown_world_tests
 
+tests-contracts:
+	comptests --contracts --nonose duckietown_world_tests
+
 
 branch=$(shell git rev-parse --abbrev-ref HEAD)
 #

@@ -1,15 +1,15 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from contracts import contract
-
-from .transforms import Transform
-
-
-from duckietown_serialization_ds1 import Serializable
-
 import copy
 
+import six
+from contracts import contract, check_isinstance
+
+from duckietown_serialization_ds1 import Serializable
+from duckietown_world.seqs.tsequence import SampledSequence, UndefinedAtTime
+from .rectangular_area import RectangularArea
+from .transforms import Transform
 
 __all__ = [
     'PlacedObject',
@@ -17,10 +17,12 @@ __all__ = [
     'GroundTruth',
 ]
 
+
 class SpatialRelation(Serializable):
 
-    @contract(a='seq(str)', b='seq(str)', transform=Transform)
+    @contract(a='seq(str)', b='seq(str)')
     def __init__(self, a, transform, b):
+        check_isinstance(transform, (Transform, SampledSequence))
         self.a = tuple(a)
         self.transform = transform
         self.b = tuple(b)
@@ -32,9 +34,7 @@ class SpatialRelation(Serializable):
     def params_from_json_dict(cls, d):
         a = d.pop('a', [])
         b = d.pop('b')
-        # sr_type = d.pop('sr_type')
         transform = d.pop('transform')
-
         return dict(a=a, b=b, transform=transform)
 
     def params_to_json_dict(self):
@@ -42,13 +42,13 @@ class SpatialRelation(Serializable):
         if self.a:
             res['a'] = list(self.a)
         res['b'] = self.b
-        # res['sr_type'] = self.sr_type
         res['transform'] = self.transform
         return res
 
 
 class GroundTruth(SpatialRelation):
-    pass
+    def params_to_json_dict(self):
+        return {}
 
 
 class PlacedObject(Serializable):
@@ -85,13 +85,29 @@ class PlacedObject(Serializable):
 
     def filter_all(self, f):
         x = copy.deepcopy(self)
+        no_child = []
+        for child_name, child in list(x.children.items()):
+            try:
+                child2 = f(child.filter_all(f))
+            except UndefinedAtTime:
+                no_child.append(child_name)
+                x.children.pop(child_name)
+            else:
+                x.children[child_name] = child2
 
-        x.children = dict((k, f(v.filter_all(f))) for (k, v) in self.children.items())
-        x.spatial_relations = dict((k, f(v.filter_all(f))) for (k, v) in self.spatial_relations.items())
+
+        for sr_name, sr in list(x.spatial_relations.items()):
+            if sr.b and sr.b[0] in no_child:
+                x.spatial_relations.pop(sr_name)
+            else:
+                try:
+                    sr2 = f(sr.filter_all(f))
+                except UndefinedAtTime:
+                    x.spatial_relations.pop(sr_name)
+                else:
+                    x.spatial_relations[sr_name] = sr2
+
         return x
-        # klass = type(self)
-        # params = self.params_to_json_dict()
-        # return f(klass(**params))
 
     def get_object_from_fqn(self, fqn):
         if fqn == ():
@@ -114,6 +130,7 @@ class PlacedObject(Serializable):
         return res
 
     def set_object(self, name, ob, **transforms):
+        check_isinstance(name, six.string_types)
         assert self is not ob
         self.children[name] = ob
         type2klass = {
@@ -130,10 +147,11 @@ class PlacedObject(Serializable):
         from duckietown_world.world_duckietown.duckiebot import draw_axes
         draw_axes(drawing, g)
 
-        # print('draw_svg not implemented for %s' % type(self).__name__)
-
     def get_drawing_children(self):
         return sorted(self.children)
 
     def extent_points(self):
         return [(0.0, 0.1), (0.1, 0.0)]
+
+    def get_footprint(self):
+        return RectangularArea([-0.1, -0.1], [0.1, 0.1])

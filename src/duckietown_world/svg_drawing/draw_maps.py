@@ -4,7 +4,7 @@ import os
 import sys
 
 from duckietown_world.geo.rectangular_area import RectangularArea
-from duckietown_world.svg_drawing import get_basic_upright2, draw_recursive
+from duckietown_world.svg_drawing import get_basic_upright2, draw_recursive, draw_static
 from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
 from duckietown_world.world_duckietown.map_loading import list_gym_maps, load_gym_map
 
@@ -42,25 +42,30 @@ def draw_map(output, duckietown_map):
     if not os.path.exists(output):
         os.makedirs(output)
     assert isinstance(duckietown_map, DuckietownMap)
-    tilemap = duckietown_map.children['tilemap']
-    gh, gw = tilemap.H * duckietown_map.tile_size, tilemap.W * duckietown_map.tile_size
-    # gh = int(math.ceil(gh))
-    # gw = int(math.ceil(gw))
-    B = 640
-    pixel_size = (B, B * gw / gh)
-    B = 0.24
-    space = (gh + B, gw + B)
-    area = RectangularArea((-B, -B), space)
-    drawing, base = get_basic_upright2('out.svg', area, pixel_size)
+    # tilemap = duckietown_map.children['tilemap']
+    # gh, gw = tilemap.H * duckietown_map.tile_size, tilemap.W * duckietown_map.tile_size
+    # # gh = int(math.ceil(gh))
+    # # gw = int(math.ceil(gw))
+    # B = 640
+    # pixel_size = (B, B * gw / gh)
+    # B = 0.24
+    # space = (gh + B, gw + B)
+    # area = RectangularArea((-B, -B), space)
+    #
+    #
+    #
+    # drawing, base = get_basic_upright2('out.svg', area, pixel_size)
+    # 
+    # gmg = drawing.g(id='duckietown_map')
+    # draw_recursive(drawing, duckietown_map, gmg)
+    # base.add(gmg)
 
-    gmg = drawing.g(id='duckietown_map')
-    draw_recursive(drawing, duckietown_map, gmg)
-    base.add(gmg)
-
-    fn = os.path.join(output, 'map.svg')
-    drawing.filename = fn
-    drawing.save(pretty=True)
-    print('written to %s' % fn)
+    draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
+    #
+    # fn = os.path.join(output, 'map.svg')
+    # drawing.filename = fn
+    # drawing.save(pretty=True)
+    # print('written to %s' % fn)
 
 
 if __name__ == '__main__':

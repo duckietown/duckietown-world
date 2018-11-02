@@ -1,11 +1,15 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+from collections import namedtuple
+
+from contracts import contract
 from networkx import MultiDiGraph
 
-
-from duckietown_world.geo.placed_object import SpatialRelation, PlacedObject
+from duckietown_world.geo.placed_object import PlacedObject
 from duckietown_world.geo.rectangular_area import RectangularArea
+from duckietown_world.geo.transforms import VariableTransformSequence
+from duckietown_world.seqs import Sequence
 
 __all__ = [
     'iterate_measurements_relations',
@@ -40,6 +44,54 @@ def get_meausurements_graph(po):
 
 import networkx as nx
 
+FlattenResult = namedtuple('FlattenResult', 'po old2new')
+
+
+@contract(po=PlacedObject)
+def get_static_and_dynamic(po):
+    assert isinstance(po, PlacedObject)
+
+    G = get_flattened_measurement_graph(po)
+
+    static = []
+    dynamic = []
+    root_name = ()
+    for name in G.nodes():
+        if name == root_name:
+            continue
+        edge_data = G.get_edge_data(root_name, name)
+
+        transform = edge_data['transform_sequence']
+        from duckietown_world.world_duckietown.transformations import is_static
+        it_is = is_static(transform)
+
+        if it_is:
+
+            static.append(name)
+        else:
+            dynamic.append(name)
+
+    return static, dynamic
+
+
+@contract(po=PlacedObject, returns=PlacedObject)
+def flatten_hierarchy(po):
+    assert isinstance(po, PlacedObject)
+    res = PlacedObject()
+    G = get_flattened_measurement_graph(po)
+
+    root_name = ()
+    for name in G.nodes():
+        if name == root_name:
+            continue
+        edge_data = G.get_edge_data(root_name, name)
+
+        transform = edge_data['transform_sequence']
+        ob = po.get_object_from_fqn(name)
+        name2 = "/".join(name)
+        res.set_object(name2, ob, ground_truth=transform)
+    return res
+
 
 def get_flattened_measurement_graph(po, include_root_to_self=False):
     G = get_meausurements_graph(po)
@@ -62,7 +114,10 @@ def get_flattened_measurement_graph(po, include_root_to_self=False):
             transforms.append(sr)
 
         from duckietown_world import TransformSequence
-        res = TransformSequence(transforms)
+        if any(isinstance(_, Sequence) for _ in transforms):
+            res = VariableTransformSequence(transforms)
+        else:
+            res = TransformSequence(transforms)
         G2.add_edge(root_name, name, transform_sequence=res)
 
     if include_root_to_self:
@@ -73,22 +128,42 @@ def get_flattened_measurement_graph(po, include_root_to_self=False):
     return G2
 
 
+IterateByTestResult = namedtuple('IterateByTestResult', 'fqn transform_sequence object')
+
+
+def iterate_by_class(po, klass):
+    for _ in iterate_by_test(po, lambda _: isinstance(_, klass)):
+        yield _
+
+
+def iterate_by_test(po, testf):
+    """
+
+    :param po: root object
+    :param testf: boolean test on the object
+    :return: Iterator of IterateByTestResult
+    """
+    G = get_flattened_measurement_graph(po, include_root_to_self=True)
+    root_name = ()
+    for name in G:
+        object = po.get_object_from_fqn(name)
+        if testf(object):
+            transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
+            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=object)
+
+
 import numpy as np
 
 
 def get_extent_points(root):
     assert isinstance(root, PlacedObject)
-    # iterate_in_frame(root)
+
     G = get_flattened_measurement_graph(root, include_root_to_self=True)
     points = []
 
     root_name = ()
     for name in G.nodes():
-        print('name: %s' % name.__repr__())
-        # if name == root_name:
-        #     from duckietown_world import SE2Transform
-        #     transform_sequence = SE2Transform.identity()
-        # else:
+
         transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
         extent_points = root.get_object_from_fqn(name).extent_points()
         m2d = transform_sequence.asmatrix2d()

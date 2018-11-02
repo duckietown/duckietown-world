@@ -1,11 +1,13 @@
 import numpy as np
+import svgwrite
 from contracts import contract, check_isinstance, new_contract
 
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import SE2Transform, PlacedObject, logger
+from duckietown_world import SE2Transform, PlacedObject
 from duckietown_world.utils.memoizing import memoized_reset
 from duckietown_world.utils.poses import SE2_interpolate, SE2_apply_R2
+from duckietown_world.world_duckietown.tile import relative_pose
 
 __all__ = [
     'LaneSegment',
@@ -18,12 +20,13 @@ class LanePose(Serializable):
                  along_lane, lateral, relative_heading,
                  distance_from_left, distance_from_right,
                  along_inside, along_before, along_after,
-                 lateral_left, lateral_right):
+                 lateral_left, lateral_right, lateral_inside, distance_from_center,
+                 center_point, correct_direction):
         self.inside = inside
+        self.lateral_inside = lateral_inside
         self.outside_left = outside_left
         self.outside_right = outside_right
         self.lateral = lateral
-
         self.lateral_left = lateral_left
         self.lateral_right = lateral_right
 
@@ -36,10 +39,13 @@ class LanePose(Serializable):
 
         self.distance_from_left = distance_from_left
         self.distance_from_right = distance_from_right
+        self.distance_from_center = distance_from_center
+        self.center_point = center_point
+        self.correct_direction = correct_direction
 
 
 def almost_equal(a, b):
-    return (np.abs(a - b) / np.abs(a + b)) < 1e-7
+    return (np.abs(a - b)) < 1e-7
 
 
 class LaneSegment(PlacedObject):
@@ -74,19 +80,26 @@ class LaneSegment(PlacedObject):
         return self.lane_pose(along_lane=along_lane, lateral=lateral, relative_heading=angle)
 
     def lane_pose(self, along_lane, lateral, relative_heading):
+        beta = self.beta_from_along_lane(along_lane)
+        center_point = self.center_point(beta)
+
         W2 = self.width / 2
-        inside = -W2 <= lateral <= W2
+        lateral_inside = -W2 <= lateral <= W2
         outside_right = lateral < -W2
         outside_left = W2 < lateral
         distance_from_left = np.abs(+ W2 - lateral)
         distance_from_right = np.abs(- W2 - lateral)
+        distance_from_center = np.abs(lateral)
 
         L = self.get_lane_length()
         along_inside = 0 <= along_lane < L
         along_before = along_lane < 0
         along_after = along_lane > L
+        inside = lateral_inside and along_inside
 
+        correct_direction = np.abs(relative_heading) <= np.pi / 2
         return LanePose(inside=inside,
+                        lateral_inside=lateral_inside,
                         outside_left=outside_left,
                         outside_right=outside_right,
                         distance_from_left=distance_from_left,
@@ -98,7 +111,10 @@ class LaneSegment(PlacedObject):
                         along_lane=along_lane,
                         lateral=lateral,
                         lateral_left=W2,
-                        lateral_right=-W2)
+                        lateral_right=-W2,
+                        distance_from_center=distance_from_center,
+                        center_point=SE2Transform.from_SE2(center_point),
+                        correct_direction=correct_direction)
 
     def params_to_json_dict(self):
         return dict(width=self.width, control_points=self.control_points)
@@ -108,23 +124,50 @@ class LaneSegment(PlacedObject):
 
     @contract(qt=SE2Transform, returns=LanePose)
     def lane_pose_from_SE2Transform(self, qt, tol=0.001):
-        q = qt.as_SE2()
+        return self.lane_pose_from_SE2(qt.as_SE2(), tol=tol)
+
+    @contract(q='SE2', returns=LanePose)
+    def lane_pose_from_SE2(self, q, tol=0.001):
+        return (self.is_straight()
+                and self.lane_pose_from_SE2_straight(q)
+                or self.lane_pose_from_SE2_generic(q, tol=tol))
+
+    # return condition ? if_true : if_false
+    # return condition and if_true or if_false
+
+    def is_straight(self):
+        if not len(self.control_points) == 2:
+            return False
+
+        cp1 = self.control_points[0]
+        cp2 = self.control_points[1]
+
+        r = relative_pose(cp1.as_SE2(), cp2.as_SE2())
+        p, theta = geo.translation_angle_from_SE2(r)
+        return almost_equal(theta, 0) and almost_equal(p[1], 0)
+
+    def lane_pose_from_SE2_straight(self, q):
+        cp1 = self.control_points[0]
+        rel = relative_pose(cp1.as_SE2(), q)
+        p, relative_heading = geo.translation_angle_from_SE2(rel)
+        lateral = p[1]
+        along_lane = p[0]
+        return self.lane_pose(relative_heading=relative_heading,
+                              lateral=lateral,
+                              along_lane=along_lane)
+
+    def lane_pose_from_SE2_generic(self, q, tol=0.001):
         p, _ = geo.translation_angle_from_SE2(q)
 
         beta, q0 = self.find_along_lane_closest_point(p, tol=tol)
         along_lane = self.along_lane_from_beta(beta)
-        logger.info('along_lane: %s' % along_lane)
         rel = geo.SE2.multiply(geo.SE2.inverse(q0), q)
-        logger.info('q: %s' % geo.SE2.friendly(q))
-        logger.info('q0: %s' % geo.SE2.friendly(q0))
-        logger.info('rel: %s' % geo.SE2.friendly(rel))
 
         r, relative_heading = geo.translation_angle_from_SE2(rel)
-
         lateral = r[1]
-        extra = r[0]
+        # extra = r[0]
         # along_lane -= extra
-        logger.info('ms: %s' % r[0])
+        # logger.info('ms: %s' % r[0])
         return self.lane_pose(relative_heading=relative_heading,
                               lateral=lateral,
                               along_lane=along_lane)
@@ -154,63 +197,17 @@ class LaneSegment(PlacedObject):
         # print(res)
         beta = res.x
         q0 = self.center_point(beta)
-        # along_lane = self.along_lane_from_beta(beta)
         return beta, q0
-
-    #
-    # def find_along_lane_closest_point_old(self, p, lb=None, ub=None, levels=(10, 10, 10, 10, 10, 10, 10, 10, 10)):
-    #     levels = list(levels)
-    #     q = geo.SE2_from_translation_angle(p, 0)
-    #     V = len(self.control_points) - 1
-    #     # N = int(np.ceil(V * 1.0 / resolution))
-    #     if lb is None:
-    #         lb = 0
-    #     if ub is None:
-    #         ub = V
-    #
-    #     N = levels.pop(0)
-    #     betas = np.linspace(lb, ub, N)
-    #     distances = []
-    #     points = []
-    #     for i, beta in enumerate(betas):
-    #         q0 = self.center_point(beta)
-    #         points.append(q0)
-    #         rel = geo.SE2.multiply(geo.SE2.inverse(q0), q)
-    #         p0, _ = geo.translation_angle_from_SE2(rel)
-    #         d = np.linalg.norm(p0)
-    #         distances.append(d)
-    #     distances = np.array(distances)
-    #     i = int(np.argmin(distances))
-    #     i1 = max(i - 1, 0)
-    #     i2 = min(i + 1, len(betas) - 1)
-    #     print('level %s ub %s %s N %s' % (levels, lb, ub, N))
-    #     print('level %s: distance = %s  > %s < %s' % (levels, distances[i1], distances[i], distances[i2]))
-    #     print('level %s i %s beta %s' % (levels, i, betas[i]))
-    #     if levels:
-    #         lb2 = betas[i1]
-    #         ub2 = betas[i2]
-    #         # resolution2 = resolution / 10
-    #         return self.find_along_lane_closest_point(p, lb=lb2, ub=ub2, levels=levels)
-    #     else:
-    #         # print('i: %s %s %s' % (i, i1, i2))
-    #         # print('distances: %s' % distances[[i1,i,i2]])
-    #         # print('distances: %s' % distances)
-    #         # x = (distances - float(distances[i]))
-    #         #
-    #
-    #         beta = betas[i]
-    #         r = points[i]
-    #         return beta, r
 
     @contract(lane_pose=LanePose, returns=SE2Transform)
     def SE2Transform_from_lane_pose(self, lane_pose):
         beta = self.beta_from_along_lane(lane_pose.along_lane)
-        logger.info('beta: %s' % beta)
+        # logger.info('beta: %s' % beta)
         center_point = self.center_point(beta)
         delta = np.array([0, lane_pose.lateral])
 
         rel = geo.SE2_from_translation_angle(delta, lane_pose.relative_heading)
-        logger.info('rel: %s' % geo.SE2.friendly(rel))
+        # logger.info('rel: %s' % geo.SE2.friendly(rel))
         res = geo.SE2.multiply(center_point, rel)
 
         return SE2Transform.from_SE2(res)
@@ -261,27 +258,61 @@ class LaneSegment(PlacedObject):
         assert False
 
     def draw_svg(self, drawing, g):
+        assert isinstance(drawing, svgwrite.Drawing)
+        glane = drawing.g()
+        glane.attribs['class'] = 'lane'
+
+        cp1 = self.control_points[0]
+        cp2 = self.control_points[-1]
+        rel = relative_pose(cp1.as_SE2(), cp2.as_SE2())
+        _, theta = geo.translation_angle_from_SE2(rel)
+
+        delta = int(np.sign(theta))
+        fill = {
+            -1: '#577094',
+            0: '#709457',
+            1: '#947057',
+
+        }[delta]
+
         points = self.lane_profile(points_per_segment=10)
         p = drawing.polygon(points=points,
-                            fill='#709457',
+                            fill=fill,
                             fill_opacity=0.5)
-        g.add(p)
+
+        glane.add(p)
+
+        center_points = self.center_line_points(points_per_segment=10)
+        center_points = [geo.translation_angle_from_SE2(_)[0] for _ in center_points]
+        p = drawing.polyline(points=center_points,
+                             stroke=fill,
+                             fill='none',
+                             stroke_dasharray="0.02",
+                             stroke_width=0.01)
+        glane.add(p)
+
+
+
+        g.add(glane)
 
         for x in self.control_points:
             q = x.asmatrix2d().m
             p1, _ = geo.translation_angle_from_SE2(q)
             delta_arrow = np.array([self.width / 4, 0])
             p2 = SE2_apply_R2(q, delta_arrow)
+            gp = drawing.g()
+            gp.attribs['class'] = 'control-point'
             l = drawing.line(start=p1.tolist(), end=p2.tolist(),
                              stroke='black',
                              stroke_width=self.width / 20.0)
-            g.add(l)
+            gp.add(l)
             c = drawing.circle(center=p1.tolist(),
                                r=self.width / 8,
                                fill='white',
                                stroke='black',
                                stroke_width=self.width / 20.0)
-            g.add(c)
+            gp.add(c)
+            g.add(gp)
 
     @contract(returns='SE2')
     def center_point(self, beta):
@@ -305,6 +336,15 @@ class LaneSegment(PlacedObject):
         q = SE2_interpolate(q0, q1, alpha)
         return q
 
+    def center_line_points(self, points_per_segment=5):
+        n = len(self.control_points) - 1
+        num = n * points_per_segment
+        betas = np.linspace(0, n, num=num)
+        res = []
+        for beta in betas:
+            q = self.center_point(beta)
+            res.append(q)
+        return res
     def lane_profile(self, points_per_segment=5):
         points_left = []
         points_right = []

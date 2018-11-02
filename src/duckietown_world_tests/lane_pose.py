@@ -1,12 +1,21 @@
 # coding=utf-8
 
+import os
+
+import numpy as np
 from comptests import comptest, run_module_tests, get_comptests_output_dir
+from contracts import contract
 from numpy.testing import assert_almost_equal
 
 from duckietown_world import LaneSegment, RectangularArea, PlacedObject, SE2Transform
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing import draw_static
+from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
+    WheelVelocityCommands
+from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.lane_segment import get_distance_two
+from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.tile import get_lane_poses, GetLanePoseResult
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
 
@@ -93,11 +102,6 @@ def lane_pose4():
         assert_almost_equal(lp1.relative_heading, lp2.relative_heading, decimal=3)
 
 
-import os
-import geometry as geo
-import numpy as np
-
-
 @comptest
 def center_point1():
     outdir = get_comptests_output_dir()
@@ -125,6 +129,122 @@ def center_point1():
             c = SampledSequence(betas, transforms)
             v.set_object('a', PlacedObject(), ground_truth=c)
             draw_static(v, dest, area=area)
+
+
+@comptest
+def lane_pose_test1():
+    outdir = get_comptests_output_dir()
+
+    dw = load_gym_map('udem1')
+
+    area = RectangularArea((0, 0), (3, 3))
+
+    v = 5
+    s = [
+        (1.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
+        (2.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
+        (4.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
+        (5.0, WheelVelocityCommands(0.1 * v, 0.2 * v)),
+        (6.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
+    ]
+    commands_sequence = SampledSequence.from_iterator(s)
+
+    commands_sequence = commands_sequence.upsample(5)
+    factory = reasonable_duckiebot()
+    q0 = geo.SE2_from_translation_angle([1.8, 0.7], 0)
+    poses_sequence = get_robot_trajectory(factory, q0, commands_sequence)
+    transforms_sequence = poses_sequence.transform_values(SE2Transform.from_SE2)
+
+    db = DB18()
+    dw.set_object('duckiebot', db, ground_truth=transforms_sequence)
+
+    class GetClosestLane(object):
+        def __init__(self):
+            self.previous = None
+            self.no_matches_for = []
+
+        def __call__(self, transform):
+            poses = list(get_lane_poses(dw, transform))
+            if not poses:
+                self.no_matches_for.append(transform)
+                return None
+
+            print(["/".join(_.lane_segment_fqn) for _ in poses])
+            if len(poses) == 1:
+                closest = poses[0]
+            else:
+                # more than one to choose from
+
+                if self.previous is not None:
+                    for _ in poses:
+                        if _.lane_segment_fqn == self.previous.lane_segment_fqn:
+                            closest = _
+                            break
+                    else:
+                        closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+                else:
+                    closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+            print("/".join(closest.lane_segment_fqn))
+            self.previous = closest
+            return closest
+
+    @contract(x=GetLanePoseResult)
+    def get_center_point(x):
+        return x.center_point
+
+    lane_pose_results = poses_sequence.transform_values(GetClosestLane())
+    center_points = lane_pose_results.transform_values(get_center_point)
+    dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
+
+    for i, (timestamp, lane_pose_result) in enumerate(lane_pose_results):
+        lane_segment = lane_pose_result.lane_segment
+        rt = lane_pose_result.lane_segment_transform
+        s = SampledSequence([timestamp], [rt])
+        dw.set_object('ls%s' % i, lane_segment, ground_truth=s)
+
+    draw_static(dw, outdir, area=area)
+
+
+import geometry as geo
+
+
+def integrate_commands(s0, commands_sequence):
+    states = [s0]
+    timestamps = commands_sequence.timestamps
+    t0 = timestamps[0]
+    yield t0, s0
+    for i in range(len(timestamps) - 1):
+        dt = timestamps[i + 1] - timestamps[i]
+        commands = commands_sequence.values[i]
+        s_prev = states[-1]
+        s_next = s_prev.integrate(dt, commands)
+        states.append(s_next)
+        t = timestamps[i + 1]
+        yield t, s_next
+
+
+def get_robot_trajectory(factory, q0, commands_sequence):
+    assert isinstance(commands_sequence, SampledSequence)
+    t0 = commands_sequence.timestamps[0]
+
+    # initialize trajectory
+    c0 = q0, geo.se2.zero()
+    s0 = factory.initialize(c0=c0, t0=t0)
+
+    states_sequence = SampledSequence.from_iterator(integrate_commands(s0, commands_sequence))
+    f = lambda _: _.TSE2_from_state()[0]
+    poses_sequence = states_sequence.transform_values(f)
+    return poses_sequence
+
+
+def reasonable_duckiebot():
+    radius = 0.1
+    radius_left = radius
+    radius_right = radius
+    wheel_distance = 0.5
+    dddp = DifferentialDriveDynamicsParameters(radius_left=radius_left, radius_right=radius_right,
+                                               wheel_distance=wheel_distance)
+    return dddp
 
 
 if __name__ == '__main__':

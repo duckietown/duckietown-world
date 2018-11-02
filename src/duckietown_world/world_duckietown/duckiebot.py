@@ -1,7 +1,8 @@
-from duckietown_world import PlacedObject
+from duckietown_world.geo import PlacedObject
+from .other_objects import Vehicle
 
 
-class Duckiebot(PlacedObject):
+class Duckiebot(Vehicle):
 
     def __init__(self, width, length, height, *args, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
@@ -23,6 +24,14 @@ class Duckiebot(PlacedObject):
 
         draw_axes(drawing, g)
         # print(g.tostring())
+
+
+class DB18(Duckiebot):
+    def __init__(self, *args, **kwargs):
+        width = 0.1
+        height = 0.1
+        length = 0.15
+        Duckiebot.__init__(self, width=width, length=length, height=height, *args, **kwargs)
 
 
 def draw_axes(drawing, g, L=0.1, stroke_width="0.01"):
