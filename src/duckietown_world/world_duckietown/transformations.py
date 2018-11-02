@@ -1,6 +1,13 @@
 # coding=utf-8
 from duckietown_world import Transform, Sequence, PlacedObject, TransformSequence
 
+__all__ = [
+    'ChooseTime',
+    'RemoveVariable',
+    'RemoveStatic',
+    'get_sampling_points',
+]
+
 
 class ChooseTime(object):
     def __init__(self, t):
@@ -73,16 +80,16 @@ def remove_stuff_and_children(ob, toremove):
             srs[sr_name] = sr
     return PlacedObject(children=children, spatial_relations=srs)
 
-
-class Flatten(object):
-    def __init__(self):
-        pass
-
-    def __call__(self, ob):
-        if isinstance(ob, Transform):
-            return ob.asmatrix2d()
-        else:
-            return ob
+#
+# class Flatten(object):
+#     def __init__(self):
+#         pass
+#
+#     def __call__(self, ob):
+#         if isinstance(ob, Transform):
+#             return ob.asmatrix2d()
+#         else:
+#             return ob
 
 
 def get_sampling_points(ob0):

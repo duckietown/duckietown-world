@@ -4,20 +4,18 @@ import itertools
 import logging
 import math
 import os
-from six import BytesIO
 
 import svgwrite
 import yaml
 from bs4 import Tag
 from contracts import contract
 from past.builtins import reduce
+from six import BytesIO
 
 from duckietown_world import logger
-from duckietown_world.geo import RectangularArea
-from duckietown_world.geo.measurements_utils import get_extent_points, get_static_and_dynamic
-from duckietown_world.seqs.tsequence import SampledSequence, UndefinedAtTime
-from duckietown_world.utils.memoizing import memoized_reset
-from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
+from duckietown_world.geo import RectangularArea, get_extent_points, get_static_and_dynamic
+from duckietown_world.seqs import SampledSequence, UndefinedAtTime
+from duckietown_world.utils import memoized_reset
 
 __all__ = [
     'draw_recursive',
@@ -41,12 +39,12 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     sh = size[1] * 1.0 / space[1]
 
     s = min(sh, sw)
-    # print(space, size, sw, sh, s)
+
     tx = 0 - origin[0] * s
     ty = (space[1] + origin[1]) * s
 
     base = drawing.g(transform='translate(%s, %s) scale(%s) scale(+1,-1)' % (tx, ty, s))
-
+    base.attribs['id'] = 'base'
     i0 = int(math.floor(area.pmin[0]))
     j0 = int(math.floor(area.pmin[1]))
     i1 = int(math.ceil(area.pmax[0]))
@@ -58,7 +56,7 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
         rect = drawing.rect(insert=where,
                             fill="none",
                             size=(1, 1,),
-                            stroke_width="0.01",
+                            stroke_width=0.01,
                             stroke="#eeeeee", )
         grid.add(rect)
 
@@ -66,7 +64,9 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     draw_axes(drawing, base, L=0.5, stroke_width=0.03)
 
     inside = drawing.g()
+    inside.attribs['id'] = 'inside'
     tofill = drawing.g()
+    tofill.attribs['id'] = 'tofill'
     inside.add(tofill)
 
     view = drawing.rect(insert=area.pmin.tolist(),
@@ -74,6 +74,7 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
                         stroke_width=0.01,
                         fill='none',
                         stroke='black')
+    view.attribs['id'] = 'view'
     inside.add(view)
     base.add(inside)
 
@@ -125,6 +126,7 @@ def recurive_draw_list(draw_list, prefix):
 
 
 def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None):
+    from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
     images = images or {}
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -139,9 +141,6 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
         keyframes = SampledSequence(range(len(timestamps)), timestamps)
     nkeyframes = len(keyframes)
 
-    # t0 = keyframes.at(0)
-    # root_t0 = root.filter_all(ChooseTime(t0))
-
     if area is None:
         areas = []
         for i, t in keyframes:
@@ -149,8 +148,8 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
             rarea = get_extent_points(root_t)
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
-        print('using area: %s' % area)
 
+    logger.info('area: %s' % area)
     drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
 
     gmg = drawing.g()
@@ -184,8 +183,8 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
         for name, sequence in images.items():
             try:
                 obs = sequence.at(t)
-            except UndefinedAtTime as e:
-                print(str(e))
+            except UndefinedAtTime:
+                pass
             else:
                 img = Tag(name='img')
                 img.attrs['src'] = data_encoded_for_src(obs.bytes_contents, obs.content_type)
@@ -324,6 +323,9 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
 <html>
 <head></head>
 <body>
+<style>
+svg {{ background-color: #eee;}}
+</style>
 {controls}
 <table>
 <tr>

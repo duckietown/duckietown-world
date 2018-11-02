@@ -7,10 +7,8 @@ from collections import namedtuple
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
-from duckietown_world.seqs.tsequence import SampledSequence
-from duckietown_world.svg_drawing.misc import draw_static
-from duckietown_world.world_duckietown import DB18
-from duckietown_world.world_duckietown.map_loading import construct_map
+from duckietown_world.seqs import SampledSequence
+from .misc import draw_static
 
 __all__ = [
     'draw_logs_main',
@@ -46,8 +44,6 @@ def draw_logs_main_(output, filename):
     draw_static(duckietown_env, output, images=images)
 
 
-
-
 def read_log(filename):
     with open(filename) as i:
         for k, line in enumerate(i.readlines()):
@@ -69,6 +65,8 @@ SimulatorLog = namedtuple('SimulatorLog', 'observations duckietown')
 
 
 def read_simulator_log(filename):
+    from duckietown_world.world_duckietown import DB18, construct_map
+
     duckietown_map = None
     curpos_timestamps = []
     curpos_values = []

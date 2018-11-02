@@ -6,17 +6,21 @@ import oyaml as yaml
 
 from duckietown_world import Scale2D, logger, SE2Transform
 from duckietown_world.seqs import Constant
-from duckietown_world.world_duckietown import TileMap, Tile, TrafficLight, GenericObject
-from duckietown_world.world_duckietown.duckiebot import DB18
-from duckietown_world.world_duckietown.duckietown_map import DuckietownMap
-from duckietown_world.world_duckietown.other_objects import Duckie, SignLeftTIntersect, SignRightTIntersect, \
-    SignTIntersect, SignStop, Tree, House, Bus, Truck, Cone, Barrier, Building, Sign4WayIntersect, SingTLightAhead
-from duckietown_world.world_duckietown.tile_template import load_tile_types
+from .duckiebot import DB18
+from .duckietown_map import DuckietownMap
+from .other_objects import Duckie, SignLeftTIntersect, SignRightTIntersect, \
+    SignTIntersect, SignStop, Tree, House, Bus, Truck, Cone, Barrier, Building, Sign4WayIntersect, SingTLightAhead, \
+    GenericObject
+from .tile import Tile
+from .tile_map import TileMap
+from .tile_template import load_tile_types
+from .traffic_light import TrafficLight
 
 __all__ = [
     'create_map',
     'list_maps',
     'construct_map',
+    'load_map',
 ]
 
 
@@ -59,7 +63,7 @@ def get_texture_dirs():
     return [d, d2]
 
 
-def load_gym_map(map_name):
+def load_map(map_name):
     logger.info('loading map %s' % map_name)
     maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + '.yaml')
@@ -74,13 +78,13 @@ def load_gym_map(map_name):
 
 
 def construct_map(yaml_data, tile_size):
-    tiles = interpret_gym_map(yaml_data)
+    tiles = interpret_map_data(yaml_data)
     tilemap0 = DuckietownMap(tile_size)
     tilemap0.set_object('tilemap', tiles, ground_truth=Scale2D(tile_size))
     return tilemap0
 
 
-def interpret_gym_map(data):
+def interpret_map_data(data):
     tiles = data['tiles']
     assert len(tiles) > 0
     assert len(tiles[0]) > 0
@@ -89,9 +93,6 @@ def interpret_gym_map(data):
     A = len(tiles)
     B = len(tiles[0])
     tm = TileMap(H=B, W=A)
-
-    # print(tiles)
-    # For each row in the grid
 
     templates = load_tile_types()
     for a, row in enumerate(tiles):
@@ -122,13 +123,6 @@ def interpret_gym_map(data):
                 # angle = 0
                 orient = 'S'
                 drivable = False
-
-            # tile = {
-            #     'coords': (i, j),
-            #     'kind': kind,
-            #     # 'angle': angle,
-            #     'drivable': drivable
-            # }
 
             tile = Tile(kind=kind, drivable=drivable)
             if kind in templates:

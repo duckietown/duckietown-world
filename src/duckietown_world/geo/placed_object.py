@@ -7,8 +7,7 @@ import six
 from contracts import contract, check_isinstance
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs import SampledSequence, UndefinedAtTime
-from duckietown_world.svg_drawing import draw_axes
+from duckietown_world.seqs import UndefinedAtTime, Sequence
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -23,7 +22,7 @@ class SpatialRelation(Serializable):
 
     @contract(a='seq(str|unicode)', b='seq(str|unicode)')
     def __init__(self, a, transform, b):
-        check_isinstance(transform, (Transform, SampledSequence))
+        check_isinstance(transform, (Transform, Sequence))
         self.a = tuple(a)
         self.transform = transform
         self.b = tuple(b)
@@ -36,6 +35,7 @@ class SpatialRelation(Serializable):
         a = d.pop('a', [])
         b = d.pop('b')
         transform = d.pop('transform')
+        transform = Serializable.from_json_dict(transform)
         return dict(a=a, b=b, transform=transform)
 
     def params_to_json_dict(self):
@@ -48,6 +48,10 @@ class SpatialRelation(Serializable):
 
 
 class GroundTruth(SpatialRelation):
+    @classmethod
+    def params_from_json_dict(cls, d):
+        return {}
+
     def params_to_json_dict(self):
         return {}
 
@@ -140,6 +144,7 @@ class PlacedObject(Serializable):
 
     # @abstractmethod
     def draw_svg(self, drawing, g):
+        from duckietown_world.svg_drawing import draw_axes
         draw_axes(drawing, g)
 
     def get_drawing_children(self):

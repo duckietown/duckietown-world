@@ -4,7 +4,7 @@ from contracts import check_isinstance
 
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import GenericKinematicsSE2
+from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 
 __all__ = [

@@ -6,14 +6,16 @@ from collections import namedtuple
 from contracts import contract
 from networkx import MultiDiGraph
 
-from duckietown_world.geo.placed_object import PlacedObject
-from duckietown_world.geo.rectangular_area import RectangularArea
-from duckietown_world.geo.transforms import VariableTransformSequence
 from duckietown_world.seqs import Sequence
+from .placed_object import PlacedObject
+from .rectangular_area import RectangularArea
+from .transforms import VariableTransformSequence
 
 __all__ = [
     'iterate_measurements_relations',
     'get_meausurements_graph',
+    'get_extent_points',
+    'get_static_and_dynamic',
 ]
 
 

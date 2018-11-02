@@ -17,6 +17,12 @@ __all__ = [
     'SingTLightAhead',
     'Bus',
     'House',
+    'Tree',
+    'Truck',
+    'Cone',
+    'Vehicle',
+    'Barrier',
+    'Building',
 ]
 
 

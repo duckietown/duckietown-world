@@ -2,7 +2,8 @@
 import yaml
 
 from duckietown_serialization_ds1 import Serializable
-# language=yaml
+
+
 from duckietown_world.utils.memoizing import memoized_reset
 
 # language=yaml

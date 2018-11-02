@@ -13,3 +13,4 @@ beautifulsoup4>=4.6.3
 #lxml
 future
 scipy
+oyaml

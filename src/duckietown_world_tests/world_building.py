@@ -7,7 +7,7 @@ from duckietown_world import list_maps
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.seqs import Constant
 from duckietown_world.world_duckietown import create_map
-from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.map_loading import load_map
 
 
 @comptest
@@ -44,7 +44,7 @@ def wb2():
     root = PlacedObject()
 
     for map_name in list_maps():
-        tm = load_gym_map(map_name)
+        tm = load_map(map_name)
         root.set_object(map_name, tm)
 
     d = root.as_json_dict()

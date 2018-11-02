@@ -1,5 +1,5 @@
 # coding=utf-8
-from duckietown_world import PlacedObject, SE2Transform
+from duckietown_world.geo import PlacedObject, SE2Transform
 
 __all__ = [
     'DuckietownMap',

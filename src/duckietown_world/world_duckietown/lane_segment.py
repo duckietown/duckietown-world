@@ -80,6 +80,7 @@ class LaneSegment(PlacedObject):
         angle = np.random.uniform(-np.pi / 2, +np.pi / 2)
         return self.lane_pose(along_lane=along_lane, lateral=lateral, relative_heading=angle)
 
+    @contract(along_lane='float', lateral='float', relative_heading='float')
     def lane_pose(self, along_lane, lateral, relative_heading):
         beta = self.beta_from_along_lane(along_lane)
         center_point = self.center_point(beta)
@@ -127,7 +128,8 @@ class LaneSegment(PlacedObject):
     def lane_pose_from_SE2Transform(self, qt, tol=0.001):
         return self.lane_pose_from_SE2(qt.as_SE2(), tol=tol)
 
-    @contract(q='SE2', returns=LanePose)
+    @contract(#q='SE2',
+              returns=LanePose)
     def lane_pose_from_SE2(self, q, tol=0.001):
         return (self.is_straight()
                 and self.lane_pose_from_SE2_straight(q)
@@ -147,24 +149,27 @@ class LaneSegment(PlacedObject):
         p, theta = geo.translation_angle_from_SE2(r)
         return almost_equal(theta, 0) and almost_equal(p[1], 0)
 
+    @contract(q='euclidean2')
     def lane_pose_from_SE2_straight(self, q):
         cp1 = self.control_points[0]
         rel = relative_pose(cp1.as_SE2(), q)
-        p, relative_heading = geo.translation_angle_from_SE2(rel)
-        lateral = p[1]
-        along_lane = p[0]
+        tas = geo.translation_angle_scale_from_E2(rel)
+        lateral = tas.translation[1]
+        along_lane = tas.translation[0]
+        relative_heading = tas.angle
         return self.lane_pose(relative_heading=relative_heading,
                               lateral=lateral,
                               along_lane=along_lane)
 
+    @contract(q='euclidean2')
     def lane_pose_from_SE2_generic(self, q, tol=0.001):
-        p, _ = geo.translation_angle_from_SE2(q)
+        p, _, _ = geo.translation_angle_scale_from_E2(q)
 
         beta, q0 = self.find_along_lane_closest_point(p, tol=tol)
         along_lane = self.along_lane_from_beta(beta)
-        rel = geo.SE2.multiply(geo.SE2.inverse(q0), q)
+        rel = relative_pose(q0, q)
 
-        r, relative_heading = geo.translation_angle_from_SE2(rel)
+        r, relative_heading, _ = geo.translation_angle_scale_from_E2(rel)
         lateral = r[1]
         # extra = r[0]
         # along_lane -= extra

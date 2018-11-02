@@ -6,7 +6,8 @@ from six import with_metaclass
 
 __all__ = [
     'PlatformDynamicsFactory',
-    'PlatformDynamics',]
+    'PlatformDynamics',
+]
 
 
 class PlatformDynamics(with_metaclass(ABCMeta)):

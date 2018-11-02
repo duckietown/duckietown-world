@@ -36,6 +36,7 @@ setup(name='duckietown-world',
           'pillow',
           'future',
           'scipy',
+          'oyaml',
       ],
 
       tests_require=[

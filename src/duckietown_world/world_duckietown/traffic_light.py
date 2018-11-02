@@ -1,7 +1,9 @@
 # coding=utf-8
-from duckietown_world.geo.placed_object import PlacedObject
+from duckietown_world.geo import PlacedObject
 
-__all__ = ['TrafficLight']
+__all__ = [
+    'TrafficLight',
+]
 
 
 class TrafficLight(PlacedObject):

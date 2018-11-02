@@ -5,13 +5,20 @@ import numpy as np
 from contracts import contract
 
 from duckietown_world import logger
-from duckietown_world.geo import PlacedObject, RectangularArea, SE2Transform, TransformSequence
+from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
+from geometry import extract_pieces
 
 __all__ = [
     'Tile',
 ]
-draw_directions_lanes = False
+
+GetLanePoseResult = namedtuple('GetLanePoseResult',
+                               'tile tile_fqn tile_transform tile_relative_pose '
+                               'lane_segment lane_segment_fqn lane_pose '
+                               'lane_segment_relative_pose tile_coords '
+                               'lane_segment_transform '
+                               'center_point')
 
 
 class Tile(PlacedObject):
@@ -59,25 +66,17 @@ class Tile(PlacedObject):
                                 )
             img.attribs['class'] = 'tile-textures'
             g.add(img)
-
-        if draw_directions_lanes:
-            if self.kind != 'floor':
-                start = (-0.5, -0.25)
-                end = (+0, -0.25)
-                line = drawing.line(start=start, end=end, stroke='blue', stroke_width='0.01')
-                g.add(line)
+        #
+        # if draw_directions_lanes:
+        #     if self.kind != 'floor':
+        #         start = (-0.5, -0.25)
+        #         end = (+0, -0.25)
+        #         line = drawing.line(start=start, end=end, stroke='blue', stroke_width='0.01')
+        #         g.add(line)
 
         draw_axes(drawing, g)
 
         draw_children(drawing, self, g)
-
-
-GetLanePoseResult = namedtuple('GetLanePoseResult',
-                               'tile tile_fqn tile_transform tile_relative_pose '
-                               'lane_segment lane_segment_fqn lane_pose '
-                               'lane_segment_relative_pose tile_coords '
-                               'lane_segment_transform '
-                               'center_point')
 
 
 @contract(q='SE2')
@@ -85,7 +84,6 @@ def get_lane_poses(dw, q, tol=0.000001):
     from duckietown_world.geo.measurements_utils import iterate_by_class, IterateByTestResult
     from .lane_segment import LaneSegment
     from duckietown_world import TileCoords
-    import geometry as geo
 
     for it in iterate_by_class(dw, Tile):
         assert isinstance(it, IterateByTestResult), it
@@ -101,9 +99,10 @@ def get_lane_poses(dw, q, tol=0.000001):
         else:
             msg = 'Could not find tile coords in %s' % tile_transform
             assert False, msg
-
-        tile_relative_pose = relative_pose(tile_transform.as_SE2(), q)
-        p, _ = geo.translation_angle_from_SE2(tile_relative_pose)
+        # print('tile_transform: %s' % tile_transform.asmatrix2d().m)
+        tile_relative_pose = relative_pose(tile_transform.asmatrix2d().m, q)
+        p = translation_from_O3(tile_relative_pose)
+        # print('tile_relative_pose: %s' % tile_relative_pose)
         if not tile.get_footprint().contains(p):
             continue
         nresults = 0
@@ -111,8 +110,8 @@ def get_lane_poses(dw, q, tol=0.000001):
             lane_segment = it2.object
             lane_segment_fqn = tile_fqn + it2.fqn
             assert isinstance(lane_segment, LaneSegment), lane_segment
-            lane_segment_wrt_tile = it2.transform_sequence.as_SE2()
-            lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile, tile_relative_pose)
+            lane_segment_wrt_tile = it2.transform_sequence.asmatrix2d()
+            lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile.m, tile_relative_pose)
             lane_segment_transform = TransformSequence(tile_transform.transforms + it2.transform_sequence.transforms)
             lane_pose = lane_segment.lane_pose_from_SE2(lane_segment_relative_pose, tol=tol)
 
@@ -120,14 +119,14 @@ def get_lane_poses(dw, q, tol=0.000001):
             center_point = lane_pose.center_point.as_SE2()
 
             center_point_abs = np.dot(M, center_point)
-            center_point_abs_t = SE2Transform.from_SE2(center_point_abs)
+            center_point_abs_t = Matrix2D(center_point_abs)
 
             if lane_pose.along_inside and lane_pose.inside and lane_pose.correct_direction:
                 yield GetLanePoseResult(tile=tile, tile_fqn=tile_fqn,
                                         tile_transform=tile_transform,
-                                        tile_relative_pose=SE2Transform.from_SE2(tile_relative_pose),
+                                        tile_relative_pose=Matrix2D(tile_relative_pose),
                                         lane_segment=lane_segment,
-                                        lane_segment_relative_pose=SE2Transform.from_SE2(lane_segment_relative_pose),
+                                        lane_segment_relative_pose=Matrix2D(lane_segment_relative_pose),
                                         lane_pose=lane_pose,
                                         lane_segment_fqn=lane_segment_fqn,
                                         lane_segment_transform=lane_segment_transform,
@@ -148,6 +147,15 @@ def get_lane_poses(dw, q, tol=0.000001):
             logger.warning(msg)
 
 
+@contract(  # pose='O3',
+        returns='array[2]')
+def translation_from_O3(pose):
+    _, t, _, _ = extract_pieces(pose)
+    return t
+
+
 def relative_pose(base, pose):
-    import geometry as geo
-    return geo.SE2.multiply(geo.SE2.inverse(base), pose)
+    # import geometry as geo
+    # return geo.SE2.multiply(geo.SE2.inverse(base), pose)
+    return np.dot(np.linalg.inv(base), pose)
+#

@@ -7,13 +7,13 @@ from comptests import comptest, run_module_tests, get_comptests_output_dir
 from duckietown_world.geo import PlacedObject, SE2Transform, get_meausurements_graph
 from duckietown_world.seqs import Constant
 from duckietown_world.utils.gvgen_ac import ACGvGen
-from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.map_loading import load_map
 
 
 @comptest
 def m1():
     outdir = get_comptests_output_dir()
-    gm = load_gym_map('udem1')
+    gm = load_map('udem1')
 
     # dw = DuckietownWorld()
     # for map_name, tm in gym_maps.items():

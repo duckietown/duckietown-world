@@ -3,7 +3,10 @@ import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
 
-__all__ = ['GenericKinematicsSE2']
+__all__ = [
+    'GenericKinematicsSE2',
+
+]
 
 # noinspection PyUnresolvedReferences
 from geometry.poses import *

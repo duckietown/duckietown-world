@@ -24,9 +24,20 @@ class Transform(with_metaclass(ABCMeta)):
     @abstractmethod
     def asmatrix2d(self):
         pass
+    #
+    # def as_M33(self):
+    #     pass
+    #
 
     def as_SE2(self):
-        return self.asmatrix2d().m
+        m = self.asmatrix2d().m
+        try:
+            geo.SE2.belongs(m)
+        except:
+            msg = 'Cannot convert %s' % type(self).__name__
+            msg += 'm = %s' % m
+            raise Exception(msg)
+        return m
 
 
 new_contract('Transform', Transform)
@@ -40,6 +51,7 @@ class TransformSequence(Transform, Serializable):
 
     def asmatrix2d(self):
         ms = [_.asmatrix2d() for _ in self.transforms]
+        # print('ms: %s' % ms)
         result = ms[0].m
 
         for mi in ms[1:]:
@@ -86,6 +98,7 @@ class SE2Transform(Transform, Serializable):
         return SE2Transform([0.0, 0.0], 0.0)
 
     @classmethod
+    @contract(q='SE2')
     def from_SE2(cls, q):
         """ From a matrix """
         translation, angle = geo.translation_angle_from_SE2(q)

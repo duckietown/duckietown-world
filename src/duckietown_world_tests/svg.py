@@ -9,7 +9,7 @@ from duckietown_world import SE2Transform, RectangularArea, list_maps
 from duckietown_world.svg_drawing import draw_static
 from duckietown_world.svg_drawing.draw_maps import draw_map
 from duckietown_world.world_duckietown.lane_segment import LaneSegment
-from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.map_loading import load_map
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
 
@@ -49,7 +49,7 @@ def maps():
     print(map_names)
 
     for map_name in map_names:
-        duckietown_map = load_gym_map(map_name)
+        duckietown_map = load_map(map_name)
         out = os.path.join(outdir, map_name)
         draw_map(out, duckietown_map)
 

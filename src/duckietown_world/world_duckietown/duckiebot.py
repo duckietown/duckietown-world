@@ -39,4 +39,3 @@ class DB18(Duckiebot):
         length = 0.18
         height = 0.12
         Duckiebot.__init__(self, width=width, length=length, height=height, *args, **kwargs)
-

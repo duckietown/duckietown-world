@@ -14,7 +14,7 @@ from duckietown_world.world_duckietown.differential_drive_dynamics import Differ
     WheelVelocityCommands
 from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.lane_segment import get_distance_two
-from duckietown_world.world_duckietown.map_loading import load_gym_map
+from duckietown_world.world_duckietown.map_loading import load_map
 from duckietown_world.world_duckietown.tile import get_lane_poses, GetLanePoseResult
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
@@ -26,7 +26,6 @@ def same_point(a, b):
 
 @comptest
 def lane_pose2():
-    outdir = get_comptests_output_dir()
     templates = load_tile_types()
 
     for name, ls in templates.items():
@@ -135,7 +134,7 @@ def center_point1():
 def lane_pose_test1():
     outdir = get_comptests_output_dir()
 
-    dw = load_gym_map('udem1')
+    dw = load_map('udem1')
 
     area = RectangularArea((0, 0), (3, 3))
 
@@ -160,7 +159,7 @@ def lane_pose_test1():
 
     class GetClosestLane(object):
         def __init__(self):
-            self.previous = None
+            # self.previous = None
             self.no_matches_for = []
 
         def __call__(self, transform):
@@ -168,39 +167,47 @@ def lane_pose_test1():
             if not poses:
                 self.no_matches_for.append(transform)
                 return None
+            #
+            # print(["/".join(_.lane_segment_fqn) for _ in poses])
+            # if len(poses) == 1:
+            #     closest = poses[0]
+            # else:
+            #     # more than one to choose from
+            #
+            #     if self.previous is not None:
+            #         for _ in poses:
+            #             if _.lane_segment_fqn == self.previous.lane_segment_fqn:
+            #                 closest = _
+            #                 break
+            #         else:
+            #             closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+            #     else:
+            #         closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
 
-            print(["/".join(_.lane_segment_fqn) for _ in poses])
-            if len(poses) == 1:
-                closest = poses[0]
-            else:
-                # more than one to choose from
+            s = sorted(poses, key=lambda _: np.abs(_.lane_pose.relative_heading))
+            res = {}
+            for _ in s:
+                name = "/".join(_.lane_segment_fqn)
+                res[name] = _
+            #
+            # print("/".join(closest.lane_segment_fqn))
+            # self.previous = closest
+            return res
 
-                if self.previous is not None:
-                    for _ in poses:
-                        if _.lane_segment_fqn == self.previous.lane_segment_fqn:
-                            closest = _
-                            break
-                    else:
-                        closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
-                else:
-                    closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
-            print("/".join(closest.lane_segment_fqn))
-            self.previous = closest
-            return closest
-
-    @contract(x=GetLanePoseResult)
-    def get_center_point(x):
-        return x.center_point
+    # @contract(x=GetLanePoseResult)
+    # def get_center_point(x):
+    #     return x.center_point
 
     lane_pose_results = poses_sequence.transform_values(GetClosestLane())
-    center_points = lane_pose_results.transform_values(get_center_point)
-    dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
+    # center_points = lane_pose_results.transform_values(get_center_point)
+    # dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
 
-    for i, (timestamp, lane_pose_result) in enumerate(lane_pose_results):
-        lane_segment = lane_pose_result.lane_segment
-        rt = lane_pose_result.lane_segment_transform
-        s = SampledSequence([timestamp], [rt])
-        dw.set_object('ls%s' % i, lane_segment, ground_truth=s)
+    for i, (timestamp, name2pose) in enumerate(lane_pose_results):
+        for name, lane_pose_result in name2pose.items():
+            lane_segment = lane_pose_result.lane_segment
+            rt = lane_pose_result.lane_segment_transform
+            s = SampledSequence([timestamp], [rt])
+            dw.set_object('ls%s-%s' % (i, name), lane_segment, ground_truth=s)
 
     draw_static(dw, outdir, area=area)
 

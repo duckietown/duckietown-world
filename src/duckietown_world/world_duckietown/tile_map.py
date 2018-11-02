@@ -4,7 +4,9 @@ import itertools
 from ..geo import PlacedObject
 from ..world_duckietown import TileCoords
 
-__all__ = ['TileMap']
+__all__ = [
+    'TileMap',
+]
 
 
 class TileMap(PlacedObject):

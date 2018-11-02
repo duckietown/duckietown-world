@@ -1,7 +1,9 @@
 # coding=utf-8
 from .tsequence import Sequence
 
-__all__ = ['Constant']
+__all__ = [
+    'Constant',
+]
 
 
 class Constant(Sequence):

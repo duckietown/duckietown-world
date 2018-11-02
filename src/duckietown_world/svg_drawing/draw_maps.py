@@ -5,8 +5,6 @@ import os
 import sys
 
 from .misc import draw_static
-from duckietown_world.world_duckietown import DuckietownMap
-from duckietown_world.world_duckietown.map_loading import list_maps, load_gym_map
 
 __all__ = [
     'draw_maps_main',
@@ -14,6 +12,8 @@ __all__ = [
 
 
 def draw_maps_main(args=None):
+    from duckietown_world.world_duckietown import list_maps, load_map
+
     if args is None:
         args = sys.argv[1:]
     parser = argparse.ArgumentParser()
@@ -26,7 +26,7 @@ def draw_maps_main(args=None):
     print(map_names)
 
     for map_name in map_names:
-        duckietown_map = load_gym_map(map_name)
+        duckietown_map = load_map(map_name)
         out = os.path.join(output, map_name)
 
         draw_map(out, duckietown_map)
@@ -39,6 +39,7 @@ def draw_maps_main(args=None):
 
 
 def draw_map(output, duckietown_map):
+    from duckietown_world.world_duckietown import DuckietownMap
     if not os.path.exists(output):
         os.makedirs(output)
     assert isinstance(duckietown_map, DuckietownMap)
