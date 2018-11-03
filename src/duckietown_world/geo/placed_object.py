@@ -20,7 +20,7 @@ __all__ = [
 
 class SpatialRelation(Serializable):
 
-    @contract(a='seq(str|unicode)', b='seq(str|unicode)')
+    @contract(a='seq(string)', b='seq(string)')
     def __init__(self, a, transform, b):
         check_isinstance(transform, (Transform, Sequence))
         self.a = tuple(a)
