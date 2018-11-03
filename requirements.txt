@@ -7,7 +7,7 @@ svgwrite==1.1.12
 pillow
 duckietown-serialization-ds1>=1,<2
 comptests==1.4.26
-PyGeometry==1.5.5
+PyGeometry==1.5.6
 
 beautifulsoup4>=4.6.3
 #lxml
