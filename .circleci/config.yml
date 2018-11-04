@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            make tests-contracts-coverage
+            make tests-coverage-single-nocontracts
 
       - run:
           name: Example draw maps
