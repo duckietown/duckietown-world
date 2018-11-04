@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
+from collections import OrderedDict
 
-from contracts import contract
+from contracts import contract, check_isinstance
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.geo import PlacedObject
 from duckietown_world.seqs import Sequence
@@ -63,13 +64,12 @@ class EvaluatedMetric(Serializable):
 class RuleEvaluationResult(object):
 
     def __init__(self, rule):
-        self.metrics = {}
+        self.metrics = OrderedDict()
         self.rule = rule
 
     @contract(name='tuple,seq(string)', total='float|int', incremental=Sequence)
     def set_metric(self, name, total, title=None, incremental=None, description=None, cumulative=None):
-        assert isinstance(name, tuple)
-        name = tuple(name)
+        check_isinstance(name, tuple)
         self.metrics[name] = EvaluatedMetric(total=total, incremental=incremental,
                                              title=title, description=description, cumulative=cumulative)
 
@@ -94,17 +94,16 @@ def evaluate_rules(poses_sequence, interval, world, ego_name):
     from duckietown_world.rules import InDrivableLane
     from duckietown_world.rules import DeviationHeading
     from duckietown_world.rules import DrivenLength
-    rules = {
-        'deviation-heading': DeviationHeading(),
-        'in-drivable-lane': InDrivableLane(),
-        'deviation-center-line': DeviationFromCenterLine(),
-        'driving-distance': DrivenLength(),
-    }
+    rules = OrderedDict()
+    rules['deviation-heading'] = DeviationHeading()
+    rules['in-drivable-lane'] = InDrivableLane()
+    rules['deviation-center-line'] = DeviationFromCenterLine()
+    rules['driving-distance'] = DrivenLength()
 
     context = RuleEvaluationContext(interval, world, ego_name=ego_name,
                                     lane_pose_seq=lane_pose_seq, pose_seq=poses_sequence)
 
-    evaluated = {}
+    evaluated = OrderedDict()
     for name, rule in rules.items():
         result = RuleEvaluationResult(rule)
         rule.evaluate(context, result)
@@ -113,7 +112,7 @@ def evaluate_rules(poses_sequence, interval, world, ego_name):
 
 
 def make_timeseries(evaluated):
-    timeseries = {}
+    timeseries = OrderedDict()
     for k, rer in evaluated.items():
         from duckietown_world.rules import RuleEvaluationResult
         from duckietown_world.svg_drawing.misc import TimeseriesPlot
@@ -128,7 +127,8 @@ def make_timeseries(evaluated):
                 sequences['cumulative'] = evaluated_metric.cumulative
 
             kk = "/".join((k,) + km)
-            title = evaluated_metric.title + ( '(%s)' % evaluated_metric.title if km else "")
+            # title = evaluated_metric.title + ( '(%s)' % evaluated_metric.title if km else "")
+            title = evaluated_metric.title
             timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
     # print(list(timeseries))
     return timeseries

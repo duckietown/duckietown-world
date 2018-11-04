@@ -4,17 +4,17 @@ import itertools
 import logging
 import math
 import os
+from collections import OrderedDict
 
 import svgwrite
 from bs4 import Tag, BeautifulSoup
 from contracts import contract, check_isinstance
-from past.builtins import reduce
-from six import BytesIO
-
 from duckietown_world import logger
 from duckietown_world.geo import RectangularArea, get_extent_points, get_static_and_dynamic
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.utils import memoized_reset
+from past.builtins import reduce
+from six import BytesIO
 
 __all__ = [
     'draw_recursive',
@@ -334,7 +334,7 @@ class TimeseriesPlot(object):
 
 
 def make_tabs(timeseries):
-    tabs = {}
+    tabs = OrderedDict()
     import plotly.offline as offline
     i = 0
     for name, tsp in timeseries.items():
@@ -342,37 +342,49 @@ def make_tabs(timeseries):
 
         div = Tag(name='div')
         table = Tag(name='table')
+        table.attrs['style'] = 'width: 100%'
         tr = Tag(name='tr')
 
         td = Tag(name='td')
-        td.attrs['style'] = 'width: 15em; vertical-align: top;'
+        td.attrs['style'] = 'width: 15em; min-height: 20em; vertical-align: top;'
         td.append(get_markdown(tsp.long_description))
         tr.append(td)
 
         td = Tag(name='td')
+        td.attrs['style'] = 'width: calc(100%-16em); min-height: 20em; vertical-align: top;'
 
         import plotly.graph_objs as go
+        import plotly.tools as tools
+        scatters = []
         for name_sequence, sequence in tsp.sequences.items():
             assert isinstance(sequence, SampledSequence)
-
-            # marker = go.scatter.Marker
 
             trace = go.Scatter(
                     x=sequence.timestamps,
                     y=sequence.values,
                     mode='lines+markers',
-
+                    name=name_sequence,
             )
+            scatters.append(trace)
 
-            include_plotlyjs = i == 0 and True or False
-            res = offline.plot({'data': [trace],
-                                'layout': {'title': name_sequence,
-                                           'font': dict(size=10)}},
-                               output_type='div',
-                               show_link=False,
-                               include_plotlyjs=include_plotlyjs)
-            i += 1
-            td.append(bs(res))
+        layout = {'font': dict(size=10), 'margin': dict(t=0)}
+
+
+        n = len(scatters)
+        fig = tools.make_subplots(rows=1, cols=n)
+        fig.layout.update(layout)
+        for j, scatter in enumerate(scatters):
+            fig.append_trace(scatter, 1, j + 1)
+
+        # include_plotlyjs = True if i == 0 else False
+        include_plotlyjs = True
+        res = offline.plot(fig,
+                           output_type='div',
+                           show_link=False,
+                           include_plotlyjs=include_plotlyjs)
+        td.append(bs(res))
+        i += 1
+
         tr.append(td)
         table.append(tr)
 
@@ -418,10 +430,7 @@ def render_tabs(tabs):
 
         div_content.append(div_c)
 
-    main = Tag(name='div')
-    main.attrs['id'] = 'tabs'
-    main.append(div_buttons)
-    main.append(div_content)
+
     script = Tag(name='script')
     # language=javascript
     js = """
@@ -443,12 +452,13 @@ function open_tab(evt, cityName) {
 
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(cityName).style.display = "block";
+    document.getElementById(cityName).style.opacity = 1.0;
     evt.currentTarget.className += " active";
 } 
     
     """
     script.append(js)
-    main.append(script)
+
     style = Tag(name='style')
     # language=css
     style.append('''\
@@ -461,13 +471,19 @@ function open_tab(evt, cityName) {
 
 /* Style the buttons that are used to open the tab content */
 .tab button {
+    
+    font-size: 80%;
     background-color: inherit;
     float: left;
-    border: none;
+    border: solid 0.5px gray;
     outline: none;
     cursor: pointer;
-    padding: 14px 16px;
+    /* padding: 14px 16px;*/
     transition: 0.3s;
+}
+
+.tab button + button {
+    margin-left: 10px;
 }
 
 /* Change background color of buttons on hover */
@@ -482,14 +498,21 @@ function open_tab(evt, cityName) {
 
 /* Style the tab content */
 .tabcontent {
-    display: none;
+    /*display: none;*/
+    opacity: 0;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
+    width: 100%;
 }
     
     ''')
+    main = Tag(name='div')
+    main.attrs['id'] = 'tabs'
     main.append(style)
+    main.append(script)
+    main.append(div_buttons)
+    main.append(div_content)
     return main
 
 
@@ -568,6 +591,9 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
 <body>
 <style>
 /*svg {{ background-color: #eee;}}*/
+body {{
+    font-family: system-ui, sans-serif;
+}}
 </style>
 {controls}
 <table>
