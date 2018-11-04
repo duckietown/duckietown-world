@@ -62,8 +62,7 @@ class LaneSegment(PlacedObject):
             check_isinstance(p, SE2Transform)
 
     def _copy(self):
-        return type(self)(self.width, list(self.control_points),
-                          children=dict(**self.children),spatial_relations=dict(**self.spatial_relations))
+        return self._simplecopy(width=self.width, control_points=self.control_points)
 
     @memoized_reset
     def get_lane_lengths(self):
