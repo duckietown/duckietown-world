@@ -147,7 +147,7 @@ class InDrivableLane(Rule):
         sequence = SampledSequence(timestamps, values)
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
-        
+
         title = "[Rule] Drivable areas"
         description = textwrap.dedent("""\
             This metric computes whether the robot was in a drivable area.

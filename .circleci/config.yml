@@ -34,8 +34,6 @@ jobs:
           command: |
             PATH=~/.local/bin:$PATH  make tests-clean tests-contracts-coverage
 
-            coverage html -d artifacts/coverage
-
       - run:
           name: Examples
           command: |
@@ -52,11 +50,18 @@ jobs:
             PATH=~/.local/bin:$PATH dt-world-draw-log --filename test-data/LFV.json --output artifacts/LFV
 
       - run:
+          name: Coverage analysis
+          when: always
+          command: |
+            coverage html -d artifacts/coverage
+
+      - run:
           name: Statistics
           when: always
           command: |
             mkdir junit
             PATH=~/.local/bin:$PATH comptests-to-junit out-comptests/compmake > junit/junit.xml
+
 
       - test-results-store:
           path: junit
