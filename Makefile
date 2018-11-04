@@ -43,9 +43,11 @@ tests-coverage:
 	$(MAKE) coverage-coveralls
 
 tests-LFV-coverage:
+	mkdir -p artifacts
 	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
 
 tests-maps-coverage:
+	mkdir -p artifacts
 	$(coverage_run) `which dt-world-draw-maps` --output artifacts/maps
 
 
@@ -64,7 +66,6 @@ tests-coverage-parallel-contracts:
 coverage-report:
 	coverage combine
 	coverage html -d $(coverage_dir)
-	#--include $(coverage_include)
 
 coverage-coveralls:
 	# without --nogit, coveralls does not find the source code
