@@ -22,10 +22,11 @@ jobs:
 
             pip install -q --user --upgrade -r requirements.txt
             python setup.py develop --prefix ~/.local --no-deps
-            pip freeze
             echo PATH=$PATH
 
             mkdir artifacts
+            pip freeze | tee artifacts/pip-freeze.txt
+
 
 
 
