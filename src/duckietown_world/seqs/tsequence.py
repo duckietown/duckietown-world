@@ -1,5 +1,6 @@
 # coding=utf-8
 from abc import abstractmethod
+from collections import namedtuple
 
 from duckietown_serialization_ds1 import Serializable
 
@@ -7,6 +8,8 @@ __all__ = [
     'Sequence',
     'UndefinedAtTime',
     'SampledSequence',
+    'IterateDT',
+    'iterate_with_dt',
 ]
 
 
@@ -132,3 +135,19 @@ class SampledSequence(Sequence):
         timestamps.append(self.timestamps[-1])
         values.append(self.values[-1])
         return SampledSequence(timestamps, values)
+
+
+IterateDT = namedtuple('IterateDT', 't0 t1 dt v0 v1')
+
+
+def iterate_with_dt(sequence):
+    """ yields t0, t1, dt, v0, v1 """
+    timestamps = sequence.timestamps
+    values = sequence.values
+    for i in range(len(timestamps) - 1):
+        t0 = timestamps[i]
+        t1 = timestamps[i + 1]
+        v0 = values[i]
+        v1 = values[i + 1]
+        dt = t1 - t0
+        yield IterateDT(t0, t1, dt, v0, v1)

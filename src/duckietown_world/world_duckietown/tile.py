@@ -5,12 +5,16 @@ import numpy as np
 from contracts import contract
 
 from duckietown_world import logger
-from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D
+from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D, SE2Transform
+from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from geometry import extract_pieces
 
 __all__ = [
     'Tile',
+    'GetLanePoseResult',
+    'get_lane_poses',
+    'create_lane_highlight',
 ]
 
 GetLanePoseResult = namedtuple('GetLanePoseResult',
@@ -133,18 +137,19 @@ def get_lane_poses(dw, q, tol=0.000001):
                                         tile_coords=tile_coords,
                                         center_point=center_point_abs_t)
                 nresults += 1
-        if nresults == 0:
-            msg = 'Could not find any lane in tile %s' % tile_transform
-            msg += '\ntile_relative_pose: %s' % tile_relative_pose
-            for it2 in iterate_by_class(tile, LaneSegment):
-                lane_segment = it2.object
-                lane_segment_wrt_tile = it2.transform_sequence.as_SE2()
-                lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile, tile_relative_pose)
-                lane_pose = lane_segment.lane_pose_from_SE2(lane_segment_relative_pose, tol=tol)
 
-                msg += '\n lane_relative: %s' % lane_segment_relative_pose
-                msg += '\n lane pose: %s' % lane_pose
-            logger.warning(msg)
+        # if nresults == 0:
+        #     msg = 'Could not find any lane in tile %s' % tile_transform
+        #     msg += '\ntile_relative_pose: %s' % tile_relative_pose
+        #     for it2 in iterate_by_class(tile, LaneSegment):
+        #         lane_segment = it2.object
+        #         lane_segment_wrt_tile = it2.transform_sequence.as_SE2()
+        #         lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile, tile_relative_pose)
+        #         lane_pose = lane_segment.lane_pose_from_SE2(lane_segment_relative_pose, tol=tol)
+        #
+        #         msg += '\n lane_relative: %s' % lane_segment_relative_pose
+        #         msg += '\n lane pose: %s' % lane_pose
+        #     logger.warning(msg)
 
 
 @contract(  # pose='O3',
@@ -155,7 +160,76 @@ def translation_from_O3(pose):
 
 
 def relative_pose(base, pose):
-    # import geometry as geo
-    # return geo.SE2.multiply(geo.SE2.inverse(base), pose)
     return np.dot(np.linalg.inv(base), pose)
-#
+
+
+class GetClosestLane(object):
+    def __init__(self, dw):
+        # self.previous = None
+        self.no_matches_for = []
+        self.dw = dw
+
+    def __call__(self, transform):
+        if isinstance(transform, SE2Transform):
+            transform = transform.as_SE2()
+        poses = list(get_lane_poses(self.dw, transform))
+        if not poses:
+            self.no_matches_for.append(transform)
+            return None
+        #
+        # print(["/".join(_.lane_segment_fqn) for _ in poses])
+        # if len(poses) == 1:
+        #     closest = poses[0]
+        # else:
+        #     # more than one to choose from
+        #
+        #     if self.previous is not None:
+        #         for _ in poses:
+        #             if _.lane_segment_fqn == self.previous.lane_segment_fqn:
+        #                 closest = _
+        #                 break
+        #         else:
+        #             closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+        #     else:
+        #         closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+
+        s = sorted(poses, key=lambda _: np.abs(_.lane_pose.relative_heading))
+        res = {}
+        for i, _ in enumerate(s):
+            res[i] = _
+        #
+        # print("/".join(closest.lane_segment_fqn))
+        # self.previous = closest
+        return res
+
+
+class Anchor(PlacedObject):
+    def draw_svg(self, drawing, g):
+        draw_axes(drawing, g, klass='anchor-axes')
+        c = drawing.circle(center=(0, 0), r=0.03,
+                           fill='blue', stroke='black', stroke_width=0.001)
+        g.add(c)
+
+
+def create_lane_highlight(poses_sequence, dw):
+    # @contract(x=GetLanePoseResult)
+    # def get_center_point(x):
+    #     return x.center_point
+
+    lane_pose_results = poses_sequence.transform_values(GetClosestLane(dw))
+    # center_points = lane_pose_results.transform_values(get_center_point)
+    # dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
+
+    visualization = PlacedObject()
+    dw.set_object('visualization', visualization, ground_truth=SE2Transform.identity())
+    for i, (timestamp, name2pose) in enumerate(lane_pose_results):
+        for name, lane_pose_result in name2pose.items():
+            assert isinstance(lane_pose_result, GetLanePoseResult)
+            lane_segment = lane_pose_result.lane_segment
+            rt = lane_pose_result.lane_segment_transform
+            s = SampledSequence([timestamp], [rt])
+            visualization.set_object('ls%s-%s-lane' % (i, name), lane_segment, ground_truth=s)
+            p = SampledSequence([timestamp], [lane_pose_result.center_point])
+            visualization.set_object('ls%s-%s-anchor' % (i, name), Anchor(), ground_truth=p)
+
+    return lane_pose_results

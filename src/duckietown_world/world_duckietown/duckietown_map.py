@@ -15,6 +15,7 @@ class DuckietownMap(PlacedObject):
         return dict(tile_size=self.tile_size)
 
     def se2_from_curpos(self, cur_pos, cur_angle):
+        """ Conversion from Duckietown Gym Simulator coordinates z"""
         H = self.children['tilemap'].H
         gx, gy, gz = cur_pos
         p = [gx, (H - 1) * self.tile_size - gz]

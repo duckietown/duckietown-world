@@ -5,13 +5,14 @@ from contracts import contract, check_isinstance, new_contract
 
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import SE2Transform, PlacedObject
-from duckietown_world.utils.memoizing import memoized_reset
-from duckietown_world.utils.poses import SE2_interpolate, SE2_apply_R2
-from duckietown_world.world_duckietown.tile import relative_pose
+from duckietown_world.geo import SE2Transform, PlacedObject
+from duckietown_world.utils import memoized_reset, SE2_interpolate, SE2_apply_R2
+from .tile import relative_pose
 
 __all__ = [
     'LaneSegment',
+    'LanePose',
+
 ]
 
 
@@ -128,8 +129,8 @@ class LaneSegment(PlacedObject):
     def lane_pose_from_SE2Transform(self, qt, tol=0.001):
         return self.lane_pose_from_SE2(qt.as_SE2(), tol=tol)
 
-    @contract(#q='SE2',
-              returns=LanePose)
+    @contract(  # q='SE2',
+            returns=LanePose)
     def lane_pose_from_SE2(self, q, tol=0.001):
         return (self.is_straight()
                 and self.lane_pose_from_SE2_straight(q)
@@ -296,8 +297,6 @@ class LaneSegment(PlacedObject):
                              stroke_dasharray="0.02",
                              stroke_width=0.01)
         glane.add(p)
-
-
 
         g.add(glane)
 

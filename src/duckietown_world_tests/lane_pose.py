@@ -4,10 +4,12 @@ import os
 
 import numpy as np
 from comptests import comptest, run_module_tests, get_comptests_output_dir
-from contracts import contract
 from numpy.testing import assert_almost_equal
 
+import geometry as geo
 from duckietown_world import LaneSegment, RectangularArea, PlacedObject, SE2Transform
+from duckietown_world.rules import evaluate_rules
+from duckietown_world.rules.rule import EvaluatedMetric
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing import draw_static
 from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
@@ -15,7 +17,6 @@ from duckietown_world.world_duckietown.differential_drive_dynamics import Differ
 from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.lane_segment import get_distance_two
 from duckietown_world.world_duckietown.map_loading import load_map
-from duckietown_world.world_duckietown.tile import get_lane_poses, GetLanePoseResult
 from duckietown_world.world_duckietown.tile_template import load_tile_types
 
 
@@ -154,65 +155,35 @@ def lane_pose_test1():
     poses_sequence = get_robot_trajectory(factory, q0, commands_sequence)
     transforms_sequence = poses_sequence.transform_values(SE2Transform.from_SE2)
 
+    ego_name = 'duckiebot'
     db = DB18()
-    dw.set_object('duckiebot', db, ground_truth=transforms_sequence)
+    dw.set_object(ego_name, db, ground_truth=transforms_sequence)
 
-    class GetClosestLane(object):
-        def __init__(self):
-            # self.previous = None
-            self.no_matches_for = []
+    interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
+    evaluated = evaluate_rules(poses_sequence=poses_sequence,
+                             interval=interval, world=dw, ego_name=ego_name)
 
-        def __call__(self, transform):
-            poses = list(get_lane_poses(dw, transform))
-            if not poses:
-                self.no_matches_for.append(transform)
-                return None
-            #
-            # print(["/".join(_.lane_segment_fqn) for _ in poses])
-            # if len(poses) == 1:
-            #     closest = poses[0]
-            # else:
-            #     # more than one to choose from
-            #
-            #     if self.previous is not None:
-            #         for _ in poses:
-            #             if _.lane_segment_fqn == self.previous.lane_segment_fqn:
-            #                 closest = _
-            #                 break
-            #         else:
-            #             closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
-            #     else:
-            #         closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
+    timeseries = {}
+    for k, rer in evaluated.items():
+        from duckietown_world.rules import RuleEvaluationResult
+        from duckietown_world.svg_drawing.misc import TimeseriesPlot
+        assert isinstance(rer, RuleEvaluationResult)
 
-            s = sorted(poses, key=lambda _: np.abs(_.lane_pose.relative_heading))
-            res = {}
-            for _ in s:
-                name = "/".join(_.lane_segment_fqn)
-                res[name] = _
-            #
-            # print("/".join(closest.lane_segment_fqn))
-            # self.previous = closest
-            return res
+        for km, evaluated_metric in rer.metrics.items():
+            assert isinstance(evaluated_metric, EvaluatedMetric)
+            sequences = {}
+            if evaluated_metric.incremental:
+                sequences['incremental'] = evaluated_metric.incremental
+            if evaluated_metric.cumulative:
+                sequences['cumulative'] = evaluated_metric.cumulative
 
-    # @contract(x=GetLanePoseResult)
-    # def get_center_point(x):
-    #     return x.center_point
+            kk = "/".join((k,) + km)
+            title = kk
+            timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
+    print(list(timeseries))
 
-    lane_pose_results = poses_sequence.transform_values(GetClosestLane())
-    # center_points = lane_pose_results.transform_values(get_center_point)
-    # dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
-
-    for i, (timestamp, name2pose) in enumerate(lane_pose_results):
-        for name, lane_pose_result in name2pose.items():
-            lane_segment = lane_pose_result.lane_segment
-            rt = lane_pose_result.lane_segment_transform
-            s = SampledSequence([timestamp], [rt])
-            dw.set_object('ls%s-%s' % (i, name), lane_segment, ground_truth=s)
-
-    draw_static(dw, outdir, area=area)
-
-
-import geometry as geo
+    print('drawing')
+    draw_static(dw, outdir, area=area, timeseries=timeseries)
 
 
 def integrate_commands(s0, commands_sequence):

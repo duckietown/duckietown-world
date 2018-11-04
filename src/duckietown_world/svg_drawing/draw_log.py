@@ -7,6 +7,7 @@ from collections import namedtuple
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
+from duckietown_world.rules import evaluate_rules
 from duckietown_world.seqs import SampledSequence
 from .misc import draw_static
 
@@ -41,7 +42,18 @@ def draw_logs_main_(output, filename):
         images = {'observations': log.observations}
     else:
         images = None
-    draw_static(duckietown_env, output, images=images)
+
+    # create_lane_highlight(log.trajectory, duckietown_env)
+
+    interval = SampledSequence.from_iterator(enumerate(log.trajectory.timestamps))
+    metrics = evaluate_rules(poses_sequence=log.trajectory,
+                             interval=interval, world=duckietown_env, ego_name='ego')
+
+    timeseries = {}
+    for k, evm in metrics.items():
+        timeseries[k] = evm.incremental
+
+    draw_static(duckietown_env, output, images=images, timeseries=timeseries)
 
 
 def read_log(filename):
@@ -61,7 +73,7 @@ def read_log(filename):
             yield ob
 
 
-SimulatorLog = namedtuple('SimulatorLog', 'observations duckietown')
+SimulatorLog = namedtuple('SimulatorLog', 'observations duckietown trajectory')
 
 
 def read_simulator_log(filename):
@@ -116,7 +128,8 @@ def read_simulator_log(filename):
 
     robot = DB18()
     duckietown_map.set_object('ego', robot, ground_truth=trajectory)
-    return SimulatorLog(duckietown=duckietown_map, observations=observations)
+    return SimulatorLog(duckietown=duckietown_map, observations=observations,
+                        trajectory=trajectory)
 
 
 if __name__ == '__main__':

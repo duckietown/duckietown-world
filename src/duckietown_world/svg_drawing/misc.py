@@ -7,8 +7,8 @@ import os
 
 import svgwrite
 import yaml
-from bs4 import Tag
-from contracts import contract
+from bs4 import Tag, BeautifulSoup
+from contracts import contract, check_isinstance
 from past.builtins import reduce
 from six import BytesIO
 
@@ -125,9 +125,11 @@ def recurive_draw_list(draw_list, prefix):
     return res
 
 
-def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None):
+def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
+                timeseries=None):
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
     images = images or {}
+    timeseries = timeseries or {}
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -171,6 +173,7 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
         imagename2div[name] = Tag(name='div')
         obs_div.append(imagename2div[name])
 
+    logger.debug('dynamic: %s' % dynamic)
     for i, t in keyframes:
         g_t = drawing.g()
         g_t.attribs['class'] = 'keyframe keyframe%d' % i
@@ -210,23 +213,32 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
     other1 = str(other)
 
     # language=html
-    other2 = """\
+    visualize_controls = """\
             <style>
             *[visualize_parts=false] {
                 display: none;
             }
             </style>
-
+        
+            <p></p>
             <input id='checkbox-static' type="checkbox"  onclick="hideshow(this);" checked>static data</input>
             <input id='checkbox-textures' type="checkbox"  onclick="hideshow(this);" checked>textures</input>
             <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
             <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane segments</input>
-            <input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">map lane segments control points</input>
+            (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">control points</input>)</p>
+            
+            <p>
             <input id='checkbox-current_lane' type="checkbox"  onclick="hideshow(this);">current lane</input>
-            <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>other vehicles</input>
+            <input id='checkbox-anchors' type="checkbox"  onclick="hideshow(this);">anchor point</input>
+            </p>
+            
+            <p>
+            <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>vehicles</input>
             <input id='checkbox-duckies' type="checkbox"  onclick="hideshow(this);" checked>duckies</input>
-            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
             <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
+            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
+          
+            </p>
             <script>
                 var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
                 console.log(checkboxValues);
@@ -241,6 +253,7 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
                     "checkbox-signs": ".Sign",
                     "checkbox-vehicles": ".Vehicle",
                     "checkbox-decorations": ".Decoration",
+                    'checkbox-anchors': '.Anchor',
                 };
                 function hideshow(element) {
                     console.log(element);
@@ -270,10 +283,14 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
                 });
             </script>
         """
-    other = other2 + other1
+    other = other1
+
+    div_timeseries = str(make_tabs(timeseries))
 
     obs_div = str(obs_div)
-    html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div=obs_div, other=other)
+    html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div=obs_div, other=other,
+                            div_timeseries=div_timeseries,
+                            visualize_controls=visualize_controls)
     with open(fn_html, 'w') as f:
         f.write(html)
 
@@ -284,7 +301,170 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None)
     return [fn_svg, fn_html]
 
 
-def make_html_slider(drawing, nkeyframes, obs_div, other):
+class TimeseriesPlot(object):
+
+    def __init__(self, title, long_description, sequences):
+        check_isinstance(title, six.string_types)
+        self.title = title
+        self.long_description = long_description
+        self.sequences = sequences
+
+    def get_title(self):
+        return self.title
+
+    def get_long_description(self):
+        return self.long_description
+
+
+def make_tabs(timeseries):
+    tabs = {}
+    import plotly.offline as offline
+    for name, tsp in timeseries.items():
+        assert isinstance(tsp, TimeseriesPlot)
+
+        div = Tag(name='div')
+        table = Tag(name='table')
+        tr = Tag(name='tr')
+
+        td = Tag(name='td')
+        td.attrs['style'] = 'width: 20em; vertical-align: top;'
+        td.append(tsp.long_description)
+        tr.append(td)
+
+        td = Tag(name='td')
+
+        for name_sequence, sequence in tsp.sequences.items():
+            assert isinstance(sequence, SampledSequence)
+            plot = {'x': sequence.timestamps,
+                    'y': sequence.values}
+            # title = "/".join(name)
+            res = offline.plot({'data': [plot],
+                                'layout': {'title': name_sequence,
+                                           'font': dict(size=10)}},
+                               output_type='div')
+
+            td.append(bs(res))
+        tr.append(td)
+        table.append(tr)
+
+        div.append(table)
+
+        tabs[name] = Tab(title=tsp.title, content=div)
+
+    return render_tabs(tabs)
+
+
+import six
+
+
+class Tab(object):
+    def __init__(self, title, content):
+        check_isinstance(title, six.string_types)
+        self.title = title
+        self.content = content
+
+
+def render_tabs(tabs):
+    div_buttons = Tag(name='div')
+    div_buttons.attrs['class'] = 'tab'
+    div_content = Tag(name='div')
+
+    for i, (name, tab) in enumerate(tabs.items()):
+        assert isinstance(tab, Tab), tab
+
+        tid = 'tab%s' % i
+        button = Tag(name='button')
+        button.attrs['class'] = 'tablinks'
+        button.attrs['onclick'] = "open_tab(event,'%s')" % tid
+        button.append(tab.title)
+        div_buttons.append(button)
+
+        div_c = Tag(name='div')
+        div_c.attrs['id'] = tid
+        div_c.attrs['style'] = '' #''display: none; width:100%; height:100vh'
+
+        div_c.attrs['class'] = 'tabcontent'
+
+        div_c.append(tab.content)
+
+        div_content.append(div_c)
+
+    main = Tag(name='div')
+    main.attrs['id'] = 'tabs'
+    main.append(div_buttons)
+    main.append(div_content)
+    script = Tag(name='script')
+    # language=javascript
+    js = """
+function open_tab(evt, cityName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+} 
+    
+    """
+    script.append(js)
+    main.append(script)
+    style = Tag(name='style')
+    # language=css
+    style.append('''\
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+    
+    ''')
+    main.append(style)
+    return main
+
+
+def make_html_slider(drawing, nkeyframes, obs_div, other, div_timeseries, visualize_controls):
     # language=html
     controls = """\
 <p id="valBox"></p>
@@ -302,6 +482,10 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
         padding: 1em;
         vertical-align: top;
     }
+    
+    #observation_sequence {
+        width: 320px;
+    }
     td#obs img { width: 90%%;} 
 </style>
 <script type='text/javascript'>
@@ -317,14 +501,19 @@ def make_html_slider(drawing, nkeyframes, obs_div, other):
 </script>
 """ % (nkeyframes - 1)
 
-    drawing_svg = drawing.tostring()
+    from six import StringIO
+    f = StringIO()
+    drawing.write(f, pretty=True)
+    drawing_svg = f.getvalue()
+    f.close()
+    # drawing_svg = drawing.tostring(pretty=True)
     # language=html
     doc = """\
 <html>
 <head></head>
 <body>
 <style>
-svg {{ background-color: #eee;}}
+/*svg {{ background-color: #eee;}}*/
 </style>
 {controls}
 <table>
@@ -333,16 +522,19 @@ svg {{ background-color: #eee;}}
 {drawing}
 </td>
 <td id="obs" >
+{visualize_controls}
 <div id="observation_sequence">
 {obs_div}
 </div>
 </td>
 </tr>
 </table>
+{div_timeseries}
 {other}
 </body>
 </html>
-    """.format(controls=controls, drawing=drawing_svg, obs_div=obs_div, other=other)
+    """.format(controls=controls, drawing=drawing_svg, obs_div=obs_div, other=other,
+               div_timeseries=div_timeseries, visualize_controls=visualize_controls)
     return doc
 
 
@@ -357,9 +549,9 @@ def data_encoded_for_src(data, mime):
     return link
 
 
-def draw_axes(drawing, g, L=0.1, stroke_width=0.01):
+def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass='axes'):
     g2 = drawing.g()
-    g2.attribs['class'] = 'axes'
+    g2.attribs['class'] = klass
     line = drawing.line(start=(0, 0),
                         end=(L, 0),
                         stroke_width=stroke_width,
@@ -386,3 +578,19 @@ def get_jpeg_bytes(fn):
     out = BytesIO()
     image.save(out, format='jpeg')
     return out.getvalue()
+
+
+def bs(fragment):
+    """ Returns the contents wrapped in an element called "fragment".
+        Expects fragment as a str in utf-8 """
+
+    check_isinstance(fragment, (str, unicode))
+
+    if isinstance(fragment, unicode):
+        fragment = fragment.encode('utf8')
+    s = '<fragment>%s</fragment>' % fragment
+
+    parsed = BeautifulSoup(s, 'lxml', from_encoding='utf-8')
+    res = parsed.html.body.fragment
+    assert res.name == 'fragment'
+    return res
