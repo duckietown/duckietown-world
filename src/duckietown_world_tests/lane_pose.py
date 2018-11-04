@@ -9,7 +9,7 @@ from numpy.testing import assert_almost_equal
 import geometry as geo
 from duckietown_world import LaneSegment, RectangularArea, PlacedObject, SE2Transform
 from duckietown_world.rules import evaluate_rules
-from duckietown_world.rules.rule import EvaluatedMetric
+from duckietown_world.rules.rule import EvaluatedMetric, make_timeseries
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing import draw_static
 from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
@@ -163,24 +163,25 @@ def lane_pose_test1():
     evaluated = evaluate_rules(poses_sequence=poses_sequence,
                              interval=interval, world=dw, ego_name=ego_name)
 
-    timeseries = {}
-    for k, rer in evaluated.items():
-        from duckietown_world.rules import RuleEvaluationResult
-        from duckietown_world.svg_drawing.misc import TimeseriesPlot
-        assert isinstance(rer, RuleEvaluationResult)
-
-        for km, evaluated_metric in rer.metrics.items():
-            assert isinstance(evaluated_metric, EvaluatedMetric)
-            sequences = {}
-            if evaluated_metric.incremental:
-                sequences['incremental'] = evaluated_metric.incremental
-            if evaluated_metric.cumulative:
-                sequences['cumulative'] = evaluated_metric.cumulative
-
-            kk = "/".join((k,) + km)
-            title = kk
-            timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
-    print(list(timeseries))
+    timeseries = make_timeseries(evaluated)
+    #
+    # for k, rer in evaluated.items():
+    #     from duckietown_world.rules import RuleEvaluationResult
+    #     from duckietown_world.svg_drawing.misc import TimeseriesPlot
+    #     assert isinstance(rer, RuleEvaluationResult)
+    #
+    #     for km, evaluated_metric in rer.metrics.items():
+    #         assert isinstance(evaluated_metric, EvaluatedMetric)
+    #         sequences = {}
+    #         if evaluated_metric.incremental:
+    #             sequences['incremental'] = evaluated_metric.incremental
+    #         if evaluated_metric.cumulative:
+    #             sequences['cumulative'] = evaluated_metric.cumulative
+    #
+    #         kk = "/".join((k,) + km)
+    #         title = kk
+    #         timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
+    # print(list(timeseries))
 
     print('drawing')
     draw_static(dw, outdir, area=area, timeseries=timeseries)

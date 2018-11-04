@@ -6,7 +6,6 @@ import math
 import os
 
 import svgwrite
-import yaml
 from bs4 import Tag, BeautifulSoup
 from contracts import contract, check_isinstance
 from past.builtins import reduce
@@ -141,7 +140,7 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
         keyframes = SampledSequence([0], [0])
     else:
         keyframes = SampledSequence(range(len(timestamps)), timestamps)
-    nkeyframes = len(keyframes)
+    # nkeyframes = len(keyframes)
 
     if area is None:
         areas = []
@@ -190,27 +189,30 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
                 pass
             else:
                 img = Tag(name='img')
-                img.attrs['src'] = data_encoded_for_src(obs.bytes_contents, obs.content_type)
+                resized = get_resized_image(obs.bytes_contents, 200)
+                img.attrs['src'] = data_encoded_for_src(resized, 'image/jpeg')
+                # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
                 img.attrs['class'] = 'keyframe keyframe%d' % i
                 img.attrs['visualize'] = 'hide'
                 imagename2div[name].append(img)
 
-    other = Tag(name='div')
-
-    summary = Tag(name='summary')
-    summary.append('Log data')
-    details = Tag(name='details')
-
-    details.append(summary)
-    pre = Tag(name='pre')
-    code = Tag(name='code')
-    pre.append(code)
-    y = yaml.safe_dump(root.as_json_dict(), default_flow_style=False)
-    code.append(y)
-    details.append(pre)
-
-    other.append(details)
-    other1 = str(other)
+    # other = Tag(name='div')
+    #
+    # summary = Tag(name='summary')
+    # summary.append('Log data')
+    # details = Tag(name='details')
+    #
+    # details.append(summary)
+    # pre = Tag(name='pre')
+    # code = Tag(name='code')
+    # pre.append(code)
+    # y = yaml.safe_dump(root.as_json_dict(), default_flow_style=False)
+    # code.append(y)
+    # details.append(pre)
+    #
+    # other.append(details)
+    # other1 = str(other)
+    other = ""
 
     # language=html
     visualize_controls = """\
@@ -283,12 +285,11 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
                 });
             </script>
         """
-    other = other1
 
     div_timeseries = str(make_tabs(timeseries))
 
     obs_div = str(obs_div)
-    html = make_html_slider(drawing, nkeyframes=nkeyframes, obs_div=obs_div, other=other,
+    html = make_html_slider(drawing, keyframes, obs_div=obs_div, other=other,
                             div_timeseries=div_timeseries,
                             visualize_controls=visualize_controls)
     with open(fn_html, 'w') as f:
@@ -299,6 +300,19 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
     logger.info('Written HTML to %s' % fn_html)
 
     return [fn_svg, fn_html]
+
+def get_resized_image(bytes_content, width):
+    from PIL import Image
+    pl = logging.getLogger('PIL')
+    pl.setLevel(logging.ERROR)
+    idata = BytesIO(bytes_content)
+    image = Image.open(idata).convert('RGB')
+    size = image.size
+    height = int(size[1] * 1.0 / size[0] * width)
+    image = image.resize((width, height))
+    out = BytesIO()
+    image.save(out, format='jpeg')
+    return out.getvalue()
 
 
 class TimeseriesPlot(object):
@@ -319,6 +333,7 @@ class TimeseriesPlot(object):
 def make_tabs(timeseries):
     tabs = {}
     import plotly.offline as offline
+    i = 0
     for name, tsp in timeseries.items():
         assert isinstance(tsp, TimeseriesPlot)
 
@@ -327,8 +342,8 @@ def make_tabs(timeseries):
         tr = Tag(name='tr')
 
         td = Tag(name='td')
-        td.attrs['style'] = 'width: 20em; vertical-align: top;'
-        td.append(tsp.long_description)
+        td.attrs['style'] = 'width: 15em; vertical-align: top;'
+        td.append(get_markdown(tsp.long_description))
         tr.append(td)
 
         td = Tag(name='td')
@@ -336,18 +351,24 @@ def make_tabs(timeseries):
         import plotly.graph_objs as go
         for name_sequence, sequence in tsp.sequences.items():
             assert isinstance(sequence, SampledSequence)
+
+            # marker = go.scatter.Marker
+
             trace = go.Scatter(
                     x=sequence.timestamps,
-                    y=sequence.values
+                    y=sequence.values,
+                    mode='lines+markers',
+
             )
-            # plot = {'x': sequence.timestamps,
-            #         'y': sequence.values}
-            # title = "/".join(name)
+
+            include_plotlyjs = i == 0 and True or False
             res = offline.plot({'data': [trace],
                                 'layout': {'title': name_sequence,
                                            'font': dict(size=10)}},
-                               output_type='div')
-
+                               output_type='div',
+                               show_link=False,
+                               include_plotlyjs=include_plotlyjs)
+            i += 1
             td.append(bs(res))
         tr.append(td)
         table.append(tr)
@@ -386,7 +407,7 @@ def render_tabs(tabs):
 
         div_c = Tag(name='div')
         div_c.attrs['id'] = tid
-        div_c.attrs['style'] = '' #''display: none; width:100%; height:100vh'
+        div_c.attrs['style'] = ''  # ''display: none; width:100%; height:100vh'
 
         div_c.attrs['class'] = 'tabcontent'
 
@@ -469,14 +490,28 @@ function open_tab(evt, cityName) {
     return main
 
 
-def make_html_slider(drawing, nkeyframes, obs_div, other, div_timeseries, visualize_controls):
+def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visualize_controls):
+    nkeyframes = len(keyframes.timestamps)
+
     # language=html
-    controls = """\
-<p id="valBox"></p>
-<div class="slidecontainer">
-    <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="myRange" onchange="showVal(this.value)"/>
+    controls_html = """\
+
+<div id="slidecontainer">
+<div id='fixedui'>
+    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" onchange="showVal(this.value)"/>
+    <span id="time-display"></span>
+    </div>
 </div>
 <style type='text/css'>
+    #slidecontainer {
+    height: 3em;
+    }
+    #fixedui { 
+    position: fixed; 
+    width: 50%%;
+    height: 3em;
+    background-color: white;
+    }
     .keyframe[visualize="hide"] {
         display: none;
     }
@@ -489,7 +524,7 @@ def make_html_slider(drawing, nkeyframes, obs_div, other, div_timeseries, visual
     }
     
     #observation_sequence {
-        width: 320px;
+        width: 150px;
     }
     td#obs img { width: 90%%;} 
 </style>
@@ -505,6 +540,17 @@ def make_html_slider(drawing, nkeyframes, obs_div, other, div_timeseries, visual
     });
 </script>
 """ % (nkeyframes - 1)
+    controls = bs(controls_html)
+
+    valbox = controls.find('span', id='time-display')
+    assert valbox is not None
+    for i, timestamp in keyframes:
+        t = Tag(name='span')
+        t.attrs['class'] = 'keyframe keyframe%d' % i
+        t.attrs['visualize'] = 'hide'
+        t.append('t = %.2f' % timestamp)
+
+        valbox.append(t)
 
     from six import StringIO
     f = StringIO()
@@ -538,7 +584,7 @@ def make_html_slider(drawing, nkeyframes, obs_div, other, div_timeseries, visual
 {other}
 </body>
 </html>
-    """.format(controls=controls, drawing=drawing_svg, obs_div=obs_div, other=other,
+    """.format(controls=str(controls), drawing=drawing_svg, obs_div=obs_div, other=other,
                div_timeseries=div_timeseries, visualize_controls=visualize_controls)
     return doc
 
@@ -600,4 +646,14 @@ def bs(fragment):
     parsed = BeautifulSoup(wire, 'lxml', from_encoding='utf-8')
     res = parsed.html.body.fragment
     assert res.name == 'fragment'
+    return res
+
+
+def get_markdown(md):
+    import markdown
+
+    extensions = ['extra', 'smarty']
+    html = markdown.markdown(md, extensions=extensions, output_format='html5')
+
+    res = bs(html)
     return res

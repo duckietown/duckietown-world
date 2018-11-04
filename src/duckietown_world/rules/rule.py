@@ -47,8 +47,9 @@ class RuleEvaluationContext(object):
 
 
 class EvaluatedMetric(Serializable):
-    def __init__(self, total, incremental, description, cumulative):
+    def __init__(self, total, incremental, description, cumulative, title):
         self.total = total
+        self.title = title
         self.incremental = incremental
         self.cumulative = cumulative
         self.description = description
@@ -56,14 +57,16 @@ class EvaluatedMetric(Serializable):
 
 class RuleEvaluationResult(object):
 
-    def __init__(self):
+    def __init__(self, rule):
         self.metrics = {}
+        self.rule = rule
 
     @contract(name='tuple,seq(string)', total='float|int', incremental=Sequence)
-    def set_metric(self, name, total, incremental=None, description=None, cumulative=None):
+    def set_metric(self, name, total, title=None, incremental=None, description=None, cumulative=None):
         assert isinstance(name, tuple)
         name = tuple(name)
-        self.metrics[name] = EvaluatedMetric(total, incremental, description, cumulative=cumulative)
+        self.metrics[name] = EvaluatedMetric(total=total, incremental=incremental,
+                                             title=title, description=description, cumulative=cumulative)
 
 
 class Rule(with_metaclass(ABCMeta)):
@@ -95,10 +98,35 @@ def evaluate_rules(poses_sequence, interval, world, ego_name):
 
     evaluated = {}
     for name, rule in rules.items():
-        result = RuleEvaluationResult()
+        result = RuleEvaluationResult(rule)
         rule.evaluate(context, result)
         evaluated[name] = result
         # for k, v in result.metrics.items():
         #     kk = (name,) + k
         #     metrics[kk] = result
     return evaluated
+
+
+def make_timeseries(evaluated):
+    timeseries = {}
+    for k, rer in evaluated.items():
+        from duckietown_world.rules import RuleEvaluationResult
+        from duckietown_world.svg_drawing.misc import TimeseriesPlot
+        assert isinstance(rer, RuleEvaluationResult)
+
+        for km, evaluated_metric in rer.metrics.items():
+            assert isinstance(evaluated_metric, EvaluatedMetric)
+            sequences = {}
+            if evaluated_metric.incremental:
+                sequences['incremental'] = evaluated_metric.incremental
+            if evaluated_metric.cumulative:
+                sequences['cumulative'] = evaluated_metric.cumulative
+
+            # if km == ():
+            #     title = rer.
+            # else:
+            kk = "/".join((k,) + km)
+            title = evaluated_metric.title
+            timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
+    # print(list(timeseries))
+    return timeseries

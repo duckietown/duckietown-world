@@ -8,6 +8,7 @@ from collections import namedtuple
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
 from duckietown_world.rules import evaluate_rules
+from duckietown_world.rules.rule import make_timeseries
 from duckietown_world.seqs import SampledSequence
 from .misc import draw_static
 
@@ -43,15 +44,10 @@ def draw_logs_main_(output, filename):
     else:
         images = None
 
-    # create_lane_highlight(log.trajectory, duckietown_env)
-
     interval = SampledSequence.from_iterator(enumerate(log.trajectory.timestamps))
-    metrics = evaluate_rules(poses_sequence=log.trajectory,
-                             interval=interval, world=duckietown_env, ego_name='ego')
-
-    timeseries = {}
-    for k, evm in metrics.items():
-        timeseries[k] = evm.incremental
+    evaluated = evaluate_rules(poses_sequence=log.trajectory,
+                               interval=interval, world=duckietown_env, ego_name='ego')
+    timeseries = make_timeseries(evaluated)
 
     draw_static(duckietown_env, output, images=images, timeseries=timeseries)
 

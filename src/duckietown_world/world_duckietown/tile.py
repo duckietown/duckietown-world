@@ -41,6 +41,10 @@ class Tile(PlacedObject):
 
             self.fn = None
 
+    def _copy(self):
+        return type(self)(self.kind, self.drivable,
+                          children=dict(**self.children), spatial_relations=dict(**self.spatial_relations))
+
     def params_to_json_dict(self):
         return dict(kind=self.kind, drivable=self.drivable)
 
@@ -204,6 +208,9 @@ class GetClosestLane(object):
 
 
 class Anchor(PlacedObject):
+    def _copy(self):
+        return self._simplecopy()
+
     def draw_svg(self, drawing, g):
         draw_axes(drawing, g, klass='anchor-axes')
         c = drawing.circle(center=(0, 0), r=0.03,

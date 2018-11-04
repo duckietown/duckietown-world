@@ -28,7 +28,11 @@ class SpatialRelation(Serializable):
         self.b = tuple(b)
 
     def filter_all(self, f):
-        return SpatialRelation(self.a, f(self.transform), self.b)
+        t2 = f(self.transform)
+        if t2 == self.transform:
+            return self
+        else:
+            return SpatialRelation(self.a, t2, self.b)
 
     @classmethod
     def params_from_json_dict(cls, d):
@@ -81,13 +85,23 @@ class PlacedObject(Serializable):
                 sr = GroundTruth(a=(), b=(child,), transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
 
+    def _simplecopy(self):
+        return type(self)(dict(**self.children), dict(**self.spatial_relations))
+
+    def _copy(self):
+        if type(self) is PlacedObject:
+            return self._simplecopy()
+        else:
+            # logger.debug('no _copy for %s' % type(self).__name__)
+            return copy.copy(self)
+
     def filter_all(self, f):
-        x = copy.copy(self)
+
         children = {}
         spatial_relations = {}
 
         no_child = []
-        for child_name, child in list(x.children.items()):
+        for child_name, child in list(self.children.items()):
             try:
                 child2 = f(child.filter_all(f))
             except UndefinedAtTime:
@@ -95,7 +109,7 @@ class PlacedObject(Serializable):
             else:
                 children[child_name] = child2
 
-        for sr_name, sr in list(x.spatial_relations.items()):
+        for sr_name, sr in list(self.spatial_relations.items()):
             if sr.b and sr.b[0] in no_child:
                 pass
             else:
@@ -105,9 +119,16 @@ class PlacedObject(Serializable):
                     pass
                 else:
                     spatial_relations[sr_name] = sr2
-        x.children = children
-        x.spatial_relations = spatial_relations
-        return x
+
+        if children == self.children and spatial_relations == self.spatial_relations:
+            # logger.debug('could save a copy of %s' % type(self).__name__)
+            return self
+        else:
+            # print('need a copy of %s' % self)
+            x = self._copy()
+            x.children = children
+            x.spatial_relations = spatial_relations
+            return x
 
     def get_object_from_fqn(self, fqn):
         if fqn == ():

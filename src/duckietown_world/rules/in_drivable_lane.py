@@ -1,3 +1,5 @@
+import textwrap
+
 import numpy as np
 from contracts import contract
 
@@ -62,14 +64,18 @@ class DeviationFromCenterLine(Rule):
         sequence = SampledSequence(timestamps, values)
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
-        description = """\
-This metric describes the amount of deviation from the center line.
-        """
-        result.set_metric((), dtot, sequence, description, cumulative=cumulative)
+        title = "[Rule] Deviation from center line"
+        description = textwrap.dedent("""\
+            This metric describes the amount of deviation from the center line.
+        """)
+        result.set_metric(name=(), total=dtot, incremental=sequence,
+                          title=title, description=description, cumulative=cumulative)
 
 
 class DeviationHeading(Rule):
-
+    # def get_name_UI(self):
+    #     return '[Rule] Heading deviation'
+    #
     @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
     def evaluate(self, context, result):
         assert isinstance(result, RuleEvaluationResult)
@@ -103,10 +109,13 @@ class DeviationHeading(Rule):
         sequence = SampledSequence(timestamps, values)
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
-        description = """\
-This metric describes the amount of deviation from the relative heading.
-        """
-        result.set_metric((), dtot, sequence, description, cumulative=cumulative)
+        # result.set_metric((), dtot, sequence, description, cumulative=cumulative)
+        title = "[Rule] Deviation from lane direction"
+        description = textwrap.dedent("""\
+            This metric describes the amount of deviation from the relative heading.
+        """)
+        result.set_metric(name=(), total=dtot, incremental=sequence,
+                          title=title, description=description, cumulative=cumulative)
 
 
 class InDrivableLane(Rule):
@@ -138,7 +147,18 @@ class InDrivableLane(Rule):
         sequence = SampledSequence(timestamps, values)
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
-        description = """\
-    This metric describes the amount of deviation from the center line.
-            """
+        description = textwrap.dedent("""\
+            This metric describes the amount of deviation from the center line.
+        """)
         result.set_metric((), dtot, sequence, description, cumulative=cumulative)
+
+        title = "[Rule] Drivable areas"
+        description = textwrap.dedent("""\
+            This metric computes whether the robot was in a drivable area.
+            
+            Note that we check that the robot is in the lane in a correct heading 
+            (up to 90deg deviation from the lane direction). 
+        """)
+
+        result.set_metric(name=(), total=dtot, incremental=sequence,
+                          title=title, description=description, cumulative=cumulative)
