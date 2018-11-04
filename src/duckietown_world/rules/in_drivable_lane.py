@@ -183,8 +183,8 @@ class DrivenLength(Rule):
             try:
                 name2lpr = lane_pose_seq.at(t0)
 
-                p0 = ego_pose_sequence.at(t0)
-                p1 = ego_pose_sequence.at(t1)
+                p0 = ego_pose_sequence.at(t0).as_SE2()
+                p1 = ego_pose_sequence.at(t1).as_SE2()
             except UndefinedAtTime:
                 dr_any = dr_lanedir = 0.0
 

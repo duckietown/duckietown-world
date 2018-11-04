@@ -3,7 +3,6 @@ from collections import namedtuple
 
 import numpy as np
 from contracts import contract
-
 from duckietown_world import logger
 from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D, SE2Transform
 from duckietown_world.seqs import SampledSequence
@@ -221,6 +220,18 @@ class Anchor(PlacedObject):
 
 
 def create_lane_highlight(poses_sequence, dw):
+    assert isinstance(poses_sequence, SampledSequence)
+
+    def mapi(v):
+        if isinstance(v, SE2Transform):
+            return v.as_SE2()
+        else:
+            return v
+
+    print(poses_sequence)
+    poses_sequence = poses_sequence.transform_values(mapi)
+    print(poses_sequence)
+
     lane_pose_results = poses_sequence.transform_values(GetClosestLane(dw))
 
     visualization = PlacedObject()

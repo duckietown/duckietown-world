@@ -524,7 +524,7 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
 
 <div id="slidecontainer">
 <div id='fixedui'>
-    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" onchange="showVal(this.value)"/>
+    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" onchange="showVal(this.value)" oninput="showVal(this.value)"/>
     <span id="time-display"></span>
     </div>
 </div>
@@ -532,9 +532,12 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     #slidecontainer {
     height: 3em;
     }
+    #time-range {
+    width: 50%%;
+    }
     #fixedui { 
     position: fixed; 
-    width: 50%%;
+    width: 100%%;
     height: 3em;
     background-color: white;
     }

@@ -160,7 +160,7 @@ def lane_pose_test1():
     dw.set_object(ego_name, db, ground_truth=transforms_sequence)
 
     interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
-    evaluated = evaluate_rules(poses_sequence=poses_sequence,
+    evaluated = evaluate_rules(poses_sequence=transforms_sequence,
                              interval=interval, world=dw, ego_name=ego_name)
 
     timeseries = make_timeseries(evaluated)
