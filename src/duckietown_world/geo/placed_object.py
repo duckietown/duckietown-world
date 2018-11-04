@@ -86,8 +86,8 @@ class PlacedObject(Serializable):
                 self.spatial_relations[child] = sr
 
     def _simplecopy(self, *args, **kwargs):
-        children = dict((k, v) for k, v in self.children)
-        spatial_relations = dict((k, v) for k, v in self.spatial_relations)
+        children = dict((k, v) for k, v in self.children.items())
+        spatial_relations = dict((k, v) for k, v in self.spatial_relations.items())
         kwargs.update(dict(children=children, spatial_relations=spatial_relations))
         return type(self)(*args, **kwargs)
 
