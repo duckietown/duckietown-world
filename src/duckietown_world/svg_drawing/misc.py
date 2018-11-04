@@ -333,12 +333,17 @@ def make_tabs(timeseries):
 
         td = Tag(name='td')
 
+        import plotly.graph_objs as go
         for name_sequence, sequence in tsp.sequences.items():
             assert isinstance(sequence, SampledSequence)
-            plot = {'x': sequence.timestamps,
-                    'y': sequence.values}
+            trace = go.Scatter(
+                    x=sequence.timestamps,
+                    y=sequence.values
+            )
+            # plot = {'x': sequence.timestamps,
+            #         'y': sequence.values}
             # title = "/".join(name)
-            res = offline.plot({'data': [plot],
+            res = offline.plot({'data': [trace],
                                 'layout': {'title': name_sequence,
                                            'font': dict(size=10)}},
                                output_type='div')
@@ -584,13 +589,15 @@ def bs(fragment):
     """ Returns the contents wrapped in an element called "fragment".
         Expects fragment as a str in utf-8 """
 
-    check_isinstance(fragment, (str, unicode))
+    check_isinstance(fragment, six.string_types)
 
-    if isinstance(fragment, unicode):
-        fragment = fragment.encode('utf8')
-    s = '<fragment>%s</fragment>' % fragment
+    if six.PY2:
+        if isinstance(fragment, unicode):
+            fragment = fragment.encode('utf8')
+    s = u'<fragment>%s</fragment>' % fragment
 
-    parsed = BeautifulSoup(s, 'lxml', from_encoding='utf-8')
+    wire = s.encode('utf-8')
+    parsed = BeautifulSoup(wire, 'lxml', from_encoding='utf-8')
     res = parsed.html.body.fragment
     assert res.name == 'fragment'
     return res
