@@ -21,6 +21,7 @@ out=out-comptests
 coverage_dir=out-coverage
 coverage_include='*src/duckietown_world*'
 coveralls_repo_token=Yp4i32KwzL4s6C76DfjJ3e6NqUgkXsv0X
+coverage_run=coverage run
 
 tests-clean:
 	rm -rf $(out) $(coverage_dir) .coverage .coverage.*
@@ -32,28 +33,36 @@ tests-contracts:
 	comptests --contracts --nonose  $(comptest_package)
 
 tests-contracts-coverage:
-	$(MAKE) docoverage-single-contracts
+	$(MAKE) tests-coverage-single-contracts
 	$(MAKE) coverage-report
 	$(MAKE) coverage-coveralls
 
+tests-coverage:
+	$(MAKE) tests-coverage-single-nocontracts
+	$(MAKE) coverage-report
+	$(MAKE) coverage-coveralls
 
-#
-#	comptests --contracts --coverage --nonose  $(comptest_package)
-#
-#tests-coverage:
-#	comptests --coverage --nonose  $(comptest_package)
+tests-LFV-coverage:
+	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
+
+tests-maps-coverage:
+	$(coverage_run) `which dt-world-draw-maps` --output artifacts/maps
 
 
-docoverage-single-contracts:
+tests-coverage-single-nocontracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=1 coverage run --source=duckietown_world  `which compmake` $(out) --contracts -c "rmake"
+	-DISABLE_CONTRACTS=1 $(coverage_run)  `which compmake` $(out)  -c "rmake"
 
-docoverage-parallel:
+tests-coverage-single-contracts:
+	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
+	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rmake"
+
+tests-coverage-parallel-contracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit" $(package)
-	-DISABLE_CONTRACTS=1 coverage run --source=duckietown_world --concurrency=multiprocessing `which compmake` $(out) -c "rparmake"
-	coverage combine
+	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rparmake"
 
 coverage-report:
+	coverage combine
 	coverage html -d $(coverage_dir)
 	#--include $(coverage_include)
 
