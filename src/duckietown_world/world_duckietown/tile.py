@@ -164,6 +164,8 @@ def translation_from_O3(pose):
 
 
 def relative_pose(base, pose):
+    assert isinstance(base, np.ndarray), base
+    assert isinstance(pose, np.ndarray), pose
     return np.dot(np.linalg.inv(base), pose)
 
 

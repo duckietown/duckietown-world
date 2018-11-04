@@ -1,11 +1,10 @@
 from abc import ABCMeta, abstractmethod
 
 from contracts import contract
-from six import with_metaclass
-
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.geo import PlacedObject
 from duckietown_world.seqs import Sequence
+from six import with_metaclass
 
 __all__ = [
     'RuleEvaluationContext',
@@ -17,11 +16,12 @@ __all__ = [
 
 class RuleEvaluationContext(object):
 
-    def __init__(self, interval, world, ego_name, lane_pose_seq):
+    def __init__(self, interval, world, ego_name, lane_pose_seq, pose_seq):
         self._interval = interval
         self._world = world
         self._ego_name = ego_name
         self._lane_pose_seq = lane_pose_seq
+        self._pose_seq = pose_seq
 
     @contract(returns=Sequence)
     def get_interval(self):
@@ -44,6 +44,11 @@ class RuleEvaluationContext(object):
         """ Returns the lane pose result sequence.
             At each timestamp a possibly empty dict of index -> LanePoseResult """
         return self._lane_pose_seq
+
+    @contract(returns=Sequence)
+    def get_ego_pose_global(self):
+        """ Returns the global pose of the vehicle. """
+        return self._pose_seq
 
 
 class EvaluatedMetric(Serializable):
@@ -88,22 +93,22 @@ def evaluate_rules(poses_sequence, interval, world, ego_name):
     from duckietown_world.rules import DeviationFromCenterLine
     from duckietown_world.rules import InDrivableLane
     from duckietown_world.rules import DeviationHeading
+    from duckietown_world.rules import DrivenLength
     rules = {
         'deviation-heading': DeviationHeading(),
         'in-drivable-lane': InDrivableLane(),
         'deviation-center-line': DeviationFromCenterLine(),
+        'driving-distance': DrivenLength(),
     }
 
-    context = RuleEvaluationContext(interval, world, ego_name, lane_pose_seq)
+    context = RuleEvaluationContext(interval, world, ego_name=ego_name,
+                                    lane_pose_seq=lane_pose_seq, pose_seq=poses_sequence)
 
     evaluated = {}
     for name, rule in rules.items():
         result = RuleEvaluationResult(rule)
         rule.evaluate(context, result)
         evaluated[name] = result
-        # for k, v in result.metrics.items():
-        #     kk = (name,) + k
-        #     metrics[kk] = result
     return evaluated
 
 
@@ -122,11 +127,8 @@ def make_timeseries(evaluated):
             if evaluated_metric.cumulative:
                 sequences['cumulative'] = evaluated_metric.cumulative
 
-            # if km == ():
-            #     title = rer.
-            # else:
             kk = "/".join((k,) + km)
-            title = evaluated_metric.title
+            title = evaluated_metric.title + ( '(%s)' % evaluated_metric.title if km else "")
             timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
     # print(list(timeseries))
     return timeseries

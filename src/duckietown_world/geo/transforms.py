@@ -23,7 +23,7 @@ class Transform(with_metaclass(ABCMeta)):
 
     @abstractmethod
     def asmatrix2d(self):
-        pass
+        """ """
     #
     # def as_M33(self):
     #     pass

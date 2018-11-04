@@ -2,15 +2,17 @@ import textwrap
 
 import numpy as np
 from contracts import contract
-
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
 from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
+from duckietown_world.world_duckietown.tile import relative_pose
+
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [
     'InDrivableLane',
     'DeviationFromCenterLine',
     'DeviationHeading',
+    'DrivenLength',
 ]
 
 
@@ -158,3 +160,81 @@ class InDrivableLane(Rule):
 
         result.set_metric(name=(), total=dtot, incremental=sequence,
                           title=title, description=description, cumulative=cumulative)
+
+
+import geometry as geo
+
+
+class DrivenLength(Rule):
+
+    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
+    def evaluate(self, context, result):
+        assert isinstance(result, RuleEvaluationResult)
+        interval = context.get_interval()
+        lane_pose_seq = context.get_lane_pose_seq()
+        ego_pose_sequence = context.get_ego_pose_global()
+
+        timestamps = []
+        driven_any = []
+        driven_lanedir = []
+
+        for idt in iterate_with_dt(interval):
+            t0, t1 = idt.v0, idt.v1  # not v
+            try:
+                name2lpr = lane_pose_seq.at(t0)
+
+                p0 = ego_pose_sequence.at(t0)
+                p1 = ego_pose_sequence.at(t1)
+            except UndefinedAtTime:
+                dr_any = dr_lanedir = 0.0
+
+            else:
+                if name2lpr:
+                    prel = relative_pose(p0, p1)
+                    translation, _ = geo.translation_angle_from_SE2(prel)
+
+                    dr_any = np.linalg.norm(translation)
+
+                    ds = []
+                    for k, lpr in name2lpr.items():
+                        assert isinstance(lpr, GetLanePoseResult)
+                        c0 = lpr.center_point
+                        prelc0 = relative_pose(c0.asmatrix2d().m, p1)
+                        translation, _ = geo.translation_angle_from_SE2(prelc0)
+
+                        # otherwise this lane should not be reported
+                        assert translation[0] >= 0, translation
+                        ds.append(translation[0])
+
+                    dr_lanedir = max(ds)
+                else:
+                    # no lp
+                    dr_any = dr_lanedir = 0.0
+
+            driven_any.append(dr_any)
+            driven_lanedir.append(dr_lanedir)
+            timestamps.append(idt.t0)
+
+        driven_any_incremental = SampledSequence(timestamps, driven_any)
+        driven_any_cumulative = integrate(driven_any_incremental)
+
+        title = "Distance"
+        description = textwrap.dedent("""\
+            This metric computes how far the robot drove.
+        """)
+
+        result.set_metric(name=('driven_any',), total=driven_any_cumulative.values[-1],
+                          incremental=driven_any_incremental,
+                          title=title, description=description, cumulative=driven_any_cumulative)
+        title = "Lane distance"
+
+        driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
+        driven_lanedir_cumulative = integrate(driven_lanedir_incremental)
+
+        description = textwrap.dedent("""\
+            This metric computes how far the robot drove
+            **in the direction of the lane**.
+        """)
+        result.set_metric(name=('driven_lanedir',), total=driven_lanedir_cumulative.values[-1],
+                          incremental=driven_lanedir_incremental,
+                          title=title, description=description, cumulative=driven_lanedir_cumulative)
