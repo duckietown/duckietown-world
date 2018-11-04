@@ -29,6 +29,9 @@ tests-contracts:
 tests-contracts-coverage:
 	comptests --contracts --coverage --nonose duckietown_world_tests
 
+tests-coverage:
+	comptests --coverage --nonose duckietown_world_tests
+
 
 
 branch=$(shell git rev-parse --abbrev-ref HEAD)
