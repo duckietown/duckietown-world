@@ -16,25 +16,58 @@ upload:
 	twine upload dist/*
 
 
+comptest_package=duckietown_world_tests
+out=out-comptests
+coverage_dir=out-coverage
+coverage_include='*src/duckietown_world*'
+coveralls_repo_token=Yp4i32KwzL4s6C76DfjJ3e6NqUgkXsv0X
 
 tests-clean:
-	rm -rf out-comptests
+	rm -rf $(out) $(coverage_dir) .coverage .coverage.*
 
 tests:
-	comptests --nonose duckietown_world_tests
+	comptests --nonose $(comptest_package)
 
 tests-contracts:
-	comptests --contracts --nonose duckietown_world_tests
+	comptests --contracts --nonose  $(comptest_package)
 
 tests-contracts-coverage:
-	comptests --contracts --coverage --nonose duckietown_world_tests
+	comptests --contracts --coverage --nonose  $(comptest_package)
 
 tests-coverage:
-	comptests --coverage --nonose duckietown_world_tests
+	comptests --coverage --nonose  $(comptest_package)
+
+
+docoverage-single:
+	# note you need "rmake" otherwise it will not be captured
+	rm -rf $(coverage_dir) .coverage
+	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
+	-DISABLE_CONTRACTS=1 coverage2 run `which compmake` $(out) -c "rmake"
+	$(MAKE) coverage-report
+	$(MAKE) coverage-coveralls
+
+docoverage-parallel:
+	# note you need "rmake" otherwise it will not be captured
+	rm -rf $(coverage_dir) .coverage .coverage.*
+	-DISABLE_CONTRACTS=1 MCDP_TEST_LIBRARIES_EXCLUDE="mcdp_theory" comptests -o $(out) --nonose -c "exit" $(package)
+	-DISABLE_CONTRACTS=1 coverage2 run --concurrency=multiprocessing  `which compmake` $(out) -c "rparmake"
+	coverage combine
+	$(MAKE) coverage-report
+	$(MAKE) coverage-coveralls
+	#coverage html -d out_coverage --include '*src/mcdp*'
+
+coverage-report:
+	coverage html -d $(coverage_dir) --include $(coverage_include)
+
+coverage-coveralls:
+	# without --nogit, coveralls does not find the source code
+	COVERALLS_REPO_TOKEN=$(coveralls_repo_token) coveralls
+	#--nogit --base_dir .
 
 
 
-branch=$(shell git rev-parse --abbrev-ref HEAD)
+
+#branch=$(shell git rev-parse --abbrev-ref HEAD)
 #
 #tag_rpi=duckietown/rpi-duckietown-shell:$(branch)
 #tag_x86=duckietown/duckietown-shell:$(branch)
