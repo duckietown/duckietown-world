@@ -177,9 +177,9 @@ class GetClosestLane(object):
         if isinstance(transform, SE2Transform):
             transform = transform.as_SE2()
         poses = list(get_lane_poses(self.dw, transform))
-        if not poses:
-            self.no_matches_for.append(transform)
-            return None
+        # if not poses:
+        #     self.no_matches_for.append(transform)
+        #     return None
 
         s = sorted(poses, key=lambda _: np.abs(_.lane_pose.relative_heading))
         res = {}

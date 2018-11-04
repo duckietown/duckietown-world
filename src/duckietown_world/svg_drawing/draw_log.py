@@ -124,6 +124,10 @@ def read_simulator_log(filename):
 
     trajectory = SampledSequence(curpos_timestamps, transforms)
 
+    if not curpos_timestamps:
+        msg = 'Could not find any position.'
+        raise Exception(msg)
+
     robot = DB18()
     duckietown_map.set_object('ego', robot, ground_truth=trajectory)
     return SimulatorLog(duckietown=duckietown_map, observations=observations,
