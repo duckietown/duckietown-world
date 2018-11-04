@@ -6,7 +6,7 @@ networkx==2.2
 svgwrite==1.1.12
 pillow
 duckietown-serialization-ds1>=1,<2
-comptests==1.4.27
+
 PyGeometry==1.5.6
 
 beautifulsoup4>=4.6.3
@@ -16,3 +16,7 @@ scipy
 oyaml
 plotly
 markdown
+
+# testing
+comptests==1.4.27
+coverage
