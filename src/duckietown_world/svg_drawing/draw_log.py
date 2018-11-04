@@ -52,6 +52,7 @@ def draw_logs_main_(output, filename):
     timeseries = make_timeseries(evaluated)
 
     draw_static(duckietown_env, output, images=images, timeseries=timeseries)
+    return evaluated
 
 
 def read_log(filename):

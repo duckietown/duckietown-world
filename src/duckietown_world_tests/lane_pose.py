@@ -161,27 +161,10 @@ def lane_pose_test1():
 
     interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
     evaluated = evaluate_rules(poses_sequence=transforms_sequence,
-                             interval=interval, world=dw, ego_name=ego_name)
+                                interval=interval, world=dw, ego_name=ego_name)
 
     timeseries = make_timeseries(evaluated)
-    #
-    # for k, rer in evaluated.items():
-    #     from duckietown_world.rules import RuleEvaluationResult
-    #     from duckietown_world.svg_drawing.misc import TimeseriesPlot
-    #     assert isinstance(rer, RuleEvaluationResult)
-    #
-    #     for km, evaluated_metric in rer.metrics.items():
-    #         assert isinstance(evaluated_metric, EvaluatedMetric)
-    #         sequences = {}
-    #         if evaluated_metric.incremental:
-    #             sequences['incremental'] = evaluated_metric.incremental
-    #         if evaluated_metric.cumulative:
-    #             sequences['cumulative'] = evaluated_metric.cumulative
-    #
-    #         kk = "/".join((k,) + km)
-    #         title = kk
-    #         timeseries[kk] = TimeseriesPlot(title, evaluated_metric.description, sequences)
-    # print(list(timeseries))
+
 
     print('drawing')
     draw_static(dw, outdir, area=area, timeseries=timeseries)
