@@ -39,6 +39,7 @@ setup(name='duckietown-world',
           'scipy',
           'plotly',
           'oyaml',
+          'markdown',
       ],
 
       tests_require=[

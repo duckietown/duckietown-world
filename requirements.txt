@@ -15,3 +15,4 @@ future
 scipy
 oyaml
 plotly
+markdown
