@@ -10,7 +10,7 @@ comptests==1.4.26
 PyGeometry==1.5.6
 
 beautifulsoup4>=4.6.3
-#lxml
+lxml
 future
 scipy
 oyaml

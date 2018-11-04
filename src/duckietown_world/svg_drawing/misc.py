@@ -124,7 +124,7 @@ def recurive_draw_list(draw_list, prefix):
     return res
 
 
-def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
+def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                 timeseries=None):
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
     images = images or {}
@@ -222,17 +222,15 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
             }
             </style>
         
-            <p></p>
+            <p>
             <input id='checkbox-static' type="checkbox"  onclick="hideshow(this);" checked>static data</input>
             <input id='checkbox-textures' type="checkbox"  onclick="hideshow(this);" checked>textures</input>
             <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
+            <br/>
             <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane segments</input>
             (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">control points</input>)</p>
-            
-            <p>
-            <input id='checkbox-current_lane' type="checkbox"  onclick="hideshow(this);">current lane</input>
-            <input id='checkbox-anchors' type="checkbox"  onclick="hideshow(this);">anchor point</input>
             </p>
+           
             
             <p>
             <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>vehicles</input>
@@ -240,6 +238,10 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
             <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
             <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
           
+            </p>
+             <p>
+            <input id='checkbox-current_lane' type="checkbox"  onclick="hideshow(this);">current lane</input>
+            <input id='checkbox-anchors' type="checkbox"  onclick="hideshow(this);">anchor point</input>
             </p>
             <script>
                 var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
@@ -300,6 +302,7 @@ def draw_static(root, output_dir, pixel_size=(640, 640), area=None, images=None,
     logger.info('Written HTML to %s' % fn_html)
 
     return [fn_svg, fn_html]
+
 
 def get_resized_image(bytes_content, width):
     from PIL import Image

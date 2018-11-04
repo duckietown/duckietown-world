@@ -219,13 +219,7 @@ class Anchor(PlacedObject):
 
 
 def create_lane_highlight(poses_sequence, dw):
-    # @contract(x=GetLanePoseResult)
-    # def get_center_point(x):
-    #     return x.center_point
-
     lane_pose_results = poses_sequence.transform_values(GetClosestLane(dw))
-    # center_points = lane_pose_results.transform_values(get_center_point)
-    # dw.set_object('center_point', PlacedObject(), ground_truth=center_points)
 
     visualization = PlacedObject()
     dw.set_object('visualization', visualization, ground_truth=SE2Transform.identity())
