@@ -54,7 +54,7 @@ jobs:
           name: Coverage analysis
           when: always
           command: |
-            coverage html -d artifacts/coverage
+            PATH=~/.local/bin:$PATH coverage html -d artifacts/coverage
 
       - run:
           name: Statistics
