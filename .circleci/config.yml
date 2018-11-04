@@ -32,7 +32,9 @@ jobs:
       - run:
           name: Run tests
           command: |
-            PATH=~/.local/bin:$PATH  make tests-clean tests
+            PATH=~/.local/bin:$PATH  make tests-clean tests-contracts-coverage
+
+            coverage html -d artifacts/coverage
 
       - run:
           name: Examples
