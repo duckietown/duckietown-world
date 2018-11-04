@@ -200,11 +200,11 @@ class DrivenLength(Rule):
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
                         prelc0 = relative_pose(c0.asmatrix2d().m, p1)
-                        translation, _ = geo.translation_angle_from_SE2(prelc0)
+                        tas = geo.translation_angle_scale_from_E2(prelc0)
 
                         # otherwise this lane should not be reported
-                        assert translation[0] >= 0, translation
-                        ds.append(translation[0])
+                        assert tas.translation[0] >= 0, tas
+                        ds.append(tas.translation[0])
 
                     dr_lanedir = max(ds)
                 else:

@@ -170,7 +170,6 @@ def relative_pose(base, pose):
 
 class GetClosestLane(object):
     def __init__(self, dw):
-        # self.previous = None
         self.no_matches_for = []
         self.dw = dw
 
@@ -181,30 +180,12 @@ class GetClosestLane(object):
         if not poses:
             self.no_matches_for.append(transform)
             return None
-        #
-        # print(["/".join(_.lane_segment_fqn) for _ in poses])
-        # if len(poses) == 1:
-        #     closest = poses[0]
-        # else:
-        #     # more than one to choose from
-        #
-        #     if self.previous is not None:
-        #         for _ in poses:
-        #             if _.lane_segment_fqn == self.previous.lane_segment_fqn:
-        #                 closest = _
-        #                 break
-        #         else:
-        #             closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
-        #     else:
-        #         closest = sorted(poses, key=lambda _: _.lane_pose.distance_from_center)[0]
 
         s = sorted(poses, key=lambda _: np.abs(_.lane_pose.relative_heading))
         res = {}
         for i, _ in enumerate(s):
             res[i] = _
-        #
-        # print("/".join(closest.lane_segment_fqn))
-        # self.previous = closest
+
         return res
 
 
@@ -228,9 +209,7 @@ def create_lane_highlight(poses_sequence, dw):
         else:
             return v
 
-    print(poses_sequence)
     poses_sequence = poses_sequence.transform_values(mapi)
-    print(poses_sequence)
 
     lane_pose_results = poses_sequence.transform_values(GetClosestLane(dw))
 

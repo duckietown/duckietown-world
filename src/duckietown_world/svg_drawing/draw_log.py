@@ -37,6 +37,7 @@ def draw_logs_main_(output, filename):
         output = filename + '.out'
     if not os.path.exists(output):
         os.makedirs(output)
+    logger.info('processing file %s' % filename)
 
     log = read_simulator_log(filename)
     duckietown_env = log.duckietown

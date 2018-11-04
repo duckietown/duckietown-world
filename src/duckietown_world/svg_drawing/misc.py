@@ -172,7 +172,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
         imagename2div[name] = Tag(name='div')
         obs_div.append(imagename2div[name])
 
-    logger.debug('dynamic: %s' % dynamic)
+    # logger.debug('dynamic: %s' % dynamic)
     for i, t in keyframes:
         g_t = drawing.g()
         g_t.attribs['class'] = 'keyframe keyframe%d' % i
