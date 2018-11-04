@@ -75,24 +75,24 @@ def get_static_and_dynamic(po):
 
     return static, dynamic
 
-
-@contract(po=PlacedObject, returns=PlacedObject)
-def flatten_hierarchy(po):
-    assert isinstance(po, PlacedObject)
-    res = PlacedObject()
-    G = get_flattened_measurement_graph(po)
-
-    root_name = ()
-    for name in G.nodes():
-        if name == root_name:
-            continue
-        edge_data = G.get_edge_data(root_name, name)
-
-        transform = edge_data['transform_sequence']
-        ob = po.get_object_from_fqn(name)
-        name2 = "/".join(name)
-        res.set_object(name2, ob, ground_truth=transform)
-    return res
+#
+# @contract(po=PlacedObject, returns=PlacedObject)
+# def flatten_hierarchy(po):
+#     assert isinstance(po, PlacedObject)
+#     res = PlacedObject()
+#     G = get_flattened_measurement_graph(po)
+#
+#     root_name = ()
+#     for name in G.nodes():
+#         if name == root_name:
+#             continue
+#         edge_data = G.get_edge_data(root_name, name)
+#
+#         transform = edge_data['transform_sequence']
+#         ob = po.get_object_from_fqn(name)
+#         name2 = "/".join(name)
+#         res.set_object(name2, ob, ground_truth=transform)
+#     return res
 
 
 def get_flattened_measurement_graph(po, include_root_to_self=False):

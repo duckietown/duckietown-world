@@ -5,3 +5,7 @@ dist
 cli
 out-*
 *.json.out
+.coverage
+.coverage.*
+artifacts
+.ipynb_checkpoints
