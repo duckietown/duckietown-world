@@ -26,6 +26,10 @@ coverage_run=coverage run
 tests-clean:
 	rm -rf $(out) $(coverage_dir) .coverage .coverage.*
 
+junit:
+	mkdir -p $(out)/junit
+	comptests-to-junit $(out)/compmake > $(out)/junit/junit.xml
+
 tests:
 	comptests --nonose $(comptest_package)
 

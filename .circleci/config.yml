@@ -11,6 +11,8 @@ jobs:
   test-3.6: &test-template
     environment:
       COLUMNS: 160
+      # default is /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH: ~/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     docker:
       - image: python:3.6
     working_directory: ~/repo
@@ -19,55 +21,60 @@ jobs:
       - run:
           name: Install deps
           command: |
-
             pip install -q --user --upgrade -r requirements.txt
-            python setup.py develop --prefix ~/.local --no-deps
-            echo PATH=$PATH
 
-            mkdir artifacts
+      - run:
+          name: List deps
+          command: |
+            mkdir -p artifacts
             pip freeze | tee artifacts/pip-freeze.txt
 
-
-
+      - run:
+          name: setup.py develop
+          command: |
+            python setup.py develop --prefix ~/.local --no-deps
 
       - run:
           name: Run tests
           command: |
-            PATH=~/.local/bin:$PATH make tests-clean tests-contracts-coverage
+            make tests-contracts-coverage
 
       - run:
-          name: Examples
+          name: Example draw maps
           command: |
-            PATH=~/.local/bin:$PATH make tests-maps-coverage
-
+            make tests-maps-coverage
 
       - run:
-          name: Examples
+          name: Example LFV download
           command: |
-
-
             rm test-data/LFV.json
             wget https://github.com/duckietown/duckietown-world/raw/master18/test-data/LFV.json -O test-data/LFV.json
 
-            PATH=~/.local/bin:$PATH make tests-LFV-coverage
-
+      - run:
+          name: Example LFV
+          command: |
+            make tests-LFV-coverage
 
       - run:
           name: Coverage analysis
           when: always
           command: |
-            PATH=~/.local/bin:$PATH coverage html -d artifacts/coverage
+            make coverage-report
 
       - run:
-          name: Statistics
+          name: Coveralls submission
           when: always
           command: |
-            mkdir junit
-            PATH=~/.local/bin:$PATH comptests-to-junit out-comptests/compmake > junit/junit.xml
+            make coverage-coveralls
 
+      - run:
+          name: Create JUnit output
+          when: always
+          command: |
+            make junit
 
       - test-results-store:
-          path: junit
+          path: out-comptests/junit
 
       - store_artifacts:
           path: out-comptests/duckietown_world_tests
