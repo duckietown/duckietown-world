@@ -32,28 +32,26 @@ tests-contracts:
 	comptests --contracts --nonose  $(comptest_package)
 
 tests-contracts-coverage:
-	comptests --contracts --coverage --nonose  $(comptest_package)
-
-tests-coverage:
-	comptests --coverage --nonose  $(comptest_package)
-
-
-docoverage-single:
-	# note you need "rmake" otherwise it will not be captured
-	rm -rf $(coverage_dir) .coverage
-	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=1 coverage2 run --source=duckietown_world  `which compmake` $(out) -c "rmake"
+	$(MAKE) docoverage-single-contracts
 	$(MAKE) coverage-report
 	$(MAKE) coverage-coveralls
+
+
+#
+#	comptests --contracts --coverage --nonose  $(comptest_package)
+#
+#tests-coverage:
+#	comptests --coverage --nonose  $(comptest_package)
+
+
+docoverage-single-contracts:
+	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
+	-DISABLE_CONTRACTS=1 coverage run --source=duckietown_world  `which compmake` $(out) --contracts -c "rmake"
 
 docoverage-parallel:
-	# note you need "rmake" otherwise it will not be captured
-	rm -rf $(coverage_dir) .coverage .coverage.*
-	-DISABLE_CONTRACTS=1 MCDP_TEST_LIBRARIES_EXCLUDE="mcdp_theory" comptests -o $(out) --nonose -c "exit" $(package)
-	-DISABLE_CONTRACTS=1 coverage2 run --source=duckietown_world --concurrency=multiprocessing  `which compmake` $(out) -c "rparmake"
+	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit" $(package)
+	-DISABLE_CONTRACTS=1 coverage run --source=duckietown_world --concurrency=multiprocessing `which compmake` $(out) -c "rparmake"
 	coverage combine
-	$(MAKE) coverage-report
-	$(MAKE) coverage-coveralls
 
 coverage-report:
 	coverage html -d $(coverage_dir)
