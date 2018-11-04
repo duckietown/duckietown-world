@@ -14,6 +14,7 @@ from .misc import draw_static
 
 __all__ = [
     'draw_logs_main',
+    'draw_logs_main_',
 ]
 
 
@@ -90,13 +91,13 @@ def read_simulator_log(filename):
         if ob.topic == 'observations':
             timestamps_observations.append(ob.timestamp)
             observations.append(ob.data)
-        if ob.topic == 'misc':
-            sim = ob.data['Simulator']
-            cur_pos = sim['cur_pos']
-            cur_angle = sim['cur_angle']
-
-            curpos_values.append((cur_pos, cur_angle))
-            curpos_timestamps.append(ob.timestamp)
+        # if ob.topic == 'misc':
+        #     sim = ob.data['Simulator']
+        #     cur_pos = sim['cur_pos']
+        #     cur_angle = sim['cur_angle']
+        #
+        #     curpos_values.append((cur_pos, cur_angle))
+        #     curpos_timestamps.append(ob.timestamp)
         if ob.topic == 'Simulator':
             sim = ob.data
             cur_pos = sim['cur_pos']
