@@ -54,7 +54,7 @@ class RuleEvaluationContext(object):
 
 class EvaluatedMetric(Serializable):
     def __init__(self, total, incremental, description, cumulative, title):
-        self.total = total
+        self.total = float(total)
         self.title = title
         self.incremental = incremental
         self.cumulative = cumulative

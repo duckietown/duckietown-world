@@ -203,7 +203,7 @@ class DrivenLength(Rule):
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 
                         # otherwise this lane should not be reported
-                        assert tas.translation[0] >= 0, tas
+                        # assert tas.translation[0] >= 0, tas
                         ds.append(tas.translation[0])
 
                     dr_lanedir = max(ds)
