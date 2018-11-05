@@ -553,7 +553,7 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     }
     
     #observation_sequence {
-        width: 150px;
+        width: 220px;
     }
     td#obs img { width: 90%%;} 
 </style>

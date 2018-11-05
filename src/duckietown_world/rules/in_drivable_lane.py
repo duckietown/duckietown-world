@@ -189,17 +189,19 @@ class DrivenLength(Rule):
                 dr_any = dr_lanedir = 0.0
 
             else:
-                if name2lpr:
-                    prel = relative_pose(p0, p1)
-                    translation, _ = geo.translation_angle_from_SE2(prel)
+                prel = relative_pose(p0, p1)
+                translation, _ = geo.translation_angle_from_SE2(prel)
+                dr_any = np.linalg.norm(translation)
 
-                    dr_any = np.linalg.norm(translation)
+                if name2lpr:
 
                     ds = []
                     for k, lpr in name2lpr.items():
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
-                        prelc0 = relative_pose(c0.asmatrix2d().m, p1)
+                        ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
+                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
+                        prelc0 = relative_pose(c0_, p1)
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 
                         # otherwise this lane should not be reported
@@ -209,7 +211,7 @@ class DrivenLength(Rule):
                     dr_lanedir = max(ds)
                 else:
                     # no lp
-                    dr_any = dr_lanedir = 0.0
+                    dr_lanedir = 0.0
 
             driven_any.append(dr_any)
             driven_lanedir.append(dr_lanedir)
