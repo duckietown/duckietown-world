@@ -11,6 +11,19 @@ __all__ = [
 
 
 class PlatformDynamics(with_metaclass(ABCMeta)):
+    """
+        This class represents the state of a dynamical system.
+
+
+            s0 = ...
+
+            s1 = s0.integrate(dt=0.1, commands=[1,1])
+            s2 = s0.integrate(dt=0.1, commands=[1,1])
+
+
+        Each subclass has its own representation of commands.
+
+    """
 
     @abstractmethod
     @contract(dt='>0')
@@ -20,7 +33,7 @@ class PlatformDynamics(with_metaclass(ABCMeta)):
 
             :param dt: time interval
             :param commands: class-specific commands
-            :return: None
+            :return: the next state
         """
 
     @abstractmethod
