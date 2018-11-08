@@ -297,6 +297,15 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
     with open(fn_html, 'w') as f:
         f.write(html)
 
+    # language=css
+    style = """
+        g.axes, .LaneSegment {
+        display: none;
+        }
+         
+    """
+    drawing.defs.add(drawing.style(style))
+
     drawing.save(pretty=True)
     logger.info('Written SVG to %s' % fn_svg)
     logger.info('Written HTML to %s' % fn_html)
@@ -369,7 +378,6 @@ def make_tabs(timeseries):
 
         layout = {'font': dict(size=10), 'margin': dict(t=0)}
 
-
         n = len(scatters)
         fig = tools.make_subplots(rows=1, cols=n)
         fig.layout.update(layout)
@@ -429,7 +437,6 @@ def render_tabs(tabs):
         div_c.append(tab.content)
 
         div_content.append(div_c)
-
 
     script = Tag(name='script')
     # language=javascript
