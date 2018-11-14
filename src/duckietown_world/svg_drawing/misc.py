@@ -251,7 +251,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                     "checkbox-textures": "g.static .tile-textures",
                     "checkbox-axes": "g.axes",
                     "checkbox-lane_segments": "g.static .LaneSegment",
-                    "checkbox-lane_segments-control_points": ".LaneSegment .control-point",
+                    "checkbox-lane_segments-control_points": " .control-point",
                     "checkbox-current_lane": "g.keyframe .LaneSegment",
                     "checkbox-duckies": ".Duckie",
                     "checkbox-signs": ".Sign",
@@ -576,6 +576,16 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     });
 </script>
 """ % (nkeyframes - 1)
+
+    if nkeyframes <= 1:
+        controls_html += ('''
+        <style>
+        .slidecontainer {
+        display: none;
+        }
+        </style>
+        ''')
+
     controls = bs(controls_html)
 
     valbox = controls.find('span', id='time-display')

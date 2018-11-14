@@ -5,9 +5,9 @@ import copy
 
 import six
 from contracts import contract, check_isinstance
+
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.seqs import UndefinedAtTime, Sequence
-
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -15,6 +15,7 @@ __all__ = [
     'PlacedObject',
     'SpatialRelation',
     'GroundTruth',
+    'get_object_tree',
 ]
 
 
@@ -52,6 +53,10 @@ class SpatialRelation(Serializable):
 
 
 class GroundTruth(SpatialRelation):
+
+    def __repr__(self):
+        return 'GroundTruth(%r -> %r  %s)' % (self.a, self.b, self.transform)
+
     @classmethod
     def params_from_json_dict(cls, d):
         return {}
@@ -133,6 +138,27 @@ class PlacedObject(Serializable):
             x.spatial_relations = spatial_relations
             return x
 
+    def __getitem__(self, item):
+        """
+
+        Either url-like:
+
+            child1/sub
+            .
+
+        or tuple like:
+
+            ('child1', 'sub')
+            ()
+
+        :param item:
+        :return:
+        """
+        if isinstance(item, str):
+            item = fqn_from_url(item)
+        check_isinstance(item, tuple)
+        return self.get_object_from_fqn(item)
+
     def get_object_from_fqn(self, fqn):
         if fqn == ():
             return self
@@ -179,3 +205,59 @@ class PlacedObject(Serializable):
 
     def get_footprint(self):
         return RectangularArea([-0.1, -0.1], [0.1, 0.1])
+
+
+from contracts import indent
+import yaml
+
+
+def get_object_tree(po, levels=100, spatial_relations=False, attributes=False):
+    ss = []
+    ss.append('%s' % type(po).__name__)
+    d = po.params_to_json_dict()
+    d.pop('children', None)
+    d.pop('spatial_relations', None)
+
+    if attributes:
+        if d:
+            ds = yaml.safe_dump(d, encoding='utf-8', indent=4, allow_unicode=True, default_flow_style=False)
+            ss.append('\n' + indent(ds, ' '))
+
+    if po.children and levels >= 1:
+        ss.append('')
+        N = len(po.children)
+        for i, (child_name, child) in enumerate(po.children.items()):
+
+            if i != N - 1:
+                prefix1 = u'├ %s ┐ ' % child_name
+                prefix2 = u'│ %s │ ' % (' ' * len(child_name))
+            else:
+                prefix1 = u'└ %s ┐ ' % child_name
+                prefix2 = u'  %s │ ' % (' ' * len(child_name))
+            c = get_object_tree(child, attributes=attributes, spatial_relations=spatial_relations, levels=levels - 1)
+            sc = indent(c, prefix2, prefix1)
+            n = max(len(_) for _ in sc.split('\n'))
+            sc += '\n' + prefix2[:-2] + u'└' + u'─' * (n - len(prefix2) + 3)
+            ss.append(sc)
+
+    if spatial_relations:
+        if po.spatial_relations and levels >= 1:
+            ss.append('')
+            for r_name, rel in po.spatial_relations.items():
+                ss.append('- from "%s" to "%s"  %s ' % (url_from_fqn(rel.a), url_from_fqn(rel.b), rel.transform))
+
+    return "\n".join(ss)
+
+
+def url_from_fqn(x):
+    if not x:
+        return '.'
+    else:
+        return '/'.join(x)
+
+
+def fqn_from_url(u):
+    if u == '.':
+        return ()
+    else:
+        return tuple(u.split('/'))
