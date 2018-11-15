@@ -4,6 +4,8 @@ from .measurements import *
 from .svg import *
 from .world_building import *
 from .lane_pose import *
+from .tags import *
+from .segment import  *
 
 def jobs_comptests(context):
     # instantiation

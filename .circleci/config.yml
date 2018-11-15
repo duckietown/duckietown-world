@@ -97,7 +97,7 @@ jobs:
       - store_artifacts:
           path: notebooks
           destination: notebooks
-          
+
   test-3.5:
     <<: *test-template
     docker:

@@ -18,11 +18,15 @@ def draw_maps_main(args=None):
         args = sys.argv[1:]
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", help="output dir", default='out-draw_maps')
+    parser.add_argument('map_names', nargs=argparse.REMAINDER)
     parsed = parser.parse_args(args)
 
     output = parsed.output
 
-    map_names = list_maps()
+    if parsed.map_names:
+        map_names = parsed.map_names
+    else:
+        map_names = list_maps()
     print(map_names)
 
     for map_name in map_names:
