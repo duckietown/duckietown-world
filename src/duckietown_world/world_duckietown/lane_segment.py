@@ -5,6 +5,7 @@ from contracts import contract, check_isinstance, new_contract
 
 import geometry as geo
 from duckietown_serialization_ds1 import Serializable
+from duckietown_serialization_ds1.serialization1 import as_json_dict
 from duckietown_world.geo import SE2Transform, PlacedObject
 from duckietown_world.utils import memoized_reset, SE2_interpolate, SE2_apply_R2
 from .tile import relative_pose
@@ -123,7 +124,7 @@ class LaneSegment(PlacedObject):
                         correct_direction=correct_direction)
 
     def params_to_json_dict(self):
-        return dict(width=self.width, control_points=self.control_points)
+        return dict(width=self.width, control_points=as_json_dict(self.control_points))
 
     def extent_points(self):
         return self.lane_profile()

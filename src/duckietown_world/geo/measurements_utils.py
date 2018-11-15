@@ -56,6 +56,8 @@ def get_static_and_dynamic(po):
     G = get_flattened_measurement_graph(po)
 
     static = []
+
+    static.append(())
     dynamic = []
     root_name = ()
     for name in G.nodes():
