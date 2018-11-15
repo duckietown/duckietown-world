@@ -1,2 +1,6 @@
 prune test-data
-graft src/data
+graft src/duckietown_world/data
+
+
+# python setup.py install
+# python setup.py develop

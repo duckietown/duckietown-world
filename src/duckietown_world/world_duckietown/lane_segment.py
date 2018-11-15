@@ -1,13 +1,13 @@
 # coding=utf-8
+import geometry as geo
 import numpy as np
 import svgwrite
 from contracts import contract, check_isinstance, new_contract
-
-import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 from duckietown_serialization_ds1.serialization1 import as_json_dict
 from duckietown_world.geo import SE2Transform, PlacedObject
 from duckietown_world.utils import memoized_reset, SE2_interpolate, SE2_apply_R2
+
 from .tile import relative_pose
 
 __all__ = [
@@ -18,6 +18,19 @@ __all__ = [
 
 
 class LanePose(Serializable):
+
+    # coordinate frame
+
+    # longitudinal => along_lane
+    # lateral => lateral
+    # relative heading
+
+    #
+
+    # lateral_right => lateral position of closest right lane boundary
+    # lateral_left => lateral position of closest left lane boundary
+
+    # center_point: anchor point on the center lane
 
     def __init__(self, inside, outside_left, outside_right,
                  along_lane, lateral, relative_heading,
@@ -56,11 +69,21 @@ class LaneSegment(PlacedObject):
     @contract(width='>0', control_points='list[>=2](SE2Transform)')
     def __init__(self, width, control_points, *args, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
-        self.width = width
+        self.width = float(width)
         self.control_points = control_points
 
         for p in control_points:
             check_isinstance(p, SE2Transform)
+
+        for i in range(len(control_points)-1):
+            a = control_points[i]
+            b = control_points[i+1]
+            ta, _ = geo.translation_angle_from_SE2(a.as_SE2())
+            tb, _ = geo.translation_angle_from_SE2(b.as_SE2())
+            d = np.linalg.norm(ta-tb)
+            if d < 0.001:
+                msg = 'Two points are two close: \n%s\n%s' % (a, b)
+                raise ValueError(msg)
 
     def _copy(self):
         return self._simplecopy(width=self.width, control_points=self.control_points)

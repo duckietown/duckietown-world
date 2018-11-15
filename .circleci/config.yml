@@ -57,6 +57,11 @@ jobs:
             make tests-LFV-coverage
 
       - run:
+          name: Notebooks
+          command: |
+            make -C notebooks
+
+      - run:
           name: Coverage analysis
           when: always
           command: |
