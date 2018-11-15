@@ -24,6 +24,26 @@ GetLanePoseResult = namedtuple('GetLanePoseResult',
                                'center_point')
 
 
+class SignSlot(PlacedObject):
+    L = 0.03
+
+    def get_footprint(self):
+        L = SignSlot.L
+        return RectangularArea([-L / 2, -L / 2], [L / 2, L / 2])
+
+    def draw_svg(self, drawing, g):
+        L = SignSlot.L
+        L = 0.1
+        rect = drawing.rect(insert=(-L / 2, -L / 2),
+                            size=(L, L),
+                            fill="none",
+                            # style='opacity:0.4',
+                            stroke_width="0.005",
+                            stroke="pink", )
+        g.add(rect)
+        draw_axes(drawing, g, 0.04)
+
+
 class Tile(PlacedObject):
     def __init__(self, kind, drivable, **kwargs):
         PlacedObject.__init__(self, **kwargs)
@@ -39,6 +59,27 @@ class Tile(PlacedObject):
             logger.warning(msg)
 
             self.fn = None
+        LM = 0.5
+        to = 0.20
+        tc = 0.05
+        positions = {
+            0: (-LM + to, -LM + tc),
+            1: (-LM + tc, -LM + to),
+            2: (+LM - tc, -LM + to),
+            3: (+LM - to, -LM + tc),
+            5: (+LM - tc, +LM - to),
+            4: (+LM - to, +LM - tc),
+            6: (-LM + tc, +LM - to),
+            7: (-LM + to, +LM - tc),
+        }
+        for i, (x, y) in positions.items():
+            name = 'slot%d' % i
+            if name in self.children:
+                continue
+
+            sl = SignSlot()
+            t = SE2Transform((x, y), 0)
+            self.set_object(name, sl, ground_truth=t)
 
     def _copy(self):
         return type(self)(self.kind, self.drivable,
@@ -51,16 +92,7 @@ class Tile(PlacedObject):
         return RectangularArea([-0.5, -0.5], [0.5, 0.5])
 
     def draw_svg(self, drawing, g):
-        # rect = drawing.rect(width=1,height=1,)
-        # g.add(rect)
-        rect = drawing.rect(insert=(-0.5, -0.5),
-                            width=1,
-                            height=1,
-                            fill="#eee",
-                            style='opacity:0.4',
-                            stroke_width="0.01",
-                            stroke="none", )
-        # g.add(rect)
+
 
         if self.fn:
             # texture = get_jpeg_bytes(self.fn)
@@ -99,7 +131,6 @@ def get_lane_poses(dw, q, tol=0.000001):
         tile_fqn = it.fqn
         tile_transform = it.transform_sequence
         for _ in tile_transform.transforms:
-
             if isinstance(_, TileCoords):
                 tile_coords = _
                 break
