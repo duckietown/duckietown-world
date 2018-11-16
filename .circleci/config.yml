@@ -52,6 +52,11 @@ jobs:
             make tests-coverage-single-nocontracts
 
       - run:
+          name: Notebooks
+          command: |
+            make -C notebooks
+
+      - run:
           name: Example draw maps
           command: |
             make tests-maps-coverage
@@ -67,10 +72,6 @@ jobs:
           command: |
             make tests-LFV-coverage
 
-      - run:
-          name: Notebooks
-          command: |
-            make -C notebooks
 
       - run:
           name: Coverage analysis
