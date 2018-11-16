@@ -22,3 +22,7 @@ PyContracts==1.8.7
 comptests==1.4.27
 coverage
 coveralls
+
+
+jupyter
+nbconvert
