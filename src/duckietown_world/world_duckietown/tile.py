@@ -7,6 +7,7 @@ from duckietown_world import logger
 from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D, SE2Transform
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
+from duckietown_world.svg_drawing.misc import mime_from_fn
 from geometry import extract_pieces
 
 __all__ = [
@@ -25,7 +26,8 @@ GetLanePoseResult = namedtuple('GetLanePoseResult',
 
 
 class SignSlot(PlacedObject):
-    L = 0.03
+    """ Represents a slot where you can put a sign. """
+    L = 0.1
 
     def get_footprint(self):
         L = SignSlot.L
@@ -33,7 +35,7 @@ class SignSlot(PlacedObject):
 
     def draw_svg(self, drawing, g):
         L = SignSlot.L
-        L = 0.1
+
         rect = drawing.rect(insert=(-L / 2, -L / 2),
                             size=(L, L),
                             fill="none",
@@ -42,6 +44,38 @@ class SignSlot(PlacedObject):
                             stroke="pink", )
         g.add(rect)
         draw_axes(drawing, g, 0.04)
+
+
+def get_tile_slots():
+    LM = 0.5  # half tile
+    # tile_offset
+    to = 0.20
+    # tile_curb
+    tc = 0.05
+
+    positions = {
+        0: (+ to, + tc),
+        1: (+ tc, + to),
+        2: (- tc, + to),
+        3: (- to, + tc),
+        4: (- to, - tc),
+        5: (- tc, - to),
+        6: (+ tc, - to),
+        7: (+ to, - tc),
+    }
+
+    po = PlacedObject()
+    for i, (x, y) in positions.items():
+        name = str(i)
+        # if name in self.children:
+        #     continue
+
+        sl = SignSlot()
+        # theta = np.deg2rad(theta_deg)
+        theta = 0
+        t = SE2Transform((-LM + x, -LM + y), theta)
+        po.set_object(name, sl, ground_truth=t)
+    return po
 
 
 class Tile(PlacedObject):
@@ -59,27 +93,10 @@ class Tile(PlacedObject):
             logger.warning(msg)
 
             self.fn = None
-        LM = 0.5
-        to = 0.20
-        tc = 0.05
-        positions = {
-            0: (-LM + to, -LM + tc),
-            1: (-LM + tc, -LM + to),
-            2: (+LM - tc, -LM + to),
-            3: (+LM - to, -LM + tc),
-            5: (+LM - tc, +LM - to),
-            4: (+LM - to, +LM - tc),
-            6: (-LM + tc, +LM - to),
-            7: (-LM + to, +LM - tc),
-        }
-        for i, (x, y) in positions.items():
-            name = 'slot%d' % i
-            if name in self.children:
-                continue
-
-            sl = SignSlot()
-            t = SE2Transform((x, y), 0)
-            self.set_object(name, sl, ground_truth=t)
+        # if kind in ['asphalt']:
+        if not 'slots' in self.children:
+            slots = get_tile_slots()
+            self.set_object('slots', slots, ground_truth=SE2Transform.identity())
 
     def _copy(self):
         return type(self)(self.kind, self.drivable,
@@ -92,15 +109,21 @@ class Tile(PlacedObject):
         return RectangularArea([-0.5, -0.5], [0.5, 0.5])
 
     def draw_svg(self, drawing, g):
-
+        T = 0.562 / 0.585
+        S = 1.0
+        rect = drawing.rect(insert=(-S / 2, -S / 2),
+                            size=(S, S),
+                            fill='#222',
+                            stroke="none", )
+        g.add(rect)
 
         if self.fn:
             # texture = get_jpeg_bytes(self.fn)
             texture = open(self.fn, 'rb').read()
-            href = data_encoded_for_src(texture, 'image/jpeg')
+            href = data_encoded_for_src(texture, mime_from_fn(self.fn))
             img = drawing.image(href=href,
-                                size=(1, 1),
-                                insert=(-0.5, -0.5),
+                                size=(T, T),
+                                insert=(-T / 2, -T / 2),
                                 style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
                                 )
             img.attribs['class'] = 'tile-textures'

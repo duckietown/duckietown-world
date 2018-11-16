@@ -5,9 +5,9 @@ import copy
 
 import six
 from contracts import contract, check_isinstance
-
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.seqs import UndefinedAtTime, Sequence
+
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -89,6 +89,12 @@ class PlacedObject(Serializable):
                 from duckietown_world import SE2Transform
                 sr = GroundTruth(a=(), b=(child,), transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
+
+    def remove_object(self, k):
+        self.children.pop(k)
+        for sr_id, sr in list(self.spatial_relations.items()):
+            if sr.b == (k,):
+                self.spatial_relations.pop(sr_id)
 
     def _simplecopy(self, *args, **kwargs):
         children = dict((k, v) for k, v in self.children.items())

@@ -1,19 +1,36 @@
 # coding=utf-8
-import numpy as np
-from comptests import comptest, run_module_tests
-from numpy.testing import assert_almost_equal
+import yaml
+from comptests import comptest, run_module_tests, get_comptests_output_dir
 
-import geometry as geo
-from duckietown_world.world_duckietown import Integrator2D, GenericKinematicsSE2
-from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
-    WheelVelocityCommands
+# language=yaml
+from duckietown_world import construct_map, draw_static, get_object_tree
+
+map_yaml = """
+objects:
+- kind: sign_right_T_intersect
+  pos:
+    tile: [0, 0]
+    slot: 2
+    
+    
+tiles:
+- [ asphalt, straight/S, asphalt]
+- [ straight/E, 4way, straight/W]
+- [ asphalt, straight/N, asphal]  
+- [ asphalt, curve_right/W, straight/W]
+"""
+
+
 
 
 @comptest
 def tag_positions():
+    map_yaml_data = yaml.load(map_yaml)
+    m = construct_map(map_yaml_data, tile_size=0.61)
+    print(get_object_tree(m, attributes=True))
+    outdir = get_comptests_output_dir()
+    draw_static(m, outdir)
 
-    q0 = geo.SE2_from_translation_angle([0, 0], 0)
-    v0 = geo.se2.zero()
 
 if __name__ == '__main__':
     run_module_tests()

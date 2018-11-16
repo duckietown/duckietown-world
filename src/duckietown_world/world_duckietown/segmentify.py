@@ -3,11 +3,16 @@ from collections import namedtuple, defaultdict
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.geo.measurements_utils import iterate_by_class
 
+
+import numpy as np
+
 from .lane_segment import LaneSegment
 
-SkeletonGraphResult = namedtuple('SkeletonGraphResult', 'root root2 G')
+
 import geometry as geo
 
+
+SkeletonGraphResult = namedtuple('SkeletonGraphResult', 'root root2 G')
 
 def get_skeleton_graph(po):
     """ Returns a graph with the lane segments of the map """
@@ -79,8 +84,6 @@ def get_skeleton_graph(po):
             # print(' -> %s and %s meet at %s' % (lin_name, lout_name, mp))
             print('%s and %s meet at %s' % (lin_name, lout_name, k))
 
-
-
             def get(it):
                 if it in root.children:
                     return root.children[it]
@@ -91,7 +94,7 @@ def get_skeleton_graph(po):
             lout = get(lout_name)
 
             # name = 'alias%s' % (len(aliases))
-            name ='%s-%s' % (lin_name, lout_name)
+            name = '%s-%s' % (lin_name, lout_name)
             width = lin.width
             print(lin.control_points)
             print(lout.control_points)
@@ -115,9 +118,6 @@ def get_skeleton_graph(po):
             root2.set_object(k, v, ground_truth=SE2Transform.identity())
 
     return SkeletonGraphResult(root=root, root2=root2, G=None)
-
-
-import numpy as np
 
 
 def transform_lane_segment(lane_segment, transformation):
