@@ -1,5 +1,4 @@
-#!/bin/zsh
-
+#!/bin/bash
 
 for a in *.ipynb; do
 

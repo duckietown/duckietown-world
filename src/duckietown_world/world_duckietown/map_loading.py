@@ -3,20 +3,22 @@ import itertools
 import os
 import traceback
 
+import geometry as geo
 import numpy as np
 import oyaml as yaml
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import Scale2D, logger, SE2Transform
+from duckietown_world.geo import Scale2D, SE2Transform
 from duckietown_world.geo.measurements_utils import iterate_by_class
-from duckietown_world.world_duckietown.tags_db import FloorTag, TagInstance
 
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
 from .other_objects import Duckie, Tree, House, Bus, Truck, Cone, Barrier, Building, GenericObject, SIGNS
+from .tags_db import FloorTag, TagInstance
 from .tile import Tile
 from .tile_map import TileMap
 from .tile_template import load_tile_types
 from .traffic_light import TrafficLight
+from .. import logger
 
 __all__ = [
     'create_map',
@@ -62,7 +64,6 @@ def get_texture_dirs():
     assert os.path.exists(d), d
     d2 = os.path.join(module_dir, '../data/gd1/meshes')
     assert os.path.exists(d2), d2
-
 
     d3 = os.path.join(module_dir, '../data/tag36h11')
     assert os.path.exists(d3), d3
@@ -255,9 +256,6 @@ def get_transform(desc, tm, tile_size):
             return pose
 
 
-import geometry as geo
-
-
 def get_xy_slot(i):
     # tile_offset
     # to = 0.20
@@ -287,7 +285,7 @@ def get_texture_file(tex_name):
         suffixes = ['', '_1', '_2', '_3', '_4']
         for s in suffixes:
             for ext in ['.jpg', '.png', '']:
-                path = os.path.join(d, tex_name + s+ext)
+                path = os.path.join(d, tex_name + s + ext)
                 tried.append(path)
                 if os.path.exists(path):
                     res.append(path)
