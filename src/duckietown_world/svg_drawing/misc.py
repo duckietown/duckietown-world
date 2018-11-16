@@ -236,6 +236,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
             <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>vehicles</input>
             <input id='checkbox-duckies' type="checkbox"  onclick="hideshow(this);" checked>duckies</input>
             <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
+            <input id='checkbox-sign-papers' type="checkbox"  onclick="hideshow(this);" checked>signs textures</input>
             <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
           
             </p>
@@ -255,6 +256,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                     "checkbox-current_lane": "g.keyframe .LaneSegment",
                     "checkbox-duckies": ".Duckie",
                     "checkbox-signs": ".Sign",
+                    "checkbox-sign-papers": ".Sign .sign-paper",
                     "checkbox-vehicles": ".Vehicle",
                     "checkbox-decorations": ".Decoration",
                     'checkbox-anchors': '.Anchor',
@@ -299,8 +301,11 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
 
     # language=css
     style = """
+        .sign-paper {
+            display: none;
+        }
         g.axes, .LaneSegment {
-        display: none;
+            display: none;
         }
          
     """
@@ -636,6 +641,15 @@ body {{
     """.format(controls=str(controls), drawing=drawing_svg, obs_div=obs_div, other=other,
                div_timeseries=div_timeseries, visualize_controls=visualize_controls)
     return doc
+
+
+def mime_from_fn(fn):
+    if fn.endswith('png'):
+        return 'image/png'
+    elif fn.endswith('jpg'):
+        return 'image/jpeg'
+    else:
+        raise ValueError(fn)
 
 
 def data_encoded_for_src(data, mime):

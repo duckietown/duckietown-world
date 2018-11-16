@@ -21,3 +21,8 @@ class DuckietownMap(PlacedObject):
         p = [gx, (H - 1) * self.tile_size - gz]
         transform = SE2Transform(p, cur_angle)
         return transform
+
+    def get_drawing_children(self):
+        children = sorted(self.children)
+        children.remove('tilemap')
+        return ['tilemap'] + children

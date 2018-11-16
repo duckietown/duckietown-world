@@ -1,7 +1,8 @@
 # coding=utf-8
-from abc import abstractmethod
 
 from duckietown_world import logger
+from duckietown_world.svg_drawing.misc import mime_from_fn, draw_axes
+
 from ..geo import PlacedObject
 
 __all__ = [
@@ -14,7 +15,16 @@ __all__ = [
     'SignRightTIntersect',
     'SignStop',
     'SignTIntersect',
-    'SingTLightAhead',
+    'SignTLightAhead',
+    'SignOneWayRight',
+    'SignOneWayLeft',
+    'SignDuckCrossing',
+    'SignYield',
+    'SignNoLeftTurn',
+    'SignNoRightTurn',
+    'SignDoNotEnter',
+    'SignParking',
+    'SignPedestrian',
     'Bus',
     'House',
     'Tree',
@@ -23,6 +33,9 @@ __all__ = [
     'Vehicle',
     'Barrier',
     'Building',
+    'SIGNS',
+    'SIGNS_ALIASES',
+    'get_canonical_sign_name',
 ]
 
 
@@ -126,9 +139,23 @@ class Building(Decoration):
 
 class Sign(PlacedObject):
 
+    def __init__(self, tag=None, **kwargs):
+        PlacedObject.__init__(self, **kwargs)
+        self.tag = tag
+
     def draw_svg(self, drawing, g):
         texture = self.get_name_texture()
-        L, W = 0.2, 0.5
+        # x = -0.2
+        CM = 0.01
+        PAPER_WIDTH, PAPER_HEIGHT = 8.5 * CM, 15.5 * CM
+        PAPER_THICK = 0.01
+
+        BASE_SIGN = 5 * CM
+        WIDTH_SIGN = 1.1 * CM
+
+        y = -1.5 * PAPER_HEIGHT  # XXX not sure why this is negative
+        y = BASE_SIGN
+        x = -PAPER_WIDTH/2
         try:
             from .map_loading import get_texture_file
             fn = get_texture_file(texture)
@@ -136,9 +163,9 @@ class Sign(PlacedObject):
             msg = 'Cannot find texture for %s' % texture
             logger.warning(msg)
 
-            c = drawing.rect(insert=(-L / 2, -W / 2),
+            c = drawing.rect(insert=(x, y),
                              fill="white",
-                             size=(L, W,),
+                             size=(PAPER_WIDTH, PAPER_HEIGHT,),
                              stroke_width="0.01",
                              stroke="black", )
             g.add(c)
@@ -146,46 +173,144 @@ class Sign(PlacedObject):
         else:
             texture = open(fn, 'rb').read()
             from duckietown_world.world_duckietown.tile import data_encoded_for_src
-            href = data_encoded_for_src(texture, 'image/jpeg')
+
+            href = data_encoded_for_src(texture, mime_from_fn(fn))
 
             img = drawing.image(href=href,
-                                size=(L, W),
-                                insert=(-L / 2, -W / 2),
-                                style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
+                                size=(PAPER_WIDTH, PAPER_HEIGHT),
+                                insert=(x, y),
+
+                                stroke_width=0.001,
+                                stroke='black',
+                                style='transform: rotate(90deg) rotate(90deg) scaleX(-1)  rotate(-90deg);'
+                                      'border: solid 1px black '
                                 )
+            img.attribs['class'] = 'sign-paper'
             g.add(img)
 
-    @abstractmethod
+        c = drawing.rect(insert=(-BASE_SIGN / 2, -BASE_SIGN / 2),
+                         fill="lightgreen",
+
+                         stroke_width=0.001,
+                         stroke='black',
+                         size=(BASE_SIGN, BASE_SIGN,))
+        g.add(c)
+        draw_axes(drawing, g)
+        alpha = 1.2
+        c = drawing.rect(insert=(-WIDTH_SIGN / 2, -BASE_SIGN / 2 * alpha),
+                         fill="#FFCB9C",
+                         stroke_width=0.001,
+                         stroke='black',
+                         size=(WIDTH_SIGN, BASE_SIGN * alpha,))
+        g.add(c)
+
+        c = drawing.rect(insert=(+0.01 + -PAPER_THICK / 2, -PAPER_WIDTH / 2),
+                         fill="white",
+                         stroke_width=0.001,
+                         stroke='black',
+                         size=(PAPER_THICK, PAPER_WIDTH,))
+        g.add(c)
+
     def get_name_texture(self):
-        pass
+        for k, v in SIGNS.items():
+            if v.__name__ == type(self).__name__:
+                return k
+
+        raise KeyError(type(self).__name__)
 
 
 class SignStop(Sign):
-    def get_name_texture(self):
-        return 'sign_stop'
+    pass
 
 
 class SignLeftTIntersect(Sign):
-    def get_name_texture(self):
-        return 'sign_left_T_intersect'
+    pass
 
 
 class SignRightTIntersect(Sign):
-    def get_name_texture(self):
-        return 'sign_right_T_intersect'
+    pass
 
 
 class SignTIntersect(Sign):
-    def get_name_texture(self):
-        return 'sign_T_intersect'
+    pass
 
 
 class Sign4WayIntersect(Sign):
-    def get_name_texture(self):
-        return 'sign_4_way_intersect'
+    pass
 
 
-class SingTLightAhead(Sign):
+class SignTLightAhead(Sign):
+    pass
 
-    def get_name_texture(self):
-        return 'sign_t_light_ahead'
+
+class SignOneWayRight(Sign): pass
+
+
+class SignOneWayLeft(Sign): pass
+
+
+class SignDuckCrossing(Sign): pass
+
+
+class SignYield(Sign): pass
+
+
+class SignNoLeftTurn(Sign): pass
+
+
+class SignNoRightTurn(Sign): pass
+
+
+class SignDoNotEnter(Sign): pass
+
+
+class SignParking(Sign): pass
+
+
+class SignPedestrian(Sign): pass
+
+
+SIGNS = {
+    'sign_left_T_intersect': SignLeftTIntersect,
+    'sign_right_T_intersect': SignRightTIntersect,
+    'sign_T_intersect': SignTIntersect,
+    'sign_4_way_intersect': Sign4WayIntersect,
+    'sign_t_light_ahead': SignTLightAhead,
+    'sign_stop': SignStop,
+    'sign_1_way_right': SignOneWayRight,
+    'sign_1_way_left': SignOneWayLeft,
+    'sign_duck_crossing': SignDuckCrossing,
+    'sign_yield': SignYield,
+    'sign_parking': SignParking,
+    'sign_pedestrian': SignPedestrian,
+    'sign_do_not_enter': SignDoNotEnter,
+    'sign_no_left_turn': SignNoLeftTurn,
+    'sign_no_right_turn': SignNoRightTurn,
+
+}
+
+SIGNS_ALIASES = {
+    'T-intersection': 'sign_T_intersect',
+    'oneway-right': 'sign_1_way_right',
+    'oneway-left': 'sign_1_way_left',
+    'duck-crossing': 'sign_duck_crossing',
+    'stop': 'sign_stop',
+    'yield': 'sign_yield',
+    'no-left-turn': 'sign_no_left_turn',
+    't-light-ahead': 'sign_t_light_ahead',
+    'pedestrian': 'sign_pedestrian',
+    'no-right-turn': 'sign_no_right_turn',
+    'parking': 'sign_parking',
+    'right-T-intersect': 'sign_right_T_intersect',
+    'left-T-intersect': 'sign_left_T_intersect',
+    '4-way-intersect': 'sign_4_way_intersect',
+    'do-not-enter': 'sign_do_not_enter',
+}
+
+
+def get_canonical_sign_name(sign_name):
+    if sign_name in SIGNS:
+        return sign_name
+    if sign_name in SIGNS_ALIASES:
+        return SIGNS_ALIASES[sign_name]
+    raise KeyError(sign_name)

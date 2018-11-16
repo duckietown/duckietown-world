@@ -26,11 +26,15 @@ class TileMap(PlacedObject):
         return dict(H=self.H, W=self.W)
 
     def __getitem__(self, coords):
+        if not coords in self.ij2tile:
+            msg = 'Tile "%s" not available' % coords.__repr__()
+            raise KeyError(msg)
         return self.ij2tile[coords]
 
-    def add_tile(self, i, j, orientation, tile):
-        assert 0 <= i < self.H, (i, self.H)
-        assert 0 <= j < self.W, (j, self.W)
+    def add_tile(self, i, j, orientation, tile, can_be_outside=False):
+        if not can_be_outside:
+            assert 0 <= i < self.H, (i, self.H)
+            assert 0 <= j < self.W, (j, self.W)
 
         assert orientation in ['S', 'E', 'N', 'W'], orientation
         self.ij2tile[(i, j)] = tile
