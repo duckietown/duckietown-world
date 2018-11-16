@@ -9,3 +9,4 @@ out-*
 .coverage.*
 artifacts
 .ipynb_checkpoints
+.compmake_history.txt

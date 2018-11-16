@@ -217,7 +217,10 @@ def get_transform(desc, tm, tile_size):
 
     if 'pos' in desc:
         pos = desc['pos']
-        transform = SE2Transform([float(pos[0])* tile_size, float(tm.W - pos[1])* tile_size], rotate)
+        x = float(pos[0]) * tile_size
+        y = float(tm.W - pos[1]) * tile_size
+        rotate = -rotate
+        transform = SE2Transform([x, y], rotate)
         return transform
 
     else:

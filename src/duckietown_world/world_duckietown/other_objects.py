@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from duckietown_world import logger
-from duckietown_world.svg_drawing.misc import mime_from_fn
+from duckietown_world.svg_drawing.misc import mime_from_fn, draw_axes
 
 from ..geo import PlacedObject
 
@@ -154,6 +154,8 @@ class Sign(PlacedObject):
         WIDTH_SIGN = 1.1 * CM
 
         y = -1.5 * PAPER_HEIGHT  # XXX not sure why this is negative
+        y = BASE_SIGN
+        x = -PAPER_WIDTH/2
         try:
             from .map_loading import get_texture_file
             fn = get_texture_file(texture)
@@ -161,7 +163,7 @@ class Sign(PlacedObject):
             msg = 'Cannot find texture for %s' % texture
             logger.warning(msg)
 
-            c = drawing.rect(insert=(0, y),
+            c = drawing.rect(insert=(x, y),
                              fill="white",
                              size=(PAPER_WIDTH, PAPER_HEIGHT,),
                              stroke_width="0.01",
@@ -176,11 +178,11 @@ class Sign(PlacedObject):
 
             img = drawing.image(href=href,
                                 size=(PAPER_WIDTH, PAPER_HEIGHT),
-                                insert=(0, y),
+                                insert=(x, y),
 
                                 stroke_width=0.001,
                                 stroke='black',
-                                style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg);'
+                                style='transform: rotate(90deg) rotate(90deg) scaleX(-1)  rotate(-90deg);'
                                       'border: solid 1px black '
                                 )
             img.attribs['class'] = 'sign-paper'
@@ -193,7 +195,7 @@ class Sign(PlacedObject):
                          stroke='black',
                          size=(BASE_SIGN, BASE_SIGN,))
         g.add(c)
-        # draw_axes(drawing, g)
+        draw_axes(drawing, g)
         alpha = 1.2
         c = drawing.rect(insert=(-WIDTH_SIGN / 2, -BASE_SIGN / 2 * alpha),
                          fill="#FFCB9C",
@@ -219,42 +221,26 @@ class Sign(PlacedObject):
 
 class SignStop(Sign):
     pass
-    #
-    # def get_name_texture(self):
-    #     return 'sign_stop'
 
 
 class SignLeftTIntersect(Sign):
     pass
-    # def get_name_texture(self):
-    #     return 'sign_left_T_intersect'
 
 
 class SignRightTIntersect(Sign):
     pass
 
-    # def get_name_texture(self):
-    #     return 'sign_right_T_intersect'
-
 
 class SignTIntersect(Sign):
     pass
-    # def get_name_texture(self):
-    #     return 'sign_T_intersect'
 
 
 class Sign4WayIntersect(Sign):
     pass
-    #
-    # def get_name_texture(self):
-    #     return 'sign_4_way_intersect'
 
 
 class SignTLightAhead(Sign):
     pass
-    #
-    # def get_name_texture(self):
-    #     return 'sign_t_light_ahead'
 
 
 class SignOneWayRight(Sign): pass
