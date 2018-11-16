@@ -1,18 +1,14 @@
 from collections import namedtuple, defaultdict
 
+import geometry as geo
+import numpy as np
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.geo.measurements_utils import iterate_by_class
 
-
-import numpy as np
-
 from .lane_segment import LaneSegment
 
-
-import geometry as geo
-
-
 SkeletonGraphResult = namedtuple('SkeletonGraphResult', 'root root2 G')
+
 
 def get_skeleton_graph(po):
     """ Returns a graph with the lane segments of the map """
@@ -27,7 +23,8 @@ def get_skeleton_graph(po):
             self.outcoming = set()
 
         def __repr__(self):
-            return 'MP(%d %d | %s, %s)' % (len(self.incoming), len(self.outcoming), self.incoming, self.outcoming)
+            return 'MP(%d %d | %s, %s)' % (len(self.incoming), len(self.outcoming),
+                                           self.incoming, self.outcoming)
 
     def discretize(tran):
         def D(x):

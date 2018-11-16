@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+
 for a in *.ipynb; do
 
     jupyter nbconvert --to html --execute $a
