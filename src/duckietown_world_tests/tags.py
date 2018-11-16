@@ -8,7 +8,7 @@ from duckietown_world import construct_map, draw_static, get_object_tree
 map_yaml = """
 objects:
 - kind: sign_right_T_intersect
-  pos:
+  attach:
     tile: [0, 0]
     slot: 2
     

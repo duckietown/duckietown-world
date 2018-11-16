@@ -47,8 +47,7 @@ class TagInstance(object):
             from duckietown_world import data_encoded_for_src
             href = data_encoded_for_src(texture, 'image/png')
             T = self.size
-            insert=(-T / 2, -T / 2)
-            # insert=(0,0)
+            insert = (-T / 2, -T / 2)
 
             img = drawing.image(href=href,
                                 size=(T, T),
