@@ -48,7 +48,7 @@ data = list(reader)[1:]
 objects = map_data['objects'] = {}
 import numpy as np
 
-APRIL_TAG_SIZE=0.08
+APRIL_TAG_SIZE = 0.08
 
 for i, entry in enumerate(data):
     tag_ID, x, y, slot, rotation = entry
@@ -96,8 +96,6 @@ for entry in data:
     sign['pose'] = SE2Transform([x, y], np.deg2rad(rotation)).as_json_dict()
 
     objects[quadrant] = sign
-
-
 
 s = yaml.safe_dump(map_data, encoding='utf-8', indent=4, allow_unicode=True,
                    default_flow_style=False)
