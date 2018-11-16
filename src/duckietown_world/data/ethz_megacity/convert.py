@@ -8,6 +8,9 @@ reader = csv.reader(in_file)
 
 data = list(reader)[1:]
 
+map_data = {}
+map_data['version'] = 2
+
 H = W = 0
 for entry in data:
     xs, ys, kind, rotation = entry
@@ -37,8 +40,17 @@ for entry in data:
     kind = translate.get(kind, kind)
     k = kind + '/' + direction[rotation]
     tiles[H - 1 - y][x] = k
+map_data['tiles'] = tiles
+#
+# tiles2 = []
+# for row in tiles:
+#     row_string = '  '.join('%10s' % _ for _ in row)
+#     tiles2.append(row_string)
+#
+#
+#
+# map_data['tiles-string'] = "\n".join(tiles2)
 
-map_data = dict(tiles=tiles)
 import yaml
 
 in_file = open("autolab_tags_map.csv", "rb")
@@ -64,7 +76,7 @@ for i, entry in enumerate(data):
     # bug in the map file
     # rotation = rotation + 90
     sign = dict(kind=kind,
-                tag=dict(tag_id=int(tag_ID), family='36h11', size=APRIL_TAG_SIZE),
+                tag={'~TagInstance': dict(tag_id=int(tag_ID), family='36h11', size=APRIL_TAG_SIZE)},
                 attach=dict(tile=[x, y], slot=slot)
                 )
 
@@ -91,7 +103,7 @@ for entry in data:
 
     sign = dict(
             kind='floor_tag',
-            tag=dict(tag_id=int(tag_ID), family='36h11', size=APRIL_TAG_SIZE),
+            tag={'~TagInstance': dict(tag_id=int(tag_ID), family='36h11', size=APRIL_TAG_SIZE)},
     )
     sign['pose'] = SE2Transform([x, y], np.deg2rad(rotation)).as_json_dict()
 

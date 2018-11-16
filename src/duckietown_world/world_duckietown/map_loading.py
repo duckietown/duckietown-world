@@ -172,15 +172,13 @@ def construct_map(yaml_data, tile_size):
 def get_object(desc):
     kind = desc['kind']
 
-    DEFAULT_FAMILY = '36h11'
-    DEFAULT_TAG_SIZE = 0.065
     attrs = {}
     if 'tag' in desc:
         tag_desc = desc['tag']
-        tag_id = tag_desc.get('tag_id')
-        size = tag_desc.get('size', DEFAULT_TAG_SIZE)
-        family = tag_desc.get('family', DEFAULT_FAMILY)
-        attrs['tag'] = TagInstance(tag_id=tag_id, size=size, family=family)
+        # tag_id = tag_desc.get('tag_id')
+        # size = tag_desc.get('size', DEFAULT_TAG_SIZE)
+        # family = tag_desc.get('family', DEFAULT_FAMILY)
+        attrs['tag'] = Serializable.from_json_dict(tag_desc)
 
     kind2klass = {
         'trafficlight': TrafficLight,
@@ -218,7 +216,9 @@ def get_transform(desc, tm, tile_size):
     if 'pos' in desc:
         pos = desc['pos']
         x = float(pos[0]) * tile_size
+        # account for non-righthanded
         y = float(tm.W - pos[1]) * tile_size
+        # account for non-righthanded
         rotate = -rotate
         transform = SE2Transform([x, y], rotate)
         return transform
@@ -234,18 +234,7 @@ def get_transform(desc, tm, tile_size):
             attach = desc['attach']
             tile_coords = tuple(attach['tile'])
             slot = str(attach['slot'])
-            # print('tilecoords: %s' % tile_coords.__repr__())
-            # if tile_coords in tm.ij2tile:
-            #     tile = tm[tile_coords]
-            # else:
-            #     tile = Tile(kind='asphalt', drivable=False)
-            #     tm.add_tile(tile_coords[0], tile_coords[1], 'E', tile, can_be_outside=True)
 
-            # if not 'slots' in tile.children:
-            #     msg = 'Cannot find slots for tile %s' % tile
-            #     raise Exception(msg)
-            # slots = tile.children['slots']
-            # parent = slots.children[slot]
             x, y = get_xy_slot(slot)
             i, j = tile_coords
 

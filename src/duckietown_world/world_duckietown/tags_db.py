@@ -1,6 +1,7 @@
 import os
 
 import yaml
+from duckietown_serialization_ds1 import Serializable
 from duckietown_world import PlacedObject, logger
 from duckietown_world.utils import memoized_reset
 
@@ -12,7 +13,9 @@ __all__ = [
 from six import BytesIO
 
 
-class TagInstance(object):
+# DEFAULT_FAMILY = '36h11'
+
+class TagInstance(Serializable):
     def __init__(self, tag_id, family, size):
         self.tag_id = tag_id
         self.family = family

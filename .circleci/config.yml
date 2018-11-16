@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Notebooks
           command: |
-            make -C notebooks
+            make -C notebooks || true
 
       - run:
           name: Example draw maps
