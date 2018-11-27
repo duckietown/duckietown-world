@@ -3,12 +3,11 @@
 
 from abc import ABCMeta, abstractmethod
 
+import geometry as geo
 import numpy as np
 from contracts import contract, new_contract
-from six import with_metaclass
-
-import geometry as geo
 from duckietown_serialization_ds1 import Serializable
+from six import with_metaclass
 
 __all__ = [
     'TransformSequence',
@@ -24,6 +23,7 @@ class Transform(with_metaclass(ABCMeta)):
     @abstractmethod
     def asmatrix2d(self):
         """ """
+
     #
     # def as_M33(self):
     #     pass
@@ -105,7 +105,21 @@ class SE2Transform(Transform, Serializable):
         return SE2Transform(translation, angle)
 
     def params_to_json_dict(self):
-        return dict(p=self.p, theta=self.theta)
+        res = {}
+        if np.allclose(self.theta, 0):
+            pass
+        else:
+            for a in [-270, -180, -90, -45, +45, 90, 180, 270]:
+                if np.allclose(a, np.rad2deg(self.theta)):
+                    res['theta_deg'] = a
+                    break
+            else:
+                res['theta'] = self.theta
+        if np.allclose(np.linalg.norm(self.p), 0):
+            pass
+        else:
+            res['p'] = self.p
+        return res
 
     @classmethod
     def params_from_json_dict(cls, d):

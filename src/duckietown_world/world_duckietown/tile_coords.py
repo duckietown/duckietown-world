@@ -5,26 +5,34 @@ import geometry
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.geo import Transform, Matrix2D
 
-__all__ = ['TileCoords', 'TileRelativeTransform']
+__all__ = [
+    'TileCoords',
+    'TileRelativeTransform',
+]
 
 
 class TileCoords(Transform, Serializable):
 
     def asmatrix2d(self):
-        # orientation2deg = dict(N=0, E=90, S=180, W=270, )
-        # angle = ['S', 'E', 'N', 'W'].index(self.orientation)
-        # angle = +angle * np.pi/2 + np.pi
 
-        angle = {
+        angle0 = {
             'N': 0,
             'E': -np.pi/2,
             'S': np.pi,
             'W': +np.pi/2,
 
         }[self.orientation] + np.pi/2
-        # angle = 0
-        # orientation2deg = dict(N=0, E=-90, S=-180, W=-270, )
-        # angle = np.deg2rad(orientation2deg[self.orientation])
+
+        angle = {
+                    'N': np.pi / 2,
+                    'E': 0,
+                    'S': np.pi+np.pi/2,
+                    'W': np.pi,
+
+                }[self.orientation]
+
+        assert np.allclose(angle, angle0)
+
         p = [self.i + 0.5, self.j + 0.5]
         M = geometry.SE2_from_translation_angle(p, angle)
         return Matrix2D(M)

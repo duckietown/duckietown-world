@@ -9,19 +9,21 @@ from duckietown_world.utils.memoizing import memoized_reset
 # language=yaml
 data = """
 
-
+# lane = 22cm
+# tile = 58.5
+# lane_rel = 22/58.5
 go_right: &go_right
     ~LaneSegment:
-      width: &width 0.47 
+      width: &width 0.376
       control_points: 
         - ~SE2Transform:
-            p: [-0.50, -0.25]
+            p: [-0.50, -0.22]
             theta_deg: 0
         - ~SE2Transform:
             p: [-0.30, -0.30]
             theta_deg: -45
         - ~SE2Transform:
-            p: [-0.25, -0.50]
+            p: [-0.22, -0.50]
             theta_deg: -90
 
 go_straight: &go_straight
@@ -29,10 +31,10 @@ go_straight: &go_straight
       width: *width
       control_points: 
         - ~SE2Transform:
-            p: [-0.5, -0.25]
+            p: [-0.5, -0.22]
             theta_deg: 0
         - ~SE2Transform:
-            p: [+0.5, -0.25]
+            p: [+0.5, -0.22]
             theta_deg: 0
 
 go_left: &go_left
@@ -40,17 +42,15 @@ go_left: &go_left
       width: *width
       control_points: 
         - ~SE2Transform:
-            p: [-0.5, -0.25]
-            theta_deg: 0
-        - ~SE2Transform:
-            p: [0.0, -0.25]
-            theta_deg: 0
+            p: [-0.5, -0.22]
+            theta_deg: 0 
 
         - ~SE2Transform:
-            p: [+0.25, 0.0]
-            theta_deg: 90
+            p: [0.0, 0.0]
+            theta_deg: 45
+ 
         - ~SE2Transform:
-            p: [+0.25, +0.50]
+            p: [+0.22, +0.50]
             theta_deg: 90 
 
             

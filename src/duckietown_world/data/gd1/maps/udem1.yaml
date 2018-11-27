@@ -42,22 +42,27 @@ objects:
   pos: [2.08, 4.05]
   rotate: 90
   height: 0.18
+#
 - kind: sign_left_T_intersect
   pos: [0.94, 3.96]
   rotate: 90
   height: 0.18
+#
 - kind: sign_stop
   pos: [2.08, 2.96]
   rotate: -90
   height: 0.18
+
 - kind: sign_right_T_intersect
   pos: [0.94, 3.05]
   rotate: -90
   height: 0.18
+
 - kind: sign_stop
   pos: [0.94, 4.05]
   rotate: 0
   height: 0.18
+
 - kind: sign_T_intersect
   pos: [0.94, 2.96]
   rotate: 0
@@ -80,16 +85,19 @@ objects:
   rotate: 0
   height: 0.18
   optional: true
+
 - kind: bus
   pos: [4, 0.5]
   rotate: 0
   height: 0.18
   optional: true
+
 - kind: bus
   pos: [6.0, 0.5]
   rotate: 0
   height: 0.18
   optional: true
+
 - kind: truck
   pos: [7.5, 0.5]
   rotate: 180
