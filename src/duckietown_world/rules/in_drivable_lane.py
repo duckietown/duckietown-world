@@ -13,6 +13,7 @@ __all__ = [
     'DeviationFromCenterLine',
     'DeviationHeading',
     'DrivenLength',
+    'DrivenLengthConsecutive',
 ]
 
 
@@ -238,5 +239,85 @@ class DrivenLength(Rule):
             **in the direction of the lane**.
         """)
         result.set_metric(name=('driven_lanedir',), total=driven_lanedir_cumulative.values[-1],
+                          incremental=driven_lanedir_incremental,
+                          title=title, description=description, cumulative=driven_lanedir_cumulative)
+
+
+class DrivenLengthConsecutive(Rule):
+
+    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
+    def evaluate(self, context, result):
+        assert isinstance(result, RuleEvaluationResult)
+        interval = context.get_interval()
+        lane_pose_seq = context.get_lane_pose_seq()
+        ego_pose_sequence = context.get_ego_pose_global()
+
+        timestamps = []
+        driven_any = []
+        driven_lanedir = []
+
+        tile_fqn2lane_fqn = {}
+        for idt in iterate_with_dt(interval):
+            t0, t1 = idt.v0, idt.v1  # not v
+            try:
+                name2lpr = lane_pose_seq.at(t0)
+
+                p0 = ego_pose_sequence.at(t0).as_SE2()
+                p1 = ego_pose_sequence.at(t1).as_SE2()
+            except UndefinedAtTime:
+                dr_any = dr_lanedir = 0.0
+
+            else:
+                prel = relative_pose(p0, p1)
+                translation, _ = geo.translation_angle_from_SE2(prel)
+                dr_any = np.linalg.norm(translation)
+
+                if name2lpr:
+
+                    ds = []
+                    for k, lpr in name2lpr.items():
+                        if lpr.tile_fqn in tile_fqn2lane_fqn:
+                            if lpr.lane_segment_fqn != tile_fqn2lane_fqn[lpr.tile_fqn]:
+                                # msg = 'Backwards detected'
+                                # print(msg)
+                                continue
+
+                        tile_fqn2lane_fqn[lpr.tile_fqn] = lpr.lane_segment_fqn
+
+                        assert isinstance(lpr, GetLanePoseResult)
+                        c0 = lpr.center_point
+                        ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
+                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
+                        prelc0 = relative_pose(c0_, p1)
+                        tas = geo.translation_angle_scale_from_E2(prelc0)
+
+                        # otherwise this lane should not be reported
+                        # assert tas.translation[0] >= 0, tas
+                        ds.append(tas.translation[0])
+
+                    dr_lanedir = max(ds) if ds else 0.0
+                else:
+                    # no lp
+                    dr_lanedir = 0.0
+
+            driven_any.append(dr_any)
+            driven_lanedir.append(dr_lanedir)
+            timestamps.append(idt.t0)
+
+        # driven_any_incremental = SampledSequence(timestamps, driven_any)
+        # driven_any_cumulative = integrate(driven_any_incremental)
+
+        title = "Consecutive lane distance"
+
+        driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
+        driven_lanedir_cumulative = integrate(driven_lanedir_incremental)
+
+        description = textwrap.dedent("""\
+            This metric computes how far the robot drove
+            **in the direction of the correct lane**,
+            discounting whenever it was driven
+            in the wrong direction with respect to the start.
+        """)
+        result.set_metric(name=('driven_lanedir_consecutive',), total=driven_lanedir_cumulative.values[-1],
                           incremental=driven_lanedir_incremental,
                           title=title, description=description, cumulative=driven_lanedir_cumulative)

@@ -51,6 +51,7 @@ def draw_logs_main_(output, filename):
                                interval=interval, world=duckietown_env, ego_name='ego')
     timeseries = make_timeseries(evaluated)
 
+    print(evaluated)
     draw_static(duckietown_env, output, images=images, timeseries=timeseries)
     return evaluated
 

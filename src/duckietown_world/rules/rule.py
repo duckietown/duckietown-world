@@ -2,10 +2,11 @@ from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 
 from contracts import contract, check_isinstance
+from six import with_metaclass
+
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.geo import PlacedObject
 from duckietown_world.seqs import Sequence
-from six import with_metaclass
 
 __all__ = [
     'RuleEvaluationContext',
@@ -60,6 +61,9 @@ class EvaluatedMetric(Serializable):
         self.cumulative = cumulative
         self.description = description
 
+    def __repr__(self):
+        return 'EvaluatedMetric(%s, %s)' % (self.title, self.total)
+
 
 class RuleEvaluationResult(object):
 
@@ -72,6 +76,9 @@ class RuleEvaluationResult(object):
         check_isinstance(name, tuple)
         self.metrics[name] = EvaluatedMetric(total=total, incremental=incremental,
                                              title=title, description=description, cumulative=cumulative)
+
+    def __repr__(self):
+        return 'RuleEvaluationResult(%s, %s)' % (self.rule, self.metrics)
 
 
 class Rule(with_metaclass(ABCMeta)):
@@ -94,11 +101,13 @@ def evaluate_rules(poses_sequence, interval, world, ego_name):
     from duckietown_world.rules import InDrivableLane
     from duckietown_world.rules import DeviationHeading
     from duckietown_world.rules import DrivenLength
+    from duckietown_world.rules import DrivenLengthConsecutive
     rules = OrderedDict()
     rules['deviation-heading'] = DeviationHeading()
     rules['in-drivable-lane'] = InDrivableLane()
     rules['deviation-center-line'] = DeviationFromCenterLine()
     rules['driving-distance'] = DrivenLength()
+    rules['driving-distance-consecutive'] = DrivenLengthConsecutive()
 
     context = RuleEvaluationContext(interval, world, ego_name=ego_name,
                                     lane_pose_seq=lane_pose_seq, pose_seq=poses_sequence)
