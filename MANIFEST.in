@@ -1,4 +1,5 @@
 prune test-data
 prune visualization
+prune notebooks
 graft src/duckietown_world/data
 
