@@ -2,10 +2,11 @@ import textwrap
 
 import numpy as np
 from contracts import contract
+
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
+from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
 from duckietown_world.world_duckietown.tile import relative_pose
-
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [
@@ -67,7 +68,7 @@ class DeviationFromCenterLine(Rule):
         sequence = SampledSequence(timestamps, values)
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
-        title = "[Rule] Deviation from center line"
+        title = "Deviation from center line"
         description = textwrap.dedent("""\
             This metric describes the amount of deviation from the center line.
         """)
@@ -76,9 +77,7 @@ class DeviationFromCenterLine(Rule):
 
 
 class DeviationHeading(Rule):
-    # def get_name_UI(self):
-    #     return '[Rule] Heading deviation'
-    #
+
     @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
     def evaluate(self, context, result):
         assert isinstance(result, RuleEvaluationResult)
@@ -113,7 +112,7 @@ class DeviationHeading(Rule):
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
         # result.set_metric((), dtot, sequence, description, cumulative=cumulative)
-        title = "[Rule] Deviation from lane direction"
+        title = "Deviation from lane direction"
         description = textwrap.dedent("""\
             This metric describes the amount of deviation from the relative heading.
         """)
@@ -151,7 +150,7 @@ class InDrivableLane(Rule):
         cumulative = integrate(sequence)
         dtot = cumulative.values[-1]
 
-        title = "[Rule] Drivable areas"
+        title = "Drivable areas"
         description = textwrap.dedent("""\
             This metric computes whether the robot was in a drivable area.
             
@@ -175,9 +174,8 @@ class DrivenLength(Rule):
         lane_pose_seq = context.get_lane_pose_seq()
         ego_pose_sequence = context.get_ego_pose_global()
 
-        timestamps = []
-        driven_any = []
-        driven_lanedir = []
+        driven_any_builder = SampledSequenceBuilder()
+        driven_lanedir_builder = SampledSequenceBuilder()
 
         for idt in iterate_with_dt(interval):
             t0, t1 = idt.v0, idt.v1  # not v
@@ -214,11 +212,10 @@ class DrivenLength(Rule):
                     # no lp
                     dr_lanedir = 0.0
 
-            driven_any.append(dr_any)
-            driven_lanedir.append(dr_lanedir)
-            timestamps.append(idt.t0)
+            driven_any_builder.add(t0, dr_any)
+            driven_lanedir_builder.add(t0, dr_lanedir)
 
-        driven_any_incremental = SampledSequence(timestamps, driven_any)
+        driven_any_incremental = driven_any_builder.as_sequence()
         driven_any_cumulative = integrate(driven_any_incremental)
 
         title = "Distance"
@@ -231,7 +228,7 @@ class DrivenLength(Rule):
                           title=title, description=description, cumulative=driven_any_cumulative)
         title = "Lane distance"
 
-        driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
+        driven_lanedir_incremental = driven_lanedir_builder.as_sequence()
         driven_lanedir_cumulative = integrate(driven_lanedir_incremental)
 
         description = textwrap.dedent("""\
@@ -302,7 +299,7 @@ class DrivenLengthConsecutive(Rule):
 
             driven_any.append(dr_any)
             driven_lanedir.append(dr_lanedir)
-            timestamps.append(idt.t0)
+            timestamps.append(t0)
 
         # driven_any_incremental = SampledSequence(timestamps, driven_any)
         # driven_any_cumulative = integrate(driven_any_incremental)

@@ -196,22 +196,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                 img.attrs['visualize'] = 'hide'
                 imagename2div[name].append(img)
 
-    # other = Tag(name='div')
-    #
-    # summary = Tag(name='summary')
-    # summary.append('Log data')
-    # details = Tag(name='details')
-    #
-    # details.append(summary)
-    # pre = Tag(name='pre')
-    # code = Tag(name='code')
-    # pre.append(code)
-    # y = yaml.safe_dump(root.as_json_dict(), default_flow_style=False)
-    # code.append(y)
-    # details.append(pre)
-    #
-    # other.append(details)
-    # other1 = str(other)
+
     other = ""
 
     # language=html
@@ -565,7 +550,7 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     }
     
     #observation_sequence {
-        width: 220px;
+        width: 320px;
     }
     td#obs img { width: 90%%;} 
 </style>
@@ -634,6 +619,11 @@ body {{
 </td>
 </tr>
 </table>
+
+<script type='text/javascript'>
+    showVal(0); 
+</script>
+
 {div_timeseries}
 {other}
 </body>

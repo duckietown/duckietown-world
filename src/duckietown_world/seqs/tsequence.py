@@ -2,6 +2,8 @@
 from abc import abstractmethod
 from collections import namedtuple
 
+from contracts import describe_value
+
 from duckietown_serialization_ds1 import Serializable
 
 __all__ = [
@@ -67,7 +69,7 @@ class SampledSequence(Sequence):
 
         for t in timestamps:
             if not isinstance(t, (float, int)):
-                msg = 'I expected a number, got %s' % t
+                msg = 'I expected a number, got %s' % describe_value(t)
                 raise ValueError(msg)
         for i in range(len(timestamps) - 1):
             dt = timestamps[i + 1] - timestamps[i]
@@ -151,3 +153,19 @@ def iterate_with_dt(sequence):
         v1 = values[i + 1]
         dt = t1 - t0
         yield IterateDT(t0, t1, dt, v0, v1)
+
+
+class SampledSequenceBuilder(object):
+    def __init__(self):
+        self.timestamps = []
+        self.values = []
+
+    def add(self, t, v):
+        self.timestamps.append(t)
+        self.values.append(v)
+
+    def __len__(self):
+        return len(self.timestamps)
+
+    def as_sequence(self):
+        return SampledSequence(self.timestamps, self.values)
