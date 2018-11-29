@@ -16,6 +16,7 @@ __all__ = [
     'get_meausurements_graph',
     'get_extent_points',
     'get_static_and_dynamic',
+    'iterate_by_class',
 ]
 
 
