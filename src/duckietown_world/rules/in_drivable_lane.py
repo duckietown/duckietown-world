@@ -315,6 +315,6 @@ class DrivenLengthConsecutive(Rule):
             discounting whenever it was driven
             in the wrong direction with respect to the start.
         """)
-        result.set_metric(name=('driven_lanedir_consecutive',), total=driven_lanedir_cumulative.values[-1],
+        result.set_metric(name=('driven_lanedir_consec',), total=driven_lanedir_cumulative.values[-1],
                           incremental=driven_lanedir_incremental,
                           title=title, description=description, cumulative=driven_lanedir_cumulative)
