@@ -1,5 +1,5 @@
 
-[![CircleCI](https://circleci.com/gh/duckietown/duckietown-world.svg?style=shield)](https://circleci.com/gh/duckietown/duckietown-workd)
+[![CircleCI](https://circleci.com/gh/duckietown/duckietown-world.svg?style=shield)](https://circleci.com/gh/duckietown/duckietown-world)
 
 
 # Duckietown World
