@@ -19,6 +19,8 @@ __all__ = [
 
 
 def integrate(sequence):
+    """ Integrates with respect to time.
+        That is, it multiplies the value with the Delta T. """
     total = 0.0
     timestamps = []
     values = []
@@ -28,6 +30,21 @@ def integrate(sequence):
         total += v0 * dt
 
         timestamps.append(_.t0)
+        values.append(total)
+
+    return SampledSequence(timestamps, values)
+
+
+def accumulate(sequence):
+    """ Integrates with respect to time.
+        Sums the values along the horizontal. """
+    total = 0.0
+    timestamps = []
+    values = []
+    for t, v in sequence:
+        total += v
+
+        timestamps.append(t)
         values.append(total)
 
     return SampledSequence(timestamps, values)
@@ -216,7 +233,7 @@ class DrivenLength(Rule):
             driven_lanedir_builder.add(t0, dr_lanedir)
 
         driven_any_incremental = driven_any_builder.as_sequence()
-        driven_any_cumulative = integrate(driven_any_incremental)
+        driven_any_cumulative = accumulate(driven_any_incremental)
 
         title = "Distance"
         description = textwrap.dedent("""\
@@ -229,7 +246,7 @@ class DrivenLength(Rule):
         title = "Lane distance"
 
         driven_lanedir_incremental = driven_lanedir_builder.as_sequence()
-        driven_lanedir_cumulative = integrate(driven_lanedir_incremental)
+        driven_lanedir_cumulative = accumulate(driven_lanedir_incremental)
 
         description = textwrap.dedent("""\
             This metric computes how far the robot drove
@@ -301,13 +318,10 @@ class DrivenLengthConsecutive(Rule):
             driven_lanedir.append(dr_lanedir)
             timestamps.append(t0)
 
-        # driven_any_incremental = SampledSequence(timestamps, driven_any)
-        # driven_any_cumulative = integrate(driven_any_incremental)
-
         title = "Consecutive lane distance"
 
         driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
-        driven_lanedir_cumulative = integrate(driven_lanedir_incremental)
+        driven_lanedir_cumulative = accumulate(driven_lanedir_incremental)
 
         description = textwrap.dedent("""\
             This metric computes how far the robot drove
