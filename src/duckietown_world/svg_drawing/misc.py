@@ -649,7 +649,7 @@ def data_encoded_for_src(data, mime):
         returns "data: ... " sttring
     """
     encoded = base64.b64encode(data).decode()
-    link = 'data:%s;base64,%s' % (mime, encoded)
+    link = 'data:%s;base64,' % (mime) + encoded
     return link
 
 
