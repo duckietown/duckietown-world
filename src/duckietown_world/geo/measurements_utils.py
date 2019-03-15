@@ -1,15 +1,15 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from dataclasses import dataclass
+from typing import Tuple, List, Iterator, Callable
 
-from collections import namedtuple
-
-from contracts import contract
+import networkx as nx
+import numpy as np
 from networkx import MultiDiGraph
 
 from duckietown_world.seqs import Sequence
-from .placed_object import PlacedObject
+from .placed_object import PlacedObject, FQN, SpatialRelation
 from .rectangular_area import RectangularArea
-from .transforms import VariableTransformSequence
+from .transforms import VariableTransformSequence, Transform
 
 __all__ = [
     'iterate_measurements_relations',
@@ -17,10 +17,11 @@ __all__ = [
     'get_extent_points',
     'get_static_and_dynamic',
     'iterate_by_class',
+    'IterateByTestResult',
 ]
 
 
-def iterate_measurements_relations(po_name, po):
+def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
     assert isinstance(po_name, tuple)
     for sr_name, sr in po.spatial_relations.items():
         a = po_name + sr.a
@@ -31,11 +32,10 @@ def iterate_measurements_relations(po_name, po):
 
     for child_name, child in po.children.items():
         cname = po_name + (child_name,)
-        for _ in iterate_measurements_relations(cname, child):
-            yield _
+        yield from iterate_measurements_relations(cname, child)
 
 
-def get_meausurements_graph(po):
+def get_meausurements_graph(po: PlacedObject) -> MultiDiGraph:
     G = MultiDiGraph()
     for name, sr in iterate_measurements_relations((), po):
         a = sr.a
@@ -45,13 +45,10 @@ def get_meausurements_graph(po):
     return G
 
 
-import networkx as nx
-
-FlattenResult = namedtuple('FlattenResult', 'po old2new')
+# FlattenResult = namedtuple('FlattenResult', 'po old2new')
 
 
-@contract(po=PlacedObject)
-def get_static_and_dynamic(po):
+def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
     assert isinstance(po, PlacedObject)
 
     G = get_flattened_measurement_graph(po)
@@ -71,34 +68,14 @@ def get_static_and_dynamic(po):
         it_is = is_static(transform)
 
         if it_is:
-
             static.append(name)
         else:
             dynamic.append(name)
 
     return static, dynamic
 
-#
-# @contract(po=PlacedObject, returns=PlacedObject)
-# def flatten_hierarchy(po):
-#     assert isinstance(po, PlacedObject)
-#     res = PlacedObject()
-#     G = get_flattened_measurement_graph(po)
-#
-#     root_name = ()
-#     for name in G.nodes():
-#         if name == root_name:
-#             continue
-#         edge_data = G.get_edge_data(root_name, name)
-#
-#         transform = edge_data['transform_sequence']
-#         ob = po.get_object_from_fqn(name)
-#         name2 = "/".join(name)
-#         res.set_object(name2, ob, ground_truth=transform)
-#     return res
 
-
-def get_flattened_measurement_graph(po, include_root_to_self=False):
+def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self=False) -> nx.DiGraph:
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()
@@ -133,36 +110,46 @@ def get_flattened_measurement_graph(po, include_root_to_self=False):
     return G2
 
 
-IterateByTestResult = namedtuple('IterateByTestResult', 'fqn transform_sequence object')
+@dataclass
+class IterateByTestResult:
+    fqn: Tuple[str]
+    transform_sequence: List[Transform]
+    object: PlacedObject
+    parents: Tuple[PlacedObject, ...]
 
 
-def iterate_by_class(po, klass):
-    for _ in iterate_by_test(po, lambda _: isinstance(_, klass)):
-        yield _
+# IterateByTestResult = namedtuple('IterateByTestResult', 'fqn transform_sequence object')
 
 
-def iterate_by_test(po, testf):
-    """
+def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestResult]:
+    t = lambda _: isinstance(_, klass)
+    yield from iterate_by_test(po, t)
 
-    :param po: root object
-    :param testf: boolean test on the object
-    :return: Iterator of IterateByTestResult
-    """
+
+def iterate_by_test(po: PlacedObject, testf: Callable[[PlacedObject], bool]) -> Iterator[IterateByTestResult]:
     G = get_flattened_measurement_graph(po, include_root_to_self=True)
     root_name = ()
     for name in G:
         ob = po.get_object_from_fqn(name)
         if testf(ob):
             transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
-            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=ob)
+
+            parents = get_parents(po, name)
+
+            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=ob, parents=parents)
 
 
-import numpy as np
+def get_parents(root: PlacedObject, child_fqn: FQN) -> Tuple[PlacedObject]:
+    parents = []
+    n = len(child_fqn)
+    for i in range(0, n - 1):
+        name_parent: FQN = child_fqn[:i]
+        parent = root.get_object_from_fqn(name_parent)
+        parents.append(parent)
+    return tuple(parents)
 
 
-def get_extent_points(root):
-    assert isinstance(root, PlacedObject)
-
+def get_extent_points(root: PlacedObject) -> RectangularArea:
     G = get_flattened_measurement_graph(root, include_root_to_self=True)
     points = []
 

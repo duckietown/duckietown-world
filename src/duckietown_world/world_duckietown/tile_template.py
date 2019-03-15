@@ -136,6 +136,6 @@ curve_left: &curve_left
 
 @memoized_reset
 def load_tile_types():
-    s = yaml.load(data)
+    s = yaml.load(data, Loader=yaml.SafeLoader)
     templates = Serializable.from_json_dict(s)
     return templates

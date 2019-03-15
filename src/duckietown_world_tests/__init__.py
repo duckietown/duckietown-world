@@ -6,7 +6,7 @@ from .segment import *
 from .svg import *
 from .tags import *
 from .world_building import *
-
+from .sampling_poses import *
 
 def jobs_comptests(context):
     # instantiation

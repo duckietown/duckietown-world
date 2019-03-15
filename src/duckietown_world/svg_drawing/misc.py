@@ -8,13 +8,14 @@ from collections import OrderedDict
 
 import svgwrite
 from bs4 import Tag, BeautifulSoup
+from past.builtins import reduce
+from six import BytesIO
+
 from contracts import contract, check_isinstance
 from duckietown_world import logger
 from duckietown_world.geo import RectangularArea, get_extent_points, get_static_and_dynamic
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.utils import memoized_reset
-from past.builtins import reduce
-from six import BytesIO
 
 __all__ = [
     'draw_recursive',
@@ -189,13 +190,17 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                 pass
             else:
                 img = Tag(name='img')
-                resized = get_resized_image(obs.bytes_contents, 200)
+                if isinstance(obs, bytes):
+                    data = obs
+                else:
+                    data = obs.bytes_contents
+
+                resized = get_resized_image(data, 200)
                 img.attrs['src'] = data_encoded_for_src(resized, 'image/jpeg')
                 # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
                 img.attrs['class'] = 'keyframe keyframe%d' % i
                 img.attrs['visualize'] = 'hide'
                 imagename2div[name].append(img)
-
 
     other = ""
 
@@ -230,8 +235,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
             <input id='checkbox-anchors' type="checkbox"  onclick="hideshow(this);">anchor point</input>
             </p>
             <script>
-                var checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
-                console.log(checkboxValues);
+                var checkboxValues = null; 
                 name2selector = {
                     "checkbox-static": "g.static",
                     "checkbox-textures": "g.static .tile-textures",
@@ -257,9 +261,15 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                     elements = document.querySelectorAll(selector);
                     elements.forEach(_ => _.setAttribute('visualize_parts', checked));
                     checkboxValues[element_name] = checked;
-                    localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+                    try {
+                        localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+                    } catch (error) {
+                        console.log('cannot save preferences.');
+                        console.log(error);
+                    }
                 }
-                document.addEventListener("DOMContentLoaded", function(event) {
+                
+                function init() {
                     for(var name in name2selector) {
                         console.log(name);
                         element = document.getElementById(name);
@@ -267,11 +277,25 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                             element.checked = checkboxValues[name];
                         }
                         
-                        
                         hideshow(element);
                     } 
-                     
+                }
+                
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    init();     
                 });
+                
+                try {
+                    checkboxValues =  JSON.parse(localStorage.getItem('checkboxValues')) || {};
+                
+                } catch (error) {
+                    console.log('cannot load preferences.');
+                    console.log(error);
+                    checkboxValues = {}
+                }
+                
+                init();
+                console.log(checkboxValues);
             </script>
         """
 
@@ -596,7 +620,7 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     # drawing_svg = drawing.tostring(pretty=True)
     # language=html
     doc = """\
-<html>
+<html lang='en'>
 <head></head>
 <body>
 <style>
@@ -684,19 +708,16 @@ def get_jpeg_bytes(fn):
     return out.getvalue()
 
 
-def bs(fragment):
+def bs(fragment: str):
     """ Returns the contents wrapped in an element called "fragment".
         Expects fragment as a str in utf-8 """
 
     check_isinstance(fragment, six.string_types)
 
-    if six.PY2:
-        if isinstance(fragment, unicode):
-            fragment = fragment.encode('utf8')
     s = u'<fragment>%s</fragment>' % fragment
 
     wire = s.encode('utf-8')
-    parsed = BeautifulSoup(wire, 'lxml', from_encoding='utf-8')
+    parsed = BeautifulSoup(wire, 'lxml')
     res = parsed.html.body.fragment
     assert res.name == 'fragment'
     return res

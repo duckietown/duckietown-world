@@ -3,22 +3,22 @@ import itertools
 import os
 import traceback
 
-import geometry as geo
 import numpy as np
 import oyaml as yaml
-from duckietown_serialization_ds1 import Serializable
-from duckietown_world.geo import Scale2D, SE2Transform
-from duckietown_world.geo.measurements_utils import iterate_by_class
 
+import geometry as geo
+from duckietown_serialization_ds1 import Serializable
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
 from .other_objects import Duckie, Tree, House, Bus, Truck, Cone, Barrier, Building, GenericObject, SIGNS
-from .tags_db import FloorTag, TagInstance
+from .tags_db import FloorTag
 from .tile import Tile
 from .tile_map import TileMap
 from .tile_template import load_tile_types
 from .traffic_light import TrafficLight
 from .. import logger
+from ..geo import Scale2D, SE2Transform
+from ..geo.measurements_utils import iterate_by_class
 
 __all__ = [
     'create_map',
@@ -71,14 +71,20 @@ def get_texture_dirs():
     return [d, d2, d3]
 
 
-def load_map(map_name):
-    logger.info('loading map %s' % map_name)
+def _get_map_yaml(map_name) -> str:
     maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + '.yaml')
     if not os.path.exists(fn):
         msg = 'Could not find file %s' % fn
         raise ValueError(msg)
     data = open(fn).read()
+    return data
+
+
+
+def load_map(map_name):
+    logger.info('loading map %s' % map_name)
+    data = _get_map_yaml(map_name)
     yaml_data = yaml.load(data)
     tile_size = 0.585
     return construct_map(yaml_data, tile_size)

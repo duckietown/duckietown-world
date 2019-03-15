@@ -1,13 +1,15 @@
 # coding=utf-8
-from __future__ import unicode_literals
 
 import copy
+from dataclasses import dataclass, field
+from typing import Tuple, Dict, List, Union
 
 import six
-from contracts import contract, check_isinstance
-from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs import UndefinedAtTime, Sequence
+import yaml
 
+from contracts import check_isinstance, indent
+from duckietown_serialization_ds1 import Serializable
+from duckietown_world.seqs import UndefinedAtTime
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -16,17 +18,24 @@ __all__ = [
     'SpatialRelation',
     'GroundTruth',
     'get_object_tree',
+    'FQN',
 ]
 
+FQN = Tuple[str, ...]
 
+
+@dataclass
 class SpatialRelation(Serializable):
+    a: Tuple[str]
+    transform: Transform
+    b: Tuple[str]
 
-    @contract(a='seq(string)', b='seq(string)')
-    def __init__(self, a, transform, b):
-        check_isinstance(transform, (Transform, Sequence))
-        self.a = tuple(a)
-        self.transform = transform
-        self.b = tuple(b)
+    # @contract(a='seq(string)', b='seq(string)')
+    # def __init__(self, a: Tuple[str], transform, b: Tuple[str]):
+    #     check_isinstance(transform, (Transform, Sequence))
+    #     self.a = tuple(a)
+    #     self.transform = transform
+    #     self.b = tuple(b)
 
     def filter_all(self, f):
         t2 = f(self.transform)
@@ -65,29 +74,57 @@ class GroundTruth(SpatialRelation):
         return {}
 
 
+root: FQN = ()
+
+
+@dataclass
 class PlacedObject(Serializable):
-    def __init__(self, children=None, spatial_relations=None):
-        children = children or {}
-        spatial_relations = spatial_relations or {}
+    children: Dict[str, 'PlacedObject'] = field(default_factory=dict)
+    spatial_relations: Dict[str, SpatialRelation] = field(default_factory=dict)
 
-        self.children = children
+    # def __init__(self, children: Dict[str, 'PlacedObject'],
+    #                     spatial_relations: Dict[str, SpatialRelation]):
+    #     children = children or {}
+    #     spatial_relations = spatial_relations or {}
+    #
+    #     self.children = children
+    #
+    #     for k, v in list(spatial_relations.items()):
+    #         from .transforms import Transform
+    #         if isinstance(v, Transform):
+    #             if k in self.children:
+    #                 b: Tuple[str] = (k,)
+    #                 sr = GroundTruth(a=root, b=b, transform=v)
+    #                 spatial_relations[k] = sr
+    #             else:
+    #                 msg = 'What is the "%s" referring to?' % k
+    #                 raise ValueError(msg)
+    #
+    #     self.spatial_relations = spatial_relations
+    #
+    #     if not spatial_relations:
+    #         for child in self.children:
+    #             from duckietown_world import SE2Transform
+    #             sr = GroundTruth(a=root, b=(child,), transform=SE2Transform.identity())
+    #             self.spatial_relations[child] = sr
 
-        for k, v in list(spatial_relations.items()):
-            from .transforms import Transform
+    def __post_init__(self):
+        from .transforms import Transform
+
+        for k, v in list(self.spatial_relations.items()):
             if isinstance(v, Transform):
                 if k in self.children:
-                    sr = GroundTruth(a=(), b=(k,), transform=v)
-                    spatial_relations[k] = sr
+                    b: Tuple[str] = (k,)
+                    sr = GroundTruth(a=root, b=b, transform=v)
+                    self.spatial_relations[k] = sr
                 else:
                     msg = 'What is the "%s" referring to?' % k
                     raise ValueError(msg)
 
-        self.spatial_relations = spatial_relations
-
-        if not spatial_relations:
+        if not self.spatial_relations:
             for child in self.children:
                 from duckietown_world import SE2Transform
-                sr = GroundTruth(a=(), b=(child,), transform=SE2Transform.identity())
+                sr = GroundTruth(a=root, b=(child,), transform=SE2Transform.identity())
                 self.spatial_relations[child] = sr
 
     def remove_object(self, k):
@@ -110,7 +147,6 @@ class PlacedObject(Serializable):
             return copy.copy(self)
 
     def filter_all(self, f):
-
         children = {}
         spatial_relations = {}
 
@@ -144,7 +180,7 @@ class PlacedObject(Serializable):
             x.spatial_relations = spatial_relations
             return x
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Union[str, FQN]) -> 'PlacedObject':
         """
 
         Either url-like:
@@ -165,7 +201,7 @@ class PlacedObject(Serializable):
         check_isinstance(item, tuple)
         return self.get_object_from_fqn(item)
 
-    def get_object_from_fqn(self, fqn):
+    def get_object_from_fqn(self, fqn: FQN) -> 'PlacedObject':
         if fqn == ():
             return self
         first, rest = fqn[0], fqn[1:]
@@ -192,18 +228,18 @@ class PlacedObject(Serializable):
         type2klass = {
             'ground_truth': GroundTruth
         }
+        root: Tuple[str] = ()
         for k, v in transforms.items():
             klass = type2klass[k]
-            st = klass(a=(), b=(name,), transform=v)
+            st = klass(a=root, b=(name,), transform=v)
             i = len(self.spatial_relations)
             self.spatial_relations[i] = st
 
-    # @abstractmethod
     def draw_svg(self, drawing, g):
         from duckietown_world.svg_drawing import draw_axes
         draw_axes(drawing, g)
 
-    def get_drawing_children(self):
+    def get_drawing_children(self) -> List[str]:
         return sorted(self.children)
 
     def extent_points(self):
@@ -213,11 +249,10 @@ class PlacedObject(Serializable):
         return RectangularArea([-0.1, -0.1], [0.1, 0.1])
 
 
-from contracts import indent
-import yaml
-
-
-def get_object_tree(po, levels=100, spatial_relations=False, attributes=False):
+def get_object_tree(po: PlacedObject,
+                    levels: int = 100,
+                    spatial_relations: bool = False,
+                    attributes: bool = False) -> str:
     ss = []
     ss.append('%s' % type(po).__name__)
     d = po.params_to_json_dict()

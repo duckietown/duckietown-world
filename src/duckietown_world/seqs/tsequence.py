@@ -167,5 +167,5 @@ class SampledSequenceBuilder(object):
     def __len__(self):
         return len(self.timestamps)
 
-    def as_sequence(self):
+    def as_sequence(self)->SampledSequence:
         return SampledSequence(self.timestamps, self.values)

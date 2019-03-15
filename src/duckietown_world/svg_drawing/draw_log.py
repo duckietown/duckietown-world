@@ -3,7 +3,9 @@ import argparse
 import json
 import os
 import sys
-from collections import namedtuple, OrderedDict, defaultdict
+from collections import OrderedDict, defaultdict
+from dataclasses import dataclass
+from typing import Any
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger
@@ -84,10 +86,18 @@ def read_log(filename):
             yield ob
 
 
-SimulatorLog = namedtuple('SimulatorLog', 'observations duckietown trajectory render_time actions')
+@dataclass
+class SimulatorLog:
+    observations: Any
+    duckietown: Any
+    trajectory: Any
+    velocities: Any
+    render_time: Any
+    actions: Any
+    commands: Any
 
 
-
+#
 def read_simulator_log(filename):
     from duckietown_world.world_duckietown import DB18, construct_map
 
@@ -147,7 +157,7 @@ def read_simulator_log(filename):
     actions = builders[TOPIC_ACTIONS].as_sequence()
     return SimulatorLog(duckietown=duckietown_map, observations=observations,
                         trajectory=trajectory, render_time=render_time,
-                        actions=actions)
+                        actions=actions, commands=None, velocities=None)
 
 
 if __name__ == '__main__':

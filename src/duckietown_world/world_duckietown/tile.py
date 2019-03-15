@@ -211,7 +211,7 @@ def get_lane_poses(dw, q, tol=0.000001):
 
 @contract(  # pose='O3',
         returns='array[2]')
-def translation_from_O3(pose):
+def translation_from_O3(pose) -> np.ndarray:
     _, t, _, _ = extract_pieces(pose)
     return t
 
