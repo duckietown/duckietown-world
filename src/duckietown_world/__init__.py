@@ -16,7 +16,8 @@ logger.info('duckietown-world %s' % __version__)
 from duckietown_serialization_ds1 import logger
 logger.setLevel(logging.CRITICAL)
 
-
+from contracts import disable_all
+disable_all()
 
 from .geo import *
 from .seqs import *

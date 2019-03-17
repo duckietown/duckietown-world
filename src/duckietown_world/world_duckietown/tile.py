@@ -120,6 +120,9 @@ class Tile(PlacedObject):
         if self.fn:
             # texture = get_jpeg_bytes(self.fn)
             texture = open(self.fn, 'rb').read()
+            if b'git-lfs' in texture:
+                msg = f'The file {self.fn} is a Git LFS pointer. Repo not checked out correctly.'
+                raise Exception(msg)
             href = data_encoded_for_src(texture, mime_from_fn(self.fn))
             img = drawing.image(href=href,
                                 size=(T, T),
