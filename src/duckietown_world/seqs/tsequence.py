@@ -22,14 +22,6 @@ class UndefinedAtTime(Exception):
 class Sequence(Serializable):
     CONTINUOUS = 'continuous-sampling'
 
-    # __metaclass__ = ABCMeta
-
-    # def params_to_json_dict(self):
-    #     return None
-
-    # @classmethod
-    # def params_from_json_dict(cls, d):
-    #     return {}
 
     @abstractmethod
     def at(self, t):
@@ -59,9 +51,9 @@ class SampledSequence(Sequence):
     def __init__(self, timestamps, values):
         values = list(values)
         timestamps = list(timestamps)
-        if not timestamps:
-            msg = 'Empty sequence.'
-            raise ValueError(msg)
+        # if not timestamps:
+        #     msg = 'Empty sequence.'
+        #     raise ValueError(msg)
 
         if len(timestamps) != len(values):
             msg = 'Length mismatch'
@@ -89,13 +81,35 @@ class SampledSequence(Sequence):
         else:
             return self.values[i]
 
+    def at_or_previous(self, t):
+        try:
+            return self.at(t)
+        except:
+            pass
+
+        # last_t = self.timestamps[0]
+        last_i = 0
+        for i in range(len(self.timestamps)):
+            if self.timestamps[i] < t:
+                # last_t = self.timestamps[i]
+                last_i = i
+            else:
+                break
+        return self.values[last_i]
+
     def get_sampling_points(self):
         return list(self.timestamps)
 
     def get_start(self):
+        if not self.timestamps:
+            msg = 'Empty sequence'
+            raise ValueError(msg)
         return self.timestamps[0]
 
     def get_end(self):
+        if not self.timestamps:
+            msg = 'Empty sequence'
+            raise ValueError(msg)
         return self.timestamps[-1]
 
     def __iter__(self):

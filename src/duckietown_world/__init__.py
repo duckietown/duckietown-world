@@ -12,7 +12,14 @@ logger.setLevel(logging.DEBUG)
 logger.info('duckietown-world %s' % __version__)
 # _ = zuper_json.__version__
 
+# remove noisy logging
+from duckietown_serialization_ds1 import logger
+logger.setLevel(logging.CRITICAL)
+
+
+
 from .geo import *
 from .seqs import *
 from .svg_drawing import *
 from .world_duckietown import *
+

@@ -10,3 +10,5 @@ tiles:
 - [straight/N]
 
 start_tile: [1, 0]
+
+tile_size: 0.585

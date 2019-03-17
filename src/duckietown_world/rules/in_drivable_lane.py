@@ -1,8 +1,8 @@
 import textwrap
 
 import numpy as np
-from contracts import contract
 
+from contracts import contract
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
@@ -83,8 +83,14 @@ class DeviationFromCenterLine(Rule):
             timestamps.append(timestamp)
 
         sequence = SampledSequence(timestamps, values)
-        cumulative = integrate(sequence)
-        dtot = cumulative.values[-1]
+
+        if len(sequence) <= 1:
+            cumulative = 0
+            dtot = 0
+        else:
+            cumulative = integrate(sequence)
+            dtot = cumulative.values[-1]
+
         title = "Deviation from center line"
         description = textwrap.dedent("""\
             This metric describes the amount of deviation from the center line.
@@ -126,8 +132,13 @@ class DeviationHeading(Rule):
             timestamps.append(timestamp)
 
         sequence = SampledSequence(timestamps, values)
-        cumulative = integrate(sequence)
-        dtot = cumulative.values[-1]
+        if len(sequence) <= 1:
+            cumulative = 0
+            dtot = 0
+        else:
+            cumulative = integrate(sequence)
+            dtot = cumulative.values[-1]
+
         # result.set_metric((), dtot, sequence, description, cumulative=cumulative)
         title = "Deviation from lane direction"
         description = textwrap.dedent("""\
@@ -164,8 +175,12 @@ class InDrivableLane(Rule):
             timestamps.append(timestamp)
 
         sequence = SampledSequence(timestamps, values)
-        cumulative = integrate(sequence)
-        dtot = cumulative.values[-1]
+        if len(sequence) <= 1:
+            cumulative = 0
+            dtot = 0
+        else:
+            cumulative = integrate(sequence)
+            dtot = cumulative.values[-1]
 
         title = "Drivable areas"
         description = textwrap.dedent("""\
@@ -233,14 +248,20 @@ class DrivenLength(Rule):
             driven_lanedir_builder.add(t0, dr_lanedir)
 
         driven_any_incremental = driven_any_builder.as_sequence()
+
         driven_any_cumulative = accumulate(driven_any_incremental)
+
+        if len(driven_any_incremental) <= 1:
+            total = 0
+        else:
+            total = driven_any_cumulative.values[-1]
 
         title = "Distance"
         description = textwrap.dedent("""\
             This metric computes how far the robot drove.
         """)
 
-        result.set_metric(name=('driven_any',), total=driven_any_cumulative.values[-1],
+        result.set_metric(name=('driven_any',), total=total,
                           incremental=driven_any_incremental,
                           title=title, description=description, cumulative=driven_any_cumulative)
         title = "Lane distance"
@@ -248,11 +269,16 @@ class DrivenLength(Rule):
         driven_lanedir_incremental = driven_lanedir_builder.as_sequence()
         driven_lanedir_cumulative = accumulate(driven_lanedir_incremental)
 
+        if len(driven_lanedir_incremental) <= 1:
+            total = 0
+        else:
+            total = driven_lanedir_cumulative.values[-1]
+
         description = textwrap.dedent("""\
             This metric computes how far the robot drove
             **in the direction of the lane**.
         """)
-        result.set_metric(name=('driven_lanedir',), total=driven_lanedir_cumulative.values[-1],
+        result.set_metric(name=('driven_lanedir',), total=total,
                           incremental=driven_lanedir_incremental,
                           title=title, description=description, cumulative=driven_lanedir_cumulative)
 
@@ -323,12 +349,14 @@ class DrivenLengthConsecutive(Rule):
         driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
         driven_lanedir_cumulative = accumulate(driven_lanedir_incremental)
 
+        if len(driven_lanedir_incremental) <= 1:
+            total = 0
+        else:
+            total = driven_lanedir_cumulative.values[-1]
         description = textwrap.dedent("""\
-            This metric computes how far the robot drove
-            **in the direction of the correct lane**,
-            discounting whenever it was driven
-            in the wrong direction with respect to the start.
+            This metric computes how far the robot drove **in the direction of the correct lane**,
+            discounting whenever it was driven in the wrong direction with respect to the start.
         """)
-        result.set_metric(name=('driven_lanedir_consec',), total=driven_lanedir_cumulative.values[-1],
+        result.set_metric(name=('driven_lanedir_consec',), total=total,
                           incremental=driven_lanedir_incremental,
                           title=title, description=description, cumulative=driven_lanedir_cumulative)

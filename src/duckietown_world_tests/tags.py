@@ -26,7 +26,7 @@ tiles:
 @comptest
 def tag_positions():
     map_yaml_data = yaml.load(map_yaml)
-    m = construct_map(map_yaml_data, tile_size=0.61)
+    m = construct_map(map_yaml_data) #, tile_size=0.61)
     print(get_object_tree(m, attributes=True))
     outdir = get_comptests_output_dir()
     draw_static(m, outdir)

@@ -5,6 +5,7 @@ import logging
 import math
 import os
 from collections import OrderedDict
+from typing import Optional
 
 import svgwrite
 from bs4 import Tag, BeautifulSoup
@@ -126,7 +127,7 @@ def recurive_draw_list(draw_list, prefix):
 
 
 def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
-                timeseries=None):
+                timeseries=None, height_of_stored_images: Optional[int] = None):
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
     images = images or {}
     timeseries = timeseries or {}
@@ -186,21 +187,25 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
         for name, sequence in images.items():
             try:
                 obs = sequence.at(t)
+                updated = True
             except UndefinedAtTime:
-                pass
-            else:
-                img = Tag(name='img')
-                if isinstance(obs, bytes):
-                    data = obs
-                else:
-                    data = obs.bytes_contents
+                obs = sequence.at_or_previous(t)
+                updated = False
 
-                resized = get_resized_image(data, 200)
-                img.attrs['src'] = data_encoded_for_src(resized, 'image/jpeg')
-                # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
-                img.attrs['class'] = 'keyframe keyframe%d' % i
-                img.attrs['visualize'] = 'hide'
-                imagename2div[name].append(img)
+            img = Tag(name='img')
+            if isinstance(obs, bytes):
+                data = obs
+            else:
+                data = obs.bytes_contents
+
+            if height_of_stored_images is not None:
+                data = get_resized_image(data, height_of_stored_images)
+            img.attrs['src'] = data_encoded_for_src(data, 'image/jpeg')
+            # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
+            img.attrs['class'] = 'keyframe keyframe%d' % i
+            img.attrs['visualize'] = 'hide'
+            img.attrs['updated'] = int(updated)
+            imagename2div[name].append(img)
 
     other = ""
 
@@ -393,19 +398,25 @@ def make_tabs(timeseries):
         layout = {'font': dict(size=10), 'margin': dict(t=0)}
 
         n = len(scatters)
-        fig = tools.make_subplots(rows=1, cols=n)
-        fig.layout.update(layout)
-        for j, scatter in enumerate(scatters):
-            fig.append_trace(scatter, 1, j + 1)
+        if n == 0:
+            p = Tag(name='p')
+            p.append('No scatter plots available')
+            td.append(p)
+        else:
 
-        # include_plotlyjs = True if i == 0 else False
-        include_plotlyjs = True
-        res = offline.plot(fig,
-                           output_type='div',
-                           show_link=False,
-                           include_plotlyjs=include_plotlyjs)
-        td.append(bs(res))
-        i += 1
+            fig = tools.make_subplots(rows=1, cols=n)
+            fig.layout.update(layout)
+            for j, scatter in enumerate(scatters):
+                fig.append_trace(scatter, 1, j + 1)
+
+            # include_plotlyjs = True if i == 0 else False
+            include_plotlyjs = True
+            res = offline.plot(fig,
+                               output_type='div',
+                               show_link=False,
+                               include_plotlyjs=include_plotlyjs)
+            td.append(bs(res))
+            i += 1
 
         tr.append(td)
         table.append(tr)
@@ -673,7 +684,7 @@ def data_encoded_for_src(data, mime):
         returns "data: ... " sttring
     """
     encoded = base64.b64encode(data).decode()
-    link = 'data:%s;base64,' % (mime) + encoded
+    link = ('data:%s;base64,' % mime) + encoded
     return link
 
 

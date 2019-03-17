@@ -81,18 +81,17 @@ def _get_map_yaml(map_name) -> str:
     return data
 
 
-
 def load_map(map_name):
     logger.info('loading map %s' % map_name)
     data = _get_map_yaml(map_name)
-    yaml_data = yaml.load(data)
-    tile_size = 0.585
-    return construct_map(yaml_data, tile_size)
+    yaml_data = yaml.load(data, Loader=yaml.SafeLoader)
+
+    return construct_map(yaml_data)
 
 
-def construct_map(yaml_data, tile_size):
+def construct_map(yaml_data):
+    tile_size = yaml_data['tile_size']
     dm = DuckietownMap(tile_size)
-
     tiles = yaml_data['tiles']
     assert len(tiles) > 0
     assert len(tiles[0]) > 0
