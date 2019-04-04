@@ -195,54 +195,6 @@ objects:
                 - 3.99
                 - 3.373
 
-    tag22:
-        attach:
-            slot: 0
-            tile:
-            - 3
-            - 12
-        kind: sign_T_intersect
-        tag:
-            ~TagInstance:
-                family: 36h11
-                tag_id: 150
-                size: 0.08
-        pose:
-            ~SE2Transform:
-                theta_deg: 270
-
-
-
-    tag25:
-        attach:
-            slot: 2
-            tile:
-            - 2
-            - 12
-        kind: sign_left_T_intersect
-        tag:
-            ~TagInstance:
-                family: 36h11
-                tag_id: 156
-                size: 0.08
-        pose:
-            ~SE2Transform: {}
-
-    tag29:
-        attach:
-            slot: 4
-            tile:
-            - 2
-            - 11
-        kind: sign_4_way_intersect
-        tag:
-            ~TagInstance:
-                family: 36h11
-                tag_id: 233
-                size: 0.08
-        pose:
-            ~SE2Transform:
-                theta_deg: 90
 
     A4:
         kind: floor_tag
@@ -842,22 +794,6 @@ objects:
                 - 4.5760000000000005
                 - 6.298
 
-
-    tag15:
-        attach:
-            slot: 6
-            tile:
-            - 3
-            - 11
-        kind: sign_right_T_intersect
-        tag:
-            ~TagInstance:
-                family: 36h11
-                tag_id: 132
-                size: 0.08
-        pose:
-            ~SE2Transform:
-                theta_deg: 180
 
     D9:
         kind: floor_tag
