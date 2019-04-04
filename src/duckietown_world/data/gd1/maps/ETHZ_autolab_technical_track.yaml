@@ -1,0 +1,9 @@
+# 7x6 technial track - ETHZ autolab
+tiles:
+- [curve_left/W , straight/W, curve_left/N, asphalt, asphalt, asphalt]
+- [straight/S   , asphalt   , straight/N  , asphalt, asphalt, asphalt]
+- [straight/S   , asphalt   , curve_left/S, curve_right/E, asphalt, asphalt]
+- [straight/S   , asphalt   , asphalt     , curve_left/S, curve_right/E, asphalt]
+- [straight/S   , asphalt   , asphalt     , asphalt, curve_left/S, curve_right/E]
+- [curve_left/S   , straight/W   , straight/W     , curve_right/E, asphalt, straight/S]
+- [asphalt   , asphalt     , asphalt, curve_left/S, straight/W , curve_left/E]
