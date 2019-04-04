@@ -13,8 +13,8 @@ logger.info('duckietown-world %s' % __version__)
 # _ = zuper_json.__version__
 
 # remove noisy logging
-from duckietown_serialization_ds1 import logger
-logger.setLevel(logging.CRITICAL)
+from duckietown_serialization_ds1 import logger as dslogger
+dslogger.setLevel(logging.CRITICAL)
 
 from contracts import disable_all, __version__ as contracts_version
 logger.info('contracts %s ' % contracts_version)

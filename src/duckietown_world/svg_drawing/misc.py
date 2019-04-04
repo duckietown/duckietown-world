@@ -1,5 +1,6 @@
 # coding=utf-8
 import base64
+from typing import *
 import itertools
 import logging
 import math
@@ -127,7 +128,7 @@ def recurive_draw_list(draw_list, prefix):
 
 
 def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
-                timeseries=None, height_of_stored_images: Optional[int] = None):
+                timeseries=None, height_of_stored_images: Optional[int] = None) -> Sequence[str]:
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
     images = images or {}
     timeseries = timeseries or {}

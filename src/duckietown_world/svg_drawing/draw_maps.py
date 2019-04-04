@@ -4,6 +4,7 @@ import json
 import os
 import sys
 
+from duckietown_world import logger
 from .misc import draw_static
 
 __all__ = [
@@ -27,7 +28,7 @@ def draw_maps_main(args=None):
         map_names = parsed.map_names
     else:
         map_names = list_maps()
-    print(map_names)
+    logger.info('Drawing the maps %s.' % ", ".join(map_names))
 
     for map_name in map_names:
         duckietown_map = load_map(map_name)
@@ -39,7 +40,7 @@ def draw_maps_main(args=None):
         fn = os.path.join(out, 'map.json')
         with open(fn, 'w') as f:
             f.write(json.dumps(y, indent=4))
-        print('written to %s' % fn)
+        # print('written to %s' % fn)
 
 
 def draw_map(output, duckietown_map):
@@ -48,7 +49,9 @@ def draw_map(output, duckietown_map):
         os.makedirs(output)
     assert isinstance(duckietown_map, DuckietownMap)
 
-    draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
+    fns = draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
+    for fn in fns:
+        logger.info('Written to %s' % fn)
 
 
 if __name__ == '__main__':
