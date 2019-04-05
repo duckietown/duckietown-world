@@ -67,11 +67,11 @@ jobs:
 #            rm test-data/LFV.json
 #            wget https://github.com/duckietown/duckietown-world/raw/master18/test-data/LFV.json -O test-data/LFV.json
 
-      - run:
-          name: Example LFV
-          command: |
-            make tests-LFV-coverage
-
+#      - run:
+#          name: Example LFV
+#          command: |
+#            make tests-LFV-coverage
+#
 
       - run:
           name: Coverage analysis
