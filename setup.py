@@ -40,6 +40,7 @@ setup(name='duckietown-world',
           'plotly',
           'oyaml',
           'markdown',
+          'dataclasses',
       ],
 
       tests_require=[
