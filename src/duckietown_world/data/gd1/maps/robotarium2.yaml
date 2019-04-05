@@ -275,7 +275,186 @@ objects:
             ~SE2Transform:
                 theta_deg: 270
 
- 
+    tag32:
+        attach:
+            slot: 4
+            tile:
+            - 0
+            - 10
+        kind: sign_stop
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 190
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 180
+    tag33:
+        attach:
+            slot: 5
+            tile:
+            - 0
+            - 10
+        kind: sign_stop
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 37
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 270
+    tag34:
+        attach:
+            slot: 0
+            tile:
+            - 1
+            - 10
+        kind: sign_right_T_intersect
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 58
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 270 
+    tag35:
+        attach:
+            slot: 7 
+            tile:
+            - 1
+            - 9
+        kind: sign_stop
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 193
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 90                                    
+    tag36:
+        attach:
+            slot: 4 
+            tile:
+            - 0
+            - 9
+        kind: sign_T_intersect
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 68
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 180 
+    tag37:
+        attach:
+            slot: 3 
+            tile:
+            - 0
+            - 9
+        kind: sign_left_T_intersect
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 63
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 90 
+    tag38:
+        attach:
+            slot: 3
+            tile:
+            - 2
+            - 12
+        kind: sign_stop
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 168 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg: 180   
+    tag39:
+        attach:
+            slot: 
+            tile:
+            - 
+            - 
+        kind: sign_
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg:    
+    tag:
+        attach:
+            slot: 
+            tile:
+            - 
+            - 
+        kind: sign_
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg:    
+    tag:
+        attach:
+            slot: 
+            tile:
+            - 
+            - 
+        kind: sign_
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg:    
+    tag:
+        attach:
+            slot: 
+            tile:
+            - 
+            - 
+        kind: sign_
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg:    
+    tag:
+        attach:
+            slot: 
+            tile:
+            - 
+            - 
+        kind: sign_
+        tag:
+            ~TagInstance:
+                family: 36h11
+                tag_id: 
+                size: 0.08
+        pose:
+            ~SE2Transform:
+                theta_deg:                                                                                              
     M7:
         kind: floor_tag
         tag:
