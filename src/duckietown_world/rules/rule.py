@@ -8,8 +8,8 @@ from duckietown_serialization_ds1 import Serializable
 from contracts import check_isinstance
 from duckietown_world import LanePose
 from duckietown_world.geo import PlacedObject, SE2Transform
-from duckietown_world.seqs import Sequence, SampledSequence
-from duckietown_world.seqs.tsequence import GenericSequence, Timestamp
+from duckietown_world.seqs import SampledSequence
+from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
 
 __all__ = [
@@ -27,14 +27,7 @@ class RuleEvaluationContext:
     ego_name: str
     lane_pose_seq: SampledSequence[LanePose]
     pose_seq: SampledSequence[SE2Transform]
-    #
-    # def __init__(self, interval, world, ego_name, lane_pose_seq, pose_seq):
-    #     self._interval = interval
-    #     self._world = world
-    #     self._ego_name = ego_name
-    #     self._lane_pose_seq = lane_pose_seq
-    #     self._pose_seq = pose_seq
-    #
+
     def get_interval(self) -> SampledSequence[Timestamp]:
         """ Returns the interval over which to evaluate the rule. """
         return self.interval
@@ -90,9 +83,9 @@ class RuleEvaluationResult:
                    total: Union[float, int],
                    title: Optional[str] = None,
                    description: Optional[str] = None,
-                   incremental: Optional[Sequence] = None,
+                   incremental: Optional[SampledSequence] = None,
 
-                   cumulative: Optional[Sequence] = None):
+                   cumulative: Optional[SampledSequence] = None):
         check_isinstance(name, tuple)
         self.metrics[name] = EvaluatedMetric(total=total,
                                              incremental=incremental,

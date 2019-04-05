@@ -6,6 +6,7 @@ from duckietown_serialization_ds1 import Serializable
 from duckietown_world import list_maps
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.seqs import Constant
+from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown import create_map
 from duckietown_world.world_duckietown.map_loading import load_map
 
@@ -57,6 +58,12 @@ def wb2():
     # print(yaml.safe_dump(d1, default_flow_style=False))
     # assert d == d1
 
+
+
+@comptest
+def sb1():
+    a = SampledSequenceBuilder[float]()
+    a.add(0.0, 0.0)
 
 if __name__ == '__main__':
     run_module_tests()
