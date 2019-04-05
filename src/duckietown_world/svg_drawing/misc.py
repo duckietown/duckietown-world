@@ -1,5 +1,6 @@
 # coding=utf-8
 import base64
+from dataclasses import dataclass
 from typing import *
 import itertools
 import logging
@@ -17,6 +18,7 @@ from contracts import contract, check_isinstance
 from duckietown_world import logger
 from duckietown_world.geo import RectangularArea, get_extent_points, get_static_and_dynamic
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
+from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
 
 __all__ = [
@@ -140,9 +142,9 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
 
     timestamps = get_sampling_points(root)
     if len(timestamps) == 0:
-        keyframes = SampledSequence([0], [0])
+        keyframes = SampledSequence[Timestamp]([0], [0])
     else:
-        keyframes = SampledSequence(range(len(timestamps)), timestamps)
+        keyframes = SampledSequence[Timestamp](range(len(timestamps)), timestamps)
     # nkeyframes = len(keyframes)
 
     if area is None:
@@ -346,14 +348,16 @@ def get_resized_image(bytes_content, width):
     image.save(out, format='jpeg')
     return out.getvalue()
 
-
-class TimeseriesPlot(object):
-
-    def __init__(self, title, long_description, sequences):
-        check_isinstance(title, six.string_types)
-        self.title = title
-        self.long_description = long_description
-        self.sequences = sequences
+@dataclass
+class TimeseriesPlot:
+    title: str
+    long_description: Optional[str]
+    sequences: Dict
+    # def __init__(self, title, long_description, sequences):
+    #     check_isinstance(title, six.string_types)
+    #     self.title = title
+    #     self.long_description = long_description
+    #     self.sequences = sequences
 
     def get_title(self):
         return self.title
@@ -376,7 +380,7 @@ def make_tabs(timeseries):
 
         td = Tag(name='td')
         td.attrs['style'] = 'width: 15em; min-height: 20em; vertical-align: top;'
-        td.append(get_markdown(tsp.long_description))
+        td.append(get_markdown(tsp.long_description or ''))
         tr.append(td)
 
         td = Tag(name='td')
@@ -735,7 +739,7 @@ def bs(fragment: str):
     return res
 
 
-def get_markdown(md):
+def get_markdown(md: str) -> str:
     import markdown
 
     extensions = ['extra', 'smarty']

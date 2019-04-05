@@ -89,7 +89,7 @@ def load_map(map_name):
     return construct_map(yaml_data)
 
 
-def construct_map(yaml_data):
+def construct_map(yaml_data: dict):
     tile_size = yaml_data['tile_size']
     dm = DuckietownMap(tile_size)
     tiles = yaml_data['tiles']

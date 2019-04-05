@@ -1,13 +1,16 @@
 # coding=utf-8
+import typing
 from abc import abstractmethod
-from collections import namedtuple
-
-from contracts import describe_value
+from dataclasses import dataclass
+from typing import Callable, TypeVar, Generic, Union, List, Optional, ClassVar, Type
 
 from duckietown_serialization_ds1 import Serializable
 
+from contracts import describe_value
+
 __all__ = [
     'Sequence',
+    'GenericSequence',
     'UndefinedAtTime',
     'SampledSequence',
     'IterateDT',
@@ -19,24 +22,28 @@ class UndefinedAtTime(Exception):
     pass
 
 
-class Sequence(Serializable):
+X = TypeVar('X')
+Y = TypeVar('Y')
+Timestamp = float
+
+
+class GenericSequence(Generic[X], Serializable):
     CONTINUOUS = 'continuous-sampling'
 
-
     @abstractmethod
-    def at(self, t):
+    def at(self, t: Timestamp) -> Generic:
         """ Raises UndefinedAtTime if not defined at t. """
 
     @abstractmethod
-    def get_start(self):
+    def get_start(self) -> Optional[Timestamp]:
         """ Returns the timestamp for start, or None if -infinity. """
 
     @abstractmethod
-    def get_end(self):
+    def get_end(self) -> Optional[Timestamp]:
         """ Returns the timestamp for start, or None if +infinity. """
 
     @abstractmethod
-    def get_sampling_points(self):
+    def get_sampling_points(self) -> Union[str, typing.Sequence[Timestamp]]:
         """
             Returns the lists of interesting points.
 
@@ -45,15 +52,20 @@ class Sequence(Serializable):
         """
 
 
-class SampledSequence(Sequence):
-    """ A sampled time sequence. Only defined at certain points. """
+Sequence = GenericSequence
 
-    def __init__(self, timestamps, values):
-        values = list(values)
-        timestamps = list(timestamps)
-        # if not timestamps:
-        #     msg = 'Empty sequence.'
-        #     raise ValueError(msg)
+
+@dataclass
+class SampledSequence(GenericSequence, Generic[X]):
+    """ A sampled time sequence. Only defined at certain points. """
+    timestamps: List[Timestamp]
+    values: List[X]
+
+    XT: ClassVar[Type[X]] = typing.Any
+
+    def __post_init__(self):
+        values = list(self.values)
+        timestamps = list(self.timestamps)
 
         if len(timestamps) != len(values):
             msg = 'Length mismatch'
@@ -68,11 +80,11 @@ class SampledSequence(Sequence):
             if dt <= 0:
                 msg = 'Invalid dt = %s at i = %s; ts= %s' % (dt, i, timestamps)
                 raise ValueError(msg)
-        timestamps = list(map(float, timestamps))
+        timestamps = list(map(Timestamp, timestamps))
         self.timestamps = timestamps
         self.values = values
 
-    def at(self, t):
+    def at(self, t: Timestamp) -> X:
         try:
             i = self.timestamps.index(t)
         except ValueError:
@@ -81,10 +93,10 @@ class SampledSequence(Sequence):
         else:
             return self.values[i]
 
-    def at_or_previous(self, t):
+    def at_or_previous(self, t: Timestamp) -> X:
         try:
             return self.at(t)
-        except:
+        except UndefinedAtTime:
             pass
 
         # last_t = self.timestamps[0]
@@ -97,16 +109,16 @@ class SampledSequence(Sequence):
                 break
         return self.values[last_i]
 
-    def get_sampling_points(self):
+    def get_sampling_points(self) -> List[Timestamp]:
         return list(self.timestamps)
 
-    def get_start(self):
+    def get_start(self) -> Timestamp:
         if not self.timestamps:
             msg = 'Empty sequence'
             raise ValueError(msg)
         return self.timestamps[0]
 
-    def get_end(self):
+    def get_end(self) -> Timestamp:
         if not self.timestamps:
             msg = 'Empty sequence'
             raise ValueError(msg)
@@ -116,18 +128,18 @@ class SampledSequence(Sequence):
         return zip(self.timestamps, self.values).__iter__()
 
     @classmethod
-    def from_iterator(cls, i):
+    def from_iterator(cls, i: typing.Iterator[X]) -> 'SampledSequence[X]':
         timestamps = []
         values = []
         for t, v in i:
             timestamps.append(t)
             values.append(v)
-        return SampledSequence(timestamps, values)
+        return SampledSequence[typing.Any](timestamps, values)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.timestamps)
 
-    def transform_values(self, f):
+    def transform_values(self, f: Callable[[X], Y]) -> 'SampledSequence[Y]':
         values = []
         timestamps = []
         for t, _ in self:
@@ -136,9 +148,9 @@ class SampledSequence(Sequence):
                 values.append(res)
                 timestamps.append(t)
 
-        return SampledSequence(timestamps, values)
+        return SampledSequence[self.XT](timestamps, values)
 
-    def upsample(self, n):
+    def upsample(self, n: int) -> 'SampledSequence[X]':
         timestamps = []
         values = []
         for i in range(len(self.timestamps) - 1):
@@ -153,10 +165,17 @@ class SampledSequence(Sequence):
         return SampledSequence(timestamps, values)
 
 
-IterateDT = namedtuple('IterateDT', 't0 t1 dt v0 v1')
+
+@dataclass
+class IterateDT(Generic[X]):
+    t0: Timestamp
+    t1: Timestamp
+    dt: float
+    v0: X
+    v1: X
 
 
-def iterate_with_dt(sequence):
+def iterate_with_dt(sequence: SampledSequence) -> typing.Iterator[IterateDT[X]]:
     """ yields t0, t1, dt, v0, v1 """
     timestamps = sequence.timestamps
     values = sequence.values
@@ -166,20 +185,34 @@ def iterate_with_dt(sequence):
         v0 = values[i]
         v1 = values[i + 1]
         dt = t1 - t0
-        yield IterateDT(t0, t1, dt, v0, v1)
+        yield IterateDT[type(sequence).XT](t0, t1, dt, v0, v1) # XXX
 
 
-class SampledSequenceBuilder(object):
-    def __init__(self):
-        self.timestamps = []
-        self.values = []
+@dataclass
+class SampledSequenceBuilder(Generic[X]):
+    timestamps: List[Timestamp] = None
+    values: List[X] = None
 
-    def add(self, t, v):
+    XT: typing.ClassVar[typing.Type[X]] = typing.Any
+
+    # def __init__(self):
+    #     self.timestamps = []
+    #     self.values = []
+
+    def __post_init__(self):
+        self.timestamps = self.timestamps or []
+        self.values = self.values or []
+
+    def add(self, t: Timestamp, v: X):
+        # self.timestamps = self.timestamps or []
+        # self.values = self.values or []
+
+        # print(type(self), self.__dict__)
         self.timestamps.append(t)
         self.values.append(v)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.timestamps)
 
-    def as_sequence(self)->SampledSequence:
-        return SampledSequence(self.timestamps, self.values)
+    def as_sequence(self) -> SampledSequence:
+        return SampledSequence[self.XT](timestamps=self.timestamps, values=self.values)

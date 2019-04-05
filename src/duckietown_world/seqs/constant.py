@@ -1,23 +1,30 @@
 # coding=utf-8
-from .tsequence import Sequence
+from dataclasses import dataclass
+from typing import *
+
+from .tsequence import GenericSequence, X, Timestamp
 
 __all__ = [
     'Constant',
 ]
 
 
-class Constant(Sequence):
-    def __init__(self, always):
-        self.always = always
+@dataclass
+class Constant(GenericSequence[X]):
+    always: X
 
-    def at(self, t):
+    def at(self, t: Timestamp) -> X:
         return self.always
 
-    def get_sampling_points(self):
-        return Sequence.CONTINUOUS
+    # noinspection PyUnusedLocal
+    def at_or_previous(self, t: Timestamp) -> X:
+        return self.always
 
-    def get_start(self):
+    def get_sampling_points(self) -> str:
+        return GenericSequence.CONTINUOUS
+
+    def get_start(self) -> Optional[Timestamp]:
         return None
 
-    def get_end(self):
+    def get_end(self) -> Optional[Timestamp]:
         return None

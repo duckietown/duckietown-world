@@ -1,12 +1,14 @@
 # coding=utf-8
 
 from abc import ABCMeta, abstractmethod
+from typing import NewType
+
+import numpy as np
+from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
-import numpy as np
 from contracts import contract, new_contract
-from duckietown_serialization_ds1 import Serializable
-from six import with_metaclass
+from duckietown_world.seqs.tsequence import Timestamp
 
 __all__ = [
     'TransformSequence',
@@ -16,17 +18,15 @@ __all__ = [
     'Matrix2D',
 ]
 
+SE2value = NewType('SE2value', np.ndarray)
 
-class Transform(with_metaclass(ABCMeta)):
+
+class Transform(metaclass=ABCMeta):
 
     @abstractmethod
-    def asmatrix2d(self):
+    def asmatrix2d(self) -> 'Matrix2D':
         """ """
 
-    #
-    # def as_M33(self):
-    #     pass
-    #
 
     def as_SE2(self):
         m = self.asmatrix2d().m
@@ -61,23 +61,23 @@ class TransformSequence(Transform, Serializable):
         return 'TransformSequence(%s)' % self.transforms
 
 
-from duckietown_world.seqs import Sequence
+from duckietown_world.seqs import GenericSequence
 
 
-class VariableTransformSequence(TransformSequence, Sequence):
-    def at(self, t):
+class VariableTransformSequence(TransformSequence, GenericSequence[Transform]): # XXX
+    def at(self, t: Timestamp):
         res = []
         for transform in self.transforms:
-            if isinstance(transform, Sequence):
+            if isinstance(transform, GenericSequence):
                 transform = transform.at(t)
             res.append(transform)
         return TransformSequence(res)
 
     def get_end(self):
-        pass
+        return None
 
     def get_start(self):
-        pass
+        return None
 
     def get_sampling_points(self):
         pass
@@ -93,12 +93,11 @@ class SE2Transform(Transform, Serializable):
         return 'SE2Transform(%s,%s)' % (self.p.tolist(), self.theta)
 
     @classmethod
-    def identity(cls):
+    def identity(cls) -> 'SE2Transform':
         return SE2Transform([0.0, 0.0], 0.0)
 
     @classmethod
-    @contract(q='SE2')
-    def from_SE2(cls, q):
+    def from_SE2(cls, q: SE2value) -> 'SE2Transform':
         """ From a matrix """
         translation, angle = geo.translation_angle_from_SE2(q)
         return SE2Transform(translation, angle)
@@ -137,7 +136,7 @@ class SE2Transform(Transform, Serializable):
 
         return dict(p=p, theta=theta)
 
-    def as_SE2(self):
+    def as_SE2(self) -> SE2value:
         import geometry
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
         return M

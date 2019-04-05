@@ -2,7 +2,7 @@ import textwrap
 
 import numpy as np
 
-from contracts import contract
+import geometry as geo
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
@@ -15,12 +15,17 @@ __all__ = [
     'DeviationHeading',
     'DrivenLength',
     'DrivenLengthConsecutive',
+    'SurvivalTime',
+
 ]
 
 
-def integrate(sequence):
+def integrate(sequence: SampledSequence[float]) -> SampledSequence[float]:
     """ Integrates with respect to time.
         That is, it multiplies the value with the Delta T. """
+    if not sequence:
+        msg = 'Cannot integrate empty sequence.'
+        raise ValueError(msg)
     total = 0.0
     timestamps = []
     values = []
@@ -32,10 +37,10 @@ def integrate(sequence):
         timestamps.append(_.t0)
         values.append(total)
 
-    return SampledSequence(timestamps, values)
+    return SampledSequence[float](timestamps, values)
 
 
-def accumulate(sequence):
+def accumulate(sequence: SampledSequence[float]) -> SampledSequence[float]:
     """ Integrates with respect to time.
         Sums the values along the horizontal. """
     total = 0.0
@@ -47,15 +52,39 @@ def accumulate(sequence):
         timestamps.append(t)
         values.append(total)
 
-    return SampledSequence(timestamps, values)
+    return SampledSequence[float](timestamps, values)
+
+
+from typing import cast
+
+
+class SurvivalTime(Rule):
+
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
+        lane_pose_seq = context.get_lane_pose_seq()
+        if len(lane_pose_seq) < 1:
+            raise ValueError(lane_pose_seq)
+
+        title = "Survival time"
+        description = "Length of the episode."
+
+        incremental = lane_pose_seq.transform_values(lambda _: 1.0)
+        cumulative = integrate(incremental)
+        total = cumulative.values[-1]
+
+        result.set_metric(name=(),
+                          title=title,
+                          description=description,
+                          total=total,
+                          incremental=incremental,
+                          cumulative=cumulative)
 
 
 class DeviationFromCenterLine(Rule):
 
-    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
-    def evaluate(self, context, result):
-        assert isinstance(result, RuleEvaluationResult)
-        interval = context.get_interval()
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
+
+        interval = cast(SampledSequence, context.get_interval())
         lane_pose_seq = context.get_lane_pose_seq()
 
         timestamps = []
@@ -65,7 +94,7 @@ class DeviationFromCenterLine(Rule):
             try:
                 name2lpr = lane_pose_seq.at(timestamp)
             except UndefinedAtTime:
-                d = 0
+                d = 0.0
             else:
                 if name2lpr:
                     first = name2lpr[sorted(name2lpr)[0]]
@@ -77,12 +106,12 @@ class DeviationFromCenterLine(Rule):
                     d = lp.distance_from_center
                 else:
                     # no lp
-                    d = 0
+                    d = 0.0
 
             values.append(d)
             timestamps.append(timestamp)
 
-        sequence = SampledSequence(timestamps, values)
+        sequence = SampledSequence[float](timestamps, values)
 
         if len(sequence) <= 1:
             cumulative = 0
@@ -101,10 +130,9 @@ class DeviationFromCenterLine(Rule):
 
 class DeviationHeading(Rule):
 
-    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
-    def evaluate(self, context, result):
-        assert isinstance(result, RuleEvaluationResult)
-        interval = context.get_interval()
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
+
+        interval = cast(SampledSequence, context.get_interval())
         lane_pose_seq = context.get_lane_pose_seq()
 
         timestamps = []
@@ -114,7 +142,7 @@ class DeviationHeading(Rule):
             try:
                 name2lpr = lane_pose_seq.at(timestamp)
             except UndefinedAtTime:
-                d = 0
+                d = 0.0
             else:
                 if name2lpr:
                     first = name2lpr[sorted(name2lpr)[0]]
@@ -126,15 +154,15 @@ class DeviationHeading(Rule):
                     d = np.abs(lp.relative_heading)
                 else:
                     # no lp
-                    d = 0
+                    d = 0.0
 
             values.append(d)
             timestamps.append(timestamp)
 
-        sequence = SampledSequence(timestamps, values)
+        sequence = SampledSequence[float](timestamps, values)
         if len(sequence) <= 1:
-            cumulative = 0
-            dtot = 0
+            cumulative = 0.0
+            dtot = 0.0
         else:
             cumulative = integrate(sequence)
             dtot = cumulative.values[-1]
@@ -150,10 +178,8 @@ class DeviationHeading(Rule):
 
 class InDrivableLane(Rule):
 
-    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
-    def evaluate(self, context, result):
-        assert isinstance(result, RuleEvaluationResult)
-        interval = context.get_interval()
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
+        interval = cast(SampledSequence, context.get_interval())
         lane_pose_seq = context.get_lane_pose_seq()
 
         timestamps = []
@@ -163,18 +189,18 @@ class InDrivableLane(Rule):
             try:
                 name2lpr = lane_pose_seq.at(timestamp)
             except UndefinedAtTime:
-                d = 1
+                d = 1.0
             else:
                 if name2lpr:
-                    d = 0
+                    d = 0.0
                 else:
                     # no lp
-                    d = 1
+                    d = 1.0
 
             values.append(d)
             timestamps.append(timestamp)
 
-        sequence = SampledSequence(timestamps, values)
+        sequence = SampledSequence[float](timestamps, values)
         if len(sequence) <= 1:
             cumulative = 0
             dtot = 0
@@ -194,20 +220,15 @@ class InDrivableLane(Rule):
                           title=title, description=description, cumulative=cumulative)
 
 
-import geometry as geo
-
-
 class DrivenLength(Rule):
 
-    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
-    def evaluate(self, context, result):
-        assert isinstance(result, RuleEvaluationResult)
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
         lane_pose_seq = context.get_lane_pose_seq()
         ego_pose_sequence = context.get_ego_pose_global()
 
-        driven_any_builder = SampledSequenceBuilder()
-        driven_lanedir_builder = SampledSequenceBuilder()
+        driven_any_builder = SampledSequenceBuilder[float]()
+        driven_lanedir_builder = SampledSequenceBuilder[float]()
 
         for idt in iterate_with_dt(interval):
             t0, t1 = idt.v0, idt.v1  # not v
@@ -285,9 +306,7 @@ class DrivenLength(Rule):
 
 class DrivenLengthConsecutive(Rule):
 
-    @contract(context=RuleEvaluationContext, result=RuleEvaluationResult)
-    def evaluate(self, context, result):
-        assert isinstance(result, RuleEvaluationResult)
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
         lane_pose_seq = context.get_lane_pose_seq()
         ego_pose_sequence = context.get_ego_pose_global()
@@ -346,7 +365,7 @@ class DrivenLengthConsecutive(Rule):
 
         title = "Consecutive lane distance"
 
-        driven_lanedir_incremental = SampledSequence(timestamps, driven_lanedir)
+        driven_lanedir_incremental = SampledSequence[float](timestamps, driven_lanedir)
         driven_lanedir_cumulative = accumulate(driven_lanedir_incremental)
 
         if len(driven_lanedir_incremental) <= 1:

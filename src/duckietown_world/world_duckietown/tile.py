@@ -1,10 +1,12 @@
 # coding=utf-8
-from collections import namedtuple
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
+
 from contracts import contract
 from duckietown_world import logger
-from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D, SE2Transform
+from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequence, Matrix2D, SE2Transform, Transform
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
@@ -17,12 +19,20 @@ __all__ = [
     'create_lane_highlight',
 ]
 
-GetLanePoseResult = namedtuple('GetLanePoseResult',
-                               'tile tile_fqn tile_transform tile_relative_pose '
-                               'lane_segment lane_segment_fqn lane_pose '
-                               'lane_segment_relative_pose tile_coords '
-                               'lane_segment_transform '
-                               'center_point')
+
+@dataclass
+class GetLanePoseResult:
+    tile: Any
+    tile_fqn: Any
+    tile_transform: Any
+    tile_relative_pose: Any
+    lane_segment: Any
+    lane_segment_fqn: Any
+    lane_pose: Any
+    lane_segment_relative_pose: Any
+    tile_coords: Any
+    lane_segment_transform: Any
+    center_point: Any
 
 
 class SignSlot(PlacedObject):
@@ -257,8 +267,7 @@ class Anchor(PlacedObject):
         g.add(c)
 
 
-def create_lane_highlight(poses_sequence, dw):
-    assert isinstance(poses_sequence, SampledSequence)
+def create_lane_highlight(poses_sequence: SampledSequence, dw):
 
     def mapi(v):
         if isinstance(v, SE2Transform):
@@ -277,9 +286,9 @@ def create_lane_highlight(poses_sequence, dw):
             assert isinstance(lane_pose_result, GetLanePoseResult)
             lane_segment = lane_pose_result.lane_segment
             rt = lane_pose_result.lane_segment_transform
-            s = SampledSequence([timestamp], [rt])
+            s = SampledSequence[Transform]([timestamp], [rt])
             visualization.set_object('ls%s-%s-lane' % (i, name), lane_segment, ground_truth=s)
-            p = SampledSequence([timestamp], [lane_pose_result.center_point])
+            p = SampledSequence[Transform]([timestamp], [lane_pose_result.center_point])
             visualization.set_object('ls%s-%s-anchor' % (i, name), Anchor(), ground_truth=p)
 
     return lane_pose_results

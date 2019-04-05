@@ -1,13 +1,21 @@
-from collections import namedtuple, defaultdict
+from collections import defaultdict
+from dataclasses import dataclass
+from typing import Any
+
+import numpy as np
 
 import geometry as geo
-import numpy as np
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.geo.measurements_utils import iterate_by_class
-
 from .lane_segment import LaneSegment
 
-SkeletonGraphResult = namedtuple('SkeletonGraphResult', 'root root2 G')
+
+@dataclass
+class SkeletonGraphResult:
+    root: Any
+    root2: Any
+    G: Any
+
 
 __all__ = [
     'get_skeleton_graph',
@@ -74,7 +82,6 @@ def get_skeleton_graph(po):
 
     def resolve_alias(x):
         return x if x not in aliases else resolve_alias(aliases[x])
-
 
     for k, mp in list(meeting_points.items()):
         # continue
