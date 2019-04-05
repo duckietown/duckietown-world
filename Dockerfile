@@ -1,44 +1,13 @@
-FROM docker:18-dind
+FROM python:3.6
 
-WORKDIR /duckietown-shell
+WORKDIR /project
 
 COPY requirements.txt .
 
-RUN apk --update --no-cache add \
-	python2 \
-	python2-dev \
-	py-pip \
-	bash \
-	git \
-	gcc \
-	musl-dev \
-	linux-headers \
-    && pip install -r requirements.txt \
-    && apk del python2-dev gcc musl-dev linux-headers
+RUN pip install -r requirements.txt
 
-# copy the rest  
-COPY . .
+COPY src .
+COPY setup.py .
+RUN pip install --no-deps .
 
-#   Note the contents of .dockerignore:
-#
-#     **
-#     !requirements.txt
-#     !lib
-#     !setup.py
-#     !README.md
-#
-#   That's all we need - do not risk including spurious files.
-
-
-# Install the package using '--no-deps': you want to pin everything
-# using requirements.txt
-# So, we want this to fail if we forgot anything.
-#RUN pip install --prefix /usr --no-deps .
-
-COPY . .
-
-RUN pip install .
-
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-#ENTRYPOINT ["dts"]
+RUN make tests

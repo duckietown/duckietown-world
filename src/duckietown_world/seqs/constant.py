@@ -2,6 +2,8 @@
 from dataclasses import dataclass
 from typing import *
 
+from duckietown_serialization_ds1.serialization1 import as_json_dict
+
 from .tsequence import GenericSequence, X, Timestamp
 
 __all__ = [
@@ -28,3 +30,6 @@ class Constant(GenericSequence[X]):
 
     def get_end(self) -> Optional[Timestamp]:
         return None
+
+    def as_json_dict(self):
+        return {'always': as_json_dict(self.always)}

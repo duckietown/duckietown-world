@@ -42,7 +42,7 @@ class Transform(metaclass=ABCMeta):
 new_contract('Transform', Transform)
 
 
-class TransformSequence(Transform, Serializable):
+class TransformSequence(Transform):
 
     # @contract(transforms='list[>=1](Transform)')
     def __init__(self, transforms):

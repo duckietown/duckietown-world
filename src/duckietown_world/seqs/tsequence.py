@@ -4,7 +4,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Callable, TypeVar, Generic, Union, List, Optional, ClassVar, Type
 
-from duckietown_serialization_ds1 import Serializable
+from duckietown_serialization_ds1.serialization1 import Serializable0
 
 from contracts import describe_value
 
@@ -27,7 +27,7 @@ Y = TypeVar('Y')
 Timestamp = float
 
 
-class GenericSequence(Generic[X], Serializable):
+class GenericSequence(Generic[X]):
     CONTINUOUS = 'continuous-sampling'
 
     @abstractmethod
@@ -56,7 +56,7 @@ Sequence = GenericSequence
 
 
 @dataclass
-class SampledSequence(GenericSequence, Generic[X]):
+class SampledSequence(GenericSequence, Generic[X], ):
     """ A sampled time sequence. Only defined at certain points. """
     timestamps: List[Timestamp]
     values: List[X]
@@ -165,7 +165,6 @@ class SampledSequence(GenericSequence, Generic[X]):
         return SampledSequence(timestamps, values)
 
 
-
 @dataclass
 class IterateDT(Generic[X]):
     t0: Timestamp
@@ -185,7 +184,7 @@ def iterate_with_dt(sequence: SampledSequence) -> typing.Iterator[IterateDT[X]]:
         v0 = values[i]
         v1 = values[i + 1]
         dt = t1 - t0
-        yield IterateDT[type(sequence).XT](t0, t1, dt, v0, v1) # XXX
+        yield IterateDT[type(sequence).XT](t0, t1, dt, v0, v1)  # XXX
 
 
 @dataclass
