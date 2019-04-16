@@ -27,3 +27,5 @@ coveralls
 jupyter
 nbconvert
 dataclasses
+
+zuper-utils>=2,<3

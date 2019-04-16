@@ -33,7 +33,7 @@ def test_pwm1():
         # 'slight-right': (PWMCommands(-0.1, 0.1)),
     }
     dt = 0.03
-    t_max = 2
+    t_max = 10
 
     map_data_yaml = """
 

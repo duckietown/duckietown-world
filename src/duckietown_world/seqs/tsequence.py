@@ -3,7 +3,6 @@ import typing
 from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Callable, TypeVar, Generic, Union, List, Optional, ClassVar, Type
-from zuper_json import zeneric2
 
 
 __all__ = [
