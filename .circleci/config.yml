@@ -5,8 +5,6 @@ workflows:
     jobs:
       - test-3.7
       - test-3.6
-#      - test-3.5
-#      - test-2.7
 jobs:
   test-3.6: &test-template
     environment:
@@ -93,6 +91,10 @@ jobs:
 
       - test-results-store:
           path: out-comptests/junit
+
+      - store_artifacts:
+          path: out-comptests 
+          destination: out-comptests
 
       - store_artifacts:
           path: out-comptests/duckietown_world_tests
