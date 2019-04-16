@@ -64,8 +64,8 @@ def test_pwm1():
         velocities = get_velocities_from_sequence(poses)
         linear = velocities.transform_values(linear_from_se2)
         angular = velocities.transform_values(angular_from_se2)
-        print(linear.values)
-        print(angular.values)
+        # print(linear.values)
+        # print(angular.values)
         root.set_object(id_try, DB18(), ground_truth=ground_truth)
 
         sequences = {}
