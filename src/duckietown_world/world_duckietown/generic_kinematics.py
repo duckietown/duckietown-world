@@ -1,7 +1,9 @@
 # coding=utf-8
-import geometry as geo
 from duckietown_serialization_ds1 import Serializable
+
+import geometry as geo
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
+from .types import *
 
 __all__ = [
     'GenericKinematicsSE2',
@@ -10,8 +12,6 @@ __all__ = [
 
 # noinspection PyUnresolvedReferences
 from geometry.poses import *
-
-from contracts import contract
 
 
 class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializable):
@@ -22,12 +22,10 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
     """
 
     @classmethod
-    @contract(c0='TSE2')
-    def initialize(cls, c0, t0=0, seed=None):
+    def initialize(cls, c0: TSE2v, t0: float = 0, seed=None):
         return GenericKinematicsSE2(c0, t0)
 
-    @contract(c0='TSE2')
-    def __init__(self, c0, t0):
+    def __init__(self, c0: TSE2v, t0: float):
         # start at q0, v0
         q0, v0 = c0
         geo.SE2.belongs(q0)
@@ -36,7 +34,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         self.v0 = v0
         self.q0 = q0
 
-    def integrate(self, dt, commands):
+    def integrate(self, dt: float, commands: se2v) -> 'GenericKinematicsSE2':
         """ commands = velocity in body frame """
         # convert to float
         dt = float(dt)
@@ -44,7 +42,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         geo.se2.belongs(commands)
         v = commands
         # suppose we hold v for dt, which pose are we going to?
-        diff = geo.SE2.group_from_algebra(dt * v) # exponential map
+        diff = geo.SE2.group_from_algebra(dt * v)  # exponential map
         # compute the absolute new pose; applying diff from q0
         q1 = geo.SE2.multiply(self.q0, diff)
         # the new configuration
@@ -54,6 +52,5 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         # return the new state
         return GenericKinematicsSE2(c1, t1)
 
-    @contract(returns='TSE2')
-    def TSE2_from_state(self):
+    def TSE2_from_state(self) -> TSE2v:
         return self.q0, self.v0

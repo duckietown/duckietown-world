@@ -1,0 +1,140 @@
+import os
+
+import numpy as np
+
+import geometry as geo
+from comptests import comptest, run_module_tests, get_comptests_output_dir
+from duckietown_world import DynamicModelParameters, PWMCommands, SampledSequence, draw_static, \
+    SE2Transform, DB18, construct_map
+from duckietown_world.seqs.tsequence import SampledSequenceBuilder
+from duckietown_world.svg_drawing.misc import TimeseriesPlot
+from duckietown_world.world_duckietown.types import TSE2v, SE2v, se2v
+
+
+@comptest
+def test_pwm1():
+    # Model Parameters
+    global state
+    u2 = u3 = w1 = w2 = w3 = 0  # to simplify the model
+    u1 = w1 = 1  # main contributor from unforced dynamics
+    uar = ual = war = wal = 1  # input matrix
+
+    parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
+
+    # initial configuration
+    init_pose = np.array([0, 0.8])
+    init_vel = np.array([0, 0])
+
+    q0 = geo.SE2_from_R2(init_pose)
+    v0 = geo.se2_from_linear_angular(init_vel, 0)
+    tries = {
+        'straight_50': (PWMCommands(+0.5, 0.5)),
+        'straight_max': (PWMCommands(+1.0, +1.0)),
+        'pure_left': (PWMCommands(motor_left=-0.5, motor_right=+0.5)),
+        'pure_right': (PWMCommands(motor_left=+0.5, motor_right=-0.5)),
+        'slight-forward-left': (PWMCommands(motor_left=0, motor_right=0.25)),
+        'faster-forward-right': (PWMCommands(motor_left=0.5, motor_right=0)),
+        # 'slight-right': (PWMCommands(-0.1, 0.1)),
+    }
+    dt = 0.03
+    t_max = 2
+
+    map_data_yaml = """
+
+    # 3x3 tiles with left turns at the corners going in a counter-clockwise loop
+    tiles:
+    - [floor/W,floor/W, floor/W, floor/W, floor/W] 
+    - [straight/W   , straight/W   , straight/W, straight/W, straight/W]
+    - [floor/W,floor/W, floor/W, floor/W, floor/W]
+    tile_size: 0.61
+    """
+
+    import yaml
+
+    map_data = yaml.load(map_data_yaml)
+
+    root = construct_map(map_data)
+
+    timeseries = {}
+    for id_try, commands in tries.items():
+        seq = integrate_dynamics(parameters, q0, v0, dt, t_max, commands)
+
+        ground_truth = seq.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
+        poses = seq.transform_values(lambda t: t[0])
+        velocities = get_velocities_from_sequence(poses)
+        linear = velocities.transform_values(linear_from_se2)
+        angular = velocities.transform_values(angular_from_se2)
+        print(linear.values)
+        print(angular.values)
+        root.set_object(id_try, DB18(), ground_truth=ground_truth)
+
+        sequences = {}
+        sequences['motor_left'] = seq.transform_values(lambda _: commands.motor_left)
+        sequences['motor_right'] = seq.transform_values(lambda _: commands.motor_right)
+        plots = TimeseriesPlot(f'{id_try} - PWM commands', 'pwm_commands', sequences)
+        timeseries[f'{id_try} - commands'] = plots
+
+        sequences = {}
+        sequences['linear_velocity'] = linear
+        sequences['angular_velocity'] = angular
+        plots = TimeseriesPlot(f'{id_try} - Velocities', 'velocities', sequences)
+        timeseries[f'{id_try} - velocities'] = plots
+
+    outdir = os.path.join(get_comptests_output_dir(), 'together')
+    draw_static(root, outdir, timeseries=timeseries)
+
+
+def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se2v]:
+    ssb = SampledSequenceBuilder[se2v]()
+    ssb.add(0, geo.se2.zero())
+    for i in range(1, len(s)):
+        t0 = s.timestamps[i - 1]
+        t1 = s.timestamps[i]
+        q0 = s.values[i - 1]
+        q1 = s.values[i]
+        v = velocity_from_poses(t0, q0, t1, q1)
+        ssb.add((t0 + t1) / 2, v)
+    return ssb.as_sequence()
+
+
+from geometry import SE2
+
+
+def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
+    delta = t2 - t1
+    if not delta > 0:
+        raise ValueError('invalid sequence')
+
+    x = SE2.multiply(SE2.inverse(q1), q2)
+    xt = SE2.algebra_from_group(x)
+    v = xt / delta
+    return v
+
+
+def linear_from_se2(x: se2v) -> float:
+    linear, _ = geo.linear_angular_from_se2(x)
+    return linear[0]
+
+
+def angular_from_se2(x: se2v) -> float:
+    _, angular = geo.linear_angular_from_se2(x)
+    return angular
+
+
+def integrate_dynamics(factory, q0, v0, dt, t_max, fixed_commands) -> SampledSequence[TSE2v]:
+    # starting time
+    t0 = 0
+    c0 = q0, v0
+    state = factory.initialize(c0=c0, t0=t0)
+    ssb = SampledSequenceBuilder[TSE2v]()
+    ssb.add(t0, state.TSE2_from_state())
+    n = int(t_max / dt)
+    for i in range(n):
+        state = state.integrate(dt, fixed_commands)
+        t = t0 + (i + 1) * dt
+        ssb.add(t, state.TSE2_from_state())
+    return ssb.as_sequence()
+
+
+if __name__ == '__main__':
+    run_module_tests()

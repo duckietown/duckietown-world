@@ -10,6 +10,7 @@ from duckietown_world.geo import PlacedObject, RectangularArea, TransformSequenc
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
+from duckietown_world.world_duckietown.types import SE2v
 from geometry import extract_pieces
 
 __all__ = [
@@ -154,8 +155,7 @@ class Tile(PlacedObject):
         draw_children(drawing, self, g)
 
 
-@contract(q='SE2')
-def get_lane_poses(dw, q, tol=0.000001):
+def get_lane_poses(dw, q: SE2v, tol=0.000001):
     from duckietown_world.geo.measurements_utils import iterate_by_class, IterateByTestResult
     from .lane_segment import LaneSegment
     from duckietown_world import TileCoords

@@ -13,5 +13,5 @@ from .lane_segment import *
 from .duckietown_map import *
 from .duckiebot import  *
 from .transformations import  *
-from .car_dynamics import  *
 from .segmentify import *
+from .pwm_dynamics import *

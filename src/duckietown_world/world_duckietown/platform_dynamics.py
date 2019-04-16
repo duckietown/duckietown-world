@@ -1,8 +1,7 @@
 # coding=utf-8
 from abc import ABCMeta, abstractmethod
 
-from contracts import contract
-from six import with_metaclass
+from .types import *
 
 __all__ = [
     'PlatformDynamicsFactory',
@@ -10,7 +9,7 @@ __all__ = [
 ]
 
 
-class PlatformDynamics(with_metaclass(ABCMeta)):
+class PlatformDynamics(metaclass=ABCMeta):
     """
         This class represents the state of a dynamical system.
 
@@ -26,28 +25,25 @@ class PlatformDynamics(with_metaclass(ABCMeta)):
     """
 
     @abstractmethod
-    @contract(dt='>0')
-    def integrate(self, dt, commands):
+    def integrate(self, dt: float, commands):
         """
             Returns the result of applying commands for dt.
 
-            :param dt: time interval
+            :param dt > 0: time interval
             :param commands: class-specific commands
             :return: the next state
         """
 
     @abstractmethod
-    @contract(returns='TSE2')
-    def TSE2_from_state(self):
+    def TSE2_from_state(self) -> TSE2v:
         """ Returns pose, velocity for the state. """
 
 
-class PlatformDynamicsFactory(with_metaclass(ABCMeta)):
+class PlatformDynamicsFactory(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    @contract(c0='TSE2', returns=PlatformDynamics)
-    def initialize(cls, c0, t0=0, seed=None):
+    def initialize(cls, c0: TSE2v, t0: float = 0, seed: int = None) -> PlatformDynamics:
         """
             Returns the dynamics initalized at a certain configuration.
 

@@ -1,13 +1,13 @@
 # coding=utf-8
-import geometry as geo
 import numpy as np
 import svgwrite
-from contracts import contract, check_isinstance, new_contract
 from duckietown_serialization_ds1 import Serializable
 from duckietown_serialization_ds1.serialization1 import as_json_dict
+
+import geometry as geo
+from contracts import contract, check_isinstance, new_contract
 from duckietown_world.geo import SE2Transform, PlacedObject
 from duckietown_world.utils import memoized_reset, SE2_interpolate, SE2_apply_R2
-
 from .tile import relative_pose
 
 __all__ = [
@@ -75,12 +75,12 @@ class LaneSegment(PlacedObject):
         for p in control_points:
             check_isinstance(p, SE2Transform)
 
-        for i in range(len(control_points)-1):
+        for i in range(len(control_points) - 1):
             a = control_points[i]
-            b = control_points[i+1]
+            b = control_points[i + 1]
             ta, _ = geo.translation_angle_from_SE2(a.as_SE2())
             tb, _ = geo.translation_angle_from_SE2(b.as_SE2())
-            d = np.linalg.norm(ta-tb)
+            d = np.linalg.norm(ta - tb)
             if d < 0.001:
                 msg = 'Two points are two close: \n%s\n%s' % (a, b)
                 raise ValueError(msg)
@@ -152,13 +152,10 @@ class LaneSegment(PlacedObject):
     def extent_points(self):
         return self.lane_profile()
 
-    @contract(qt=SE2Transform, returns=LanePose)
-    def lane_pose_from_SE2Transform(self, qt, tol=0.001):
+    def lane_pose_from_SE2Transform(self, qt: SE2Transform, tol=0.001) -> LanePose:
         return self.lane_pose_from_SE2(qt.as_SE2(), tol=tol)
 
-    @contract(  # q='SE2',
-            returns=LanePose)
-    def lane_pose_from_SE2(self, q, tol=0.001):
+    def lane_pose_from_SE2(self, q, tol=0.001) -> LanePose:
         return (self.is_straight()
                 and self.lane_pose_from_SE2_straight(q)
                 or self.lane_pose_from_SE2_generic(q, tol=tol))
