@@ -93,7 +93,7 @@ jobs:
           path: out-comptests/junit
 
       - store_artifacts:
-          path: out-comptests 
+          path: out-comptests
           destination: out-comptests
 
       - store_artifacts:
