@@ -45,6 +45,19 @@ class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
     def initialize(self, c0, t0=0, seed=None) -> 'DynamicModel''':
         return DynamicModel(self, c0, t0)
 
+def get_DB18_nominal() -> DynamicModelParameters:
+    war = 0.7728309987207651
+    ual = 0.4144391822369966
+    u1 = 0.05824065565550973
+    u2 = 0
+    u3 = 0
+    w1 = -0.20442470135083918
+    w2 = 0
+    w3 = 0
+    uar = 0.4144391822369966
+    wal = 0.22711605522863892
+    parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
+    return parameters
 
 class DynamicModel(GenericKinematicsSE2):
     """

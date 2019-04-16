@@ -93,10 +93,6 @@ jobs:
           path: out-comptests/junit
 
       - store_artifacts:
-          path: out-comptests
-          destination: out-comptests
-
-      - store_artifacts:
           path: out-comptests/duckietown_world_tests
           destination: duckietown_world_tests
           

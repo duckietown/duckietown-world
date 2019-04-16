@@ -4,22 +4,18 @@ import numpy as np
 
 import geometry as geo
 from comptests import comptest, run_module_tests, get_comptests_output_dir
-from duckietown_world import DynamicModelParameters, PWMCommands, SampledSequence, draw_static, \
+from duckietown_world import PWMCommands, SampledSequence, draw_static, \
     SE2Transform, DB18, construct_map
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
-from duckietown_world.world_duckietown.types import TSE2v, SE2v, se2v
+from duckietown_world.world_duckietown.pwm_dynamics import get_DB18_nominal
+from duckietown_world.world_duckietown.types import TSE2v, se2v
+from duckietown_world.world_duckietown.utils import get_velocities_from_sequence
 
 
 @comptest
 def test_pwm1():
-    # Model Parameters
-    global state
-    u2 = u3 = w1 = w2 = w3 = 0  # to simplify the model
-    u1 = w1 = 1  # main contributor from unforced dynamics
-    uar = ual = war = wal = 1  # input matrix
-
-    parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
+    parameters = get_DB18_nominal()
 
     # initial configuration
     init_pose = np.array([0, 0.8])
@@ -82,33 +78,6 @@ def test_pwm1():
 
     outdir = os.path.join(get_comptests_output_dir(), 'together')
     draw_static(root, outdir, timeseries=timeseries)
-
-
-def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se2v]:
-    ssb = SampledSequenceBuilder[se2v]()
-    ssb.add(0, geo.se2.zero())
-    for i in range(1, len(s)):
-        t0 = s.timestamps[i - 1]
-        t1 = s.timestamps[i]
-        q0 = s.values[i - 1]
-        q1 = s.values[i]
-        v = velocity_from_poses(t0, q0, t1, q1)
-        ssb.add((t0 + t1) / 2, v)
-    return ssb.as_sequence()
-
-
-from geometry import SE2
-
-
-def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
-    delta = t2 - t1
-    if not delta > 0:
-        raise ValueError('invalid sequence')
-
-    x = SE2.multiply(SE2.inverse(q1), q2)
-    xt = SE2.algebra_from_group(x)
-    v = xt / delta
-    return v
 
 
 def linear_from_se2(x: se2v) -> float:

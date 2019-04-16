@@ -70,6 +70,7 @@ class LaneSegment(PlacedObject):
     def __init__(self, width, control_points, *args, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
         self.width = float(width)
+        assert len(control_points) >= 2, control_points
         self.control_points = control_points
 
         for p in control_points:

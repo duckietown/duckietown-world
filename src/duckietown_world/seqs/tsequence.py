@@ -3,10 +3,8 @@ import typing
 from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Callable, TypeVar, Generic, Union, List, Optional, ClassVar, Type
+from zuper_json import zeneric2
 
-from duckietown_serialization_ds1.serialization1 import Serializable0
-
-from contracts import describe_value
 
 __all__ = [
     'Sequence',
@@ -54,9 +52,21 @@ class GenericSequence(Generic[X]):
 
 Sequence = GenericSequence
 
+import sys
+
+if sys.version_info[:2] == (3, 6):
+    class Base(GenericSequence):
+        pass
+elif sys.version_info[:2] == (3, 7):
+
+    class Base(GenericSequence):
+        pass
+else:
+    assert False, sys.version_info
+
 
 @dataclass
-class SampledSequence(GenericSequence, Generic[X], ):
+class SampledSequence(Base):
     """ A sampled time sequence. Only defined at certain points. """
     timestamps: List[Timestamp]
     values: List[X]
@@ -73,7 +83,7 @@ class SampledSequence(GenericSequence, Generic[X], ):
 
         for t in timestamps:
             if not isinstance(t, (float, int)):
-                msg = 'I expected a number, got %s' % describe_value(t)
+                msg = 'I expected a number, got %s' % type(t)
                 raise ValueError(msg)
         for i in range(len(timestamps) - 1):
             dt = timestamps[i + 1] - timestamps[i]
