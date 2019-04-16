@@ -5,7 +5,6 @@ import numpy as np
 from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
-
 from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 
@@ -45,6 +44,7 @@ class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
     def initialize(self, c0, t0=0, seed=None) -> 'DynamicModel''':
         return DynamicModel(self, c0, t0)
 
+
 def get_DB18_nominal() -> DynamicModelParameters:
     war = 0.7728309987207651
     ual = 0.4144391822369966
@@ -56,8 +56,11 @@ def get_DB18_nominal() -> DynamicModelParameters:
     w3 = 0
     uar = 0.4144391822369966
     wal = 0.22711605522863892
+
+    war = wal = (war + wal) / 2
     parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
     return parameters
+
 
 class DynamicModel(GenericKinematicsSE2):
     """
@@ -107,7 +110,6 @@ class DynamicModel(GenericKinematicsSE2):
         return x_dot_dot
 
     def integrate(self, dt: float, commands: PWMCommands) -> 'DynamicModel':
-
         # previous velocities (v0)
         linear_angular_prev = geo.linear_angular_from_se2(self.v0)
         linear_prev = linear_angular_prev[0]
