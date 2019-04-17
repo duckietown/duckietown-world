@@ -2,8 +2,7 @@
 import typing
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Callable, TypeVar, Generic, Union, List, Optional, ClassVar, Type
-
+from typing import TypeVar, Generic, Optional, Union, ClassVar, Any, List, Type, Callable
 
 __all__ = [
     'Sequence',
@@ -70,7 +69,7 @@ class SampledSequence(Base):
     timestamps: List[Timestamp]
     values: List[X]
 
-    XT: ClassVar[Type[X]] = typing.Any
+    XT: ClassVar[Type[X]] = Any
 
     def __post_init__(self):
         values = list(self.values)
@@ -143,7 +142,7 @@ class SampledSequence(Base):
         for t, v in i:
             timestamps.append(t)
             values.append(v)
-        return SampledSequence[typing.Any](timestamps, values)
+        return SampledSequence[Any](timestamps, values)
 
     def __len__(self) -> int:
         return len(self.timestamps)
@@ -201,11 +200,7 @@ class SampledSequenceBuilder(Generic[X]):
     timestamps: List[Timestamp] = None
     values: List[X] = None
 
-    XT: typing.ClassVar[typing.Type[X]] = typing.Any
-
-    # def __init__(self):
-    #     self.timestamps = []
-    #     self.values = []
+    XT: typing.ClassVar[Type[X]] = Any
 
     def __post_init__(self):
         self.timestamps = self.timestamps or []
