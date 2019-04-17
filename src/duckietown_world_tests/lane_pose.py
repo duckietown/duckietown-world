@@ -126,7 +126,7 @@ def center_point1():
                 transform = SE2Transform.from_SE2(p)
                 transforms.append(transform)
 
-            c = SampledSequence(betas, transforms)
+            c = SampledSequence[SE2Transform](betas, transforms)
             v.set_object('a', PlacedObject(), ground_truth=c)
             draw_static(v, dest, area=area)
 

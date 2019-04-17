@@ -171,7 +171,7 @@ class SampledSequence(Base):
                 values.append(self.values[i])
         timestamps.append(self.timestamps[-1])
         values.append(self.values[-1])
-        return SampledSequence(timestamps, values)
+        return SampledSequence[self.XT](timestamps, values)
 
 
 @dataclass

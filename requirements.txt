@@ -28,4 +28,4 @@ jupyter
 nbconvert
 dataclasses
 
-zuper-utils>=2,<3
+zuper-utils>=2.0.2,<3

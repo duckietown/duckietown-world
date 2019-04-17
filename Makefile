@@ -80,4 +80,7 @@ coverage-coveralls:
 test-python-3.6:
 	docker build -f Dockerfile.test-python-3.6 -t tmp .
 
-	docker run -it -v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro tmp
+	docker run -it \
+		-v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro \
+		-v ${DT_ENV_DEVELOPER}/src/zuper-utils/src/zuper_json:/usr/local/lib/python3.6/site-packages/zuper_json:ro \
+		tmp
