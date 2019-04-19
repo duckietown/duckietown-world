@@ -46,19 +46,19 @@ class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
 
 
 def get_DB18_nominal() -> DynamicModelParameters:
-    ual = 0.4144391822369966
-    uar = 0.4144391822369966
-    u1 = 0.05824065565550973
+    ual = 1.5
+    uar = 1.5
+    u1 = 5
     u2 = 0
     u3 = 0
-    w1 = -0.20442470135083918
+    w1 = 4
     w2 = 0
     w3 = 0
     # war = 0.7728309987207651
     # wal = 0.22711605522863892
 
-    wal = 0.342
-    war = 0.523
+    wal = 15
+    war = 15
 
     # war = wal = (war + wal) / 2
     parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
