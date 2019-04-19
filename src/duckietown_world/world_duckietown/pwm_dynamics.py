@@ -2,11 +2,13 @@
 from dataclasses import dataclass
 
 import numpy as np
-from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
+from duckietown_world.world_duckietown.dynamics_delay import ApplyDelay
 from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
+
+# from duckietown_serialization_ds1 import Serializable
 
 __all__ = [
     'DynamicModelParameters',
@@ -24,7 +26,7 @@ class PWMCommands:
     motor_right: float
 
 
-class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
+class DynamicModelParameters(PlatformDynamicsFactory):
 
     def __init__(self, u1, u2, u3, w1, w2, w3, uar, ual, war, wal):
         # parameters for autonomous dynamics
@@ -45,7 +47,7 @@ class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
         return DynamicModel(self, c0, t0)
 
 
-def get_DB18_nominal() -> DynamicModelParameters:
+def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
     ual = 1.5
     uar = 1.5
     u1 = 5
@@ -56,9 +58,17 @@ def get_DB18_nominal() -> DynamicModelParameters:
     w3 = 0
     wal = 15
     war = 15
-    
-    parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
-    return parameters
+
+    parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1,
+                                        w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
+
+    if delay > 0:
+        delayed = ApplyDelay(parameters, delay, PWMCommands(0, 0))
+        return delayed
+    else:
+        return parameters
+
+
 
 
 class DynamicModel(GenericKinematicsSE2):
