@@ -54,25 +54,9 @@ def get_DB18_nominal() -> DynamicModelParameters:
     w1 = 4
     w2 = 0
     w3 = 0
-    # war = 0.7728309987207651
-    # wal = 0.22711605522863892
-    
     wal = 15
     war = 15
     
-
-    ual = 0.450
-    uar = 0.449
-    u1 = 0.368
-    u2 = 0
-    u3 = 0
-    w1 = 0.516
-    w2 = 0
-    w3 = 0
-    wal = 1.618
-    war = 1.802
-
-    # war = wal = (war + wal) / 2
     parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
     return parameters
 
