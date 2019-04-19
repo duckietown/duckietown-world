@@ -2,11 +2,13 @@
 from dataclasses import dataclass
 
 import numpy as np
-from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
+from duckietown_world.world_duckietown.dynamics_delay import ApplyDelay
 from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
+
+# from duckietown_serialization_ds1 import Serializable
 
 __all__ = [
     'DynamicModelParameters',
@@ -24,7 +26,7 @@ class PWMCommands:
     motor_right: float
 
 
-class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
+class DynamicModelParameters(PlatformDynamicsFactory):
 
     def __init__(self, u1, u2, u3, w1, w2, w3, uar, ual, war, wal):
         # parameters for autonomous dynamics
@@ -45,34 +47,72 @@ class DynamicModelParameters(PlatformDynamicsFactory, Serializable):
         return DynamicModel(self, c0, t0)
 
 
-def get_DB18_nominal() -> DynamicModelParameters:
-    ual = 0.4144391822369966
-    uar = 0.4144391822369966
-    u1 = 0.05824065565550973
-    u2 = 0
-    u3 = 0
-    w1 = -0.20442470135083918
-    w2 = 0
-    w3 = 0
-    # war = 0.7728309987207651
-    # wal = 0.22711605522863892
-    wal = 0.342
-    war = 0.523
+def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
+    # ual = 0.4144391822369966
+    # uar = 0.4144391822369966
+    # u1 = 0.05824065565550973
+    # u2 = 0
+    # u3 = 0
+    # w1 = -0.20442470135083918
+    # w2 = 0
+    # w3 = 0
+    # # war = 0.7728309987207651
+    # # wal = 0.22711605522863892
+    # wal = 0.342
+    # war = 0.523
+    #
+    # ual = 0.450
+    # uar = 0.449
+    # u1 = 0.368
+    # u2 = 0
+    # u3 = 0
+    # w1 = 0.516
+    # w2 = 0
+    # w3 = 0
+    # wal = 1.618
+    # war = 1.802
 
-    ual = 0.450
-    uar = 0.449
-    u1 = 0.368
+    ual = 0.347
+    uar = 0.351
+    u1 = 0.498
     u2 = 0
     u3 = 0
-    w1 = 0.516
+    w1 = 0.290
     w2 = 0
     w3 = 0
     wal = 1.618
     war = 1.802
+    #
+    # ual = 0.8550485547154111
+    # uar = 0.8550485547154111
+    # u1 = 1.2555497986489266
+    # u2 = 1.0361432925252634
+    # u3 = 1.0424728775539562
+    # w1 = 0
+    # w2 = 0.6845149438642788
+    # w3 = 0.6784827822696831
+    # wal = 0.47596691020356724
+    # war = 1.5240553968340456
+
+    war: 15
+    ual: 1.5
+    u1: 5
+    u3: 0.0
+    u2: 0.0
+    w3: 0.0
+    w2: 0.0
+    w1: 4
+    uar: 1.5
+    wal: 15
 
     # war = wal = (war + wal) / 2
-    parameters = DynamicModelParameters(u1, u2, u3, w1, w2, w3, uar, ual, war, wal)
-    return parameters
+    parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1, w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
+
+    if delay > 0:
+        delayed = ApplyDelay(parameters, delay, PWMCommands(0, 0))
+        return delayed
+    else:
+        return parameters
 
 
 class DynamicModel(GenericKinematicsSE2):

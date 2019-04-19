@@ -15,7 +15,7 @@ from duckietown_world.world_duckietown.utils import get_velocities_from_sequence
 
 @comptest
 def test_pwm1():
-    parameters = get_DB18_nominal()
+    parameters = get_DB18_nominal(delay=0)
 
     # initial configuration
     init_pose = np.array([0, 0.8])
@@ -37,7 +37,6 @@ def test_pwm1():
 
     map_data_yaml = """
 
-    # 3x3 tiles with left turns at the corners going in a counter-clockwise loop
     tiles:
     - [floor/W,floor/W, floor/W, floor/W, floor/W] 
     - [straight/W   , straight/W   , straight/W, straight/W, straight/W]
