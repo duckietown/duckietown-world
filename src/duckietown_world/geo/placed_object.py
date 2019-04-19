@@ -262,6 +262,8 @@ def get_object_tree(po: PlacedObject,
     if attributes:
         if d:
             ds = yaml.safe_dump(d, encoding='utf-8', indent=4, allow_unicode=True, default_flow_style=False)
+            if isinstance(ds, bytes):
+                ds = ds.decode('utf-8')
             ss.append('\n' + indent(ds, ' '))
 
     if po.children and levels >= 1:

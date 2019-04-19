@@ -20,12 +20,12 @@ def wb1():
     world = PlacedObject()
     root.set_object('world', world)
 
-    placement = Constant(SE2Transform.identity())
+    placement = Constant[SE2Transform](SE2Transform.identity())
 
     world.set_object('map1', tile_map, ground_truth=placement)
 
     ego = PlacedObject()
-    world_coordinates = Constant(SE2Transform([0, 0], 0))
+    world_coordinates = Constant[SE2Transform](SE2Transform([0, 0], 0))
 
     world.set_object('ego', ego, ground_truth=world_coordinates)
 

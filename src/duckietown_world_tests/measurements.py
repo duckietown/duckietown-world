@@ -24,7 +24,7 @@ def m1():
     world = PlacedObject()
     root.set_object('world', world)
     origin = SE2Transform([1, 10], np.deg2rad(10))
-    world.set_object('tile_map', gm, ground_truth=Constant(origin))
+    world.set_object('tile_map', gm, ground_truth=Constant[SE2Transform](origin))
 
     # d = dw.as_json_dict()
     # print(json.dumps(d, indent=4))

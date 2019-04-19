@@ -76,8 +76,17 @@ coverage-coveralls:
 	COVERALLS_REPO_TOKEN=$(coveralls_repo_token) coveralls
 
 
+tag_36=duckietown-world-test-python-3.6
 
-test-python-3.6:
-	docker build -f Dockerfile.test-python-3.6 -t tmp .
+build-python-3.6:
+	docker build -f Dockerfile.test-python-3.6 -t $(tag_36) .
 
-	docker run -it -v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro tmp
+test-python-3.6: build-python-3.6
+	docker run -it $(tag_36)
+
+test-python-3.6-local: build-python-3.6
+
+	docker run -it \
+		-v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro \
+		-v ${DT_ENV_DEVELOPER}/src/zuper-utils/src/zuper_json:/usr/local/lib/python3.6/site-packages/zuper_json:ro \
+		$(tag_36)

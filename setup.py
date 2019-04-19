@@ -41,6 +41,8 @@ setup(name='duckietown-world',
           'oyaml',
           'markdown',
           'dataclasses',
+          'comptests',
+          'zuper-utils>=2.0.2'
       ],
 
       tests_require=[
