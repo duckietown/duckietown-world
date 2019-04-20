@@ -86,7 +86,7 @@ class DynamicModel(GenericKinematicsSE2):
         ## Unpack Inputs
         U = np.array([input.motor_right, input.motor_left])
         V = U.reshape(U.size, 1)
-
+        V = np.clip(V, -1, +1)
         # parameters for autonomous dynamics
         u1 = parameters.u1
         u2 = parameters.u2

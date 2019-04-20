@@ -26,6 +26,7 @@ def test_pwm1():
     tries = {
         'straight_50': (PWMCommands(+0.5, 0.5)),
         'straight_max': (PWMCommands(+1.0, +1.0)),
+        'straight_over_max': (PWMCommands(+1.5, +1.5)),
         'pure_left': (PWMCommands(motor_left=-0.5, motor_right=+0.5)),
         'pure_right': (PWMCommands(motor_left=+0.5, motor_right=-0.5)),
         'slight-forward-left': (PWMCommands(motor_left=0, motor_right=0.25)),
