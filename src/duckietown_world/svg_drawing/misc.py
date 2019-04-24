@@ -149,8 +149,11 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
 
     if area is None:
         areas = []
-        for i, t in keyframes:
+        all_keyframes = keyframes.values
+        keyframes_for_extent = [all_keyframes[0], all_keyframes[-1]]
+        for t in keyframes_for_extent:
             root_t = root.filter_all(ChooseTime(t))
+            # print(i, root_t)
             rarea = get_extent_points(root_t)
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
