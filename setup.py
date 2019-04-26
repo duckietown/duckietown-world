@@ -42,7 +42,7 @@ setup(name='duckietown-world',
           'markdown',
           'dataclasses',
           'comptests',
-          'zuper-utils>=2.0.2'
+          'zuper-utils>=2.0.3'
       ],
 
       tests_require=[

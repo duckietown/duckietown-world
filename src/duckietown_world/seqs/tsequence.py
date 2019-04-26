@@ -192,7 +192,9 @@ def iterate_with_dt(sequence: SampledSequence) -> typing.Iterator[IterateDT[X]]:
         v0 = values[i]
         v1 = values[i + 1]
         dt = t1 - t0
-        yield IterateDT[type(sequence).XT](t0, t1, dt, v0, v1)  # XXX
+        # print(type(sequence))
+        # print(type(sequence).XT)
+        yield IterateDT[type(sequence).XT](t0=t0, t1=t1, dt=dt, v0=v0, v1=v1)  # XXX
 
 
 @dataclass
