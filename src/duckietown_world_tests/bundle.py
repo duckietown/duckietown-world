@@ -11,7 +11,7 @@ from duckietown_world.svg_drawing.misc import TimeseriesPlot
 from duckietown_world.world_duckietown.pwm_dynamics import get_DB18_nominal
 from duckietown_world.world_duckietown.types import TSE2v, se2v
 from duckietown_world.world_duckietown.utils import get_velocities_from_sequence
-from duckietown_world.rules import evaluate_rules, get_scores
+from duckietown_world.rules import evaluate_rules, get_scores, RuleEvaluationResult
 from duckietown_world.optimization import LexicographicSemiorderTracker, \
     LexicographicTracker, ProductOrderTracker
 
@@ -50,6 +50,7 @@ def test_bundle():
 
     commands_bundle = get_bundle(N, list(np.linspace(0, 4, 30)))
     trajs_bundle = {}
+
     for id_try, commands in commands_bundle.items():
         seq = integrate_dynamics2(parameters, q0, v0, commands)
 
@@ -70,17 +71,22 @@ def visualize(commands_bundle, trajs_bundle, outdir):
 
     for id_try, commands in commands_bundle.items():
         traj = trajs_bundle[id_try]
+        c = commands
+        a = c.values
+        b = a[0]
         ground_truth = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
         ego_name = f'Duckiebot{id_try}'
         root.set_object(ego_name, DB18(), ground_truth=ground_truth)
         poses = traj.transform_values(lambda t: t[0])
         velocities = get_velocities_from_sequence(poses)
+        # TODO what's the difference with below
+        # v_test = traj.transform_values(lambda t: t[1])
         linear = velocities.transform_values(linear_from_se2)
         angular = velocities.transform_values(angular_from_se2)
 
         poses_sequence = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
         interval = SampledSequence.from_iterator(enumerate(commands.timestamps))
-        evaluated = evaluate_rules(poses_sequence=poses_sequence, interval=interval, world=root, ego_name = ego_name)
+        evaluated = evaluate_rules(poses_sequence=poses_sequence, interval=interval, world=root, ego_name=ego_name)
 
         print('Rules for Duckiebot' + str(id_try))
         scores = get_scores(evaluated)
@@ -99,18 +105,26 @@ def visualize(commands_bundle, trajs_bundle, outdir):
         # print("commands for traj" + str(id_try))
         # print(commands)
 
-        if len(timeseries) < 5:
-            sequences = {}
-            sequences['motor_left'] = commands.transform_values(lambda _: _.motor_left)
-            sequences['motor_right'] = commands.transform_values(lambda _: _.motor_right)
-            plots = TimeseriesPlot(f'{id_try} - PWM commands', 'pwm_commands', sequences)
-            timeseries[f'{ego_name} - commands'] = plots
+        for key, rer in evaluated.items():
+            assert isinstance(rer, RuleEvaluationResult)
 
-            sequences = {}
-            sequences['linear_velocity'] = linear
-            sequences['angular_velocity'] = angular
-            plots = TimeseriesPlot(f'{id_try} - Velocities', 'velocities', sequences)
-            timeseries[f'{ego_name} - velocities'] = plots
+            for km, evaluated_metric in rer.metrics.items():
+                sequences = {}
+                sequences[evaluated_metric.title] = evaluated_metric.cumulative
+                plots = TimeseriesPlot(f'{ego_name} - {evaluated_metric.title}', evaluated_metric.title, sequences)
+                timeseries[f'{ego_name} - {evaluated_metric.title}'] = plots
+
+        sequences = {}
+        sequences['motor_left'] = commands.transform_values(lambda _: _.motor_left)
+        sequences['motor_right'] = commands.transform_values(lambda _: _.motor_right)
+        plots = TimeseriesPlot(f'{id_try} - PWM commands', 'pwm_commands', sequences)
+        timeseries[f'{ego_name} - commands'] = plots
+
+        sequences = {}
+        sequences['linear_velocity'] = linear
+        sequences['angular_velocity'] = angular
+        plots = TimeseriesPlot(f'{id_try} - Velocities', 'velocities', sequences)
+        timeseries[f'{ego_name} - velocities'] = plots
 
     draw_static(root, outdir, timeseries=timeseries)
 
@@ -148,6 +162,7 @@ def get_simple_map():
 
 def linear_from_se2(x: se2v) -> float:
     linear, _ = geo.linear_angular_from_se2(x)
+    # FIXME why index 0 and not all?
     return linear[0]
 
 

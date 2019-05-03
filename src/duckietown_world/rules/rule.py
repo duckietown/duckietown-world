@@ -149,8 +149,8 @@ def get_scores(evaluated) -> Dict[str, float]:
         assert isinstance(rer, RuleEvaluationResult)
 
         for km, evaluated_metric in rer.metrics.items():
-            if evaluated_metric.total:
-                scores[evaluated_metric.title] = evaluated_metric.total
+            scores[evaluated_metric.title] = evaluated_metric.total
+
     return scores
 
 
