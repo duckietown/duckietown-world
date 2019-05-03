@@ -5,7 +5,7 @@ from typing import *
 import geometry as geo
 from comptests import comptest, run_module_tests, get_comptests_output_dir
 from duckietown_world import PWMCommands, SampledSequence, draw_static, \
-    SE2Transform, DB18, construct_map, iterate_with_dt
+    SE2Transform, DB18, DB19, construct_map, iterate_with_dt
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
 from duckietown_world.world_duckietown.pwm_dynamics import get_DB18_nominal
@@ -65,18 +65,18 @@ def visualize(commands_bundle, trajs_bundle, outdir):
     timeseries = {}
 
     rules_list = ['Deviation from center line', 'Drivable areas']
-    optimal_traj_tracker1 = LexicographicSemiorderTracker(rules_list)
-    optimal_traj_tracker2 = LexicographicTracker(rules_list)
-    optimal_traj_tracker3 = ProductOrderTracker(rules_list)
+    opt_trajs = get_best_trajs(commands_bundle, trajs_bundle, rules_list)
 
     for id_try, commands in commands_bundle.items():
         traj = trajs_bundle[id_try]
-        c = commands
-        a = c.values
-        b = a[0]
+
         ground_truth = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
         ego_name = f'Duckiebot{id_try}'
-        root.set_object(ego_name, DB18(), ground_truth=ground_truth)
+
+        if ego_name in opt_trajs.keys():
+            root.set_object(ego_name, DB18(), ground_truth=ground_truth)
+        else:
+            root.set_object(ego_name, DB19(), ground_truth=ground_truth)
         poses = traj.transform_values(lambda t: t[0])
         velocities = get_velocities_from_sequence(poses)
         # TODO what's the difference with below
@@ -84,35 +84,14 @@ def visualize(commands_bundle, trajs_bundle, outdir):
         linear = velocities.transform_values(linear_from_se2)
         angular = velocities.transform_values(angular_from_se2)
 
-        poses_sequence = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
-        interval = SampledSequence.from_iterator(enumerate(commands.timestamps))
-        evaluated = evaluate_rules(poses_sequence=poses_sequence, interval=interval, world=root, ego_name=ego_name)
-
-        print('Rules for Duckiebot' + str(id_try))
-        scores = get_scores(evaluated)
-        for k, score in scores.items():
-            if k in rules_list:
-                print(k, '=', score)
-
-        optimal_traj_tracker1.digest_traj(ego_name, scores)
-        optimal_traj_tracker2.digest_traj(ego_name, scores)
-        optimal_traj_tracker3.digest_traj(ego_name, scores)
-
-        # print("linear values for traj" + str(id_try))
-        # print(linear.values)
-        # print(angular.values)
-        # print(commands.timestamps[-1])
-        # print("commands for traj" + str(id_try))
-        # print(commands)
-
-        for key, rer in evaluated.items():
-            assert isinstance(rer, RuleEvaluationResult)
-
-            for km, evaluated_metric in rer.metrics.items():
-                sequences = {}
-                sequences[evaluated_metric.title] = evaluated_metric.cumulative
-                plots = TimeseriesPlot(f'{ego_name} - {evaluated_metric.title}', evaluated_metric.title, sequences)
-                timeseries[f'{ego_name} - {evaluated_metric.title}'] = plots
+        # for key, rer in evaluated.items():
+        #     assert isinstance(rer, RuleEvaluationResult)
+        #
+        #     for km, evaluated_metric in rer.metrics.items():
+        #         sequences = {}
+        #         sequences[evaluated_metric.title] = evaluated_metric.cumulative
+        #         plots = TimeseriesPlot(f'{ego_name} - {evaluated_metric.title}', evaluated_metric.title, sequences)
+        #         timeseries[f'{ego_name} - {evaluated_metric.title}'] = plots
 
         sequences = {}
         sequences['motor_left'] = commands.transform_values(lambda _: _.motor_left)
@@ -128,9 +107,21 @@ def visualize(commands_bundle, trajs_bundle, outdir):
 
     draw_static(root, outdir, timeseries=timeseries)
 
-    display_optima(optimal_traj_tracker1)
-    display_optima(optimal_traj_tracker2)
-    display_optima(optimal_traj_tracker3)
+
+def get_best_trajs(commands_bundle, trajs_bundle, rules_list):
+    root = get_simple_map()
+    optimal_traj_tracker = LexicographicTracker(rules_list)
+    for id_try, commands in commands_bundle.items():
+        traj = trajs_bundle[id_try]
+        ego_name = f'Duckiebot{id_try}'
+        ground_truth = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
+        root.set_object(ego_name, DB18(), ground_truth=ground_truth)
+        poses_sequence = traj.transform_values(lambda t: SE2Transform.from_SE2(t[0]))
+        interval = SampledSequence.from_iterator(enumerate(commands.timestamps))
+        evaluated = evaluate_rules(poses_sequence=poses_sequence, interval=interval, world=root, ego_name=ego_name)
+        scores = get_scores(evaluated)
+        optimal_traj_tracker.digest_traj(ego_name, scores)
+    return optimal_traj_tracker.get_optimal_trajs()
 
 
 def display_optima(optimal_traj_tracker):
@@ -153,9 +144,7 @@ def get_simple_map():
        """
 
     import yaml
-
     map_data = yaml.load(map_data_yaml)
-
     root = construct_map(map_data)
     return root
 

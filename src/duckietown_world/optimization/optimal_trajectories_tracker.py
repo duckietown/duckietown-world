@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict
 import numpy as np
+from duckietown_world.rules.rule import Rule
 
 
 class OptimalTrajectoryTracker(metaclass=ABCMeta):

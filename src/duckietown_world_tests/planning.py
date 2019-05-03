@@ -42,7 +42,6 @@ def get_trajs_bundle(commands_bundle, q, v):
     for id_try, commands in commands_bundle.items():
         seq = integrate_dynamics2(parameters, q, v, commands)
         trajs_bundle[id_try] = seq
-
     return trajs_bundle
 
 
@@ -95,6 +94,7 @@ def test_planning():
         # get new pose and velocity
         pseudo_commands_sbb = SampledSequenceBuilder[PWMCommands]()
         time_stamps = commands_to_execute.timestamps
+        # FIXME
         pseudo_commands_sbb.add(time_stamps[0], pwm_commands_to_execute[0])
         pseudo_commands_sbb.add(time_stamps[1], pwm_commands_to_execute[1])
         pseudo_commands_sbb.add(time_stamps[2], pwm_commands_to_execute[2])
@@ -174,6 +174,7 @@ def visualize(commands, traj, outdir):
             plots = TimeseriesPlot(f'{ego_name} - {evaluated_metric.title}', evaluated_metric.title, sequences)
             timeseries[f'{ego_name} - {evaluated_metric.title}'] = plots
 
+    # TODO refactor
     sequences = {}
     sequences['motor_left'] = commands.transform_values(lambda _: _.motor_left)
     sequences['motor_right'] = commands.transform_values(lambda _: _.motor_right)

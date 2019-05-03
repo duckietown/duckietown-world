@@ -60,6 +60,9 @@ from typing import cast
 
 class SurvivalTime(Rule):
 
+    def precedes(self, x, y):
+        return x > y
+
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         lane_pose_seq = context.get_lane_pose_seq()
         if len(lane_pose_seq) < 1:
@@ -81,6 +84,9 @@ class SurvivalTime(Rule):
 
 
 class DeviationFromCenterLine(Rule):
+
+    def precedes(self, x, y):
+        return x < y
 
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
 
@@ -130,6 +136,9 @@ class DeviationFromCenterLine(Rule):
 
 class DeviationHeading(Rule):
 
+    def precedes(self, x, y):
+        return x < y
+
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
 
         interval = cast(SampledSequence, context.get_interval())
@@ -178,6 +187,9 @@ class DeviationHeading(Rule):
 
 class InDrivableLane(Rule):
 
+    def precedes(self, x, y):
+        return x > y
+
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = cast(SampledSequence, context.get_interval())
         lane_pose_seq = context.get_lane_pose_seq()
@@ -221,6 +233,9 @@ class InDrivableLane(Rule):
 
 
 class DrivenLength(Rule):
+
+    def precedes(self, x, y):
+        return x > y
 
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
@@ -305,6 +320,9 @@ class DrivenLength(Rule):
 
 
 class DrivenLengthConsecutive(Rule):
+
+    def precedes(self, x, y):
+        return x > y
 
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
