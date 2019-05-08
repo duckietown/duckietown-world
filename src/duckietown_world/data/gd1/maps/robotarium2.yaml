@@ -931,7 +931,7 @@ objects:
                 theta_deg: 180
     
     #Floortags
-     floortag_367: 
+    floortag_367: 
         kind: floor_tag 
         tag: 
             ~TagInstance: 
@@ -942,8 +942,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 3.438000 
-                - 2.862000 
+                - 3.451000 
+                - 2.875000 
   
     floortag_333: 
         kind: floor_tag 
@@ -956,8 +956,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 4.143000 
-                - 2.862000 
+                - 4.156000 
+                - 2.875000 
   
     floortag_354: 
         kind: floor_tag 
@@ -970,8 +970,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 4.611000 
-                - 3.451000 
+                - 4.624000 
+                - 3.464000 
   
     floortag_387: 
         kind: floor_tag 
@@ -984,8 +984,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 5.334000 
-                - 2.997000 
+                - 5.347000 
+                - 3.010000 
   
     floortag_371: 
         kind: floor_tag 
@@ -998,8 +998,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 3.436000 
-                - 2.273000 
+                - 3.449000 
+                - 2.286000 
   
     floortag_368: 
         kind: floor_tag 
@@ -1012,8 +1012,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 4.143000 
-                - 2.045000 
+                - 4.156000 
+                - 2.058000 
   
     floortag_349: 
         kind: floor_tag 
@@ -1026,8 +1026,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 4.613000 
-                - 2.967000 
+                - 4.626000 
+                - 2.980000 
   
     floortag_381: 
         kind: floor_tag 
@@ -1040,8 +1040,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 5.311000 
-                - 2.384000 
+                - 5.324000 
+                - 2.397000 
   
     floortag_304: 
         kind: floor_tag 
@@ -1054,8 +1054,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -45 
                 p: 
-                - 5.726000 
-                - 2.233000 
+                - 5.739000 
+                - 2.246000 
   
     floortag_394: 
         kind: floor_tag 
@@ -1068,8 +1068,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 135 
                 p: 
-                - 4.805000 
-                - 1.877000 
+                - 4.818000 
+                - 1.890000 
   
     floortag_327: 
         kind: floor_tag 
@@ -1082,8 +1082,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 3.440000 
-                - 1.456000 
+                - 3.453000 
+                - 1.469000 
   
     floortag_376: 
         kind: floor_tag 
@@ -1096,8 +1096,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 4.149000 
-                - 1.677000 
+                - 4.162000 
+                - 1.690000 
   
     floortag_346: 
         kind: floor_tag 
@@ -1110,8 +1110,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 5.185000 
-                - 1.468000 
+                - 5.198000 
+                - 1.481000 
   
     floortag_360: 
         kind: floor_tag 
@@ -1124,8 +1124,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 4.150000 
-                - 1.217000 
+                - 4.163000 
+                - 1.230000 
   
     floortag_319: 
         kind: floor_tag 
@@ -1138,8 +1138,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 5.196000 
-                - 1.104000 
+                - 5.209000 
+                - 1.117000 
   
     floortag_308: 
         kind: floor_tag 
@@ -1152,8 +1152,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 5.902000 
-                - 1.461000 
+                - 5.915000 
+                - 1.474000 
   
     floortag_324: 
         kind: floor_tag 
@@ -1166,8 +1166,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: -90 
                 p: 
-                - 5.896000 
-                - 0.456000 
+                - 5.909000 
+                - 0.469000 
   
     floortag_305: 
         kind: floor_tag 
@@ -1180,8 +1180,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 0 
                 p: 
-                - 5.000000 
-                - 0.639000 
+                - 5.013000 
+                - 0.652000 
   
     floortag_320: 
         kind: floor_tag 
@@ -1194,8 +1194,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 0 
                 p: 
-                - 4.615000 
-                - 0.630000 
+                - 4.628000 
+                - 0.643000 
   
     floortag_332: 
         kind: floor_tag 
@@ -1208,8 +1208,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 180 
                 p: 
-                - 5.004000 
-                - -0.062000 
+                - 5.017000 
+                - -0.049000 
   
     floortag_334: 
         kind: floor_tag 
@@ -1222,8 +1222,8 @@ objects:
             ~SE2Transform: 
                 theta_deg: 135 
                 p: 
-                - 3.638000 
-                - 0.117000 
+                - 3.651000 
+                - 0.130000 
   
     floortag_300: 
         kind: floor_tag 
@@ -1236,6 +1236,6 @@ objects:
             ~SE2Transform: 
                 theta_deg: 90 
                 p: 
-                - 3.438000 
-                - 0.628000 
+                - 3.451000 
+                - 0.641000 
   
