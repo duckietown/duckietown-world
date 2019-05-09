@@ -11,18 +11,18 @@ __all__ = [
 
 class Duckiebot(Vehicle):
 
-    def __init__(self, width, length, height, *args, **kwargs):
+    def __init__(self, width, length, height, *args,  color=None, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
 
         self.width = width
         self.height = height
         self.length = length
-
+        self.color = color or "red"
     def draw_svg(self, drawing, g):
         L, W = self.length, self.width
         rect = drawing.rect(insert=(-L * 0.5, -W * 0.5),
                             size=(L, W),
-                            fill="red",
+                            fill=self.color,
                             # style='opacity:0.4',
                             stroke_width="0.01",
                             stroke="black", )
