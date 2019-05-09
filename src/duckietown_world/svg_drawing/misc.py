@@ -160,7 +160,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
 
     logger.info('area: %s' % area)
     drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
-
+    # drawing.add(drawing.defs())
     gmg = drawing.g()
     base.add(gmg)
 
