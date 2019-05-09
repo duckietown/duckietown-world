@@ -65,13 +65,14 @@ class SurvivalTime(Rule):
         if len(lane_pose_seq) < 1:
             raise ValueError(lane_pose_seq)
 
-        title = "Survival time"
-        description = "Length of the episode."
 
         incremental = lane_pose_seq.transform_values(lambda _: 1.0)
         cumulative = integrate(incremental)
         total = cumulative.values[-1]
+        # total = lane_pose_seq.timestamps[-1]
 
+        title = "Survival time"
+        description = "Length of the episode."
         result.set_metric(name=(),
                           title=title,
                           description=description,

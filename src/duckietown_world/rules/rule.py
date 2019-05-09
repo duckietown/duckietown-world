@@ -28,6 +28,7 @@ class RuleEvaluationContext:
     lane_pose_seq: SampledSequence[LanePose]
     pose_seq: SampledSequence[SE2Transform]
 
+
     def get_interval(self) -> SampledSequence[Timestamp]:
         """ Returns the interval over which to evaluate the rule. """
         return self.interval
@@ -53,8 +54,8 @@ class RuleEvaluationContext:
 
 class EvaluatedMetric(Serializable):
     total: float
-    incremental: float
-    cumulative: float
+    incremental: SampledSequence[float]
+    cumulative: SampledSequence[float]
     description: str
     title: str
 
@@ -74,7 +75,7 @@ class RuleEvaluationResult:
     rule: 'Rule'
 
     def __init__(self, rule):
-        self.metrics = OrderedDict()
+        self.metrics = {}
         self.rule = rule
 
     # @contract(name='tuple,seq(string)', total='float|int', incremental=Sequence)
@@ -123,7 +124,7 @@ def evaluate_rules(poses_sequence,
     from duckietown_world.rules import DrivenLengthConsecutive
     from duckietown_world.rules import SurvivalTime
 
-    rules = OrderedDict()
+    rules = {}
     rules['deviation-heading'] = DeviationHeading()
     rules['in-drivable-lane'] = InDrivableLane()
     rules['deviation-center-line'] = DeviationFromCenterLine()
