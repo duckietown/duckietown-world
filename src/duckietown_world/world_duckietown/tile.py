@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+from svgwrite.container import Use
 
 from contracts import contract
 from duckietown_world import logger
@@ -110,8 +111,9 @@ class Tile(PlacedObject):
             self.set_object('slots', slots, ground_truth=SE2Transform.identity())
 
     def _copy(self):
+
         return type(self)(self.kind, self.drivable,
-                          children=dict(**self.children), spatial_relations=dict(**self.spatial_relations))
+                          children=dict(self.children), spatial_relations=dict(self.spatial_relations))
 
     def params_to_json_dict(self):
         return dict(kind=self.kind, drivable=self.drivable)
@@ -134,14 +136,28 @@ class Tile(PlacedObject):
             if b'git-lfs' in texture:
                 msg = f'The file {self.fn} is a Git LFS pointer. Repo not checked out correctly.'
                 raise Exception(msg)
-            href = data_encoded_for_src(texture, mime_from_fn(self.fn))
-            img = drawing.image(href=href,
-                                size=(T, T),
-                                insert=(-T / 2, -T / 2),
-                                style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
-                                )
-            img.attribs['class'] = 'tile-textures'
-            g.add(img)
+            # print(f'drawing defs {drawing.defs}')
+
+            ID = f'texture-{self.kind}'
+
+            for img in drawing.defs.elements:
+                if img.attribs.get('id', None) == ID:
+                    break
+            else:
+            
+                href = data_encoded_for_src(texture, mime_from_fn(self.fn))
+                img = drawing.image(href=href,
+                                    size=(T, T),
+                                    insert=(-T / 2, -T / 2),
+                                    style='transform: rotate(90deg) scaleX(-1)  rotate(-90deg) '
+                                    )
+                img.attribs['class'] = 'tile-textures'
+
+                img.attribs['id'] = ID
+                drawing.defs.add(img)
+
+            use = Use(f'#{ID}')
+            g.add(use)
         #
         # if draw_directions_lanes:
         #     if self.kind != 'floor':
@@ -268,7 +284,6 @@ class Anchor(PlacedObject):
 
 
 def create_lane_highlight(poses_sequence: SampledSequence, dw):
-
     def mapi(v):
         if isinstance(v, SE2Transform):
             return v.as_SE2()
