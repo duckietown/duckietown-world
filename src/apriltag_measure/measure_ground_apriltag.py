@@ -34,32 +34,6 @@ def header(string: str):
     print(bcolors.OKGREEN + string + bcolors.ENDC)
 
 
-# def print_options():
-#     header("\nReady for next step.\nEnter your desired choice:")
-#     for key, val in file_list.items():
-#         header(str(key) + " : " + str(val))
-
-
-# def get_input():
-#     user_input = input(bcolors.BOLD + "Choice: " + bcolors.ENDC)
-#     try:
-#         val = int(user_input)
-#         if val not in file_list:
-#             raise ValueError
-#         if val in double_check_list:
-#             double_check = input(
-#                 bcolors.BOLD + "Are you sure? (y/n)" + bcolors.ENDC)
-#             if(double_check == "y"):
-#                 pass
-#             else:
-#                 print_options()
-#                 val = get_input()
-#     except ValueError:
-#         warning("Invalid input! Please try again!")
-#         val = get_input()
-#     return val
-
-
 def separater(string: str = None):
     if(string == None):
         warning(
