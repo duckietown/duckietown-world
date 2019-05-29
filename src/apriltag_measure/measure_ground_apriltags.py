@@ -109,8 +109,8 @@ class Apriltag_measurer():
             self.map_yaml = create_empty_map_file()
             self.ground_tag_dict = dict()
 
-        self.x_offset = 0.013
-        self.y_offset = 0.013
+        self.x_offset = 0.012
+        self.y_offset = 0.012
         self.tile_size = float(self.map_yaml["tile_size"])
 
     def get_ground_tag_dict(self):
@@ -246,15 +246,25 @@ def main():
 
     result_map_yaml = apriltag_measurer.update_apriltags()
     pprint.pprint(result_map_yaml["objects"])
-    warning("Not saving anything yet . Work in progress")
+
+    separater()
+    header("Inputing of april tag position done")
+    separater()
+    while True:
+        overwrite = input(
+            "Are you sure you want to overwrite %s ? (y/n) : " % map_name)
+        if overwrite == "y":
+            write_yaml(full_path, result_map_yaml)
+            separater()
+            header("File %s saved at %s. Exiting now." % (map_name, full_path))
+            separater()
+            exit()
+        elif overwrite == "n":
+            error("Did not overwrite %s. Exiting now." % map_name)
+            exit()
+        else:
+            warning("Please enter 'y' or 'n'")
 
 
 if __name__ == "__main__":
     main()
-
-# 'A10': {'kind': 'floor_tag',
-#         'pose': {'~SE2Transform': {'p': [5.0040000000000004,
-#                                          -0.12]}},
-#         'tag': {'~TagInstance': {'family': '36h11',
-#                                  'size': 0.08,
-#                                  'tag_id': 332}}}
