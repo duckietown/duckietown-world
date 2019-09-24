@@ -48,16 +48,18 @@ class DynamicModelParameters(PlatformDynamicsFactory):
 
 
 def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
-    ual = 1.5
-    uar = 1.5
+    # parameters for autonomous dynamics
     u1 = 5
     u2 = 0
     u3 = 0
     w1 = 4
     w2 = 0
     w3 = 0
+    # parameters for forced dynamics
+    uar = 1.5
+    ual = 1.5
+    war = 15  # modify this for trim
     wal = 15
-    war = 15
 
     parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1,
                                         w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
@@ -68,7 +70,28 @@ def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
     else:
         return parameters
 
+def get_DB18_uncalibrated(delay: float, trim: float=0) -> PlatformDynamicsFactory:
+    # parameters for autonomous dynamics
+    u1 = 5
+    u2 = 0
+    u3 = 0
+    w1 = 4
+    w2 = 0
+    w3 = 0
+    # parameters for forced dynamics
+    uar = 1.5
+    ual = 1.5
+    war = 15 * (1.0 + trim)
+    wal = 15 * (1.0 - trim)
 
+    parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1,
+                                        w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
+
+    if delay > 0:
+        delayed = ApplyDelay(parameters, delay, PWMCommands(0, 0))
+        return delayed
+    else:
+        return parameters
 
 
 class DynamicModel(GenericKinematicsSE2):
