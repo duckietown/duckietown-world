@@ -190,7 +190,7 @@ class Apriltag_measurer():
         return result_map_yaml
 
 
-MAP_PATH = "../duckietown_world/data/gd1/maps"
+MAP_PATH = "src/duckietown_world/data/gd1/maps"
 
 
 def main():
