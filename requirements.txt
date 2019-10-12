@@ -27,5 +27,4 @@ coveralls
 jupyter
 nbconvert
 dataclasses
-
-zuper-utils>=2.0.2,<3
+zuper-typing-z6>=5.0.8

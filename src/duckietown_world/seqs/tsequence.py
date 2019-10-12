@@ -2,7 +2,8 @@
 import typing
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import TypeVar, Generic, Optional, Union, ClassVar, Any, List, Type, Callable
+from typing import TypeVar, Optional, Union, ClassVar, Any, List, Type, Callable
+from zuper_typing import Generic
 
 __all__ = [
     'Sequence',

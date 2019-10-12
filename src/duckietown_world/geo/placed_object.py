@@ -228,7 +228,7 @@ class PlacedObject(Serializable):
         type2klass = {
             'ground_truth': GroundTruth
         }
-        root: Tuple[str] = ()
+        root: Tuple[str, ...] = ()
         for k, v in transforms.items():
             klass = type2klass[k]
             st = klass(a=root, b=(name,), transform=v)

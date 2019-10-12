@@ -1,5 +1,5 @@
-# coding=utf-8 
-__version__ = '1.0.30'
+# coding=utf-8
+__version__ = '5.0.0'
 
 # import zuper_json
 import logging
@@ -10,9 +10,9 @@ logger = logging.getLogger('dt-world')
 logger.setLevel(logging.DEBUG)
 
 logger.info('duckietown-world %s' % __version__)
-# for templating work
-from zuper_json import logger as l
-_ = l
+# for templating to work
+# from zuper_ipce import logger as l
+# _ = l
 
 # remove noisy logging
 from duckietown_serialization_ds1 import logger as dslogger
