@@ -28,3 +28,4 @@ jupyter
 nbconvert
 dataclasses
 zuper-typing-z5>=5.0.7
+codecov
