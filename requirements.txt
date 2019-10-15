@@ -27,5 +27,5 @@ coveralls
 jupyter
 nbconvert
 dataclasses
-zuper-typing-z5>=5.0.7
+zuper-typing-z5>=5.0.11
 codecov

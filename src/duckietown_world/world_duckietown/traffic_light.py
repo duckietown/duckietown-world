@@ -4,10 +4,9 @@ from duckietown_world.geo import PlacedObject
 from duckietown_world.seqs import Constant
 from duckietown_world.seqs.tsequence import GenericSequence
 
-__all__ = [
-    'TrafficLight',
-]
+__all__ = ["TrafficLight"]
 # TrafficLightStatus = str
+
 
 class TrafficLight(PlacedObject):
     # status: GenericSequence[TrafficLightStatus]

@@ -12,16 +12,18 @@ from .rectangular_area import RectangularArea
 from .transforms import VariableTransformSequence, Transform
 
 __all__ = [
-    'iterate_measurements_relations',
-    'get_meausurements_graph',
-    'get_extent_points',
-    'get_static_and_dynamic',
-    'iterate_by_class',
-    'IterateByTestResult',
+    "iterate_measurements_relations",
+    "get_meausurements_graph",
+    "get_extent_points",
+    "get_static_and_dynamic",
+    "iterate_by_class",
+    "IterateByTestResult",
 ]
 
 
-def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
+def iterate_measurements_relations(
+    po_name: FQN, po: PlacedObject
+) -> Iterator[Tuple[FQN, SpatialRelation]]:
     assert isinstance(po_name, tuple)
     for sr_name, sr in po.spatial_relations.items():
         a = po_name + sr.a
@@ -63,8 +65,9 @@ def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
             continue
         edge_data = G.get_edge_data(root_name, name)
 
-        transform = edge_data['transform_sequence']
+        transform = edge_data["transform_sequence"]
         from duckietown_world.world_duckietown.transformations import is_static
+
         it_is = is_static(transform)
 
         if it_is:
@@ -75,7 +78,9 @@ def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
     return static, dynamic
 
 
-def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self=False) -> nx.DiGraph:
+def get_flattened_measurement_graph(
+    po: PlacedObject, include_root_to_self=False
+) -> nx.DiGraph:
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()
@@ -91,11 +96,12 @@ def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self=False
 
             k = list(edges)[0]
             v = edges[k]
-            sr = v['attr_dict']['sr'].transform
+            sr = v["attr_dict"]["sr"].transform
 
             transforms.append(sr)
 
         from duckietown_world import TransformSequence
+
         if any(isinstance(_, Sequence) for _ in transforms):
             res = VariableTransformSequence(transforms)
         else:
@@ -104,6 +110,7 @@ def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self=False
 
     if include_root_to_self:
         from duckietown_world import SE2Transform
+
         transform_sequence = SE2Transform.identity()
         G2.add_edge(root_name, root_name, transform_sequence=transform_sequence)
 
@@ -126,17 +133,24 @@ def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestRes
     yield from iterate_by_test(po, t)
 
 
-def iterate_by_test(po: PlacedObject, testf: Callable[[PlacedObject], bool]) -> Iterator[IterateByTestResult]:
+def iterate_by_test(
+    po: PlacedObject, testf: Callable[[PlacedObject], bool]
+) -> Iterator[IterateByTestResult]:
     G = get_flattened_measurement_graph(po, include_root_to_self=True)
     root_name = ()
     for name in G:
         ob = po.get_object_from_fqn(name)
         if testf(ob):
-            transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
+            transform_sequence = G.get_edge_data(root_name, name)["transform_sequence"]
 
             parents = get_parents(po, name)
 
-            yield IterateByTestResult(fqn=name, transform_sequence=transform_sequence, object=ob, parents=parents)
+            yield IterateByTestResult(
+                fqn=name,
+                transform_sequence=transform_sequence,
+                object=ob,
+                parents=parents,
+            )
 
 
 def get_parents(root: PlacedObject, child_fqn: FQN) -> Tuple[PlacedObject]:
@@ -156,7 +170,7 @@ def get_extent_points(root: PlacedObject) -> RectangularArea:
     root_name = ()
     for name in G.nodes():
 
-        transform_sequence = G.get_edge_data(root_name, name)['transform_sequence']
+        transform_sequence = G.get_edge_data(root_name, name)["transform_sequence"]
         extent_points = root.get_object_from_fqn(name).extent_points()
         m2d = transform_sequence.asmatrix2d()
         for _ in extent_points:
@@ -164,7 +178,7 @@ def get_extent_points(root: PlacedObject) -> RectangularArea:
             points.append(p)
 
     if not points:
-        msg = 'No points'
+        msg = "No points"
         raise ValueError(msg)
 
     pmin = points[0]

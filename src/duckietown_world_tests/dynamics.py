@@ -5,8 +5,10 @@ from numpy.testing import assert_almost_equal
 
 import geometry as geo
 from duckietown_world.world_duckietown import Integrator2D, GenericKinematicsSE2
-from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
-    WheelVelocityCommands
+from duckietown_world.world_duckietown.differential_drive_dynamics import (
+    DifferentialDriveDynamicsParameters,
+    WheelVelocityCommands,
+)
 
 
 @comptest
@@ -32,14 +34,14 @@ def kinematics2d_test():
 
     k = 0.4
     radius = 1.0 / k
-    print('radius: %s' % radius)
+    print("radius: %s" % radius)
     v = 3.1
     perimeter = 2 * np.pi * radius
     dt_loop = perimeter / v
 
     w = 2 * np.pi / dt_loop
 
-    dt = dt_loop * .25
+    dt = dt_loop * 0.25
     commands = geo.se2_from_linear_angular([v, 0], w)
 
     s1 = s0.integrate(dt, commands)
@@ -49,11 +51,17 @@ def kinematics2d_test():
     seq = [s0, s1, s2, s3, s4]
     for _ in seq:
         q1, v1 = _.TSE2_from_state()
-        print('%s' % geo.SE2.friendly(q1))
+        print("%s" % geo.SE2.friendly(q1))
 
-    assert_almost_equal(geo.translation_from_SE2(s1.TSE2_from_state()[0]), [radius, radius])
-    assert_almost_equal(geo.translation_from_SE2(s2.TSE2_from_state()[0]), [0, radius * 2])
-    assert_almost_equal(geo.translation_from_SE2(s3.TSE2_from_state()[0]), [-radius, radius])
+    assert_almost_equal(
+        geo.translation_from_SE2(s1.TSE2_from_state()[0]), [radius, radius]
+    )
+    assert_almost_equal(
+        geo.translation_from_SE2(s2.TSE2_from_state()[0]), [0, radius * 2]
+    )
+    assert_almost_equal(
+        geo.translation_from_SE2(s3.TSE2_from_state()[0]), [-radius, radius]
+    )
     assert_almost_equal(geo.translation_from_SE2(s4.TSE2_from_state()[0]), [0, 0])
 
 
@@ -63,8 +71,11 @@ def dd_test():
     radius_left = radius
     radius_right = radius
     wheel_distance = 0.5
-    dddp = DifferentialDriveDynamicsParameters(radius_left=radius_left, radius_right=radius_right,
-                                               wheel_distance=wheel_distance)
+    dddp = DifferentialDriveDynamicsParameters(
+        radius_left=radius_left,
+        radius_right=radius_right,
+        wheel_distance=wheel_distance,
+    )
     q0 = geo.SE2_from_translation_angle([0, 0], 0)
     v0 = geo.se2.zero()
     c0 = q0, v0
@@ -97,5 +108,5 @@ def dd_test():
     # assert_almost_equal(p1[0], [dt * radius * omega_left / 2, 0])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_module_tests()

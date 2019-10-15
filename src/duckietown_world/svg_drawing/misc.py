@@ -16,18 +16,22 @@ from six import BytesIO
 
 from contracts import contract, check_isinstance
 from duckietown_world import logger
-from duckietown_world.geo import RectangularArea, get_extent_points, get_static_and_dynamic
+from duckietown_world.geo import (
+    RectangularArea,
+    get_extent_points,
+    get_static_and_dynamic,
+)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
 
 __all__ = [
-    'draw_recursive',
-    'get_basic_upright2',
-    'draw_static',
-    'draw_axes',
-    'draw_children',
-    'data_encoded_for_src',
+    "draw_recursive",
+    "get_basic_upright2",
+    "draw_static",
+    "draw_axes",
+    "draw_children",
+    "data_encoded_for_src",
 ]
 
 
@@ -47,38 +51,38 @@ def get_basic_upright2(filename, area, size=(1024, 768)):
     tx = 0 - origin[0] * s
     ty = (space[1] + origin[1]) * s
 
-    base = drawing.g(transform='translate(%s, %s) scale(%s) scale(+1,-1)' % (tx, ty, s))
-    base.attribs['id'] = 'base'
+    base = drawing.g(transform="translate(%s, %s) scale(%s) scale(+1,-1)" % (tx, ty, s))
+    base.attribs["id"] = "base"
     i0 = int(math.floor(area.pmin[0]))
     j0 = int(math.floor(area.pmin[1]))
     i1 = int(math.ceil(area.pmax[0]))
     j1 = int(math.ceil(area.pmax[1]))
 
-    grid = drawing.g(id='grid')
+    grid = drawing.g(id="grid")
     for i, j in itertools.product(range(i0, i1), range(j0, j1)):
         where = (i, j)
-        rect = drawing.rect(insert=where,
-                            fill="none",
-                            size=(1, 1,),
-                            stroke_width=0.01,
-                            stroke="#eeeeee", )
+        rect = drawing.rect(
+            insert=where, fill="none", size=(1, 1), stroke_width=0.01, stroke="#eeeeee"
+        )
         grid.add(rect)
 
     base.add(grid)
     draw_axes(drawing, base, L=0.5, stroke_width=0.03)
 
     inside = drawing.g()
-    inside.attribs['id'] = 'inside'
+    inside.attribs["id"] = "inside"
     tofill = drawing.g()
-    tofill.attribs['id'] = 'tofill'
+    tofill.attribs["id"] = "tofill"
     inside.add(tofill)
 
-    view = drawing.rect(insert=area.pmin.tolist(),
-                        size=(area.pmax - area.pmin).tolist(),
-                        stroke_width=0.01,
-                        fill='none',
-                        stroke='black')
-    view.attribs['id'] = 'view'
+    view = drawing.rect(
+        insert=area.pmin.tolist(),
+        size=(area.pmax - area.pmin).tolist(),
+        stroke_width=0.01,
+        fill="none",
+        stroke="black",
+    )
+    view.attribs["id"] = "view"
     inside.add(view)
     base.add(inside)
 
@@ -95,19 +99,30 @@ def draw_recursive(drawing, po, g, draw_list=()):
 def draw_children(drawing, po, g, draw_list=()):
     for child_name in po.get_drawing_children():
         child = po.children[child_name]
-        transforms = [_ for _ in po.spatial_relations.values() if _.a == () and _.b == (child_name,)]
+        transforms = [
+            _
+            for _ in po.spatial_relations.values()
+            if _.a == () and _.b == (child_name,)
+        ]
         if transforms:
 
             rlist = recurive_draw_list(draw_list, child_name)
 
             if rlist:
                 M = transforms[0].transform.asmatrix2d().m
-                svg_transform = 'matrix(%s,%s,%s,%s,%s,%s)' % (M[0, 0], M[1, 0], M[0, 1], M[1, 1], M[0, 2], M[1, 2])
+                svg_transform = "matrix(%s,%s,%s,%s,%s,%s)" % (
+                    M[0, 0],
+                    M[1, 0],
+                    M[0, 1],
+                    M[1, 1],
+                    M[0, 2],
+                    M[1, 2],
+                )
 
                 g2 = drawing.g(id=child_name, transform=svg_transform)
                 classes = get_typenames_for_class(child)
                 if classes:
-                    g2.attribs['class'] = " ".join(classes)
+                    g2.attribs["class"] = " ".join(classes)
                 draw_recursive(drawing, child, g2, draw_list=rlist)
 
                 g.add(g2)
@@ -116,7 +131,7 @@ def draw_children(drawing, po, g, draw_list=()):
 def get_typenames_for_class(ob):
     mro = type(ob).mro()
     names = [_.__name__ for _ in mro]
-    for n in ['Serializable', 'Serializable0', 'PlacedObject', 'object']:
+    for n in ["Serializable", "Serializable0", "PlacedObject", "object"]:
         names.remove(n)
     return names
 
@@ -129,16 +144,24 @@ def recurive_draw_list(draw_list, prefix):
     return res
 
 
-def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
-                timeseries=None, height_of_stored_images: Optional[int] = None) -> Sequence[str]:
+def draw_static(
+    root,
+    output_dir,
+    pixel_size=(480, 480),
+    area=None,
+    images=None,
+    timeseries=None,
+    height_of_stored_images: Optional[int] = None,
+) -> Sequence[str]:
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
+
     images = images or {}
     timeseries = timeseries or {}
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    fn_svg = os.path.join(output_dir, 'drawing.svg')
-    fn_html = os.path.join(output_dir, 'drawing.html')
+    fn_svg = os.path.join(output_dir, "drawing.svg")
+    fn_html = os.path.join(output_dir, "drawing.html")
 
     timestamps = get_sampling_points(root)
     if len(timestamps) == 0:
@@ -158,7 +181,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
 
-    logger.info('area: %s' % area)
+    logger.info("area: %s" % area)
     drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
     # drawing.add(drawing.defs())
     gmg = drawing.g()
@@ -169,21 +192,21 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
     t0 = keyframes.values[0]
     root_t0 = root.filter_all(ChooseTime(t0))
     g_static = drawing.g()
-    g_static.attribs['class'] = 'static'
+    g_static.attribs["class"] = "static"
 
     draw_recursive(drawing, root_t0, g_static, draw_list=static)
     base.add(g_static)
 
-    obs_div = Tag(name='div')
+    obs_div = Tag(name="div")
     imagename2div = {}
     for name in images:
-        imagename2div[name] = Tag(name='div')
+        imagename2div[name] = Tag(name="div")
         obs_div.append(imagename2div[name])
 
     # logger.debug('dynamic: %s' % dynamic)
     for i, t in keyframes:
         g_t = drawing.g()
-        g_t.attribs['class'] = 'keyframe keyframe%d' % i
+        g_t.attribs["class"] = "keyframe keyframe%d" % i
 
         root_t = root.filter_all(ChooseTime(t))
 
@@ -198,7 +221,7 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
                 obs = sequence.at_or_previous(t)
                 updated = False
 
-            img = Tag(name='img')
+            img = Tag(name="img")
             if isinstance(obs, bytes):
                 data = obs
             else:
@@ -206,11 +229,11 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
 
             if height_of_stored_images is not None:
                 data = get_resized_image(data, height_of_stored_images)
-            img.attrs['src'] = data_encoded_for_src(data, 'image/jpeg')
+            img.attrs["src"] = data_encoded_for_src(data, "image/jpeg")
             # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
-            img.attrs['class'] = 'keyframe keyframe%d' % i
-            img.attrs['visualize'] = 'hide'
-            img.attrs['updated'] = int(updated)
+            img.attrs["class"] = "keyframe keyframe%d" % i
+            img.attrs["visualize"] = "hide"
+            img.attrs["updated"] = int(updated)
             imagename2div[name].append(img)
 
     other = ""
@@ -313,10 +336,15 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
     div_timeseries = str(make_tabs(timeseries))
 
     obs_div = str(obs_div)
-    html = make_html_slider(drawing, keyframes, obs_div=obs_div, other=other,
-                            div_timeseries=div_timeseries,
-                            visualize_controls=visualize_controls)
-    with open(fn_html, 'w') as f:
+    html = make_html_slider(
+        drawing,
+        keyframes,
+        obs_div=obs_div,
+        other=other,
+        div_timeseries=div_timeseries,
+        visualize_controls=visualize_controls,
+    )
+    with open(fn_html, "w") as f:
         f.write(html)
 
     # language=css
@@ -332,24 +360,26 @@ def draw_static(root, output_dir, pixel_size=(480, 480), area=None, images=None,
     drawing.defs.add(drawing.style(style))
 
     drawing.save(pretty=True)
-    logger.info('Written SVG to %s' % fn_svg)
-    logger.info('Written HTML to %s' % fn_html)
+    logger.info("Written SVG to %s" % fn_svg)
+    logger.info("Written HTML to %s" % fn_html)
 
     return [fn_svg, fn_html]
 
 
 def get_resized_image(bytes_content, width):
     from PIL import Image
-    pl = logging.getLogger('PIL')
+
+    pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
     idata = BytesIO(bytes_content)
-    image = Image.open(idata).convert('RGB')
+    image = Image.open(idata).convert("RGB")
     size = image.size
     height = int(size[1] * 1.0 / size[0] * width)
     image = image.resize((width, height))
     out = BytesIO()
-    image.save(out, format='jpeg')
+    image.save(out, format="jpeg")
     return out.getvalue()
+
 
 @dataclass
 class TimeseriesPlot:
@@ -372,43 +402,47 @@ class TimeseriesPlot:
 def make_tabs(timeseries):
     tabs = OrderedDict()
     import plotly.offline as offline
+
     i = 0
     for name, tsp in timeseries.items():
         assert isinstance(tsp, TimeseriesPlot)
 
-        div = Tag(name='div')
-        table = Tag(name='table')
-        table.attrs['style'] = 'width: 100%'
-        tr = Tag(name='tr')
+        div = Tag(name="div")
+        table = Tag(name="table")
+        table.attrs["style"] = "width: 100%"
+        tr = Tag(name="tr")
 
-        td = Tag(name='td')
-        td.attrs['style'] = 'width: 15em; min-height: 20em; vertical-align: top;'
-        td.append(get_markdown(tsp.long_description or ''))
+        td = Tag(name="td")
+        td.attrs["style"] = "width: 15em; min-height: 20em; vertical-align: top;"
+        td.append(get_markdown(tsp.long_description or ""))
         tr.append(td)
 
-        td = Tag(name='td')
-        td.attrs['style'] = 'width: calc(100%-16em); min-height: 20em; vertical-align: top;'
+        td = Tag(name="td")
+        td.attrs[
+            "style"
+        ] = "width: calc(100%-16em); min-height: 20em; vertical-align: top;"
 
         import plotly.graph_objs as go
         import plotly.tools as tools
+
         scatters = []
         for name_sequence, sequence in tsp.sequences.items():
             assert isinstance(sequence, SampledSequence)
 
             trace = go.Scatter(
-                    x=sequence.timestamps,
-                    y=sequence.values,
-                    mode='lines+markers',
-                    name=name_sequence,
+                x=sequence.timestamps,
+                y=sequence.values,
+                mode="lines+markers",
+                name=name_sequence,
             )
             scatters.append(trace)
 
-        layout = {'font': dict(size=10), 'margin': dict(t=0)}
+        layout = {"font": dict(size=10), "margin": dict(t=0)}
 
         n = len(scatters)
         if n == 0:
-            p = Tag(name='p')
-            p.append('No scatter plots available')
+            p = Tag(name="p")
+            p.append("No scatter plots available")
             td.append(p)
         else:
 
@@ -419,10 +453,12 @@ def make_tabs(timeseries):
 
             # include_plotlyjs = True if i == 0 else False
             include_plotlyjs = True
-            res = offline.plot(fig,
-                               output_type='div',
-                               show_link=False,
-                               include_plotlyjs=include_plotlyjs)
+            res = offline.plot(
+                fig,
+                output_type="div",
+                show_link=False,
+                include_plotlyjs=include_plotlyjs,
+            )
             td.append(bs(res))
             i += 1
 
@@ -447,31 +483,31 @@ class Tab(object):
 
 
 def render_tabs(tabs):
-    div_buttons = Tag(name='div')
-    div_buttons.attrs['class'] = 'tab'
-    div_content = Tag(name='div')
+    div_buttons = Tag(name="div")
+    div_buttons.attrs["class"] = "tab"
+    div_content = Tag(name="div")
 
     for i, (name, tab) in enumerate(tabs.items()):
         assert isinstance(tab, Tab), tab
 
-        tid = 'tab%s' % i
-        button = Tag(name='button')
-        button.attrs['class'] = 'tablinks'
-        button.attrs['onclick'] = "open_tab(event,'%s')" % tid
+        tid = "tab%s" % i
+        button = Tag(name="button")
+        button.attrs["class"] = "tablinks"
+        button.attrs["onclick"] = "open_tab(event,'%s')" % tid
         button.append(tab.title)
         div_buttons.append(button)
 
-        div_c = Tag(name='div')
-        div_c.attrs['id'] = tid
-        div_c.attrs['style'] = ''  # ''display: none; width:100%; height:100vh'
+        div_c = Tag(name="div")
+        div_c.attrs["id"] = tid
+        div_c.attrs["style"] = ""  # ''display: none; width:100%; height:100vh'
 
-        div_c.attrs['class'] = 'tabcontent'
+        div_c.attrs["class"] = "tabcontent"
 
         div_c.append(tab.content)
 
         div_content.append(div_c)
 
-    script = Tag(name='script')
+    script = Tag(name="script")
     # language=javascript
     js = """
 function open_tab(evt, cityName) {
@@ -499,9 +535,10 @@ function open_tab(evt, cityName) {
     """
     script.append(js)
 
-    style = Tag(name='style')
+    style = Tag(name="style")
     # language=css
-    style.append('''\
+    style.append(
+        """\
 /* Style the tab */
 .tab {
     overflow: hidden;
@@ -546,9 +583,10 @@ function open_tab(evt, cityName) {
     width: 100%;
 }
     
-    ''')
-    main = Tag(name='div')
-    main.attrs['id'] = 'tabs'
+    """
+    )
+    main = Tag(name="div")
+    main.attrs["id"] = "tabs"
     main.append(style)
     main.append(script)
     main.append(div_buttons)
@@ -556,7 +594,9 @@ function open_tab(evt, cityName) {
     return main
 
 
-def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visualize_controls):
+def make_html_slider(
+    drawing, keyframes, obs_div, other, div_timeseries, visualize_controls
+):
     nkeyframes = len(keyframes.timestamps)
 
     # language=html
@@ -608,30 +648,33 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
         showVal(0);
     });
 </script>
-""" % (nkeyframes - 1)
+""" % (
+        nkeyframes - 1
+    )
 
     if nkeyframes <= 1:
-        controls_html += ('''
+        controls_html += """
         <style>
         .slidecontainer {
         display: none;
         }
         </style>
-        ''')
+        """
 
     controls = bs(controls_html)
 
-    valbox = controls.find('span', id='time-display')
+    valbox = controls.find("span", id="time-display")
     assert valbox is not None
     for i, timestamp in keyframes:
-        t = Tag(name='span')
-        t.attrs['class'] = 'keyframe keyframe%d' % i
-        t.attrs['visualize'] = 'hide'
-        t.append('t = %.2f' % timestamp)
+        t = Tag(name="span")
+        t.attrs["class"] = "keyframe keyframe%d" % i
+        t.attrs["visualize"] = "hide"
+        t.append("t = %.2f" % timestamp)
 
         valbox.append(t)
 
     from six import StringIO
+
     f = StringIO()
     drawing.write(f, pretty=True)
     drawing_svg = f.getvalue()
@@ -671,16 +714,22 @@ body {{
 {other}
 </body>
 </html>
-    """.format(controls=str(controls), drawing=drawing_svg, obs_div=obs_div, other=other,
-               div_timeseries=div_timeseries, visualize_controls=visualize_controls)
+    """.format(
+        controls=str(controls),
+        drawing=drawing_svg,
+        obs_div=obs_div,
+        other=other,
+        div_timeseries=div_timeseries,
+        visualize_controls=visualize_controls,
+    )
     return doc
 
 
 def mime_from_fn(fn):
-    if fn.endswith('png'):
-        return 'image/png'
-    elif fn.endswith('jpg'):
-        return 'image/jpeg'
+    if fn.endswith("png"):
+        return "image/png"
+    elif fn.endswith("jpg"):
+        return "image/jpeg"
     else:
         raise ValueError(fn)
 
@@ -692,23 +741,21 @@ def data_encoded_for_src(data, mime):
         returns "data: ... " sttring
     """
     encoded = base64.b64encode(data).decode()
-    link = ('data:%s;base64,' % mime) + encoded
+    link = ("data:%s;base64," % mime) + encoded
     return link
 
 
-def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass='axes'):
+def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
     g2 = drawing.g()
-    g2.attribs['class'] = klass
-    line = drawing.line(start=(0, 0),
-                        end=(L, 0),
-                        stroke_width=stroke_width,
-                        stroke="red")
+    g2.attribs["class"] = klass
+    line = drawing.line(
+        start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red"
+    )
     g2.add(line)
 
-    line = drawing.line(start=(0, 0),
-                        end=(0, L),
-                        stroke_width=stroke_width,
-                        stroke="green")
+    line = drawing.line(
+        start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green"
+    )
     g2.add(line)
 
     g.add(g2)
@@ -717,13 +764,14 @@ def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass='axes'):
 @memoized_reset
 def get_jpeg_bytes(fn):
     from PIL import Image
-    pl = logging.getLogger('PIL')
+
+    pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
 
-    image = Image.open(fn).convert('RGB')
+    image = Image.open(fn).convert("RGB")
 
     out = BytesIO()
-    image.save(out, format='jpeg')
+    image.save(out, format="jpeg")
     return out.getvalue()
 
 
@@ -733,20 +781,20 @@ def bs(fragment: str):
 
     check_isinstance(fragment, six.string_types)
 
-    s = u'<fragment>%s</fragment>' % fragment
+    s = u"<fragment>%s</fragment>" % fragment
 
-    wire = s.encode('utf-8')
-    parsed = BeautifulSoup(wire, 'lxml')
+    wire = s.encode("utf-8")
+    parsed = BeautifulSoup(wire, "lxml")
     res = parsed.html.body.fragment
-    assert res.name == 'fragment'
+    assert res.name == "fragment"
     return res
 
 
 def get_markdown(md: str) -> str:
     import markdown
 
-    extensions = ['extra', 'smarty']
-    html = markdown.markdown(md, extensions=extensions, output_format='html5')
+    extensions = ["extra", "smarty"]
+    html = markdown.markdown(md, extensions=extensions, output_format="html5")
 
     res = bs(html)
     return res

@@ -3,10 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 from .types import *
 
-__all__ = [
-    'PlatformDynamicsFactory',
-    'PlatformDynamics',
-]
+__all__ = ["PlatformDynamicsFactory", "PlatformDynamics"]
 
 
 class PlatformDynamics(metaclass=ABCMeta):
@@ -40,7 +37,6 @@ class PlatformDynamics(metaclass=ABCMeta):
 
 
 class PlatformDynamicsFactory(metaclass=ABCMeta):
-
     @classmethod
     @abstractmethod
     def initialize(cls, c0: TSE2v, t0: float = 0, seed: int = None) -> PlatformDynamics:

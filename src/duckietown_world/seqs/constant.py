@@ -6,9 +6,7 @@ from duckietown_serialization_ds1.serialization1 import as_json_dict
 
 from .tsequence import GenericSequence, X, Timestamp
 
-__all__ = [
-    'Constant',
-]
+__all__ = ["Constant"]
 
 
 @dataclass
@@ -32,4 +30,4 @@ class Constant(GenericSequence[X]):
         return None
 
     def as_json_dict(self):
-        return {'always': as_json_dict(self.always)}
+        return {"always": as_json_dict(self.always)}

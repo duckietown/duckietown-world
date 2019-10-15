@@ -6,9 +6,7 @@ import numpy as np
 from duckietown_world.world_duckietown.types import TSE2v
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
 
-__all__ = [
-    'ApplyDelay',
-]
+__all__ = ["ApplyDelay"]
 
 
 class ApplyDelay(PlatformDynamicsFactory):
@@ -19,7 +17,9 @@ class ApplyDelay(PlatformDynamicsFactory):
         self.delay = delay
         self.u0 = u0
 
-    def initialize(self, c0: TSE2v, t0: float = 0, seed: int = None) -> PlatformDynamics:
+    def initialize(
+        self, c0: TSE2v, t0: float = 0, seed: int = None
+    ) -> PlatformDynamics:
         """
             Returns the dynamics initalized at a certain configuration.
 
@@ -44,7 +44,7 @@ class DelayedDynamics(PlatformDynamics):
         self.u0 = u0
 
         if self.timestamps:
-            i, _, _  = self.get_commands_at(self.timestamps[-1]-self.delay)
+            i, _, _ = self.get_commands_at(self.timestamps[-1] - self.delay)
             self.commands = self.commands[i:]
             self.timestamps = self.timestamps[i:]
 
@@ -55,12 +55,14 @@ class DelayedDynamics(PlatformDynamics):
         a = np.array(self.timestamps)
         idx = np.searchsorted(a, t, side="left")
 
-        if idx > 0 and (idx == len(a) or math.fabs(t - a[idx - 1]) < math.fabs(t - a[idx])):
+        if idx > 0 and (
+            idx == len(a) or math.fabs(t - a[idx - 1]) < math.fabs(t - a[idx])
+        ):
             return idx, a[idx], self.commands[idx - 1]
         else:
             return idx, a[idx], self.commands[idx]
 
-    def integrate(self, dt: float, commands) -> 'DelayedDynamics':
+    def integrate(self, dt: float, commands) -> "DelayedDynamics":
         """
             Returns the result of applying commands for dt.
 
@@ -75,8 +77,14 @@ class DelayedDynamics(PlatformDynamics):
         # print(f't = {self.t}, t old = {told}'  )
         state2 = self.state.integrate(dt, use_commands)
 
-        next = DelayedDynamics(state2, self.delay, self.t, self.u0, commands=list(self.commands),
-                               timestamps=list(self.timestamps))
+        next = DelayedDynamics(
+            state2,
+            self.delay,
+            self.t,
+            self.u0,
+            commands=list(self.commands),
+            timestamps=list(self.timestamps),
+        )
         return next
 
     def TSE2_from_state(self) -> TSE2v:

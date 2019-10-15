@@ -5,10 +5,7 @@ import geometry as geo
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
 from .types import *
 
-__all__ = [
-    'GenericKinematicsSE2',
-
-]
+__all__ = ["GenericKinematicsSE2"]
 
 # noinspection PyUnresolvedReferences
 from geometry.poses import *
@@ -34,7 +31,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         self.v0 = v0
         self.q0 = q0
 
-    def integrate(self, dt: float, commands: se2v) -> 'GenericKinematicsSE2':
+    def integrate(self, dt: float, commands: se2v) -> "GenericKinematicsSE2":
         """ commands = velocity in body frame """
         # convert to float
         dt = float(dt)

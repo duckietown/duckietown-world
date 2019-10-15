@@ -22,7 +22,9 @@ class ACGvGen(object):
     For example of usage, please see the __main__ function
     """
 
-    def __init__(self, legend_name=None, options="compound=true;"):  # allow links between clusters
+    def __init__(
+        self, legend_name=None, options="compound=true;"
+    ):  # allow links between clusters
         self.max_line_width = 10
         self.max_arrow_width = 2
         self.line_factor = 1
@@ -73,21 +75,22 @@ class ACGvGen(object):
         if distinct:
             if self.__nodes:
                 for e in self.__nodes:
-                    props = e['properties']
-                    if props['label'] == name:
+                    props = e["properties"]
+                    if props["label"] == name:
                         # We found the label name matching, we return -1
                         return -1
 
         # We now insert into gvgen datastructure
         self.__id += 1
-        node = {'id': self.__id,  # Internal ID
-                'lock': 0,  # When the node is written, it is locked to avoid further references
-                'parent': parent,  # Node parent for easy graphviz clusters
-                'style': None,  # Style that GvGen allow you to create
-                'properties': {  # Custom graphviz properties you can add, which will overide previously defined styles
-                    'label': name
-                }
-                }
+        node = {
+            "id": self.__id,  # Internal ID
+            "lock": 0,  # When the node is written, it is locked to avoid further references
+            "parent": parent,  # Node parent for easy graphviz clusters
+            "style": None,  # Style that GvGen allow you to create
+            "properties": {  # Custom graphviz properties you can add, which will overide previously defined styles
+                "label": name
+            },
+        }
 
         # Parents should be sorted first
         if parent:
@@ -135,7 +138,9 @@ class ACGvGen(object):
     # if not linkfrom:
     #         self.__links.append(link)
 
-    def __link_new(self, from_node, to_node, label=None, cl_from_node=None, cl_to_node=None):
+    def __link_new(
+        self, from_node, to_node, label=None, cl_from_node=None, cl_to_node=None
+    ):
         """
         Creates a link between two nodes
         @from_node: The node the link comes from
@@ -144,22 +149,23 @@ class ACGvGen(object):
         Returns: The link created
         """
 
-        link = {'from_node': from_node,
-                'to_node': to_node,
-                'style': None,  # Style that GvGen allow you to create
-                'properties': {},
-                # Custom graphviz properties you can add, which will overide previously defined styles
-                'cl_from_node': None,  # When linking from a cluster, the link appears from this node
-                'cl_to_node': None,  # When linking to a cluster, the link appears to go to this node
-                }
+        link = {
+            "from_node": from_node,
+            "to_node": to_node,
+            "style": None,  # Style that GvGen allow you to create
+            "properties": {},
+            # Custom graphviz properties you can add, which will overide previously defined styles
+            "cl_from_node": None,  # When linking from a cluster, the link appears from this node
+            "cl_to_node": None,  # When linking to a cluster, the link appears to go to this node
+        }
 
         if label:
-            link['properties']['label'] = label
+            link["properties"]["label"] = label
 
         if cl_from_node:
-            link['cl_from_node'] = cl_from_node
+            link["cl_from_node"] = cl_from_node
         if cl_to_node:
-            link['cl_to_node'] = cl_to_node
+            link["cl_to_node"] = cl_to_node
 
         # We let smart link work for us
         # self.__link_smart(link)
@@ -190,7 +196,7 @@ class ACGvGen(object):
         """
         children_list = []
         for e in self.__nodes:
-            if e['parent'] == parent:
+            if e["parent"] == parent:
                 children_list.append(e)
 
         return children_list
@@ -209,7 +215,7 @@ class ACGvGen(object):
 
     def debug(self):
         for e in self.__nodes:
-            print("element = " + str(e['id']))
+            print("element = " + str(e["id"]))
 
     def collectLeaves(self, parent):
         """
@@ -217,7 +223,7 @@ class ACGvGen(object):
         """
         cl = []
         for e in self.__nodes:
-            if e['parent'] == parent:
+            if e["parent"] == parent:
                 cl.append(e)
 
         return cl
@@ -229,14 +235,14 @@ class ACGvGen(object):
         """
         cl = []
         for e in self.__nodes:
-            if e['parent'] == parent:
-                if not e['lock']:
+            if e["parent"] == parent:
+                if not e["lock"]:
                     cl.append(e)
 
         return cl
 
     def lockNode(self, node):
-        node['lock'] = 1
+        node["lock"] = 1
 
     #
     # Start: styles management
@@ -248,7 +254,7 @@ class ACGvGen(object):
         self.__styles[stylename].append([key, val])
 
     def styleApply(self, stylename, node_or_link):
-        node_or_link['style'] = stylename
+        node_or_link["style"] = stylename
 
     def styleDefaultAppend(self, key, val):
         self.__default_style.append([key, val])
@@ -279,8 +285,8 @@ class ACGvGen(object):
         #
         # First, we build the styles
         #
-        if node['style']:
-            stylename = node['style']
+        if node["style"]:
+            stylename = node["style"]
             allProps.update(self.__styles[stylename])
 
         #
@@ -290,14 +296,18 @@ class ACGvGen(object):
         allProps.update(props)
 
         if self.__has_children(node):
-            propStringList = ["%s=%s;\n" % (k, format_property(k, v)) for k, v in allProps.items()]
-            properties = ''.join(propStringList)
+            propStringList = [
+                "%s=%s;\n" % (k, format_property(k, v)) for k, v in allProps.items()
+            ]
+            properties = "".join(propStringList)
         else:
             if props:
-                propStringList = ["%s=%s" % (k, format_property(k, v)) for k, v in allProps.items()]
-                properties = '[' + ','.join(propStringList) + ']'
+                propStringList = [
+                    "%s=%s" % (k, format_property(k, v)) for k, v in allProps.items()
+                ]
+                properties = "[" + ",".join(propStringList) + "]"
             else:
-                properties = ''
+                properties = ""
 
         return properties
 
@@ -307,23 +317,28 @@ class ACGvGen(object):
         if self.__default_style_links:
             props.update(self.__default_style_links)
 
-        if link['style']:
-            stylename = link['style']
+        if link["style"]:
+            stylename = link["style"]
 
             # Build the properties string for node
             props.update(self.__styles[stylename])
 
-        props.update(link['properties'])
+        props.update(link["properties"])
 
-        properties = ''
+        properties = ""
         if props:
-            properties += ','.join(["%s=%s" % (str(k), format_property(k, val)) for k, val in props.items()])
+            properties += ",".join(
+                [
+                    "%s=%s" % (str(k), format_property(k, val))
+                    for k, val in props.items()
+                ]
+            )
         return properties
 
     def propertyForeachLinksAppend(self, node, key, val):
         for l in self.__links:
-            if l['from_node'] == node:
-                props = l['properties']
+            if l["from_node"] == node:
+                props = l["properties"]
                 props[key] = val
 
     def propertyAppend(self, node_or_link, key, val):
@@ -332,7 +347,7 @@ class ACGvGen(object):
         mynode = newItem(\"blah\")
         Ex. propertyAppend(mynode, \"color\", \"red\")
         """
-        props = node_or_link['properties']
+        props = node_or_link["properties"]
         props[key] = val
 
     def propertyGet(self, node_or_link, key):
@@ -341,7 +356,7 @@ class ACGvGen(object):
         Ex. prop = propertyGet(node, \"color\")
         """
         try:
-            props = node_or_link['properties']
+            props = node_or_link["properties"]
             return props[key]
         except:
             return None
@@ -352,7 +367,7 @@ class ACGvGen(object):
         mynode = newItem(\"blah\")
         Ex. propertyRemove(mynode, \"color\")
         """
-        props = node_or_link['properties']
+        props = node_or_link["properties"]
         del props[key]
 
     #
@@ -378,9 +393,12 @@ class ACGvGen(object):
 
     def tree_debug(self, level, node, children):
         if children:
-            print("(level:%d) Eid:%d has children (%s)" % (level, node['id'], str(children)))
+            print(
+                "(level:%d) Eid:%d has children (%s)"
+                % (level, node["id"], str(children))
+            )
         else:
-            print("Eid:" + str(node['id']) + " has no children")
+            print("Eid:" + str(node["id"]) + " has no children")
 
     #
     # Core function that outputs the data structure tree into dot language
@@ -393,11 +411,11 @@ class ACGvGen(object):
         #         print('%stree(level %s, ID %s, %s)' % ('  ' * level, level, node['id'],
         #                                                 len(children) if children else 'no children'))
         if debug:
-            print("/* Grabed node = %s*/" % str(node['id']))
+            print("/* Grabed node = %s*/" % str(node["id"]))
 
-        if node['lock'] == 1:  # The node is locked, nothing should be printed
+        if node["lock"] == 1:  # The node is locked, nothing should be printed
             if debug:
-                print("/* The node (%s) is locked */" % str(node['id']))
+                print("/* The node (%s) is locked */" % str(node["id"]))
 
             if self.__opened_braces:
                 self.fd.write(level * self.padding_str)
@@ -405,15 +423,15 @@ class ACGvGen(object):
                 self.__opened_braces.pop()
             return
 
-        props = node['properties']
+        props = node["properties"]
 
         if children:
-            node['lock'] = 1
+            node["lock"] = 1
             self.fd.write(level * self.padding_str)
 
             # print('level %d Starting subcluster for %d %r' % (level, node['id'], node.get('label', '(no label)')))
 
-            self.fd.write(self.padding_str + "subgraph cluster%d {\n" % node['id'])
+            self.fd.write(self.padding_str + "subgraph cluster%d {\n" % node["id"])
             properties = self.propertiesAsStringGet(node, props)
             self.fd.write(level * self.padding_str)
             self.fd.write(self.padding_str + "%s" % properties)
@@ -430,51 +448,69 @@ class ACGvGen(object):
                 last_level = 0
 
             if debug:
-                if node['parent']:
-                    parent_str = str(node['parent']['id'])
+                if node["parent"]:
+                    parent_str = str(node["parent"]["id"])
                 else:
-                    parent_str = 'None'
+                    parent_str = "None"
                 if last_cluster:
-                    last_cluster_str = str(last_cluster['id'])
+                    last_cluster_str = str(last_cluster["id"])
                 else:
-                    last_cluster_str = 'None'
-                print("/* e[parent] = %s, last_cluster = %s, last_level = %d, opened_braces: %s */" % (
-                parent_str, last_cluster_str, last_level, str(self.__opened_braces)))
+                    last_cluster_str = "None"
+                print(
+                    "/* e[parent] = %s, last_cluster = %s, last_level = %d, opened_braces: %s */"
+                    % (
+                        parent_str,
+                        last_cluster_str,
+                        last_level,
+                        str(self.__opened_braces),
+                    )
+                )
 
             # Write children/parent with properties
-            if node['parent']:
-                if node['parent'] != last_cluster:
-                    while node['parent'] < last_cluster:
+            if node["parent"]:
+                if node["parent"] != last_cluster:
+                    while node["parent"] < last_cluster:
                         last_cluster, last_level = self.__opened_braces[-1]
-                        if node['parent'] == last_cluster:
+                        if node["parent"] == last_cluster:
                             last_level += 1
                             # We browse any property to build a string
                             self.fd.write(last_level * self.padding_str)
-                            self.fd.write(self.padding_str + "node%d %s;\n" % (node['id'], properties))
-                            node['lock'] = 1
+                            self.fd.write(
+                                self.padding_str
+                                + "node%d %s;\n" % (node["id"], properties)
+                            )
+                            node["lock"] = 1
                         else:
                             self.fd.write(last_level * self.padding_str)
                             self.fd.write(self.padding_str + "}\n")
                             self.__opened_braces.pop()
                 else:
                     self.fd.write(level * self.padding_str)
-                    self.fd.write(self.padding_str + "node%d %s;\n" % (node['id'], properties))
-                    node['lock'] = 1
-                    cl = self.collectUnlockedLeaves(node['parent'])
+                    self.fd.write(
+                        self.padding_str + "node%d %s;\n" % (node["id"], properties)
+                    )
+                    node["lock"] = 1
+                    cl = self.collectUnlockedLeaves(node["parent"])
                     for l in cl:
-                        props = l['properties']
+                        props = l["properties"]
                         properties = self.propertiesAsStringGet(l, props)
                         self.fd.write(last_level * self.padding_str)
-                        self.fd.write(self.padding_str + self.padding_str + "node%d %s;\n" % (l['id'], properties))
-                        node['lock'] = 1
+                        self.fd.write(
+                            self.padding_str
+                            + self.padding_str
+                            + "node%d %s;\n" % (l["id"], properties)
+                        )
+                        node["lock"] = 1
                         self.lockNode(l)
 
                     self.fd.write(level * self.padding_str + "}\n")
                     self.__opened_braces.pop()
 
             else:
-                self.fd.write(self.padding_str + "node%d %s;\n" % (node['id'], properties))
-                node['lock'] = 1
+                self.fd.write(
+                    self.padding_str + "node%d %s;\n" % (node["id"], properties)
+                )
+                node["lock"] = 1
 
     def browse(self, node, cb):
         """
@@ -500,33 +536,36 @@ class ACGvGen(object):
         for c in children:
             rec = self.browse2_(G=G, id_node=c, cb=cb, level=level + 1)
             children_result[c] = rec
-        node_data = G.node[id_node]['data']
+        node_data = G.node[id_node]["data"]
         return cb(level, node_data, children_result)
 
     def browse2(self, cb):
         import networkx as nx
+
         G = nx.DiGraph()
-        G.add_node('root', data=dict(id='root'))
+        G.add_node("root", data=dict(id="root"))
         for n in self.__nodes:
-            G.add_node(n['id'], data=n)
+            G.add_node(n["id"], data=n)
 
         for n in self.__nodes:
-            parent = n['parent']
+            parent = n["parent"]
             if parent is None:
-                id_parent = 'root'
+                id_parent = "root"
             else:
-                id_parent = parent['id']
-            G.add_edge(id_parent, n['id'])
+                id_parent = parent["id"]
+            G.add_edge(id_parent, n["id"])
 
-        return self.browse2_(G=G, id_node='root', cb=cb, level=0)
+        return self.browse2_(G=G, id_node="root", cb=cb, level=0)
 
     def structure(self):
         def example(level, node, children_results):  # @UnusedVariable
             if children_results:
-                c = ", ".join(["%s" % v for k, v in children_results.items()])  # @UnusedVariable
-                return "%s { %s } " % (node['id'], c)
+                c = ", ".join(
+                    ["%s" % v for k, v in children_results.items()]
+                )  # @UnusedVariable
+                return "%s { %s } " % (node["id"], c)
             else:
-                return node['id']
+                return node["id"]
 
         return self.browse2(example)
 
@@ -535,7 +574,7 @@ class ACGvGen(object):
         def indented_results(children_results):
             s = ""
             for cs in children_results.values():
-                s += indentu(cs, '   ') + '\n'
+                s += indentu(cs, "   ") + "\n"
             return s
 
         def render_dot_root(level, node, children_results):  # @UnusedVariable
@@ -544,11 +583,13 @@ class ACGvGen(object):
                 graph [fontname = "FONT"];
                  node [fontname = "FONT"];
                  edge [fontname = "FONT"];
-            """.replace('FONT', 'Anka/Coder Narrow')
+            """.replace(
+                "FONT", "Anka/Coder Narrow"
+            )
 
             if self.options:
                 for key, value in self.options.items():
-                    s += ("    %s=%s;" % (key, value))
+                    s += "    %s=%s;" % (key, value)
                 s += "\n"
             assert isinstance(s, str), s.__repr__()
             r = indented_results(children_results)  # .decode("unicode_escape")
@@ -565,25 +606,25 @@ class ACGvGen(object):
             for n in self.__nodes:
                 self.dotLinks(n)
 
-            s += indentu(self.fd.getvalue(), '   ')
-            s += '}'
+            s += indentu(self.fd.getvalue(), "   ")
+            s += "}"
             return s
 
         def render_dot_subgraph(level, node, children_results):  # @UnusedVariable
-            s = "subgraph cluster%d { \n" % node['id']
-            properties = self.propertiesAsStringGet(node, node['properties'])
-            s += indentu('   ', properties)
+            s = "subgraph cluster%d { \n" % node["id"]
+            properties = self.propertiesAsStringGet(node, node["properties"])
+            s += indentu("   ", properties)
             s += indented_results(children_results)
-            s += '}'
+            s += "}"
             return s
 
         def render_dot_node(level, node, children_results):  # @UnusedVariable
-            properties = self.propertiesAsStringGet(node, node['properties'])
-            return "node%d %s;\n" % (node['id'], properties)
+            properties = self.propertiesAsStringGet(node, node["properties"])
+            return "node%d %s;\n" % (node["id"], properties)
 
         def render_dot(level, node, children_results):  # @UnusedVariable
 
-            if node['id'] == 'root':
+            if node["id"] == "root":
                 return render_dot_root(level, node, children_results)
 
             if children_results:
@@ -598,30 +639,30 @@ class ACGvGen(object):
         Write links between nodes
         """
         for l in self.__links:
-            if l['from_node'] == node:
+            if l["from_node"] == node:
                 # Check if we link form a cluster
                 children = self.__has_children(node)
                 if children:
-                    if l['cl_from_node']:
-                        src = l['cl_from_node']['id']
+                    if l["cl_from_node"]:
+                        src = l["cl_from_node"]["id"]
                     else:
-                        src = children[0]['id']
-                    cluster_src = node['id']
+                        src = children[0]["id"]
+                    cluster_src = node["id"]
                 else:
-                    src = node['id']
-                    cluster_src = ''
+                    src = node["id"]
+                    cluster_src = ""
 
                 # Check if we link to a cluster
-                children = self.__has_children(l['to_node'])
+                children = self.__has_children(l["to_node"])
                 if children:
-                    if l['cl_to_node']:
-                        dst = l['cl_to_node']['id']
+                    if l["cl_to_node"]:
+                        dst = l["cl_to_node"]["id"]
                     else:
-                        dst = children[0]['id']
-                    cluster_dst = l['to_node']['id']
+                        dst = children[0]["id"]
+                    cluster_dst = l["to_node"]["id"]
                 else:
-                    dst = l['to_node']['id']
-                    cluster_dst = ''
+                    dst = l["to_node"]["id"]
+                    cluster_dst = ""
 
                 self.fd.write("node%d->node%d" % (src, dst))
 
@@ -630,11 +671,11 @@ class ACGvGen(object):
                 # Build new properties if we link from or to a cluster
                 if cluster_src:
                     if props:
-                        props += ','
+                        props += ","
                     props += "ltail=cluster%d" % cluster_src
                 if cluster_dst:
                     if props:
-                        props += ','
+                        props += ","
                     props += "lhead=cluster%d" % cluster_dst
 
                 if props:
@@ -770,10 +811,10 @@ def format_property(k, v):  # @UnusedVariable
     s = str(v)
 
     def escape(x):
-        return x.replace('\n', '\\n')
+        return x.replace("\n", "\\n")
 
-    if s and s[0] == '<':
-        res = '<%s>' % escape(s)
+    if s and s[0] == "<":
+        res = "<%s>" % escape(s)
     else:
         res = '"%s"' % escape(s)
     return res
@@ -827,18 +868,19 @@ if __name__ == "__main__":
 
 def indentu(s, prefix, first=None):
     assert isinstance(prefix, str)
-    lines = s.split('\n')
-    if not lines: return ''
+    lines = s.split("\n")
+    if not lines:
+        return ""
 
     if first is None:
         first = prefix
 
     m = max(len(prefix), len(first))
 
-    prefix = ' ' * (m - len(prefix)) + prefix
-    first = ' ' * (m - len(first)) + first
+    prefix = " " * (m - len(prefix)) + prefix
+    first = " " * (m - len(first)) + first
 
     # differnet first prefix
-    res = ['%s%s' % (prefix, line.rstrip()) for line in lines]
-    res[0] = '%s%s' % (first, lines[0].rstrip())
-    return '\n'.join(res)
+    res = ["%s%s" % (prefix, line.rstrip()) for line in lines]
+    res[0] = "%s%s" % (first, lines[0].rstrip())
+    return "\n".join(res)

@@ -7,9 +7,7 @@ import sys
 from duckietown_world import logger
 from .misc import draw_static
 
-__all__ = [
-    'draw_maps_main',
-]
+__all__ = ["draw_maps_main"]
 
 
 def draw_maps_main(args=None):
@@ -18,8 +16,8 @@ def draw_maps_main(args=None):
     if args is None:
         args = sys.argv[1:]
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", help="output dir", default='out-draw_maps')
-    parser.add_argument('map_names', nargs=argparse.REMAINDER)
+    parser.add_argument("--output", help="output dir", default="out-draw_maps")
+    parser.add_argument("map_names", nargs=argparse.REMAINDER)
     parsed = parser.parse_args(args)
 
     output = parsed.output
@@ -28,7 +26,7 @@ def draw_maps_main(args=None):
         map_names = parsed.map_names
     else:
         map_names = list_maps()
-    logger.info('Drawing the maps %s.' % ", ".join(map_names))
+    logger.info("Drawing the maps %s." % ", ".join(map_names))
 
     for map_name in map_names:
         duckietown_map = load_map(map_name)
@@ -37,22 +35,25 @@ def draw_maps_main(args=None):
         draw_map(out, duckietown_map)
 
         y = duckietown_map.as_json_dict()
-        fn = os.path.join(out, 'map.json')
-        with open(fn, 'w') as f:
+        fn = os.path.join(out, "map.json")
+        with open(fn, "w") as f:
             f.write(json.dumps(y, indent=4))
         # print('written to %s' % fn)
 
 
 def draw_map(output, duckietown_map):
     from duckietown_world.world_duckietown import DuckietownMap
+
     if not os.path.exists(output):
         os.makedirs(output)
     assert isinstance(duckietown_map, DuckietownMap)
 
-    fns = draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
+    fns = draw_static(
+        duckietown_map, output_dir=output, pixel_size=(640, 640), area=None
+    )
     for fn in fns:
-        logger.info('Written to %s' % fn)
+        logger.info("Written to %s" % fn)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     draw_maps_main()

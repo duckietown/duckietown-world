@@ -7,12 +7,12 @@ from typing import Any, Callable, ClassVar, List, Optional, Type, TypeVar, Union
 from zuper_typing import Generic
 
 __all__ = [
-    'Sequence',
-    'GenericSequence',
-    'UndefinedAtTime',
-    'SampledSequence',
-    'IterateDT',
-    'iterate_with_dt',
+    "Sequence",
+    "GenericSequence",
+    "UndefinedAtTime",
+    "SampledSequence",
+    "IterateDT",
+    "iterate_with_dt",
 ]
 
 
@@ -20,13 +20,13 @@ class UndefinedAtTime(Exception):
     pass
 
 
-X = TypeVar('X')
-Y = TypeVar('Y')
+X = TypeVar("X")
+Y = TypeVar("Y")
 Timestamp = float
 
 
 class GenericSequence(Generic[X]):
-    CONTINUOUS = 'continuous-sampling'
+    CONTINUOUS = "continuous-sampling"
 
     @abstractmethod
     def at(self, t: Timestamp) -> Generic:
@@ -55,12 +55,17 @@ Sequence = GenericSequence
 import sys
 
 if sys.version_info[:2] == (3, 6):
+
     class Base(GenericSequence):
         pass
+
+
 elif sys.version_info[:2] == (3, 7):
 
     class Base(GenericSequence):
         pass
+
+
 else:
     assert False, sys.version_info
 
@@ -68,6 +73,7 @@ else:
 @dataclass
 class SampledSequence(Base):
     """ A sampled time sequence. Only defined at certain points. """
+
     timestamps: List[Timestamp]
     values: List[X]
 
@@ -78,17 +84,17 @@ class SampledSequence(Base):
         timestamps = list(self.timestamps)
 
         if len(timestamps) != len(values):
-            msg = 'Length mismatch'
+            msg = "Length mismatch"
             raise ValueError(msg)
 
         for t in timestamps:
             if not isinstance(t, (float, int)):
-                msg = 'I expected a number, got %s' % type(t)
+                msg = "I expected a number, got %s" % type(t)
                 raise ValueError(msg)
         for i in range(len(timestamps) - 1):
             dt = timestamps[i + 1] - timestamps[i]
             if dt <= 0:
-                msg = 'Invalid dt = %s at i = %s; ts= %s' % (dt, i, timestamps)
+                msg = "Invalid dt = %s at i = %s; ts= %s" % (dt, i, timestamps)
                 raise ValueError(msg)
         timestamps = list(map(Timestamp, timestamps))
         self.timestamps = timestamps
@@ -98,7 +104,7 @@ class SampledSequence(Base):
         try:
             i = self.timestamps.index(t)
         except ValueError:
-            msg = 'Could not find timestamp %s in %s' % (t, self.timestamps)
+            msg = "Could not find timestamp %s in %s" % (t, self.timestamps)
             raise UndefinedAtTime(msg)
         else:
             return self.values[i]
@@ -124,13 +130,13 @@ class SampledSequence(Base):
 
     def get_start(self) -> Timestamp:
         if not self.timestamps:
-            msg = 'Empty sequence'
+            msg = "Empty sequence"
             raise ValueError(msg)
         return self.timestamps[0]
 
     def get_end(self) -> Timestamp:
         if not self.timestamps:
-            msg = 'Empty sequence'
+            msg = "Empty sequence"
             raise ValueError(msg)
         return self.timestamps[-1]
 
@@ -138,7 +144,7 @@ class SampledSequence(Base):
         return zip(self.timestamps, self.values).__iter__()
 
     @classmethod
-    def from_iterator(cls, i: typing.Iterator[X]) -> 'SampledSequence[X]':
+    def from_iterator(cls, i: typing.Iterator[X]) -> "SampledSequence[X]":
         timestamps = []
         values = []
         for t, v in i:
@@ -149,7 +155,9 @@ class SampledSequence(Base):
     def __len__(self) -> int:
         return len(self.timestamps)
 
-    def transform_values(self, f: Callable[[X], Y]) -> 'SampledSequence[Y]':
+    def transform_values(
+        self, f: Callable[[X], Y], Y: type = object
+    ) -> "SampledSequence[Y]":
         values = []
         timestamps = []
         for t, _ in self:
@@ -158,9 +166,9 @@ class SampledSequence(Base):
                 values.append(res)
                 timestamps.append(t)
 
-        return SampledSequence[self.XT](timestamps, values)
+        return SampledSequence[Y](timestamps, values)
 
-    def upsample(self, n: int) -> 'SampledSequence[X]':
+    def upsample(self, n: int) -> "SampledSequence[X]":
         timestamps = []
         values = []
         for i in range(len(self.timestamps) - 1):

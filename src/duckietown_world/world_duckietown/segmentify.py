@@ -17,10 +17,7 @@ class SkeletonGraphResult:
     G: Any
 
 
-__all__ = [
-    'get_skeleton_graph',
-    'SkeletonGraphResult',
-]
+__all__ = ["get_skeleton_graph", "SkeletonGraphResult"]
 
 
 def get_skeleton_graph(po):
@@ -37,8 +34,12 @@ def get_skeleton_graph(po):
             self.outcoming = set()
 
         def __repr__(self):
-            return 'MP(%d %d | %s, %s)' % (len(self.incoming), len(self.outcoming),
-                                           self.incoming, self.outcoming)
+            return "MP(%d %d | %s, %s)" % (
+                len(self.incoming),
+                len(self.outcoming),
+                self.incoming,
+                self.outcoming,
+            )
 
     def discretize(tran):
         def D(x):
@@ -58,7 +59,7 @@ def get_skeleton_graph(po):
         lane_segment_transformed = transform_lane_segment(lane_segment, absolute_pose)
 
         identity = SE2Transform.identity()
-        name = 'ls%03d' % i
+        name = "ls%03d" % i
         root.set_object(name, lane_segment_transformed, ground_truth=identity)
 
         p0 = discretize(lane_segment_transformed.control_points[0])
@@ -71,7 +72,7 @@ def get_skeleton_graph(po):
 
     for k, mp in meeting_points.items():
         if (len(mp.incoming) == 0) or (len(mp.outcoming) == 0):
-            msg = 'Completeness assumption violated at point %s: %s' % (k, mp)
+            msg = "Completeness assumption violated at point %s: %s" % (k, mp)
             raise Exception(msg)
 
     # compress the lanes which are contiguous
@@ -110,7 +111,7 @@ def get_skeleton_graph(po):
 
         # name = 'alias%s' % (len(aliases))
         # name = '%s-%s' % (lin_name, lout_name)
-        name = 'L%d' % (len(created))
+        name = "L%d" % (len(created))
         width = lin.width
 
         control_points = lin.control_points + lout.control_points[1:]
@@ -133,11 +134,12 @@ def get_skeleton_graph(po):
             root2.set_object(k, v, ground_truth=SE2Transform.identity())
 
     import networkx as nx
+
     G = nx.MultiDiGraph()
 
     k2name = {}
     for i, (k, mp) in enumerate(meeting_points.items()):
-        node_name = 'P%d' % i
+        node_name = "P%d" % i
         k2name[k] = node_name
 
         G.add_node(node_name, point=mp.point)

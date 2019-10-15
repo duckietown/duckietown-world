@@ -13,7 +13,7 @@ from duckietown_world.world_duckietown.map_loading import load_map
 @comptest
 def m1():
     outdir = get_comptests_output_dir()
-    gm = load_map('udem1')
+    gm = load_map("udem1")
 
     # dw = DuckietownWorld()
     # for map_name, tm in gym_maps.items():
@@ -22,9 +22,9 @@ def m1():
     root = PlacedObject()
 
     world = PlacedObject()
-    root.set_object('world', world)
+    root.set_object("world", world)
     origin = SE2Transform([1, 10], np.deg2rad(10))
-    world.set_object('tile_map', gm, ground_truth=Constant[SE2Transform](origin))
+    world.set_object("tile_map", gm, ground_truth=Constant[SE2Transform](origin))
 
     # d = dw.as_json_dict()
     # print(json.dumps(d, indent=4))
@@ -32,7 +32,7 @@ def m1():
     #
 
     G = get_meausurements_graph(root)
-    fn = os.path.join(outdir, 'out1.pdf')
+    fn = os.path.join(outdir, "out1.pdf")
     plot_measurement_graph(root, G, fn)
     #
     # world = ('world',)
@@ -56,12 +56,12 @@ def squash_one(p, preference):
         if m.sr_type in preference:
             return m.transform
 
-    msg = 'Missing measurement of type %r' % ", ".join(preference)
-    msg += '\n\nFound:\n%r' % "\n".join(_.sr_type.__repr__() for _ in p)
+    msg = "Missing measurement of type %r" % ", ".join(preference)
+    msg += "\n\nFound:\n%r" % "\n".join(_.sr_type.__repr__() for _ in p)
     raise NoMeasurements(msg)
 
 
-def squash_path(path, preference=('ground_truth',)):
+def squash_path(path, preference=("ground_truth",)):
     res = []
     for p in path:
         res.append(squash_one(p, preference))
@@ -73,8 +73,8 @@ def transform_from_path(G, path):
     for u, v in pairwise(list(path)):
         t = []
         for k, edge_data in G.get_edge_data(u, v).items():
-            attr_dict = edge_data['attr_dict']
-            transform = attr_dict['sr']
+            attr_dict = edge_data["attr_dict"]
+            transform = attr_dict["sr"]
             t.append(transform)
         transforms.append(t)
     return transforms
@@ -87,8 +87,7 @@ def pairwise(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     a, b = itertools.tee(iterable)
     next(b, None)
-    return \
-        zip(a, b)
+    return zip(a, b)
 
 
 def plot_measurement_graph(root, G, out):
@@ -101,26 +100,26 @@ def plot_measurement_graph(root, G, out):
     for node in G.nodes():
         label = node[-1] if node else "root"
         ob = root.get_object_from_fqn(node)
-        label += '\n%s' % ob
+        label += "\n%s" % ob
         item = gg.newItem(label)
         node2item[node] = item
     for u, v in G.edges():
         for k, data in G.get_edge_data(u, v).items():
-            attr_dict = data['attr_dict']
-            transform = attr_dict['sr']
+            attr_dict = data["attr_dict"]
+            transform = attr_dict["sr"]
             label = str(transform)
             src = node2item[u]
             dst = node2item[v]
             gg.newLink(src=src, dst=dst, label=label)
 
-    fn = out + '.dot'
-    with open(fn, 'w') as f:
+    fn = out + ".dot"
+    with open(fn, "w") as f:
         f.write(gg.dot2())
 
-    cmd = 'dot -o%s -Tpdf %s' % (out, fn)
+    cmd = "dot -o%s -Tpdf %s" % (out, fn)
     os.system(cmd)
-    print('Written to %s' % out)
+    print("Written to %s" % out)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_module_tests()

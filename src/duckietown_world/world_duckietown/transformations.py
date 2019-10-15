@@ -2,10 +2,10 @@
 from duckietown_world import Sequence, TransformSequence
 
 __all__ = [
-    'ChooseTime',
+    "ChooseTime",
     # 'RemoveVariable',
     # 'RemoveStatic',
-    'get_sampling_points',
+    "get_sampling_points",
 ]
 
 
@@ -19,6 +19,8 @@ class ChooseTime(object):
             return ob
         else:
             return ob
+
+
 #
 #
 # class RemoveVariable(object):

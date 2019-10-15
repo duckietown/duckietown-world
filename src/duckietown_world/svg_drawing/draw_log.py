@@ -57,10 +57,10 @@ __all__ = [
 def timeseries_actions(log):
     timeseries = OrderedDict()
     sequences = OrderedDict()
-    sequences['action0'] = log.actions.transform_values(lambda _: _[0])
-    sequences['action1'] = log.actions.transform_values(lambda _: _[1])
+    sequences["action0"] = log.actions.transform_values(lambda _: _[0], float)
+    sequences["action1"] = log.actions.transform_values(lambda _: _[1], float)
 
-    timeseries['actions'] = TimeseriesPlot('Actions', 'actions', sequences)
+    timeseries["actions"] = TimeseriesPlot("Actions", "actions", sequences)
     return timeseries
 
 
@@ -82,8 +82,6 @@ def timeseries_actions(log):
 #             yield ob
 
 
-
-
 @dataclass
 class RobotTrajectories:
     pose: SampledSequence
@@ -100,6 +98,7 @@ class SimulatorLog:
 
     render_time: Optional[Any]
     robots: Dict[str, RobotTrajectories]
+
 
 #
 # #

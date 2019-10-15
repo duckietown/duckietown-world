@@ -12,12 +12,7 @@ from duckietown_world.seqs import SampledSequence
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
 
-__all__ = [
-    'RuleEvaluationContext',
-    'RuleEvaluationResult',
-    'Rule',
-    'evaluate_rules',
-]
+__all__ = ["RuleEvaluationContext", "RuleEvaluationResult", "Rule", "evaluate_rules"]
 
 
 @dataclass
@@ -66,39 +61,41 @@ class EvaluatedMetric(Serializable):
         self.description = description
 
     def __repr__(self):
-        return 'EvaluatedMetric(%s, %s)' % (self.title, self.total)
+        return "EvaluatedMetric(%s, %s)" % (self.title, self.total)
 
 
 class RuleEvaluationResult:
     metrics: Dict[str, EvaluatedMetric]
-    rule: 'Rule'
+    rule: "Rule"
 
     def __init__(self, rule):
         self.metrics = OrderedDict()
         self.rule = rule
 
     # @contract(name='tuple,seq(string)', total='float|int', incremental=Sequence)
-    def set_metric(self,
-                   name: Tuple[str, ...],
-                   total: Union[float, int],
-                   title: Optional[str] = None,
-                   description: Optional[str] = None,
-                   incremental: Optional[SampledSequence] = None,
-
-                   cumulative: Optional[SampledSequence] = None):
+    def set_metric(
+        self,
+        name: Tuple[str, ...],
+        total: Union[float, int],
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        incremental: Optional[SampledSequence] = None,
+        cumulative: Optional[SampledSequence] = None,
+    ):
         check_isinstance(name, tuple)
-        self.metrics[name] = EvaluatedMetric(total=total,
-                                             incremental=incremental,
-                                             title=title,
-                                             description=description,
-                                             cumulative=cumulative)
+        self.metrics[name] = EvaluatedMetric(
+            total=total,
+            incremental=incremental,
+            title=title,
+            description=description,
+            cumulative=cumulative,
+        )
 
     def __repr__(self):
-        return 'RuleEvaluationResult(%s, %s)' % (self.rule, self.metrics)
+        return "RuleEvaluationResult(%s, %s)" % (self.rule, self.metrics)
 
 
 class Rule(metaclass=ABCMeta):
-
     @abstractmethod
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         """ Evaluates the rule in this context.
@@ -109,12 +106,14 @@ class Rule(metaclass=ABCMeta):
         """
 
 
-def evaluate_rules(poses_sequence,
-                   interval: SampledSequence[Timestamp],
-                   world: PlacedObject,
-                   ego_name: str) -> Dict[
-    str, RuleEvaluationResult]:
+def evaluate_rules(
+    poses_sequence,
+    interval: SampledSequence[Timestamp],
+    world: PlacedObject,
+    ego_name: str,
+) -> Dict[str, RuleEvaluationResult]:
     from duckietown_world.world_duckietown import create_lane_highlight
+
     lane_pose_seq = create_lane_highlight(poses_sequence, world)
     from duckietown_world.rules import DeviationFromCenterLine
     from duckietown_world.rules import InDrivableLane
@@ -124,15 +123,20 @@ def evaluate_rules(poses_sequence,
     from duckietown_world.rules import SurvivalTime
 
     rules = OrderedDict()
-    rules['deviation-heading'] = DeviationHeading()
-    rules['in-drivable-lane'] = InDrivableLane()
-    rules['deviation-center-line'] = DeviationFromCenterLine()
-    rules['driving-distance'] = DrivenLength()
-    rules['driving-distance-consecutive'] = DrivenLengthConsecutive()
-    rules['survival_time'] = SurvivalTime()
+    rules["deviation-heading"] = DeviationHeading()
+    rules["in-drivable-lane"] = InDrivableLane()
+    rules["deviation-center-line"] = DeviationFromCenterLine()
+    rules["driving-distance"] = DrivenLength()
+    rules["driving-distance-consecutive"] = DrivenLengthConsecutive()
+    rules["survival_time"] = SurvivalTime()
 
-    context = RuleEvaluationContext(interval=interval, world=world, ego_name=ego_name,
-                                    lane_pose_seq=lane_pose_seq, pose_seq=poses_sequence)
+    context = RuleEvaluationContext(
+        interval=interval,
+        world=world,
+        ego_name=ego_name,
+        lane_pose_seq=lane_pose_seq,
+        pose_seq=poses_sequence,
+    )
 
     evaluated = OrderedDict()
     for name, rule in rules.items():
@@ -142,24 +146,27 @@ def evaluate_rules(poses_sequence,
     return evaluated
 
 
-def make_timeseries(evaluated) -> Dict[str, 'TimeseriesPlot']:
+def make_timeseries(evaluated) -> Dict[str, "TimeseriesPlot"]:
     timeseries = OrderedDict()
     for k, rer in evaluated.items():
         from duckietown_world.rules import RuleEvaluationResult
         from duckietown_world.svg_drawing.misc import TimeseriesPlot
+
         assert isinstance(rer, RuleEvaluationResult)
 
         for km, evaluated_metric in rer.metrics.items():
             assert isinstance(evaluated_metric, EvaluatedMetric)
             sequences = {}
             if evaluated_metric.incremental:
-                sequences['incremental'] = evaluated_metric.incremental
+                sequences["incremental"] = evaluated_metric.incremental
             if evaluated_metric.cumulative:
-                sequences['cumulative'] = evaluated_metric.cumulative
+                sequences["cumulative"] = evaluated_metric.cumulative
 
             kk = "/".join((k,) + km)
             # title = evaluated_metric.title + ( '(%s)' % evaluated_metric.title if km else "")
             title = evaluated_metric.title
-            timeseries[kk] = TimeseriesPlot(title or kk, evaluated_metric.description, sequences)
+            timeseries[kk] = TimeseriesPlot(
+                title or kk, evaluated_metric.description, sequences
+            )
 
     return timeseries
