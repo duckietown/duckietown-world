@@ -2,7 +2,8 @@
 import typing
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import TypeVar, Optional, Union, ClassVar, Any, List, Type, Callable
+from typing import Any, Callable, ClassVar, List, Optional, Type, TypeVar, Union
+
 from zuper_typing import Generic
 
 __all__ = [
@@ -175,15 +176,15 @@ class SampledSequence(Base):
 
 
 @dataclass
-class IterateDT(Generic[X]):
+class IterateDT(Generic[Y]):
     t0: Timestamp
     t1: Timestamp
     dt: float
-    v0: X
-    v1: X
+    v0: Y
+    v1: Y
 
 
-def iterate_with_dt(sequence: SampledSequence) -> typing.Iterator[IterateDT[X]]:
+def iterate_with_dt(sequence: SampledSequence[X]) -> typing.Iterator[IterateDT[X]]:
     """ yields t0, t1, dt, v0, v1 """
     timestamps = sequence.timestamps
     values = sequence.values

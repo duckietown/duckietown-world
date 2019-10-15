@@ -3,9 +3,9 @@ import textwrap
 import numpy as np
 
 import geometry as geo
-from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
+from duckietown_world.seqs import iterate_with_dt, SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
-from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
+from duckietown_world.world_duckietown import GetLanePoseResult, LanePose
 from duckietown_world.world_duckietown.tile import relative_pose
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
