@@ -1,41 +1,9 @@
 {
     "~DuckietownMap": {
-        "tile_size": 0.62
+        "tile_size": 0.585
     },
     "~PlacedObject": {
         "children": {
-            "O7": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "G6": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "G8": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "A4": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "J8": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "J4": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "J7": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
-            "J3": {
-                "~FloorTag": {},
-                "~PlacedObject": {}
-            },
             "tag31": {
                 "~SignRightTIntersect": {},
                 "~Sign": {},
@@ -336,191 +304,347 @@
                 "~Sign": {},
                 "~PlacedObject": {}
             },
-            "M7": {
+            "floortag_350": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "M9": {
+            "floortag_392": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H12": {
+            "floortag_331": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F12": {
+            "floortag_384": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F10": {
+            "floortag_344": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H8": {
+            "floortag_321": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H3": {
+            "floortag_399": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H7": {
+            "floortag_396": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H4": {
+            "floortag_318": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "H5": {
+            "floortag_339": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "K10": {
+            "floortag_377": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D10": {
+            "floortag_326": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D12": {
+            "floortag_385": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "K1": {
+            "floortag_309": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "B12": {
+            "floortag_328": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "K9": {
+            "floortag_364": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "C9": {
+            "floortag_316": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "C7": {
+            "floortag_393": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "C6": {
+            "floortag_372": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "J10": {
+            "floortag_397": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "C4": {
+            "floortag_398": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "I10": {
+            "floortag_322": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "N8": {
+            "floortag_367": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "N3": {
+            "floortag_333": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "N5": {
+            "floortag_354": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "N6": {
+            "floortag_387": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F1": {
+            "floortag_371": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F3": {
+            "floortag_368": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F4": {
+            "floortag_349": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F5": {
+            "floortag_381": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F7": {
+            "floortag_304": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "F9": {
+            "floortag_394": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "C10": {
+            "floortag_327": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "A10": {
+            "floortag_376": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "I1": {
+            "floortag_346": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "A6": {
+            "floortag_360": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "A8": {
+            "floortag_319": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "J12": {
+            "floortag_308": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "L7": {
+            "floortag_324": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "L3": {
+            "floortag_305": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "L1": {
+            "floortag_320": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "L9": {
+            "floortag_332": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D9": {
+            "floortag_334": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D6": {
+            "floortag_300": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D4": {
+            "floortag_329": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D3": {
+            "floortag_382": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
-            "D1": {
+            "floortag_383": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_353": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_380": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_338": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_357": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_345": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_307": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_386": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_379": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_303": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_391": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_342": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_352": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_343": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_302": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_301": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_373": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_374": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_347": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_312": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_395": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_306": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_359": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_314": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_335": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_325": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_315": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_330": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_341": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_358": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_369": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_310": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_366": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_363": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_336": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_378": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_311": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_375": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_351": {
+                "~FloorTag": {},
+                "~PlacedObject": {}
+            },
+            "floortag_365": {
                 "~FloorTag": {},
                 "~PlacedObject": {}
             },
@@ -16905,13 +17029,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "O7"
+                        "tag31"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                3.0210000000000004,
-                                7.659
+                                1.8076499999999998,
+                                8.795475
                             ]
                         }
                     }
@@ -16921,14 +17046,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "G6"
+                        "tag32"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
                             "p": [
-                                2.4490000000000003,
-                                3.004
+                                -0.052649999999999995,
+                                5.244524999999999
                             ]
                         }
                     }
@@ -16938,14 +17062,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "G8"
+                        "tag33"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": -90,
                             "p": [
-                                3.99,
-                                3.373
+                                -0.020475,
+                                5.79735
                             ]
                         }
                     }
@@ -16955,13 +17079,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "A4"
+                        "tag34"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                1.423,
-                                -0.12
+                                0.63765,
+                                5.870475
                             ]
                         }
                     }
@@ -16971,13 +17096,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J8"
+                        "tag35"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.7920000000000003,
-                                4.713
+                                0.63765,
+                                5.244524999999999
                             ]
                         }
                     }
@@ -16987,13 +17113,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J4"
+                        "tag36"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                1.51,
-                                4.7379999999999995
+                                -0.052649999999999995,
+                                5.829524999999999
                             ]
                         }
                     }
@@ -17003,13 +17129,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J7"
+                        "tag37"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.0010000000000003,
-                                4.9239999999999995
+                                -0.052649999999999995,
+                                5.285475
                             ]
                         }
                     }
@@ -17019,13 +17146,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J3"
+                        "tag38"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                0.6489999999999999,
-                                4.8839999999999995
+                                1.1173499999999998,
+                                7.040475
                             ]
                         }
                     }
@@ -17035,14 +17162,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag31"
+                        "tag44"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                9.3217
+                                1.8076499999999998,
+                                8.169525
                             ]
                         }
                     }
@@ -17052,14 +17179,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag32"
+                        "tag45"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
                             "p": [
-                                -0.055799999999999995,
-                                6.1783
+                                1.1173499999999998,
+                                8.210474999999999
                             ]
                         }
                     }
@@ -17069,14 +17195,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag33"
+                        "tag46"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": 90,
                             "p": [
-                                -0.0217,
-                                6.1442
+                                1.149525,
+                                8.24265
                             ]
                         }
                     }
@@ -17086,14 +17212,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag34"
+                        "tag47"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -90,
                             "p": [
-                                0.6758000000000001,
-                                6.2217
+                                1.1173499999999998,
+                                8.754525
                             ]
                         }
                     }
@@ -17103,14 +17229,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag35"
+                        "tag48"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                0.6758000000000001,
-                                5.5583
+                                1.1173499999999998,
+                                8.795475
                             ]
                         }
                     }
@@ -17120,14 +17245,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag36"
+                        "tag50"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
                             "p": [
-                                -0.055799999999999995,
-                                5.5583
+                                1.1173499999999998,
+                                9.380474999999999
                             ]
                         }
                     }
@@ -17137,14 +17261,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag37"
+                        "tag51"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                -0.055799999999999995,
-                                5.6017
+                                1.149525,
+                                9.41265
                             ]
                         }
                     }
@@ -17154,14 +17278,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag38"
+                        "tag52"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                7.4617
+                                1.149525,
+                                9.892349999999999
                             ]
                         }
                     }
@@ -17171,14 +17295,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag44"
+                        "tag53"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                8.6583
+                                1.1173499999999998,
+                                9.924525
                             ]
                         }
                     }
@@ -17188,14 +17311,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag45"
+                        "tag54"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                8.7017
+                                1.8076499999999998,
+                                9.965475
                             ]
                         }
                     }
@@ -17205,14 +17328,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag46"
+                        "tag55"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                1.2183,
-                                8.7358
+                                5.21235,
+                                9.339525
                             ]
                         }
                     }
@@ -17222,14 +17345,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag47"
+                        "tag56"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                9.2783
+                                5.21235,
+                                9.965475
                             ]
                         }
                     }
@@ -17239,14 +17362,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag48"
+                        "tag57"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -180,
                             "p": [
-                                1.2183,
-                                9.2442
+                                5.9026499999999995,
+                                9.965475
                             ]
                         }
                     }
@@ -17256,14 +17379,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag50"
+                        "tag58"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                9.9417
+                                5.9026499999999995,
+                                9.924525
                             ]
                         }
                     }
@@ -17273,14 +17396,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag51"
+                        "tag59"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                1.2183,
-                                9.9758
+                                5.9026499999999995,
+                                9.380474999999999
                             ]
                         }
                     }
@@ -17290,14 +17413,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag52"
+                        "tag60"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": -180,
                             "p": [
-                                1.2183,
-                                10.4842
+                                5.9026499999999995,
+                                9.339525
                             ]
                         }
                     }
@@ -17307,14 +17430,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag53"
+                        "tag61"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": 90,
                             "p": [
-                                1.1842,
-                                10.5183
+                                1.8076499999999998,
+                                6.455475
                             ]
                         }
                     }
@@ -17324,14 +17447,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag54"
+                        "tag62"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                10.5617
+                                1.1173499999999998,
+                                6.414524999999999
                             ]
                         }
                     }
@@ -17341,14 +17464,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag55"
+                        "tag63"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
+                            "theta_deg": -180,
                             "p": [
-                                5.5242,
-                                9.898299999999999
+                                1.8076499999999998,
+                                7.040475
                             ]
                         }
                     }
@@ -17358,14 +17481,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag56"
+                        "tag64"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": -180,
                             "p": [
-                                5.5242,
-                                10.5617
+                                1.8076499999999998,
+                                6.414524999999999
                             ]
                         }
                     }
@@ -17375,13 +17498,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag57"
+                        "tag65"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                6.2558,
-                                10.5183
+                                1.8076499999999998,
+                                6.999524999999999
                             ]
                         }
                     }
@@ -17391,14 +17515,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag58"
+                        "tag66"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -90,
                             "p": [
-                                6.2217,
-                                10.4842
+                                1.1173499999999998,
+                                7.040475
                             ]
                         }
                     }
@@ -17408,14 +17532,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag59"
+                        "tag67"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
+                            "theta_deg": -90,
                             "p": [
-                                6.2217,
-                                9.9758
+                                1.1173499999999998,
+                                5.870475
                             ]
                         }
                     }
@@ -17425,13 +17549,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag60"
+                        "tag68"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                6.2558,
-                                9.9417
+                                1.8076499999999998,
+                                5.829524999999999
                             ]
                         }
                     }
@@ -17441,14 +17566,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag61"
+                        "tag69"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
+                            "theta_deg": -180,
                             "p": [
-                                1.1842,
-                                7.4182999999999995
+                                1.8076499999999998,
+                                5.870475
                             ]
                         }
                     }
@@ -17458,14 +17583,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag62"
+                        "tag70"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
+                            "theta_deg": -180,
                             "p": [
-                                1.9158,
-                                7.4617
+                                1.8076499999999998,
+                                5.244524999999999
                             ]
                         }
                     }
@@ -17475,13 +17600,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag63"
+                        "tag71"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                7.4182999999999995
+                                1.8076499999999998,
+                                5.285475
                             ]
                         }
                     }
@@ -17491,13 +17617,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag64"
+                        "tag72"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                7.4617
+                                1.1173499999999998,
+                                5.244524999999999
                             ]
                         }
                     }
@@ -17507,14 +17634,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag65"
+                        "tag73"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -90,
                             "p": [
-                                1.9158,
-                                7.4182999999999995
+                                1.1173499999999998,
+                                3.530475
                             ]
                         }
                     }
@@ -17524,14 +17651,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag66"
+                        "tag74"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                7.4617
+                                1.8076499999999998,
+                                3.530475
                             ]
                         }
                     }
@@ -17541,14 +17668,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag67"
+                        "tag75"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                6.8417
+                                1.2226499999999998,
+                                3.530475
                             ]
                         }
                     }
@@ -17558,14 +17684,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag68"
+                        "tag76"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
                             "p": [
-                                1.9158,
-                                6.7983
+                                1.1173499999999998,
+                                2.9045249999999996
                             ]
                         }
                     }
@@ -17575,13 +17700,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag69"
+                        "tag77"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -180,
                             "p": [
-                                1.9158,
-                                6.8417
+                                1.70235,
+                                3.530475
                             ]
                         }
                     }
@@ -17591,13 +17717,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag70"
+                        "tag78"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -180,
                             "p": [
-                                1.9158,
-                                6.1783
+                                1.8076499999999998,
+                                2.9045249999999996
                             ]
                         }
                     }
@@ -17607,14 +17734,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag71"
+                        "tag79"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                6.2217
+                                2.9776499999999997,
+                                2.360475
                             ]
                         }
                     }
@@ -17624,14 +17751,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag72"
+                        "tag80"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                1.1842,
-                                6.1783
+                                2.28735,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17641,14 +17768,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag73"
+                        "tag81"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": -180,
                             "p": [
-                                1.1842,
-                                4.3617
+                                2.9776499999999997,
+                                2.360475
                             ]
                         }
                     }
@@ -17658,14 +17785,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag74"
+                        "tag82"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": -180,
                             "p": [
-                                1.9158,
-                                4.3617
+                                2.9776499999999997,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17675,14 +17802,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag75"
+                        "tag83"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.2957999999999998,
-                                4.3617
+                                2.28735,
+                                2.360475
                             ]
                         }
                     }
@@ -17692,14 +17819,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag76"
+                        "tag84"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                3.6982999999999997
+                                2.9776499999999997,
+                                2.3195249999999996
                             ]
                         }
                     }
@@ -17709,13 +17836,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag77"
+                        "tag85"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                1.8042,
-                                4.3617
+                                0.63765,
+                                2.360475
                             ]
                         }
                     }
@@ -17725,13 +17853,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag78"
+                        "tag86"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                1.9158,
-                                3.6982999999999997
+                                -0.052649999999999995,
+                                2.3195249999999996
                             ]
                         }
                     }
@@ -17741,14 +17870,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag79"
+                        "tag87"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                3.1557999999999997,
-                                3.1217
+                                -0.052649999999999995,
+                                2.360475
                             ]
                         }
                     }
@@ -17758,14 +17886,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag80"
+                        "tag88"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                3.0442,
-                                2.4583
+                                -0.052649999999999995,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17775,13 +17902,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag81"
+                        "tag89"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.1557999999999997,
-                                3.1217
+                                0.63765,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17791,13 +17919,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag82"
+                        "tag90"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.1557999999999997,
-                                2.4583
+                                -0.052649999999999995,
+                                1.775475
                             ]
                         }
                     }
@@ -17807,14 +17936,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag83"
+                        "tag91"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": 90,
                             "p": [
-                                2.4242,
-                                3.1217
+                                1.8076499999999998,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17824,14 +17953,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag84"
+                        "tag92"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
+                            "theta_deg": 90,
                             "p": [
-                                3.1557999999999997,
-                                3.0783
+                                1.1173499999999998,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17841,14 +17970,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag85"
+                        "tag93"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
                             "p": [
-                                0.6758000000000001,
-                                3.1217
+                                1.2226499999999998,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17858,14 +17986,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag86"
+                        "tag94"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -90,
                             "p": [
-                                -0.055799999999999995,
-                                3.0783
+                                1.1173499999999998,
+                                2.360475
                             ]
                         }
                     }
@@ -17875,14 +18002,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag87"
+                        "tag95"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -180,
                             "p": [
-                                -0.055799999999999995,
-                                3.1217
+                                1.8076499999999998,
+                                2.360475
                             ]
                         }
                     }
@@ -17892,14 +18019,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag88"
+                        "tag96"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": -180,
                             "p": [
-                                -0.055799999999999995,
-                                2.4583
+                                1.70235,
+                                1.7345249999999999
                             ]
                         }
                     }
@@ -17909,14 +18036,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag89"
+                        "floortag_350"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                0.6758000000000001,
-                                2.4583
+                                -0.055,
+                                1.448
                             ]
                         }
                     }
@@ -17926,14 +18053,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag90"
+                        "floortag_392"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                -0.055799999999999995,
-                                2.5017
+                                1.225,
+                                0.644
                             ]
                         }
                     }
@@ -17943,14 +18069,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag91"
+                        "floortag_331"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                2.4583
+                                1.804,
+                                0.642
                             ]
                         }
                     }
@@ -17960,14 +18085,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag92"
+                        "floortag_384"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "theta_deg": 90,
                             "p": [
-                                1.1842,
-                                2.4583
+                                2.284,
+                                0.63
                             ]
                         }
                     }
@@ -17977,14 +18102,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag93"
+                        "floortag_344"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -45,
                             "p": [
-                                1.2957999999999998,
-                                2.4583
+                                1.031,
+                                1.036
                             ]
                         }
                     }
@@ -17994,14 +18119,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag94"
+                        "floortag_321"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": -180,
+                            "theta_deg": -90,
                             "p": [
-                                1.1842,
-                                3.1217
+                                0.642,
+                                1.233
                             ]
                         }
                     }
@@ -18011,13 +18136,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag95"
+                        "floortag_399"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                1.9158,
-                                3.1217
+                                2.277,
+                                0.998
                             ]
                         }
                     }
@@ -18027,13 +18153,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "tag96"
+                        "floortag_396"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                1.8042,
-                                2.4583
+                                1.997,
+                                1.687
                             ]
                         }
                     }
@@ -18043,13 +18170,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "M7"
+                        "floortag_318"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                3.2390000000000003,
-                                6.9399999999999995
+                                1.575,
+                                1.696
                             ]
                         }
                     }
@@ -18059,13 +18187,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "M9"
+                        "floortag_339"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                4.164000000000001,
-                                6.478
+                                -0.055,
+                                2.066
                             ]
                         }
                     }
@@ -18075,13 +18204,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H12"
+                        "floortag_377"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                5.95,
-                                3.757
+                                0.659,
+                                2.487
                             ]
                         }
                     }
@@ -18091,13 +18221,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F12"
+                        "floortag_326"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                5.95,
-                                2.62
+                                0.651,
+                                2.883
                             ]
                         }
                     }
@@ -18107,13 +18238,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F10"
+                        "floortag_385"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                5.2250000000000005,
-                                2.625
+                                1.039,
+                                2.877
                             ]
                         }
                     }
@@ -18123,13 +18255,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H8"
+                        "floortag_309"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                4.051,
-                                4.011
+                                0.862,
+                                2.408
                             ]
                         }
                     }
@@ -18139,13 +18271,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H3"
+                        "floortag_328"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                0.6569999999999999,
-                                3.571
+                                1.83,
+                                2.659
                             ]
                         }
                     }
@@ -18155,13 +18288,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H7"
+                        "floortag_364"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                3.466,
-                                3.5450000000000004
+                                1.989,
+                                2.399
                             ]
                         }
                     }
@@ -18171,13 +18304,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H4"
+                        "floortag_316"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                1.2409999999999999,
-                                4.029999999999999
+                                2.295,
+                                2.445
                             ]
                         }
                     }
@@ -18187,13 +18321,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "H5"
+                        "floortag_393"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                1.835,
-                                4.021999999999999
+                                2.3,
+                                2.848
                             ]
                         }
                     }
@@ -18203,14 +18338,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "K10"
+                        "floortag_372"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
                             "p": [
-                                5.15,
-                                5.6739999999999995
+                                1.597,
+                                3.576
                             ]
                         }
                     }
@@ -18220,13 +18354,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D10"
+                        "floortag_397"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                4.768,
-                                1.653
+                                3.002,
+                                1.938
                             ]
                         }
                     }
@@ -18236,13 +18371,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D12"
+                        "floortag_398"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                5.95,
-                                1.422
+                                2.999,
+                                1.58
                             ]
                         }
                     }
@@ -18252,13 +18388,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "K1"
+                        "floortag_322"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                -0.05,
-                                5.641
+                                2.999,
+                                1.201
                             ]
                         }
                     }
@@ -18268,13 +18405,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "B12"
+                        "floortag_367"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                5.95,
-                                0.4109999999999999
+                                3.46,
+                                2.858
                             ]
                         }
                     }
@@ -18284,14 +18422,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "K9"
+                        "floortag_333"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": -90,
                             "p": [
-                                4.203,
-                                5.335
+                                4.187,
+                                2.852
                             ]
                         }
                     }
@@ -18301,13 +18439,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "C9"
+                        "floortag_354"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                4.668,
-                                0.603
+                                4.638,
+                                2.852
                             ]
                         }
                     }
@@ -18317,13 +18456,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "C7"
+                        "floortag_387"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                3.067,
-                                0.616
+                                5.34,
+                                2.952
                             ]
                         }
                     }
@@ -18333,13 +18473,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "C6"
+                        "floortag_371"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                2.4400000000000004,
-                                0.825
+                                3.48,
+                                2.269
                             ]
                         }
                     }
@@ -18349,14 +18490,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J10"
+                        "floortag_368"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": -90,
                             "p": [
-                                4.791,
-                                4.753
+                                4.191,
+                                2.011
                             ]
                         }
                     }
@@ -18366,13 +18507,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "C4"
+                        "floortag_349"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                1.2349999999999999,
-                                0.637
+                                4.659,
+                                2.367
                             ]
                         }
                     }
@@ -18382,13 +18524,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "I10"
+                        "floortag_381"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                5.222,
-                                4.468
+                                5.358,
+                                2.363
                             ]
                         }
                     }
@@ -18398,14 +18541,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "N8"
+                        "floortag_304"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": -45,
                             "p": [
-                                3.9690000000000003,
-                                7.4559999999999995
+                                5.75,
+                                2.208
                             ]
                         }
                     }
@@ -18415,13 +18558,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "N3"
+                        "floortag_394"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta": 2.356194490192345,
                             "p": [
-                                0.8999999999999999,
-                                7.085
+                                4.853,
+                                1.861
                             ]
                         }
                     }
@@ -18431,13 +18575,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "N5"
+                        "floortag_327"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                2.059,
-                                7.077999999999999
+                                3.485,
+                                1.452
                             ]
                         }
                     }
@@ -18447,14 +18592,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "N6"
+                        "floortag_376"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": -90,
                             "p": [
-                                2.479,
-                                7.452999999999999
+                                4.199,
+                                1.666
                             ]
                         }
                     }
@@ -18464,13 +18609,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F1"
+                        "floortag_346"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                -0.05,
-                                2.685
+                                5.234,
+                                1.445
                             ]
                         }
                     }
@@ -18480,13 +18626,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F3"
+                        "floortag_360"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                0.864,
-                                2.4010000000000002
+                                4.199,
+                                1.206
                             ]
                         }
                     }
@@ -18496,13 +18643,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F4"
+                        "floortag_319"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.462,
-                                2.841
+                                5.246,
+                                1.081
                             ]
                         }
                     }
@@ -18512,13 +18660,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F5"
+                        "floortag_308"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                1.9879999999999998,
-                                2.39
+                                5.945,
+                                1.43
                             ]
                         }
                     }
@@ -18528,13 +18677,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F7"
+                        "floortag_324"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                3.266,
-                                2.378
+                                5.945,
+                                0.421
                             ]
                         }
                     }
@@ -18544,13 +18694,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "F9"
+                        "floortag_305"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                4.639,
-                                2.361
+                                5.045,
+                                0.618
                             ]
                         }
                     }
@@ -18560,13 +18710,13 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "C10"
+                        "floortag_320"
                     ],
                     "transform": {
                         "~SE2Transform": {
                             "p": [
-                                5.242,
-                                1.071
+                                4.666,
+                                0.614
                             ]
                         }
                     }
@@ -18576,13 +18726,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "A10"
+                        "floortag_332"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                5.0040000000000004,
-                                -0.12
+                                5.031,
+                                -0.11
                             ]
                         }
                     }
@@ -18592,13 +18743,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "I1"
+                        "floortag_334"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta": 2.356194490192345,
                             "p": [
-                                -0.05,
-                                4.42
+                                3.691,
+                                0.107
                             ]
                         }
                     }
@@ -18608,13 +18760,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "A6"
+                        "floortag_300"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                2.661,
-                                -0.12
+                                3.486,
+                                0.623
                             ]
                         }
                     }
@@ -18624,13 +18777,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "A8"
+                        "floortag_329"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                3.8070000000000004,
-                                -0.12
+                                -0.055,
+                                5.614
                             ]
                         }
                     }
@@ -18640,13 +18794,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "J12"
+                        "floortag_382"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                5.95,
-                                4.973999999999999
+                                -0.055,
+                                6.182
                             ]
                         }
                     }
@@ -18656,13 +18811,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "L7"
+                        "floortag_383"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                3.464,
-                                6.303
+                                0.65,
+                                4.89
                             ]
                         }
                     }
@@ -18672,13 +18828,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "L3"
+                        "floortag_353"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                0.857,
-                                6.382
+                                0.649,
+                                5.19
                             ]
                         }
                     }
@@ -18688,13 +18845,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "L1"
+                        "floortag_380"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                -0.05,
-                                6.173
+                                0.897,
+                                5.228
                             ]
                         }
                     }
@@ -18704,14 +18862,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "L9"
+                        "floortag_338"
                     ],
                     "transform": {
                         "~SE2Transform": {
-                            "theta_deg": 45,
+                            "theta_deg": 90,
                             "p": [
-                                4.5760000000000005,
-                                6.298
+                                1.115,
+                                5.172
                             ]
                         }
                     }
@@ -18721,13 +18879,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D9"
+                        "floortag_357"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                4.194,
-                                1.196
+                                1.115,
+                                4.746
                             ]
                         }
                     }
@@ -18737,13 +18896,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D6"
+                        "floortag_345"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                2.585,
-                                1.695
+                                1.828,
+                                5.655
                             ]
                         }
                     }
@@ -18753,13 +18913,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D4"
+                        "floortag_307"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": -90,
                             "p": [
-                                1.395,
-                                1.687
+                                0.647,
+                                6.355
                             ]
                         }
                     }
@@ -18769,13 +18930,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D3"
+                        "floortag_386"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 180,
                             "p": [
-                                0.6529999999999999,
-                                1.2229999999999999
+                                0.852,
+                                6.396
                             ]
                         }
                     }
@@ -18785,13 +18947,14 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
-                        "D1"
+                        "floortag_379"
                     ],
                     "transform": {
                         "~SE2Transform": {
+                            "theta_deg": 90,
                             "p": [
-                                -0.05,
-                                1.438
+                                1.117,
+                                6.226
                             ]
                         }
                     }
@@ -18801,11 +18964,532 @@
                 "~GroundTruth": {},
                 "~SpatialRelation": {
                     "b": [
+                        "floortag_303"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                0.98,
+                                7.098
+                            ]
+                        }
+                    }
+                }
+            },
+            "116": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_391"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                1.819,
+                                6.91
+                            ]
+                        }
+                    }
+                }
+            },
+            "117": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_342"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                1.099,
+                                8.429
+                            ]
+                        }
+                    }
+                }
+            },
+            "118": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_352"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 180,
+                            "p": [
+                                1.941,
+                                8.164
+                            ]
+                        }
+                    }
+                }
+            },
+            "119": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_343"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                1.097,
+                                9.24
+                            ]
+                        }
+                    }
+                }
+            },
+            "120": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_302"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 180,
+                            "p": [
+                                1.863,
+                                9.319
+                            ]
+                        }
+                    }
+                }
+            },
+            "121": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_301"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                1.094,
+                                9.733
+                            ]
+                        }
+                    }
+                }
+            },
+            "122": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_373"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                5.124,
+                                9.98
+                            ]
+                        }
+                    }
+                }
+            },
+            "123": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_374"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                5.907,
+                                9.592
+                            ]
+                        }
+                    }
+                }
+            },
+            "124": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_347"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                5.914,
+                                10.098
+                            ]
+                        }
+                    }
+                }
+            },
+            "125": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_312"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta": 2.356194490192345,
+                            "p": [
+                                2.48,
+                                4.217
+                            ]
+                        }
+                    }
+                }
+            },
+            "126": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_395"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                2.285,
+                                5.207
+                            ]
+                        }
+                    }
+                }
+            },
+            "127": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_306"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                2.995,
+                                4.929
+                            ]
+                        }
+                    }
+                }
+            },
+            "128": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_359"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                3.223,
+                                4.726
+                            ]
+                        }
+                    }
+                }
+            },
+            "129": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_314"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                3.789,
+                                4.721
+                            ]
+                        }
+                    }
+                }
+            },
+            "130": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_335"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                4.641,
+                                4.716
+                            ]
+                        }
+                    }
+                }
+            },
+            "131": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_325"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                5.33,
+                                4.954
+                            ]
+                        }
+                    }
+                }
+            },
+            "132": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_315"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 180,
+                            "p": [
+                                4.641,
+                                5.188
+                            ]
+                        }
+                    }
+                }
+            },
+            "133": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_330"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta": 2.356194490192345,
+                            "p": [
+                                4.201,
+                                5.342
+                            ]
+                        }
+                    }
+                }
+            },
+            "134": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_341"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -45,
+                            "p": [
+                                5.147,
+                                5.686
+                            ]
+                        }
+                    }
+                }
+            },
+            "135": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_358"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                2.283,
+                                5.79
+                            ]
+                        }
+                    }
+                }
+            },
+            "136": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_369"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                2.288,
+                                6.684
+                            ]
+                        }
+                    }
+                }
+            },
+            "137": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_310"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 45,
+                            "p": [
+                                2.463,
+                                7.463
+                            ]
+                        }
+                    }
+                }
+            },
+            "138": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_366"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "p": [
+                                3.008,
+                                7.661
+                            ]
+                        }
+                    }
+                }
+            },
+            "139": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_363"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 180,
+                            "p": [
+                                3.235,
+                                6.953
+                            ]
+                        }
+                    }
+                }
+            },
+            "140": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_336"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                3.463,
+                                6.956
+                            ]
+                        }
+                    }
+                }
+            },
+            "141": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_378"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": 90,
+                            "p": [
+                                3.467,
+                                6.304
+                            ]
+                        }
+                    }
+                }
+            },
+            "142": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_311"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -45,
+                            "p": [
+                                3.957,
+                                7.469
+                            ]
+                        }
+                    }
+                }
+            },
+            "143": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_375"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                4.173,
+                                6.893
+                            ]
+                        }
+                    }
+                }
+            },
+            "144": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_351"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -90,
+                            "p": [
+                                4.162,
+                                6.493
+                            ]
+                        }
+                    }
+                }
+            },
+            "145": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
+                        "floortag_365"
+                    ],
+                    "transform": {
+                        "~SE2Transform": {
+                            "theta_deg": -45,
+                            "p": [
+                                4.58,
+                                6.313
+                            ]
+                        }
+                    }
+                }
+            },
+            "146": {
+                "~GroundTruth": {},
+                "~SpatialRelation": {
+                    "b": [
                         "tilemap"
                     ],
                     "transform": {
                         "~Scale2D": {
-                            "scale": 0.62
+                            "scale": 0.585
                         }
                     }
                 }
