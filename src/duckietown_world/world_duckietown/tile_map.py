@@ -4,9 +4,7 @@ import itertools
 from ..geo import PlacedObject
 from ..world_duckietown import TileCoords
 
-__all__ = [
-    'TileMap',
-]
+__all__ = ["TileMap"]
 
 
 class TileMap(PlacedObject):
@@ -18,7 +16,7 @@ class TileMap(PlacedObject):
         self.ij2tile = {}
 
         for i, j in itertools.product(range(H), range(W)):
-            tile_name = 'tile-%d-%d' % (i, j)
+            tile_name = "tile-%d-%d" % (i, j)
             if tile_name in self.children:
                 self.ij2tile[(i, j)] = self.children[tile_name]
 
@@ -36,15 +34,15 @@ class TileMap(PlacedObject):
             assert 0 <= i < self.H, (i, self.H)
             assert 0 <= j < self.W, (j, self.W)
 
-        assert orientation in ['S', 'E', 'N', 'W'], orientation
+        assert orientation in ["S", "E", "N", "W"], orientation
         self.ij2tile[(i, j)] = tile
-        tile_name = 'tile-%d-%d' % (i, j)
+        tile_name = "tile-%d-%d" % (i, j)
         placement = TileCoords(i, j, orientation)
         self.set_object(tile_name, tile, ground_truth=placement)
 
     def get_drawing_children(self):
         def key(x):
-            if x.startswith('tile'):
+            if x.startswith("tile"):
                 return 0, x
             else:
                 return 1, x

@@ -23,8 +23,6 @@ tile_size: 0.61
 """
 
 
-
-
 @comptest
 def tag_positions():
     map_yaml_data = yaml.load(map_yaml, Loader=yaml.Loader)
@@ -34,5 +32,5 @@ def tag_positions():
     draw_static(m, outdir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_module_tests()

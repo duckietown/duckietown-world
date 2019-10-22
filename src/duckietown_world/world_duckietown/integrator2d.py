@@ -6,7 +6,7 @@ import geometry as geo
 from duckietown_serialization_ds1 import Serializable
 from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
 
-__all__ = ['Integrator2D']
+__all__ = ["Integrator2D"]
 
 
 class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
@@ -18,7 +18,7 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
     """
 
     @classmethod
-    @contract(c0='TSE2')
+    @contract(c0="TSE2")
     def initialize(cls, c0, t0=0, seed=None):
         """
             This class initializes the dynamics at a given configuration
@@ -32,7 +32,7 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
         # create the integrator2d initial state
         return Integrator2D(p, v2d, t0)
 
-    @contract(p0='seq[2]')
+    @contract(p0="seq[2]")
     def __init__(self, p0, v0, t0):
         """
         :param p0: initial point
@@ -63,7 +63,7 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
         v1 = commands
         return Integrator2D(p1, v1, t1)
 
-    @contract(returns='TSE2')
+    @contract(returns="TSE2")
     def TSE2_from_state(self):
         """
             For visualization purposes, this function gets a configuration in SE2

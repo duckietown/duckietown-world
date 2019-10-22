@@ -82,6 +82,11 @@ jobs:
           when: always
           command: |
             make coverage-coveralls
+      - run:
+          name: Codecov
+          when: always
+          command: |
+            codecov
 
       - run:
           name: Create JUnit output
@@ -95,7 +100,7 @@ jobs:
       - store_artifacts:
           path: out-comptests/duckietown_world_tests
           destination: duckietown_world_tests
-          
+
       - store_artifacts:
           path: artifacts
           destination: artifacts

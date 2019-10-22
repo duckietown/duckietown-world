@@ -2,11 +2,7 @@ from typing import *
 
 import numpy as np
 
-__all__ = [
-    'SE2v',
-    'se2v',
-    'TSE2v',
-]
+__all__ = ["SE2v", "se2v", "TSE2v"]
 
 SE2v = np.ndarray
 se2v = np.ndarray

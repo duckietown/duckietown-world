@@ -11,7 +11,7 @@ from .integrator2d import *
 from .generic_kinematics import *
 from .lane_segment import *
 from .duckietown_map import *
-from .duckiebot import  *
-from .transformations import  *
+from .duckiebot import *
+from .transformations import *
 from .segmentify import *
 from .pwm_dynamics import *

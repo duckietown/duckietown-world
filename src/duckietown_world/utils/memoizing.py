@@ -2,9 +2,7 @@
 import functools
 
 
-__all__ = [
-    'memoized_reset',
-]
+__all__ = ["memoized_reset"]
 
 
 # def memoize_simple(obj):

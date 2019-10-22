@@ -18,16 +18,16 @@ def wb1():
     tile_map = create_map(H=3, W=3)
 
     world = PlacedObject()
-    root.set_object('world', world)
+    root.set_object("world", world)
 
     placement = Constant[SE2Transform](SE2Transform.identity())
 
-    world.set_object('map1', tile_map, ground_truth=placement)
+    world.set_object("map1", tile_map, ground_truth=placement)
 
     ego = PlacedObject()
     world_coordinates = Constant[SE2Transform](SE2Transform([0, 0], 0))
 
-    world.set_object('ego', ego, ground_truth=world_coordinates)
+    world.set_object("ego", ego, ground_truth=world_coordinates)
 
     d = root.as_json_dict()
     # print(json.dumps(DW.root.as_json_dict(), indent=4))
@@ -59,11 +59,11 @@ def wb2():
     # assert d == d1
 
 
-
 @comptest
 def sb1():
     a = SampledSequenceBuilder[float]()
     a.add(0.0, 0.0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run_module_tests()

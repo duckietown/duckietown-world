@@ -10,11 +10,7 @@ from .platform_dynamics import PlatformDynamicsFactory
 
 # from duckietown_serialization_ds1 import Serializable
 
-__all__ = [
-    'DynamicModelParameters',
-    'DynamicModel',
-    'PWMCommands',
-]
+__all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands"]
 
 
 @dataclass
@@ -22,12 +18,12 @@ class PWMCommands:
     """
         PWM commands are floats between -1 and 1.
     """
+
     motor_left: float
     motor_right: float
 
 
 class DynamicModelParameters(PlatformDynamicsFactory):
-
     def __init__(self, u1, u2, u3, w1, w2, w3, uar, ual, war, wal):
         # parameters for autonomous dynamics
         self.u1 = u1
@@ -43,7 +39,7 @@ class DynamicModelParameters(PlatformDynamicsFactory):
         self.w_alpha_r = war
         self.w_alpha_l = wal
 
-    def initialize(self, c0, t0=0, seed=None) -> 'DynamicModel''':
+    def initialize(self, c0, t0=0, seed=None) -> "DynamicModel" "":
         return DynamicModel(self, c0, t0)
 
 
@@ -61,8 +57,9 @@ def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
     war = 15  # modify this for trim
     wal = 15
 
-    parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1,
-                                        w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
+    parameters = DynamicModelParameters(
+        u1=u1, u2=u2, u3=u3, w1=w1, w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal
+    )
 
     if delay > 0:
         delayed = ApplyDelay(parameters, delay, PWMCommands(0, 0))
@@ -98,6 +95,7 @@ class DynamicModel(GenericKinematicsSE2):
     """
         This represents a dynamical formulation of of a differential-drive vehicle.
     """
+
     parameters: DynamicModelParameters
 
     def __init__(self, parameters: DynamicModelParameters, c0, t0):
@@ -125,15 +123,11 @@ class DynamicModel(GenericKinematicsSE2):
 
         ## Calculate Dynamics
         # nonlinear Dynamics - autonomous response
-        f_dynamic = np.array([
-            [-u1 * u - u2 * w + u3 * w ** 2],
-            [-w1 * w - w2 * u - w3 * u * w]
-        ])
+        f_dynamic = np.array(
+            [[-u1 * u - u2 * w + u3 * w ** 2], [-w1 * w - w2 * u - w3 * u * w]]
+        )
         # input Matrix
-        B = np.array([
-            [u_alpha_r, u_alpha_l],
-            [w_alpha_r, -w_alpha_l]
-        ])
+        B = np.array([[u_alpha_r, u_alpha_l], [w_alpha_r, -w_alpha_l]])
         # forced response
         f_forced = np.matmul(B, V)
         # acceleration
@@ -141,7 +135,7 @@ class DynamicModel(GenericKinematicsSE2):
 
         return x_dot_dot
 
-    def integrate(self, dt: float, commands: PWMCommands) -> 'DynamicModel':
+    def integrate(self, dt: float, commands: PWMCommands) -> "DynamicModel":
         # previous velocities (v0)
         linear_angular_prev = geo.linear_angular_from_se2(self.v0)
         linear_prev = linear_angular_prev[0]

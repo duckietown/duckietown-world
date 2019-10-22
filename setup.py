@@ -17,12 +17,12 @@ def get_version(filename):
     return version
 
 
-shell_version = get_version(filename='src/duckietown_world/__init__.py')
+version = get_version(filename='src/duckietown_world/__init__.py')
+line = 'daffy'
+setup(name=f'duckietown-world-{line}',
 
-setup(name='duckietown-world',
-
-      version=shell_version,
-      download_url='http://github.com/duckietown/duckietown-world/tarball/%s' % shell_version,
+      version=version,
+      download_url='http://github.com/duckietown/duckietown-world/tarball/%s' % version,
       package_dir={'': 'src'},
       packages=find_packages('src'),
       install_requires=[
@@ -42,7 +42,7 @@ setup(name='duckietown-world',
           'markdown',
           'dataclasses',
           'comptests',
-          'zuper-utils>=2.0.2'
+          'zuper-typing-z5>=5.0.7',
       ],
 
       tests_require=[

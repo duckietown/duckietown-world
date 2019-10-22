@@ -7,14 +7,14 @@ from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 
 __all__ = [
-    'WheelVelocityCommands',
-    'DifferentialDriveDynamicsParameters',
-    'DifferentialDriveDynamics',
+    "WheelVelocityCommands",
+    "DifferentialDriveDynamicsParameters",
+    "DifferentialDriveDynamics",
 ]
 
 
 class WheelVelocityCommands(Serializable):
-    '''
+    """
         This represents the velocity commands for differential drive
         kinematics.
 
@@ -22,23 +22,27 @@ class WheelVelocityCommands(Serializable):
 
         For both wheels, positive = moves forward.
 
-    '''
+    """
+
     left_wheel_angular_velocity: float
     right_wheel_angular_velocity: float
 
-    def __init__(self, left_wheel_angular_velocity: float, right_wheel_angular_velocity: float):
+    def __init__(
+        self, left_wheel_angular_velocity: float, right_wheel_angular_velocity: float
+    ):
         self.left_wheel_angular_velocity = left_wheel_angular_velocity
         self.right_wheel_angular_velocity = right_wheel_angular_velocity
 
 
 class DifferentialDriveDynamicsParameters(PlatformDynamicsFactory, Serializable):
-    '''
+    """
         This class represents the parameters of the ideal differential drive dynamics.
 
         radius_left, radius_right: wheels radii
         wheel_distance: distance between two wheels
 
-    '''
+    """
+
     radius_left: float
     radius_right: float
     wheel_distance: float

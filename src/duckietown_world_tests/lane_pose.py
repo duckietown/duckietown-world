@@ -12,8 +12,10 @@ from duckietown_world.rules import evaluate_rules
 from duckietown_world.rules.rule import EvaluatedMetric, make_timeseries
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing import draw_static
-from duckietown_world.world_duckietown.differential_drive_dynamics import DifferentialDriveDynamicsParameters, \
-    WheelVelocityCommands
+from duckietown_world.world_duckietown.differential_drive_dynamics import (
+    DifferentialDriveDynamicsParameters,
+    WheelVelocityCommands,
+)
 from duckietown_world.world_duckietown.duckiebot import DB18
 from duckietown_world.world_duckietown.lane_segment import get_distance_two
 from duckietown_world.world_duckietown.map_loading import load_map
@@ -127,7 +129,7 @@ def center_point1():
                 transforms.append(transform)
 
             c = SampledSequence[SE2Transform](betas, transforms)
-            v.set_object('a', PlacedObject(), ground_truth=c)
+            v.set_object("a", PlacedObject(), ground_truth=c)
             draw_static(v, dest, area=area)
 
 
@@ -136,20 +138,22 @@ def lane_pose_test1():
     outdir = get_comptests_output_dir()
 
     # load one of the maps (see the list using dt-world-draw-maps)
-    dw = load_map('udem1')
+    dw = load_map("udem1")
 
     v = 5
 
     # define a SampledSequence with timestamp, command
-    commands_sequence = SampledSequence.from_iterator([
-        # we set these velocities at 1.0
-        (1.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
-        # at 2.0 we switch and so on
-        (2.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
-        (4.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
-        (5.0, WheelVelocityCommands(0.1 * v, 0.2 * v)),
-        (6.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
-    ])
+    commands_sequence = SampledSequence.from_iterator(
+        [
+            # we set these velocities at 1.0
+            (1.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
+            # at 2.0 we switch and so on
+            (2.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
+            (4.0, WheelVelocityCommands(0.1 * v, 0.4 * v)),
+            (5.0, WheelVelocityCommands(0.1 * v, 0.2 * v)),
+            (6.0, WheelVelocityCommands(0.1 * v, 0.1 * v)),
+        ]
+    )
 
     # we upsample the sequence by 5
     commands_sequence = commands_sequence.upsample(5)
@@ -163,13 +167,12 @@ def lane_pose_test1():
     # this function integrates the dynamics
     poses_sequence = get_robot_trajectory(dynamics, q0, commands_sequence)
 
-
     #################
     # Visualization and rule evaluation
 
     # Creates an object 'duckiebot'
-    ego_name = 'duckiebot'
-    db = DB18() # class that gives the appearance
+    ego_name = "duckiebot"
+    db = DB18()  # class that gives the appearance
 
     # convert from SE2 to SE2Transform representation
     transforms_sequence = poses_sequence.transform_values(SE2Transform.from_SE2)
@@ -178,8 +181,12 @@ def lane_pose_test1():
 
     # Rule evaluation (do not touch)
     interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
-    evaluated = evaluate_rules(poses_sequence=transforms_sequence,
-                                interval=interval, world=dw, ego_name=ego_name)
+    evaluated = evaluate_rules(
+        poses_sequence=transforms_sequence,
+        interval=interval,
+        world=dw,
+        ego_name=ego_name,
+    )
     timeseries = make_timeseries(evaluated)
     # Drawing
     area = RectangularArea((0, 0), (3, 3))
@@ -209,9 +216,11 @@ def get_robot_trajectory(factory, q0, commands_sequence):
     c0 = q0, geo.se2.zero()
     s0 = factory.initialize(c0=c0, t0=t0)
 
-    states_sequence = SampledSequence.from_iterator(integrate_commands(s0, commands_sequence))
+    states_sequence = SampledSequence.from_iterator(
+        integrate_commands(s0, commands_sequence)
+    )
     f = lambda _: _.TSE2_from_state()[0]
-    poses_sequence = states_sequence.transform_values(f)
+    poses_sequence = states_sequence.transform_values(f, np.ndarray)
     return poses_sequence
 
 
@@ -220,10 +229,13 @@ def reasonable_duckiebot():
     radius_left = radius
     radius_right = radius
     wheel_distance = 0.5
-    dddp = DifferentialDriveDynamicsParameters(radius_left=radius_left, radius_right=radius_right,
-                                               wheel_distance=wheel_distance)
+    dddp = DifferentialDriveDynamicsParameters(
+        radius_left=radius_left,
+        radius_right=radius_right,
+        wheel_distance=wheel_distance,
+    )
     return dddp
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_module_tests()

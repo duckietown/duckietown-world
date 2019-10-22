@@ -3,20 +3,19 @@ import textwrap
 import numpy as np
 
 import geometry as geo
-from duckietown_world.seqs import SampledSequence, UndefinedAtTime, iterate_with_dt
+from duckietown_world.seqs import iterate_with_dt, SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
-from duckietown_world.world_duckietown import LanePose, GetLanePoseResult
+from duckietown_world.world_duckietown import GetLanePoseResult, LanePose
 from duckietown_world.world_duckietown.tile import relative_pose
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [
-    'InDrivableLane',
-    'DeviationFromCenterLine',
-    'DeviationHeading',
-    'DrivenLength',
-    'DrivenLengthConsecutive',
-    'SurvivalTime',
-
+    "InDrivableLane",
+    "DeviationFromCenterLine",
+    "DeviationHeading",
+    "DrivenLength",
+    "DrivenLengthConsecutive",
+    "SurvivalTime",
 ]
 
 
@@ -24,7 +23,7 @@ def integrate(sequence: SampledSequence[float]) -> SampledSequence[float]:
     """ Integrates with respect to time.
         That is, it multiplies the value with the Delta T. """
     if not sequence:
-        msg = 'Cannot integrate empty sequence.'
+        msg = "Cannot integrate empty sequence."
         raise ValueError(msg)
     total = 0.0
     timestamps = []
@@ -59,7 +58,6 @@ from typing import cast
 
 
 class SurvivalTime(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         lane_pose_seq = context.get_lane_pose_seq()
         if len(lane_pose_seq) < 1:
@@ -68,20 +66,21 @@ class SurvivalTime(Rule):
         title = "Survival time"
         description = "Length of the episode."
 
-        incremental = lane_pose_seq.transform_values(lambda _: 1.0)
+        incremental = lane_pose_seq.transform_values(lambda _: 1.0, float)
         cumulative = integrate(incremental)
         total = cumulative.values[-1]
 
-        result.set_metric(name=(),
-                          title=title,
-                          description=description,
-                          total=total,
-                          incremental=incremental,
-                          cumulative=cumulative)
+        result.set_metric(
+            name=(),
+            title=title,
+            description=description,
+            total=total,
+            incremental=incremental,
+            cumulative=cumulative,
+        )
 
 
 class DeviationFromCenterLine(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
 
         interval = cast(SampledSequence, context.get_interval())
@@ -121,15 +120,22 @@ class DeviationFromCenterLine(Rule):
             dtot = cumulative.values[-1]
 
         title = "Deviation from center line"
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric describes the amount of deviation from the center line.
-        """)
-        result.set_metric(name=(), total=dtot, incremental=sequence,
-                          title=title, description=description, cumulative=cumulative)
+        """
+        )
+        result.set_metric(
+            name=(),
+            total=dtot,
+            incremental=sequence,
+            title=title,
+            description=description,
+            cumulative=cumulative,
+        )
 
 
 class DeviationHeading(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
 
         interval = cast(SampledSequence, context.get_interval())
@@ -169,15 +175,22 @@ class DeviationHeading(Rule):
 
         # result.set_metric((), dtot, sequence, description, cumulative=cumulative)
         title = "Deviation from lane direction"
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric describes the amount of deviation from the relative heading.
-        """)
-        result.set_metric(name=(), total=dtot, incremental=sequence,
-                          title=title, description=description, cumulative=cumulative)
+        """
+        )
+        result.set_metric(
+            name=(),
+            total=dtot,
+            incremental=sequence,
+            title=title,
+            description=description,
+            cumulative=cumulative,
+        )
 
 
 class InDrivableLane(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = cast(SampledSequence, context.get_interval())
         lane_pose_seq = context.get_lane_pose_seq()
@@ -209,19 +222,26 @@ class InDrivableLane(Rule):
             dtot = cumulative.values[-1]
 
         title = "Drivable areas"
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric computes whether the robot was in a drivable area.
             
             Note that we check that the robot is in the lane in a correct heading 
             (up to 90deg deviation from the lane direction). 
-        """)
+        """
+        )
 
-        result.set_metric(name=(), total=dtot, incremental=sequence,
-                          title=title, description=description, cumulative=cumulative)
+        result.set_metric(
+            name=(),
+            total=dtot,
+            incremental=sequence,
+            title=title,
+            description=description,
+            cumulative=cumulative,
+        )
 
 
 class DrivenLength(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
         lane_pose_seq = context.get_lane_pose_seq()
@@ -252,7 +272,9 @@ class DrivenLength(Rule):
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
                         ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
-                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
+                        c0_ = geo.SE2_from_translation_angle(
+                            ctas.translation, ctas.angle
+                        )
                         prelc0 = relative_pose(c0_, p1)
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 
@@ -278,13 +300,20 @@ class DrivenLength(Rule):
             total = driven_any_cumulative.values[-1]
 
         title = "Distance"
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric computes how far the robot drove.
-        """)
+        """
+        )
 
-        result.set_metric(name=('driven_any',), total=total,
-                          incremental=driven_any_incremental,
-                          title=title, description=description, cumulative=driven_any_cumulative)
+        result.set_metric(
+            name=("driven_any",),
+            total=total,
+            incremental=driven_any_incremental,
+            title=title,
+            description=description,
+            cumulative=driven_any_cumulative,
+        )
         title = "Lane distance"
 
         driven_lanedir_incremental = driven_lanedir_builder.as_sequence()
@@ -295,17 +324,23 @@ class DrivenLength(Rule):
         else:
             total = driven_lanedir_cumulative.values[-1]
 
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric computes how far the robot drove
             **in the direction of the lane**.
-        """)
-        result.set_metric(name=('driven_lanedir',), total=total,
-                          incremental=driven_lanedir_incremental,
-                          title=title, description=description, cumulative=driven_lanedir_cumulative)
+        """
+        )
+        result.set_metric(
+            name=("driven_lanedir",),
+            total=total,
+            incremental=driven_lanedir_incremental,
+            title=title,
+            description=description,
+            cumulative=driven_lanedir_cumulative,
+        )
 
 
 class DrivenLengthConsecutive(Rule):
-
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         interval = context.get_interval()
         lane_pose_seq = context.get_lane_pose_seq()
@@ -346,7 +381,9 @@ class DrivenLengthConsecutive(Rule):
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
                         ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
-                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
+                        c0_ = geo.SE2_from_translation_angle(
+                            ctas.translation, ctas.angle
+                        )
                         prelc0 = relative_pose(c0_, p1)
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 
@@ -372,10 +409,17 @@ class DrivenLengthConsecutive(Rule):
             total = 0
         else:
             total = driven_lanedir_cumulative.values[-1]
-        description = textwrap.dedent("""\
+        description = textwrap.dedent(
+            """\
             This metric computes how far the robot drove **in the direction of the correct lane**,
             discounting whenever it was driven in the wrong direction with respect to the start.
-        """)
-        result.set_metric(name=('driven_lanedir_consec',), total=total,
-                          incremental=driven_lanedir_incremental,
-                          title=title, description=description, cumulative=driven_lanedir_cumulative)
+        """
+        )
+        result.set_metric(
+            name=("driven_lanedir_consec",),
+            total=total,
+            incremental=driven_lanedir_incremental,
+            title=title,
+            description=description,
+            cumulative=driven_lanedir_cumulative,
+        )

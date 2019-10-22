@@ -4,9 +4,7 @@ import numpy as np
 from duckietown_serialization_ds1 import Serializable
 from .region import Region
 
-__all__ = [
-    'RectangularArea',
-]
+__all__ = ["RectangularArea"]
 
 
 class RectangularArea(Serializable, Region):
@@ -15,7 +13,7 @@ class RectangularArea(Serializable, Region):
         self.pmax = np.array(pmax, dtype=np.float64)
 
         if not np.all(self.pmin < self.pmax):
-            msg = 'Invalid area: %s %s' % (pmin, pmax)
+            msg = "Invalid area: %s %s" % (pmin, pmax)
             raise ValueError(msg)
 
     @classmethod
