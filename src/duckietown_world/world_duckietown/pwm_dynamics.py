@@ -67,6 +67,7 @@ def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
     else:
         return parameters
 
+
 def get_DB18_uncalibrated(delay: float, trim: float=0) -> PlatformDynamicsFactory:
     # parameters for autonomous dynamics
     u1 = 5
