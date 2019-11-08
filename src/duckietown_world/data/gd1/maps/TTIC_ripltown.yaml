@@ -1,0 +1,10 @@
+# 5x6 tiles with standard 2017 layout
+tiles:
+- [curve_left/W , straight     ,   3way_right,  straight, curve_left/N]
+- [straight/S   , grass        ,   straight/N,  grass   , straight/N  ]
+- [3way_right/N , straight     ,   3way_left ,  straight, 3way_left/N ]
+- [straight/S   , grass        ,   grass     ,  grass   , straight/N  ]
+- [curve_right/W, curve_left/N ,   grass     ,  grass   , straight/N  ]
+- [asphalt,       curve_right/W,   straight  ,  straight, curve_left/E]
+
+tile_size: 0.595
