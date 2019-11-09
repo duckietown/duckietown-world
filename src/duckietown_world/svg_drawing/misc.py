@@ -1,26 +1,22 @@
 # coding=utf-8
 import base64
-from dataclasses import dataclass
-from typing import *
 import itertools
 import logging
 import math
 import os
 from collections import OrderedDict
+from dataclasses import dataclass
+from typing import *
 from typing import Optional
 
 import svgwrite
-from bs4 import Tag, BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
 from six import BytesIO
 
-from contracts import contract, check_isinstance
+from contracts import check_isinstance
 from duckietown_world import logger
-from duckietown_world.geo import (
-    RectangularArea,
-    get_extent_points,
-    get_static_and_dynamic,
-)
+from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, RectangularArea)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
@@ -35,8 +31,7 @@ __all__ = [
 ]
 
 
-@contract(area=RectangularArea)
-def get_basic_upright2(filename, area, size=(1024, 768)):
+def get_basic_upright2(filename: str, area: RectangularArea, size=(1024, 768)):
     drawing = svgwrite.Drawing(filename, size=size, debug=False)
 
     origin = area.pmin
@@ -252,7 +247,8 @@ def draw_static(
             <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
             <br/>
             <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane segments</input>
-            (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">control points</input>)</p>
+            (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">control 
+            points</input>)</p>
             </p>
            
             
@@ -386,6 +382,7 @@ class TimeseriesPlot:
     title: str
     long_description: Optional[str]
     sequences: Dict
+
     # def __init__(self, title, long_description, sequences):
     #     check_isinstance(title, six.string_types)
     #     self.title = title
@@ -604,7 +601,8 @@ def make_html_slider(
 
 <div id="slidecontainer">
 <div id='fixedui'>
-    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" onchange="showVal(this.value)" oninput="showVal(this.value)"/>
+    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" 
+    onchange="showVal(this.value)" oninput="showVal(this.value)"/>
     <span id="time-display"></span>
     </div>
 </div>
