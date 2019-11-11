@@ -6,16 +6,18 @@
 #	jupyter nbconvert --to html --execute "$*"
 #	jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace "$*"
 
-targets_html=$(patsubst .ipynb,.html,$(wildcard *.ipynb))
+targets_html=$(patsubst %.ipynb,%.html,$(wildcard *.ipynb))
 
 all: $(targets_html)
 
-clean:
+clean: cleanup
 	rm -f $(targets_html)
-	 
+
 %.html: %.ipynb
 	jupyter nbconvert --to html --execute "$*"
-	jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace "$*"
+
+cleanup:
+	jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace *.ipynb
 
 
 
