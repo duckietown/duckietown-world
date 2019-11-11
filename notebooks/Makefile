@@ -16,6 +16,12 @@ clean: cleanup
 %.html: %.ipynb
 	jupyter nbconvert --to html --execute "$*"
 
+#%.pdf: %.ipynb
+#	jupyter nbconvert --to html --execute "$*"
+
+fatten:
+	jupyter nbconvert --inplace --execute *.ipynb
+
 cleanup:
 	jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace *.ipynb
 

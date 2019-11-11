@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Notebooks
           command: |
-            make -C notebooks
+            make -C notebooks cleanup all
 
       - run:
           name: Example draw maps
