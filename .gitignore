@@ -10,3 +10,4 @@ out-*
 artifacts
 .ipynb_checkpoints
 .compmake_history.txt
+testplotly.html
