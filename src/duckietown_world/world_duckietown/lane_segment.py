@@ -1,13 +1,16 @@
 # coding=utf-8
+from typing import List
+
 import numpy as np
 import svgwrite
 from duckietown_serialization_ds1 import Serializable
 from duckietown_serialization_ds1.serialization1 import as_json_dict
 
 import geometry as geo
-from contracts import contract, check_isinstance, new_contract
-from duckietown_world.geo import SE2Transform, PlacedObject
-from duckietown_world.utils import memoized_reset, SE2_interpolate, SE2_apply_R2
+from contracts import check_isinstance, contract, new_contract
+from duckietown_world.geo import PlacedObject, SE2Transform
+from duckietown_world.geo.transforms import SE2value
+from duckietown_world.utils import memoized_reset, SE2_apply_R2, SE2_interpolate
 from .tile import relative_pose
 
 __all__ = ["LaneSegment", "LanePose"]
@@ -75,8 +78,9 @@ def almost_equal(a, b):
 
 
 class LaneSegment(PlacedObject):
-    @contract(width=">0", control_points="list[>=2](SE2Transform)")
-    def __init__(self, width, control_points, *args, **kwargs):
+
+    def __init__(self, width: float, control_points: List[SE2Transform], *args, **kwargs):
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, *args, **kwargs)
         self.width = float(width)
         assert len(control_points) >= 2, control_points
@@ -120,8 +124,7 @@ class LaneSegment(PlacedObject):
             along_lane=along_lane, lateral=lateral, relative_heading=angle
         )
 
-    @contract(along_lane="float", lateral="float", relative_heading="float")
-    def lane_pose(self, along_lane, lateral, relative_heading):
+    def lane_pose(self, along_lane: float, lateral: float, relative_heading: float) -> LanePose:
         beta = self.beta_from_along_lane(along_lane)
         center_point = self.center_point(beta)
 
@@ -246,8 +249,7 @@ class LaneSegment(PlacedObject):
         q0 = self.center_point(beta)
         return beta, q0
 
-    @contract(lane_pose=LanePose, returns=SE2Transform)
-    def SE2Transform_from_lane_pose(self, lane_pose):
+    def SE2Transform_from_lane_pose(self, lane_pose: LanePose) -> SE2Transform:
         beta = self.beta_from_along_lane(lane_pose.along_lane)
         # logger.info('beta: %s' % beta)
         center_point = self.center_point(beta)
@@ -359,8 +361,7 @@ class LaneSegment(PlacedObject):
             gp.add(c)
             g.add(gp)
 
-    @contract(returns="SE2")
-    def center_point(self, beta):
+    def center_point(self, beta: float) -> SE2value:
         n = len(self.control_points)
         i = int(np.floor(beta))
 
