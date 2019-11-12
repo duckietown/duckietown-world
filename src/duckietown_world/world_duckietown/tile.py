@@ -98,6 +98,7 @@ def get_tile_slots():
 
 class Tile(PlacedObject):
     def __init__(self, kind, drivable, **kwargs):
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.kind = kind
         self.drivable = drivable
@@ -270,13 +271,13 @@ def translation_from_O3(pose) -> np.ndarray:
     return t
 
 
-def relative_pose(base, pose):
+def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
     assert isinstance(base, np.ndarray), base
     assert isinstance(pose, np.ndarray), pose
     return np.dot(np.linalg.inv(base), pose)
 
 
-class GetClosestLane(object):
+class GetClosestLane:
     def __init__(self, dw):
         self.no_matches_for = []
         self.dw = dw

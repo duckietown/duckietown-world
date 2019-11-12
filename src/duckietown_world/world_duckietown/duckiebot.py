@@ -7,7 +7,7 @@ __all__ = ["Duckiebot", "DB18"]
 
 
 class Duckiebot(Vehicle):
-    def __init__(self, width, length, height, *args, color=None, **kwargs):
+    def __init__(self, width, length, height, *args, color: str=None, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
 
         self.width = width
@@ -23,7 +23,7 @@ class Duckiebot(Vehicle):
             fill=self.color,
             # style='opacity:0.4',
             stroke_width="0.01",
-            stroke="black",
+            stroke="darkred",
         )
         rect.width = "0.1em"
         g.add(rect)
