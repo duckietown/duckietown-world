@@ -18,38 +18,38 @@ __all__ = ["LaneSegment", "LanePose"]
 
 class LanePose(Serializable):
 
-    # coordinate frame
-
-    # longitudinal => along_lane
-    # lateral => lateral
-    # relative heading
-
-    #
-
-    # lateral_right => lateral position of closest right lane boundary
-    # lateral_left => lateral position of closest left lane boundary
-
-    # center_point: anchor point on the center lane
+    #          |WWWW|        |        |YY|        |        |WWWW|
+    #          |WWWW|        |        |YY|        |        |WWWW|
+    #          |WWWW|        |        |YY|        |        |WWWW|
+    #          |WWWW|        |        |YY|        |<-d->   |WWWW|
+    #          |WWWW|        |        |YY|        |     _  |WWWW|
+    #          |WWWW|        |        |YY|        O    / \ |WWWW|
+    #          |WWWW|        |        |YY|        |    |_| |WWWW|
+    #          |WWWW|        |        |YY|        |      <r|WWWW|
+    #          |WWWW|        |        |YY|        |        |WWWW|
+    #          |WWWW|        |        |YY|        |        |WWWW|
+    # W is white lane, Y is yellow lane
+    # Here O is center point, d is lateral and distance from left, r is distance from right
 
     def __init__(
         self,
-        inside,
-        outside_left,
-        outside_right,
-        along_lane,
-        lateral,
-        relative_heading,
-        distance_from_left,
-        distance_from_right,
-        along_inside,
-        along_before,
-        along_after,
-        lateral_left,
-        lateral_right,
-        lateral_inside,
-        distance_from_center,
-        center_point,
-        correct_direction,
+        inside,  # Bool: am I inside the lane ?(laterally and longitudinally)
+        outside_left,  # Bool: is the object outside the lane on the left side?
+        outside_right,  # Bool: is the object outside the lane on the right side?
+        along_lane,  # Float: which portion of the tile have I travelled (longitudinal)? (0->L)
+        lateral,  # Float: signed displacement from the center of the current lane
+        relative_heading,  # Float: angle deviation wrt the center of the lane
+        distance_from_left,  # Float: distance from the left line of the current lane
+        distance_from_right,  # Float: distance from the right line of the current lane
+        along_inside,  # Bool: am I in the lane and facing in the right direction?
+        along_before,  # Bool: True if I did not start the segment yet
+        along_after,  # Bool: True if I finished the segment
+        lateral_left,  # Float: lateral position of closest left lane boundary
+        lateral_right,  # Float: lateral position of closest right lane boundary
+        lateral_inside,  # Bool: am I inside the lane?
+        distance_from_center,  # Float: absolute displacement from the center of the current lane
+        center_point,  # euclidean2: Closest point on centerline
+        correct_direction,  # Bool: am I going in the right direction inside my lane?
     ):
         self.inside = inside
         self.lateral_inside = lateral_inside
