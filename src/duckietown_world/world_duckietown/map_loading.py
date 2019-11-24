@@ -5,23 +5,12 @@ import traceback
 
 import numpy as np
 import oyaml as yaml
+from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
-from duckietown_serialization_ds1 import Serializable
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
-from .other_objects import (
-    Duckie,
-    Tree,
-    House,
-    Bus,
-    Truck,
-    Cone,
-    Barrier,
-    Building,
-    GenericObject,
-    SIGNS,
-)
+from .other_objects import (Barrier, Building, Bus, Cone, Duckie, GenericObject, House, SIGNS, Tree, Truck)
 from .tags_db import FloorTag
 from .tile import Tile
 from .tile_map import TileMap
@@ -87,7 +76,7 @@ def _get_map_yaml(map_name) -> str:
     return data
 
 
-def load_map(map_name):
+def load_map(map_name: str):
     logger.info("loading map %s" % map_name)
     data = _get_map_yaml(map_name)
     yaml_data = yaml.load(data, Loader=yaml.SafeLoader)
@@ -95,7 +84,7 @@ def load_map(map_name):
     return construct_map(yaml_data)
 
 
-def construct_map(yaml_data: dict):
+def construct_map(yaml_data: dict) -> DuckietownMap:
     tile_size = yaml_data["tile_size"]
     dm = DuckietownMap(tile_size)
     tiles = yaml_data["tiles"]

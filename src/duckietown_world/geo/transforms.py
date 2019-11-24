@@ -14,6 +14,8 @@ __all__ = ["TransformSequence", "Transform", "SE2Transform", "Scale2D", "Matrix2
 
 SE2value = NewType("SE2value", np.ndarray)
 
+from duckietown_world.seqs import GenericSequence
+
 
 class Transform(metaclass=ABCMeta):
     @abstractmethod
@@ -53,8 +55,6 @@ class TransformSequence(Transform):
         return "TransformSequence(%s)" % self.transforms
 
 
-from duckietown_world.seqs import GenericSequence
-
 
 class VariableTransformSequence(TransformSequence, GenericSequence[Transform]):  # XXX
     def at(self, t: Timestamp):
@@ -82,7 +82,8 @@ class SE2Transform(Transform, Serializable):
         self.theta = float(theta)
 
     def __repr__(self):
-        return "SE2Transform(%s,%s)" % (self.p.tolist(), self.theta)
+        d = np.rad2deg(self.theta)
+        return "SE2Transform(%s,%.1f)" % (self.p.tolist(), d)
 
     @classmethod
     def identity(cls) -> "SE2Transform":

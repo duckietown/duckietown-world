@@ -1,41 +1,49 @@
 # coding=utf-8
-import itertools
+from typing import Tuple
 
+from duckietown_world.world_duckietown.tile_coords import ALLOWED_ORIENTATIONS
 from ..geo import PlacedObject
-from ..world_duckietown import TileCoords
+from ..world_duckietown import Tile, TileCoords
 
 __all__ = ["TileMap"]
 
 
+def tilename_from_ij(i: int, j: int):
+    tile_name = "tile-%d-%d" % (i, j)
+    return tile_name
+
+
+def ij_from_tilename(tilename: str) -> Tuple[int, int]:
+    tokens = tilename.split('-')
+    i, j = int(tokens[1]), int(tokens[2])
+    return i, j
+
+
 class TileMap(PlacedObject):
-    def __init__(self, H, W, **kwargs):
+    H: int  # i
+    W: int  # j
+
+    def __init__(self, H: int, W: int, **kwargs):
         PlacedObject.__init__(self, **kwargs)
         self.H = H
         self.W = W
 
-        self.ij2tile = {}
-
-        for i, j in itertools.product(range(H), range(W)):
-            tile_name = "tile-%d-%d" % (i, j)
-            if tile_name in self.children:
-                self.ij2tile[(i, j)] = self.children[tile_name]
-
     def params_to_json_dict(self):
         return dict(H=self.H, W=self.W)
 
-    def __getitem__(self, coords):
-        if not coords in self.ij2tile:
+    def __getitem__(self, coords: Tuple[int, int]) -> Tile:
+        tilename = tilename_from_ij(coords[0], coords[1])
+        if not tilename in self.children:
             msg = 'Tile "%s" not available' % coords.__repr__()
             raise KeyError(msg)
-        return self.ij2tile[coords]
+        return self.children[coords]
 
-    def add_tile(self, i, j, orientation, tile, can_be_outside=False):
+    def add_tile(self, i: int, j: int, orientation: str, tile: Tile, can_be_outside: bool = False):
         if not can_be_outside:
             assert 0 <= i < self.H, (i, self.H)
             assert 0 <= j < self.W, (j, self.W)
 
-        assert orientation in ["S", "E", "N", "W"], orientation
-        self.ij2tile[(i, j)] = tile
+        assert orientation in ALLOWED_ORIENTATIONS, orientation
         tile_name = "tile-%d-%d" % (i, j)
         placement = TileCoords(i, j, orientation)
         self.set_object(tile_name, tile, ground_truth=placement)
