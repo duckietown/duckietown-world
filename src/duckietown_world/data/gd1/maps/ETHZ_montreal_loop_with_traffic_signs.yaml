@@ -1,0 +1,667 @@
+objects:
+  tag309:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.862
+        - 2.408
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 309
+  tag316:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.295
+        - 2.445
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 316
+  tag318:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.575
+        - 1.696
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 318
+  tag321:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.642
+        - 1.233
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 321
+  tag322:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.999
+        - 1.201
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 322
+  tag326:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.651
+        - 2.883
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 326
+  tag328:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.83
+        - 2.659
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 328
+  tag331:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.804
+        - 0.642
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 331
+  tag339:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - -0.055
+        - 2.066
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 339
+  tag344:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.031
+        - 1.036
+        theta_deg: -45
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 344
+  tag364:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.989
+        - 2.399
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 364
+  tag372:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.597
+        - 3.576
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 372
+  tag377:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.659
+        - 2.487
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 377
+  tag384:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.284
+        - 0.63
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 384
+  tag385:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.039
+        - 2.877
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 385
+  tag392:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.225
+        - 0.644
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 392
+  tag393:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.3
+        - 2.848
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 393
+  tag396:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.997
+        - 1.687
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 396
+  tag397:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 3.002
+        - 1.938
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 397
+  tag398:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.999
+        - 1.58
+        theta_deg: -90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 398
+  tag399:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.277
+        - 0.998
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 399
+  tag73:
+    attach:
+      slot: 3
+      tile:
+      - 2
+      - 6
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 173
+  tag74:
+    attach:
+      slot: 0
+      tile:
+      - 3
+      - 6
+    kind: sign_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 65
+  tag75:
+    attach:
+      slot: 0
+      tile:
+      - 2
+      - 6
+    kind: sign_left_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 242
+  tag76:
+    attach:
+      slot: 4
+      tile:
+      - 2
+      - 5
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 167
+  tag77:
+    attach:
+      slot: 3
+      tile:
+      - 3
+      - 6
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 24
+  tag78:
+    attach:
+      slot: 7
+      tile:
+      - 3
+      - 5
+    kind: sign_right_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 260
+  tag79:
+    attach:
+      slot: 0
+      tile:
+      - 5
+      - 4
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 33
+  tag80:
+    attach:
+      slot: 4
+      tile:
+      - 4
+      - 3
+    kind: sign_right_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 60
+  tag81:
+    attach:
+      slot: 0
+      tile:
+      - 5
+      - 4
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 171
+  tag82:
+    attach:
+      slot: 7
+      tile:
+      - 5
+      - 3
+    kind: sign_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 67
+  tag83:
+    attach:
+      slot: 3
+      tile:
+      - 4
+      - 4
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 26
+  tag84:
+    attach:
+      slot: 7
+      tile:
+      - 5
+      - 4
+    kind: sign_left_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 155
+  tag85:
+    attach:
+      slot: 0
+      tile:
+      - 1
+      - 4
+    kind: sign_right_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 57
+  tag86:
+    attach:
+      slot: 4
+      tile:
+      - 0
+      - 4
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 180
+  tag87:
+    attach:
+      slot: 3
+      tile:
+      - 0
+      - 4
+    kind: sign_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 146
+  tag88:
+    attach:
+      slot: 4
+      tile:
+      - 0
+      - 3
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 195
+  tag89:
+    attach:
+      slot: 7
+      tile:
+      - 1
+      - 3
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 20
+  tag90:
+    attach:
+      slot: 3
+      tile:
+      - 0
+      - 3
+    kind: sign_left_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 152
+  tag91:
+    attach:
+      slot: 7
+      tile:
+      - 3
+      - 3
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 35
+  tag92:
+    attach:
+      slot: 4
+      tile:
+      - 2
+      - 3
+    kind: sign_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 243
+  tag93:
+    attach:
+      slot: 7
+      tile:
+      - 2
+      - 3
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 166
+  tag94:
+    attach:
+      slot: 3
+      tile:
+      - 2
+      - 4
+    kind: sign_right_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 241
+  tag95:
+    attach:
+      slot: 0
+      tile:
+      - 3
+      - 4
+    kind: sign_stop
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 187
+  tag96:
+    attach:
+      slot: 4
+      tile:
+      - 3
+      - 3
+    kind: sign_left_T_intersect
+    pose:
+      ~SE2Transform:
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 64
+tile_size: 0.585
+tiles:
+- - curve_left/W
+  - straight/W
+  - 3way_left/W
+  - straight/W
+  - curve_left/N
+- - straight/N
+  - asphalt
+  - straight/N
+  - asphalt
+  - straight/N
+- - 3way_left/S
+  - straight/W
+  - 3way_left/E
+  - straight/W
+  - 3way_left/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - curve_left/S
+  - curve_right/E
+  - asphalt
+  - asphalt
+  - straight/N
+- - asphalt
+  - curve_left/S
+  - straight/E
+  - straight/E
+  - curve_left/E
+version: 2
