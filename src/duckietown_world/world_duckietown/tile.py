@@ -35,7 +35,7 @@ class GetLanePoseResult:
 class SignSlot(PlacedObject):
     """ Represents a slot where you can put a sign. """
 
-    L = 0.1
+    L = 0.065 / 0.61
 
     def get_footprint(self):
         L = SignSlot.L

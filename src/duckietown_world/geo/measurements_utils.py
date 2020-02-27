@@ -1,12 +1,11 @@
 # coding=utf-8
-from dataclasses import dataclass
-from typing import Callable, Iterator, List, Tuple
-
 import networkx as nx
 import numpy as np
-from networkx import MultiDiGraph
-
+from dataclasses import dataclass
 from duckietown_world.seqs import Sequence
+from networkx import MultiDiGraph
+from typing import Callable, Iterator, List, Tuple
+
 from .placed_object import FQN, PlacedObject, SpatialRelation
 from .rectangular_area import RectangularArea
 from .transforms import TransformSequence, VariableTransformSequence
@@ -139,7 +138,7 @@ def iterate_by_test(
 
     for name in G:
         ob = po.get_object_from_fqn(name)
-        
+
         if testf(ob):
             transform_sequence = G.get_edge_data(root_name, name)["transform_sequence"]
 
