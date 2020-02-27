@@ -211,7 +211,7 @@ tile_size: 0.595
 tiles:
 - - curve_left/W
   - straight/W
-  - 3way_left/W
+  - straight/W
   - straight/W
   - curve_left/N
 - - straight/N
@@ -219,11 +219,11 @@ tiles:
   - straight/N
   - asphalt
   - straight/N
-- - 3way_left/S
-  - straight/W
-  - 3way_left/E
-  - straight/W
-  - 3way_left/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
 - - straight/N
   - asphalt
   - asphalt
