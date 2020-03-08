@@ -42,7 +42,7 @@ setup(name=f'duckietown-world-{line}',
           'markdown',
           'dataclasses',
           'comptests',
-          'zuper-typing-z5>=5.0.7',
+          'zuper-typing-z5>=5.3.0',
       ],
 
       tests_require=[
