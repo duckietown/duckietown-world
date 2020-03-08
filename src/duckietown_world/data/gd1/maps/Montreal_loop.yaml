@@ -1,0 +1,33 @@
+tile_size: 0.595
+tiles:
+- - curve_left/W
+  - straight/W
+  - straight/W
+  - straight/W
+  - curve_left/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - curve_left/S
+  - curve_right/E
+  - asphalt
+  - asphalt
+  - straight/N
+- - asphalt
+  - curve_left/S
+  - straight/E
+  - straight/E
+  - curve_left/E
+version: 1
