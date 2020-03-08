@@ -41,7 +41,7 @@ def draw_maps_main(args=None):
         # print('written to %s' % fn)
 
 
-def draw_map(output, duckietown_map):
+def draw_map(output: str, duckietown_map: 'DuckietownMap') -> None:
     from duckietown_world.world_duckietown import DuckietownMap
 
     if not os.path.exists(output):

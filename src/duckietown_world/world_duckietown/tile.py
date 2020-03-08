@@ -5,16 +5,8 @@ from typing import Any
 import numpy as np
 from svgwrite.container import Use
 
-from contracts import contract
 from duckietown_world import logger
-from duckietown_world.geo import (
-    PlacedObject,
-    RectangularArea,
-    TransformSequence,
-    Matrix2D,
-    SE2Transform,
-    Transform,
-)
+from duckietown_world.geo import (Matrix2D, PlacedObject, RectangularArea, SE2Transform, Transform, TransformSequence)
 from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
@@ -43,7 +35,7 @@ class GetLanePoseResult:
 class SignSlot(PlacedObject):
     """ Represents a slot where you can put a sign. """
 
-    L = 0.1
+    L = 0.065 / 0.61
 
     def get_footprint(self):
         L = SignSlot.L
@@ -265,7 +257,6 @@ def get_lane_poses(dw, q: SE2v, tol=0.000001):
         #     logger.warning(msg)
 
 
-@contract(returns="array[2]")  # pose='O3',
 def translation_from_O3(pose) -> np.ndarray:
     _, t, _, _ = extract_pieces(pose)
     return t

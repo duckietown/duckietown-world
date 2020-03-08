@@ -1,19 +1,25 @@
 # coding=utf-8
+
 import numpy as np
+from duckietown_serialization_ds1 import Serializable
 
 import geometry
-from duckietown_serialization_ds1 import Serializable
-from duckietown_world.geo import Transform, Matrix2D
+from duckietown_world.geo import Matrix2D, Transform
 
 __all__ = ["TileCoords", "TileRelativeTransform"]
 
+ALLOWED_ORIENTATIONS = ["S", "E", "N", "W"]
+
 
 class TileCoords(Transform, Serializable):
-    def asmatrix2d(self):
+    i: int
+    j: int
+    orientation: str  # N S W E
 
+    def asmatrix2d(self):
         angle0 = {"N": 0, "E": -np.pi / 2, "S": np.pi, "W": +np.pi / 2}[
-            self.orientation
-        ] + np.pi / 2
+                     self.orientation
+                 ] + np.pi / 2
 
         angle = {"N": np.pi / 2, "E": 0, "S": np.pi + np.pi / 2, "W": np.pi}[
             self.orientation
@@ -25,7 +31,7 @@ class TileCoords(Transform, Serializable):
         M = geometry.SE2_from_translation_angle(p, angle)
         return Matrix2D(M)
 
-    def __init__(self, i, j, orientation):
+    def __init__(self, i: int, j: int, orientation: str):
         self.i = i
         self.j = j
         self.orientation = orientation
