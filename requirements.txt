@@ -26,6 +26,6 @@ coveralls
 
 jupyter
 nbconvert
-dataclasses; python_version < '3.7'
+dataclasses==0.6; python_version < '3.7'
 zuper-typing-z6
 codecov
