@@ -536,7 +536,7 @@ class ACGvGen(object):
         for c in children:
             rec = self.browse2_(G=G, id_node=c, cb=cb, level=level + 1)
             children_result[c] = rec
-        node_data = G.node[id_node]["data"]
+        node_data = G.nodes[id_node]["data"]
         return cb(level, node_data, children_result)
 
     def browse2(self, cb):

@@ -78,8 +78,9 @@ def almost_equal(a, b):
 
 
 class LaneSegment(PlacedObject):
-
-    def __init__(self, width: float, control_points: List[SE2Transform], *args, **kwargs):
+    def __init__(
+        self, width: float, control_points: List[SE2Transform], *args, **kwargs
+    ):
         # noinspection PyArgumentList
         PlacedObject.__init__(self, *args, **kwargs)
         self.width = float(width)
@@ -124,7 +125,9 @@ class LaneSegment(PlacedObject):
             along_lane=along_lane, lateral=lateral, relative_heading=angle
         )
 
-    def lane_pose(self, along_lane: float, lateral: float, relative_heading: float) -> LanePose:
+    def lane_pose(
+        self, along_lane: float, lateral: float, relative_heading: float
+    ) -> LanePose:
         beta = self.beta_from_along_lane(along_lane)
         center_point = self.center_point(beta)
 

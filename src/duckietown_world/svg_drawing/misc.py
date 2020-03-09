@@ -16,7 +16,11 @@ from six import BytesIO
 
 from contracts import check_isinstance
 from duckietown_world import logger
-from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, RectangularArea)
+from duckietown_world.geo import (
+    get_extent_points,
+    get_static_and_dynamic,
+    RectangularArea,
+)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
@@ -368,12 +372,14 @@ def get_resized_image(bytes_content, width):
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
     idata = BytesIO(bytes_content)
-    image = Image.open(idata).convert("RGB")
+    with Image.open(idata) as _:
+        image = _.convert("RGB")
     size = image.size
     height = int(size[1] * 1.0 / size[0] * width)
     image = image.resize((width, height))
     out = BytesIO()
     image.save(out, format="jpeg")
+
     return out.getvalue()
 
 
@@ -766,7 +772,8 @@ def get_jpeg_bytes(fn):
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
 
-    image = Image.open(fn).convert("RGB")
+    with Image.open(fn) as _:
+        image = _.convert("RGB")
 
     out = BytesIO()
     image.save(out, format="jpeg")

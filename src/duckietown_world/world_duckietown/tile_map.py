@@ -14,7 +14,7 @@ def tilename_from_ij(i: int, j: int):
 
 
 def ij_from_tilename(tilename: str) -> Tuple[int, int]:
-    tokens = tilename.split('-')
+    tokens = tilename.split("-")
     i, j = int(tokens[1]), int(tokens[2])
     return i, j
 
@@ -38,7 +38,9 @@ class TileMap(PlacedObject):
             raise KeyError(msg)
         return self.children[coords]
 
-    def add_tile(self, i: int, j: int, orientation: str, tile: Tile, can_be_outside: bool = False):
+    def add_tile(
+        self, i: int, j: int, orientation: str, tile: Tile, can_be_outside: bool = False
+    ):
         if not can_be_outside:
             assert 0 <= i < self.H, (i, self.H)
             assert 0 <= j < self.W, (j, self.W)

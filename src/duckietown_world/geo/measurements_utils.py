@@ -82,6 +82,7 @@ def get_flattened_measurement_graph(
 ) -> nx.DiGraph:
     from duckietown_world import TransformSequence
     from duckietown_world import SE2Transform
+
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()

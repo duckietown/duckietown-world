@@ -55,7 +55,6 @@ class TransformSequence(Transform):
         return "TransformSequence(%s)" % self.transforms
 
 
-
 class VariableTransformSequence(TransformSequence, GenericSequence[Transform]):  # XXX
     def at(self, t: Timestamp):
         res = []

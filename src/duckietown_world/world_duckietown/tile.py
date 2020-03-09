@@ -6,7 +6,14 @@ import numpy as np
 from svgwrite.container import Use
 
 from duckietown_world import logger
-from duckietown_world.geo import (Matrix2D, PlacedObject, RectangularArea, SE2Transform, Transform, TransformSequence)
+from duckietown_world.geo import (
+    Matrix2D,
+    PlacedObject,
+    RectangularArea,
+    SE2Transform,
+    Transform,
+    TransformSequence,
+)
 from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
@@ -134,7 +141,8 @@ class Tile(PlacedObject):
 
         if self.fn:
             # texture = get_jpeg_bytes(self.fn)
-            texture = open(self.fn, "rb").read()
+            with open(self.fn, "rb") as _:
+                texture = _.read()
             if b"git-lfs" in texture:
                 msg = f"The file {self.fn} is a Git LFS pointer. Repo not checked out correctly."
                 raise Exception(msg)

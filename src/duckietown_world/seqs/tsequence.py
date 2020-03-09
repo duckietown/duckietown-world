@@ -1,10 +1,21 @@
 # coding=utf-8
 import typing
 from abc import abstractmethod
-from dataclasses import dataclass
-from typing import Any, Callable, ClassVar, Iterator, List, Optional, Type, TypeVar, Union
 
-from zuper_typing import Generic
+# from dataclasses import dataclass
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Iterator,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+)
+
+from zuper_typing import dataclass, Generic
 
 __all__ = [
     "Sequence",
@@ -148,6 +159,8 @@ class SampledSequence(Base):
         timestamps = []
         values = []
         for t, v in i:
+            assert isinstance(t, (float, int)), type(t)
+            t = Timestamp(t)
             timestamps.append(t)
             values.append(v)
         return SampledSequence[Any](timestamps, values)
@@ -176,11 +189,12 @@ class SampledSequence(Base):
                 t0 = self.timestamps[i]
                 t1 = self.timestamps[i + 1]
                 t = t0 + (k * 1.0 / n) * (t1 - t0)
-                timestamps.append(t)
+                timestamps.append(Timestamp(t))
                 values.append(self.values[i])
         timestamps.append(self.timestamps[-1])
         values.append(self.values[-1])
         return SampledSequence[self.XT](timestamps, values)
+
 
 def downsample(s: SampledSequence[X], M: int) -> SampledSequence[X]:
     timestamps = []
@@ -190,6 +204,7 @@ def downsample(s: SampledSequence[X], M: int) -> SampledSequence[X]:
             timestamps.append(s.timestamps[i])
             values.append(s.values[i])
     return SampledSequence[s.XT](timestamps, values)
+
 
 @dataclass
 class IterateDT(Generic[Y]):
@@ -206,11 +221,13 @@ def iterate_with_dt(sequence: SampledSequence[X]) -> Iterator[IterateDT[X]]:
     values = sequence.values
     for i in range(len(timestamps) - 1):
         t0 = timestamps[i]
+        assert isinstance(t0, float), type(t0)
         t1 = timestamps[i + 1]
         v0 = values[i]
         v1 = values[i + 1]
-        dt = t1 - t0
-        yield IterateDT[type(sequence).XT](t0, t1, dt, v0, v1)  # XXX
+        dt = float(t1 - t0)
+        X = type(sequence).XT
+        yield IterateDT[X](t0, t1, dt, v0, v1)  # XXX
 
 
 @dataclass

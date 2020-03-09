@@ -114,7 +114,7 @@ class Apriltag_measurer:
         elif modify_file:
             self.map_yaml = load_yaml_file(full_path)
             if "objects" not in self.map_yaml:
-                self.map_yaml['objects'] = dict()
+                self.map_yaml["objects"] = dict()
             self.ground_tag_dict = self.get_ground_tag_dict()
         else:
             self.map_yaml = create_empty_map_file()

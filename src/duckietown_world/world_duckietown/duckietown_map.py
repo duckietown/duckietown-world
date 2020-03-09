@@ -19,7 +19,8 @@ class DuckietownMap(PlacedObject):
     def se2_from_curpos(self, cur_pos, cur_angle):
         """ Conversion from Duckietown Gym Simulator coordinates z"""
         from duckietown_world import TileMap
-        tilemap: TileMap = cast(TileMap, self.children['tilemap'])
+
+        tilemap: TileMap = cast(TileMap, self.children["tilemap"])
         H = tilemap.H
         gx, gy, gz = cur_pos
         p = [gx, (H - 1) * self.tile_size - gz]

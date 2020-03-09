@@ -41,7 +41,8 @@ class TagInstance(Serializable):
         if self.fn:
             from PIL import Image
 
-            image = Image.open(self.fn).convert("RGB")
+            with Image.open(self.fn) as _:
+                image = _.convert("RGB")
             image = image.resize((64, 64), resample=Image.NEAREST)
             out = BytesIO()
             image.save(out, format="png")
@@ -76,8 +77,10 @@ class FloorTag(PlacedObject):
 def get_apriltagsDB_raw():
     abs_path_module = os.path.realpath(__file__)
     module_dir = os.path.dirname(abs_path_module)
+
     fn = os.path.join(module_dir, "../data/apriltagsDB.yaml")
-    d = open(fn).read()
+    with open(fn) as _:
+        d = _.read()
     return yaml.load(d)
 
 

@@ -183,7 +183,7 @@ class PlacedObject(Serializable):
 
         return res
 
-    def set_object(self, name: str, ob: 'PlacedObject', **transforms: SpatialRelation):
+    def set_object(self, name: str, ob: "PlacedObject", **transforms: SpatialRelation):
         assert self is not ob
         self.children[name] = ob
         type2klass = {"ground_truth": GroundTruth}
@@ -209,11 +209,13 @@ class PlacedObject(Serializable):
     def get_footprint(self):
         return RectangularArea([-0.1, -0.1], [0.1, 0.1])
 
+
 def get_child_transform(po: PlacedObject, child: str) -> Transform:
     for _ in po.spatial_relations.values():
         if _.a == () and _.b == (child,):
             return _.transform
     raise KeyError(child)
+
 
 def get_object_tree(
     po: PlacedObject,

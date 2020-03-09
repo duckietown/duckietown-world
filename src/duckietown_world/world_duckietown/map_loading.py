@@ -2,15 +2,27 @@
 import itertools
 import os
 import traceback
+from typing import List
 
 import numpy as np
 import oyaml as yaml
-from duckietown_serialization_ds1 import Serializable
 
 import geometry as geo
+from duckietown_serialization_ds1 import Serializable
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
-from .other_objects import (Barrier, Building, Bus, Cone, Duckie, GenericObject, House, SIGNS, Tree, Truck)
+from .other_objects import (
+    Barrier,
+    Building,
+    Bus,
+    Cone,
+    Duckie,
+    GenericObject,
+    House,
+    SIGNS,
+    Tree,
+    Truck,
+)
 from .tags_db import FloorTag
 from .tile import Tile
 from .tile_map import TileMap
@@ -23,7 +35,7 @@ from ..geo.measurements_utils import iterate_by_class
 __all__ = ["create_map", "list_maps", "construct_map", "load_map"]
 
 
-def create_map(H=3, W=3):
+def create_map(H=3, W=3) -> TileMap:
     tile_map = TileMap(H=H, W=W)
 
     for i, j in itertools.product(range(H), range(W)):
@@ -33,7 +45,7 @@ def create_map(H=3, W=3):
     return tile_map
 
 
-def list_maps():
+def list_maps() -> List[str]:
     maps_dir = get_maps_dir()
 
     def f():
@@ -44,7 +56,7 @@ def list_maps():
     return list(f())
 
 
-def get_maps_dir():
+def get_maps_dir() -> str:
     abs_path_module = os.path.realpath(__file__)
     module_dir = os.path.dirname(abs_path_module)
     d = os.path.join(module_dir, "../data/gd1/maps")
@@ -52,7 +64,7 @@ def get_maps_dir():
     return d
 
 
-def get_texture_dirs():
+def get_texture_dirs() -> List[str]:
     abs_path_module = os.path.realpath(__file__)
     module_dir = os.path.dirname(abs_path_module)
     d = os.path.join(module_dir, "../data/gd1/textures")
@@ -66,17 +78,18 @@ def get_texture_dirs():
     return [d, d2, d3]
 
 
-def _get_map_yaml(map_name) -> str:
+def _get_map_yaml(map_name: str) -> str:
     maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + ".yaml")
     if not os.path.exists(fn):
         msg = "Could not find file %s" % fn
         raise ValueError(msg)
-    data = open(fn).read()
+    with open(fn) as _:
+        data = _.read()
     return data
 
 
-def load_map(map_name: str):
+def load_map(map_name: str) -> DuckietownMap:
     logger.info("loading map %s" % map_name)
     data = _get_map_yaml(map_name)
     yaml_data = yaml.load(data, Loader=yaml.SafeLoader)
@@ -258,9 +271,7 @@ def get_xy_slot(i):
     # # tile_curb
     # tc = 0.05
     to = 0.09  # [m] the longest of two distances from the center of the tag to the edge
-    tc = (
-        0.035
-    )  # [m] the shortest of two distances from the center of the tag to the edge
+    tc = 0.035  # [m] the shortest of two distances from the center of the tag to the edge
 
     positions = {
         0: (+to, +tc),
@@ -276,7 +287,7 @@ def get_xy_slot(i):
     return x, y
 
 
-def get_texture_file(tex_name):
+def get_texture_file(tex_name: str) -> str:
     res = []
     tried = []
     for d in get_texture_dirs():

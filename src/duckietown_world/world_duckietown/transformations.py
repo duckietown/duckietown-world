@@ -15,7 +15,7 @@ class ChooseTime(object):
 
     def __call__(self, ob):
         # if isinstance(ob, Sequence):
-        if hasattr(ob, 'at'):
+        if hasattr(ob, "at"):
             ob = ob.at(self.t)
             return ob
         else:

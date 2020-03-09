@@ -27,6 +27,7 @@ __all__ = ["get_skeleton_graph", "SkeletonGraphResult"]
 
 PointLabel = Tuple[float, float, float, float]
 
+
 @dataclass
 class MeetingPoint:
     incoming: Set[str]  # set of lane names
@@ -95,13 +96,23 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
         p1 = discretize(lane_segment_transformed.control_points[-1])
 
         if not p0 in meeting_points:
-            meeting_points[p0] = MeetingPoint(set(), set(), set(),
-                                              lane_segment_transformed.control_points[0],
-                                              None, None)
+            meeting_points[p0] = MeetingPoint(
+                set(),
+                set(),
+                set(),
+                lane_segment_transformed.control_points[0],
+                None,
+                None,
+            )
         if not p1 in meeting_points:
-            meeting_points[p1] = MeetingPoint(set(), set(), set(),
-                                              lane_segment_transformed.control_points[-1],
-                                              None, None)
+            meeting_points[p1] = MeetingPoint(
+                set(),
+                set(),
+                set(),
+                lane_segment_transformed.control_points[-1],
+                None,
+                None,
+            )
 
         # meeting_points[p0].point = lane_segment_transformed.control_points[0]
         meeting_points[p0].outcoming.add(name)
@@ -110,9 +121,11 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
 
         meeting_points[p0].connects_to.add(p1)
 
-        tile_coords = [_ for _ in it.transform_sequence.transforms if isinstance(_, TileCoords)]
+        tile_coords = [
+            _ for _ in it.transform_sequence.transforms if isinstance(_, TileCoords)
+        ]
         if not tile_coords:
-            raise ZException(p0=p0,p1=p1, transforms=it.transform_sequence.transforms)
+            raise ZException(p0=p0, p1=p1, transforms=it.transform_sequence.transforms)
         tile_coord = tile_coords[0]
         ij = tile_coord.i, tile_coord.j
         meeting_points[p0].into_tile = ij
@@ -214,7 +227,9 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
     return SkeletonGraphResult(root=root, root2=root2, G=G, G0=G0)
 
 
-def transform_lane_segment(lane_segment: LaneSegment, transformation: Matrix2D) -> LaneSegment:
+def transform_lane_segment(
+    lane_segment: LaneSegment, transformation: Matrix2D
+) -> LaneSegment:
     M = transformation.m
 
     def transform_point(p):

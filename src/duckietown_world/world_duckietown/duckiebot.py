@@ -7,7 +7,7 @@ __all__ = ["Duckiebot", "DB18"]
 
 
 class Duckiebot(Vehicle):
-    def __init__(self, width, length, height, *args, color: str=None, **kwargs):
+    def __init__(self, width, length, height, *args, color: str = None, **kwargs):
         PlacedObject.__init__(self, *args, **kwargs)
 
         self.width = width

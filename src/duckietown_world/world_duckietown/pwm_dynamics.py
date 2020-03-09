@@ -68,7 +68,7 @@ def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
         return parameters
 
 
-def get_DB18_uncalibrated(delay: float, trim: float=0) -> PlatformDynamicsFactory:
+def get_DB18_uncalibrated(delay: float, trim: float = 0) -> PlatformDynamicsFactory:
     # parameters for autonomous dynamics
     u1 = 5
     u2 = 0
@@ -82,8 +82,9 @@ def get_DB18_uncalibrated(delay: float, trim: float=0) -> PlatformDynamicsFactor
     war = 15 * (1.0 + trim)
     wal = 15 * (1.0 - trim)
 
-    parameters = DynamicModelParameters(u1=u1, u2=u2, u3=u3, w1=w1,
-                                        w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal)
+    parameters = DynamicModelParameters(
+        u1=u1, u2=u2, u3=u3, w1=w1, w2=w2, w3=w3, uar=uar, ual=ual, war=war, wal=wal
+    )
 
     if delay > 0:
         delayed = ApplyDelay(parameters, delay, PWMCommands(0, 0))
