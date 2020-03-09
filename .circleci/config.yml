@@ -38,6 +38,7 @@ jobs:
           command: |
             mkdir -p artifacts
             pip freeze | tee artifacts/pip-freeze.txt
+            pipdeptree | tee artifacts/pipdeptree.txt
 
       - run:
           name: setup.py develop
