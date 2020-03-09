@@ -26,7 +26,7 @@ install_requires = [
     "numpy",
     "PyYAML",
     "networkx>=2.2,<3",
-    "duckietown-serialization-ds1>=1.0.7,<2",
+    "duckietown-serialization-ds1<2",
     "svgwrite",
     "PyGeometry>=1.5.6",
     "beautifulsoup4>=4.6.3",

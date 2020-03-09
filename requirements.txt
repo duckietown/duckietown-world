@@ -2,10 +2,10 @@
 PyYAML
 
 six==1.11.0
-networkx==2.2
+networkx<3
 svgwrite==1.1.12
 pillow
-duckietown-serialization-ds1==1.0.7
+duckietown-serialization-ds1<2
 
 PyGeometry==1.5.6
 
