@@ -122,3 +122,7 @@ jobs:
     <<: *test-template
     docker:
     - image: python:3.7
+  test-3.8:
+    <<: *test-template
+    docker:
+    - image: python:3.8
