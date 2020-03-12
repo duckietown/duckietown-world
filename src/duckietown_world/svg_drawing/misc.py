@@ -5,8 +5,8 @@ import logging
 import math
 import os
 from dataclasses import dataclass
-from typing import *
-from typing import Optional
+
+from typing import Optional, Tuple, Dict, Sequence, Tuple
 
 import svgwrite
 from bs4 import BeautifulSoup, Tag
@@ -778,8 +778,6 @@ def get_jpeg_bytes(fn):
 def bs(fragment: str):
     """ Returns the contents wrapped in an element called "fragment".
         Expects fragment as a str in utf-8 """
-
-    check_isinstance(fragment, six.string_types)
 
     s = u"<fragment>%s</fragment>" % fragment
 
