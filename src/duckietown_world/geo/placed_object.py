@@ -2,7 +2,7 @@
 
 import copy
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union, Callable
 
 import yaml
 from duckietown_serialization_ds1 import Serializable
@@ -108,7 +108,7 @@ class PlacedObject(Serializable):
             # logger.debug('no _copy for %s' % type(self).__name__)
             return copy.copy(self)
 
-    def filter_all(self, f) -> "PlacedObject":
+    def filter_all(self, f: "Callable[[PlacedObject], PlacedObject]") -> "PlacedObject":
         children = {}
         spatial_relations = {}
 

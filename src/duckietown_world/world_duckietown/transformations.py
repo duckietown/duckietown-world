@@ -1,5 +1,7 @@
 # coding=utf-8
-from duckietown_world import Sequence, TransformSequence
+from typing import List
+
+from duckietown_world import GenericSequence, PlacedObject, TransformSequence
 
 __all__ = [
     "ChooseTime",
@@ -7,6 +9,9 @@ __all__ = [
     # 'RemoveStatic',
     "get_sampling_points",
 ]
+
+from duckietown_world.seqs.tsequence import Timestamp
+from zuper_commons.types import ZValueError
 
 
 class ChooseTime(object):
@@ -60,7 +65,7 @@ class ChooseTime(object):
 
 
 def is_static(transform):
-    if isinstance(transform, Sequence):
+    if isinstance(transform, GenericSequence):
         return False
     if isinstance(transform, TransformSequence):
         return all(is_static(_) for _ in transform.transforms)
@@ -94,18 +99,21 @@ def is_static(transform):
 #         else:
 #             return ob
 
-
-def get_sampling_points(ob0):
+def get_sampling_points(ob0: PlacedObject) -> List[Timestamp]:
     points = set()
 
-    def f(ob):
+    def f(ob: PlacedObject) -> PlacedObject:
         # print(ob)
-        if isinstance(ob, Sequence):
+        if hasattr(ob, 'get_sampling_points'):
+            if not isinstance(ob, GenericSequence):
+                raise ZValueError(ob=ob)
             sp = ob.get_sampling_points()
-            if sp == Sequence.CONTINUOUS:
+            if sp == GenericSequence.CONTINUOUS:
                 pass
             else:
                 points.update(sp)
+        # else:
+        #     logger.info(f'not a seq: {type(ob)}')
         return ob
 
     ob0.filter_all(f)

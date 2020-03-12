@@ -18,7 +18,6 @@ from typing import (
 from zuper_typing import dataclass, Generic
 
 __all__ = [
-    "Sequence",
     "GenericSequence",
     "UndefinedAtTime",
     "SampledSequence",
@@ -35,7 +34,7 @@ X = TypeVar("X")
 Y = TypeVar("Y")
 Timestamp = float
 
-
+@dataclass 
 class GenericSequence(Generic[X]):
     CONTINUOUS = "continuous-sampling"
 
@@ -61,9 +60,6 @@ class GenericSequence(Generic[X]):
         """
 
 
-Sequence = GenericSequence
-
-
 @dataclass
 class SampledSequence(GenericSequence):
     """ A sampled time sequence. Only defined at certain points. """
@@ -71,7 +67,7 @@ class SampledSequence(GenericSequence):
     timestamps: List[Timestamp]
     values: List[X]
 
-    XT: ClassVar[Type[X]] = Any
+    XT: ClassVar[Type[X]] = object
 
     def __post_init__(self):
         values = list(self.values)
@@ -138,7 +134,7 @@ class SampledSequence(GenericSequence):
         return zip(self.timestamps, self.values).__iter__()
 
     @classmethod
-    def from_iterator(cls, i: Iterator[X]) -> "SampledSequence[X]":
+    def from_iterator(cls, i: Iterator[X], T: Type[X] = object) -> "SampledSequence[X]":
         timestamps = []
         values = []
         for t, v in i:
@@ -146,13 +142,13 @@ class SampledSequence(GenericSequence):
             t = Timestamp(t)
             timestamps.append(t)
             values.append(v)
-        return SampledSequence[Any](timestamps, values)
+        return SampledSequence[T](timestamps, values)
 
     def __len__(self) -> int:
         return len(self.timestamps)
 
     def transform_values(
-        self, f: Callable[[X], Y], Y: type = object
+        self, f: Callable[[X], Y], YT: Type[Y] = object
     ) -> "SampledSequence[Y]":
         values = []
         timestamps = []
@@ -162,7 +158,7 @@ class SampledSequence(GenericSequence):
                 values.append(res)
                 timestamps.append(t)
 
-        return SampledSequence[Y](timestamps, values)
+        return SampledSequence[YT](timestamps, values)
 
     def upsample(self, n: int) -> "SampledSequence[X]":
         timestamps = []
