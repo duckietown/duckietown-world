@@ -1,21 +1,18 @@
 # coding=utf-8
 import base64
-from PIL import Image
-from PIL import Image
 import itertools
 import logging
 import math
 import os
 from dataclasses import dataclass
-
-from typing import Optional, Tuple, Dict, Sequence, Tuple
+from typing import Dict, Optional, Sequence, Tuple
 
 import svgwrite
 from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
+from PIL import Image
 from six import BytesIO
 
-from contracts import check_isinstance
 from duckietown_world import logger
 from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, PlacedObject, RectangularArea)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
@@ -366,7 +363,6 @@ def draw_static(
 
 
 def get_resized_image(bytes_content, width):
-
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
     idata = BytesIO(bytes_content)
@@ -763,8 +759,6 @@ def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
 
 @memoized_reset
 def get_jpeg_bytes(fn):
-
-
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
 
