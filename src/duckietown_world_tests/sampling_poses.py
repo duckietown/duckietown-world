@@ -2,11 +2,11 @@
 from comptests import comptest, get_comptests_output_dir, run_module_tests
 from duckietown_world import draw_static
 from duckietown_world.world_duckietown.sampling_poses import sample_good_starting_pose
-
+import duckietown_world as dw
 
 @comptest
 def test_pose_sampling_1():
-    import duckietown_world as dw
+
 
     m = dw.load_map("4way")
 

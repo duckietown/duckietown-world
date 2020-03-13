@@ -1,5 +1,6 @@
 import os
 
+import yaml
 import numpy as np
 
 import geometry as geo
@@ -51,7 +52,6 @@ def test_pwm1():
     tile_size: 0.61
     """
 
-    import yaml
 
     map_data = yaml.load(map_data_yaml)
 

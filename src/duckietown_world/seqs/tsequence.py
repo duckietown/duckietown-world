@@ -15,6 +15,7 @@ from typing import (
     Union,
 )
 
+from zuper_commons.types import ZValueError
 from zuper_typing import dataclass, Generic
 
 __all__ = [
@@ -34,7 +35,7 @@ X = TypeVar("X")
 Y = TypeVar("Y")
 Timestamp = float
 
-@dataclass 
+@dataclass
 class GenericSequence(Generic[X]):
     CONTINUOUS = "continuous-sampling"
 
@@ -225,6 +226,10 @@ class SampledSequenceBuilder(Generic[X]):
         # self.values = self.values or []
 
         # print(type(self), self.__dict__)
+        if self.timestamps:
+            if t == self.timestamps[-1]:
+                msg = 'Repeated time stamp'
+                raise ZValueError(msg, t=t, timestamps=self.timestamps)
         self.timestamps.append(t)
         self.values.append(v)
 

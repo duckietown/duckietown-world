@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import geometry
 from abc import ABCMeta, abstractmethod
 from typing import NewType
 
@@ -129,7 +129,7 @@ class SE2Transform(Transform, Serializable):
         return dict(p=p, theta=theta)
 
     def as_SE2(self) -> SE2value:
-        import geometry
+
 
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
         return M

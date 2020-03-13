@@ -13,6 +13,8 @@ from .duckietown_map import DuckietownMap
 from .lane_segment import LaneSegment
 from .tile_coords import TileCoords
 
+import networkx as nx
+
 
 @dataclass
 class SkeletonGraphResult:
@@ -194,8 +196,6 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
     for k, v in root.children.items():
         if not k in aliases:
             root2.set_object(k, v, ground_truth=SE2Transform.identity())
-
-    import networkx as nx
 
     G = nx.MultiDiGraph()
 

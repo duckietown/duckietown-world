@@ -1,5 +1,7 @@
 # coding=utf-8
 import base64
+from PIL import Image
+from PIL import Image
 import itertools
 import logging
 import math
@@ -364,7 +366,6 @@ def draw_static(
 
 
 def get_resized_image(bytes_content, width):
-    from PIL import Image
 
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
@@ -762,7 +763,7 @@ def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
 
 @memoized_reset
 def get_jpeg_bytes(fn):
-    from PIL import Image
+
 
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
