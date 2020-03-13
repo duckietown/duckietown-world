@@ -24,7 +24,8 @@ def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se
 def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
     delta = t2 - t1
     if not delta > 0:
-        raise ValueError("invalid sequence")
+        msg = f"invalid delta {delta}"
+        raise ValueError(msg)
 
     x = SE2.multiply(SE2.inverse(q1), q2)
     xt = SE2.algebra_from_group(x)
