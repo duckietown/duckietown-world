@@ -158,7 +158,7 @@ def draw_static(
     fn_html = os.path.join(output_dir, "drawing.html")
 
     timestamps = get_sampling_points(root)
-    logger.info(f'timestamps: {timestamps}')
+    # logger.info(f'timestamps: {timestamps}')
     if len(timestamps) == 0:
         keyframes = SampledSequence[Timestamp]([0], [0])
     else:
