@@ -1,5 +1,5 @@
 # coding=utf-8
-__version__ = "5.3.11"
+__version__ = "5.3.12"
 
 
 # import zuper_json
