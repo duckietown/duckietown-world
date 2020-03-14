@@ -23,7 +23,7 @@ class Duckiebot(Vehicle):
             fill=self.color,
             # style='opacity:0.4',
             stroke_width="0.01",
-            stroke="darkred",
+            stroke=self.color, #"darkred",
         )
         rect.width = "0.1em"
         g.add(rect)
