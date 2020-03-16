@@ -1,5 +1,4 @@
 # coding=utf-8
-from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
@@ -8,7 +7,6 @@ from typing import Any, Dict, Optional
 # from duckietown_world.rules.rule import make_timeseries
 # from duckietown_world.seqs import SampledSequence
 from duckietown_world import SampledSequence
-from .misc import TimeseriesPlot
 
 __all__ = [
     # 'draw_logs_main',
@@ -54,14 +52,14 @@ __all__ = [
 #     return evaluated
 
 
-def timeseries_actions(log):
-    timeseries = OrderedDict()
-    sequences = OrderedDict()
-    sequences["action0"] = log.actions.transform_values(lambda _: _[0], float)
-    sequences["action1"] = log.actions.transform_values(lambda _: _[1], float)
-
-    timeseries["actions"] = TimeseriesPlot("Actions", "actions", sequences)
-    return timeseries
+# def timeseries_actions(log):
+#     timeseries = OrderedDict()
+#     sequences = OrderedDict()
+#     sequences["action0"] = log.actions.transform_values(lambda _: _[0], float)
+#     sequences["action1"] = log.actions.transform_values(lambda _: _[1], float)
+#
+#     timeseries["actions"] = TimeseriesPlot("Actions", "actions", sequences)
+#     return timeseries
 
 
 #
@@ -85,8 +83,8 @@ def timeseries_actions(log):
 @dataclass
 class RobotTrajectories:
     pose: SampledSequence
-    wheels_velocities: SampledSequence
-    actions: SampledSequence
+    # wheels_velocities: SampledSequence
+    # actions: SampledSequence
     velocity: SampledSequence
     observations: SampledSequence
     commands: SampledSequence
@@ -98,7 +96,6 @@ class SimulatorLog:
 
     render_time: Optional[Any]
     robots: Dict[str, RobotTrajectories]
-
 
 #
 # #
