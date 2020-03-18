@@ -6,7 +6,7 @@ import geometry as geo
 from duckietown_world.seqs import iterate_with_dt, SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder, Timestamp
 from duckietown_world.world_duckietown import GetLanePoseResult, LanePose
-from duckietown_world.world_duckietown.tile import relative_pose
+from ..world_duckietown.utils import relative_pose
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [

@@ -18,7 +18,6 @@ from duckietown_world.geo.measurements_utils import (
     iterate_by_class,
     IterateByTestResult,
 )
-from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
@@ -28,6 +27,8 @@ from .tile_coords import TileCoords
 from .types import SE2v
 
 __all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight"]
+
+from .utils import relative_pose
 
 
 class SignSlot(PlacedObject):
@@ -267,12 +268,6 @@ def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLaneP
 def translation_from_O3(pose) -> np.ndarray:
     _, t, _, _ = extract_pieces(pose)
     return t
-
-
-def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
-    assert isinstance(base, np.ndarray), base
-    assert isinstance(pose, np.ndarray), pose
-    return np.dot(np.linalg.inv(base), pose)
 
 
 class GetClosestLane:

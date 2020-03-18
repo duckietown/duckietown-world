@@ -2,13 +2,13 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
-from duckietown_world import SampledSequence, SE2Transform, DuckietownMap
+from duckietown_world import SampledSequence, SE2Transform
+from ..world_duckietown import DuckietownMap
 
 __all__ = [
     'RobotTrajectories',
     'SimulatorLog',
 ]
-
 
 
 @dataclass

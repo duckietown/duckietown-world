@@ -12,7 +12,7 @@ from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.geo.transforms import SE2value
 from duckietown_world.utils import memoized_reset, SE2_apply_R2, SE2_interpolate
 from zuper_commons.types import check_isinstance
-from .tile import relative_pose
+from .utils import relative_pose
 
 __all__ = ["LaneSegment", "LanePose"]
 

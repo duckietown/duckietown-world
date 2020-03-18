@@ -17,7 +17,8 @@ from zuper_commons.types import ZException
 from zuper_typing import debug_print
 from zuper_typing.exceptions import ZValueError
 from .duckietown_map import DuckietownMap
-from .tile import relative_pose, Tile, translation_from_O3
+from .tile import Tile, translation_from_O3
+from .utils import relative_pose
 from .tile_coords import TileCoords
 
 

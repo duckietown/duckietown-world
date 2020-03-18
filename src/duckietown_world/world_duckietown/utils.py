@@ -1,5 +1,8 @@
+import numpy as np
+
 import geometry as geo
 from duckietown_world import SampledSequence
+from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown.types import SE2v, se2v
 
@@ -31,3 +34,9 @@ def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
     xt = SE2.algebra_from_group(x)
     v = xt / delta
     return v
+
+
+def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
+    assert isinstance(base, np.ndarray), base
+    assert isinstance(pose, np.ndarray), pose
+    return np.dot(np.linalg.inv(base), pose)
