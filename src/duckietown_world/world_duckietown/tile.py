@@ -1,6 +1,6 @@
 # coding=utf-8
 from dataclasses import dataclass
-from typing import Any
+from typing import Iterator, Tuple
 
 import numpy as np
 from svgwrite.container import Use
@@ -14,29 +14,20 @@ from duckietown_world.geo import (
     Transform,
     TransformSequence,
 )
+from duckietown_world.geo.measurements_utils import (
+    iterate_by_class,
+    IterateByTestResult,
+)
 from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
-from duckietown_world.world_duckietown.types import SE2v
 from geometry import extract_pieces
+from .lane_segment import LanePose, LaneSegment
+from .tile_coords import TileCoords
+from .types import SE2v
 
 __all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight"]
-
-
-@dataclass
-class GetLanePoseResult:
-    tile: Any
-    tile_fqn: Any
-    tile_transform: Any
-    tile_relative_pose: Any
-    lane_segment: Any
-    lane_segment_fqn: Any
-    lane_pose: Any
-    lane_segment_relative_pose: Any
-    tile_coords: Any
-    lane_segment_transform: Any
-    center_point: Any
 
 
 class SignSlot(PlacedObject):
@@ -182,14 +173,22 @@ class Tile(PlacedObject):
         draw_children(drawing, self, g)
 
 
-def get_lane_poses(dw, q: SE2v, tol=0.000001):
-    from duckietown_world.geo.measurements_utils import (
-        iterate_by_class,
-        IterateByTestResult,
-    )
-    from .lane_segment import LaneSegment
-    from duckietown_world import TileCoords
+@dataclass
+class GetLanePoseResult:
+    tile: Tile
+    tile_fqn: Tuple[str, ...]
+    tile_transform: TransformSequence
+    tile_relative_pose: Matrix2D
+    lane_segment: LaneSegment
+    lane_segment_fqn: Tuple[str, ...]
+    lane_pose: LanePose
+    lane_segment_relative_pose: Matrix2D
+    tile_coords: TileCoords
+    lane_segment_transform: TransformSequence
+    center_point: Matrix2D
 
+
+def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLanePoseResult]:
     for it in iterate_by_class(dw, Tile):
         assert isinstance(it, IterateByTestResult), it
         assert isinstance(it.object, Tile), it.object
