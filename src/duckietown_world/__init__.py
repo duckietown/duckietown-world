@@ -1,5 +1,5 @@
 # coding=utf-8
-__version__ = "5.1.1"
+__version__ = "5.1.2"
 
 # import zuper_json
 import logging
