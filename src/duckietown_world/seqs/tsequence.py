@@ -51,27 +51,10 @@ class GenericSequence(Generic[X]):
 
 
 Sequence = GenericSequence
-
-import sys
-
-if sys.version_info[:2] == (3, 6):
-
-    class Base(GenericSequence):
-        pass
-
-
-elif sys.version_info[:2] == (3, 7):
-
-    class Base(GenericSequence):
-        pass
-
-
-else:
-    assert False, sys.version_info
-
+ 
 
 @dataclass
-class SampledSequence(Base):
+class SampledSequence(GenericSequence):
     """ A sampled time sequence. Only defined at certain points. """
 
     timestamps: List[Timestamp]
