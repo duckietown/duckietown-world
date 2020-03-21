@@ -7,10 +7,10 @@ bump-upload:
 
 bump:
 	bumpversion patch
-
-upload:
 	git push --tags
 	git push
+
+upload:
 	rm -f dist/*
 	rm -rf src/*.egg-info
 	python setup.py sdist
