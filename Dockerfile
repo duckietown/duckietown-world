@@ -4,7 +4,7 @@ WORKDIR /project
 
 COPY requirements.* ./
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.resolved
 
 COPY src .
 COPY setup.py .
