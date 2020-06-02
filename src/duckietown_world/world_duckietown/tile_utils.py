@@ -15,7 +15,7 @@ from duckietown_world.geo.transforms import SE2value, Transform
 from duckietown_world.world_duckietown.tile_map import ij_from_tilename
 from zuper_commons.types import ZException
 from zuper_typing import debug_print
-from zuper_typing.exceptions import ZValueError
+from zuper_commons.types import ZValueError
 from .duckietown_map import DuckietownMap
 from .tile import Tile, translation_from_O3
 from .utils import relative_pose
