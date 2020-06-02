@@ -61,6 +61,9 @@ class GenericSequence(Generic[X]):
         """
 
 
+Sequence = GenericSequence
+ 
+
 @dataclass
 class SampledSequence(GenericSequence):
     """ A sampled time sequence. Only defined at certain points. """
