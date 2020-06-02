@@ -27,7 +27,7 @@ coveralls==1.11.1
 jupyter==1.0.0
 nbconvert==5.6.1
 dataclasses==0.6; python_version < '3.7'
-zuper-typing-z6==6.0.59
+zuper-typing-z6==6.0.66
 codecov==2.0.16
 pipdeptree==0.13.2
 compmake==4.0.4

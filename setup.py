@@ -37,7 +37,7 @@ install_requires = [
     "plotly",
     "oyaml",
     "markdown",
-    "zuper-typing-z6>=6",
+    "zuper-typing-z6>=6.0.66",
 ]
 tests_require = ["comptests"]
 system_version = tuple(sys.version_info)[:3]
