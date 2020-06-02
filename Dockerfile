@@ -2,9 +2,9 @@ FROM python:3.6
 
 WORKDIR /project
 
-COPY requirements.txt .
+COPY requirements.* ./
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.resolved
 
 COPY src .
 COPY setup.py .

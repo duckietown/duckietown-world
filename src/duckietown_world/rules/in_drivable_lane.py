@@ -4,9 +4,9 @@ import numpy as np
 
 import geometry as geo
 from duckietown_world.seqs import iterate_with_dt, SampledSequence, UndefinedAtTime
-from duckietown_world.seqs.tsequence import SampledSequenceBuilder
+from duckietown_world.seqs.tsequence import SampledSequenceBuilder, Timestamp
 from duckietown_world.world_duckietown import GetLanePoseResult, LanePose
-from duckietown_world.world_duckietown.tile import relative_pose
+from ..world_duckietown.utils import relative_pose
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [
@@ -29,11 +29,11 @@ def integrate(sequence: SampledSequence[float]) -> SampledSequence[float]:
     timestamps = []
     values = []
     for _ in iterate_with_dt(sequence):
-        v0 = _.v0
+        v0 = float(_.v0)
         dt = _.dt
-        total += v0 * dt
+        total += float(v0 * dt)
 
-        timestamps.append(_.t0)
+        timestamps.append(Timestamp(_.t0))
         values.append(total)
 
     return SampledSequence[float](timestamps, values)

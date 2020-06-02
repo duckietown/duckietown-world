@@ -2,7 +2,7 @@
 
 import copy
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union, Callable
 
 import yaml
 from duckietown_serialization_ds1 import Serializable
@@ -108,7 +108,7 @@ class PlacedObject(Serializable):
             # logger.debug('no _copy for %s' % type(self).__name__)
             return copy.copy(self)
 
-    def filter_all(self, f) -> "PlacedObject":
+    def filter_all(self, f: "Callable[[PlacedObject], PlacedObject]") -> "PlacedObject":
         children = {}
         spatial_relations = {}
 
@@ -183,7 +183,7 @@ class PlacedObject(Serializable):
 
         return res
 
-    def set_object(self, name: str, ob: 'PlacedObject', **transforms: SpatialRelation):
+    def set_object(self, name: str, ob: "PlacedObject", **transforms: SpatialRelation):
         assert self is not ob
         self.children[name] = ob
         type2klass = {"ground_truth": GroundTruth}
@@ -209,11 +209,13 @@ class PlacedObject(Serializable):
     def get_footprint(self):
         return RectangularArea([-0.1, -0.1], [0.1, 0.1])
 
+
 def get_child_transform(po: PlacedObject, child: str) -> Transform:
     for _ in po.spatial_relations.values():
         if _.a == () and _.b == (child,):
             return _.transform
     raise KeyError(child)
+
 
 def get_object_tree(
     po: PlacedObject,

@@ -26,7 +26,9 @@ class RectangularArea(Serializable, Region):
 
     def contains(self, p, epsilon=0.0):
         pmin, pmax = self.pmin, self.pmax
-        return (pmin[0] - epsilon <= p[0] <= pmax[0] + epsilon) and (pmin[1] - epsilon <= p[1] <= pmax[1]+epsilon)
+        return (pmin[0] - epsilon <= p[0] <= pmax[0] + epsilon) and (
+            pmin[1] - epsilon <= p[1] <= pmax[1] + epsilon
+        )
 
     def distance(self, p) -> float:
         pmin, pmax = self.pmin, self.pmax

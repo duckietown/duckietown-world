@@ -4,19 +4,17 @@ import itertools
 import logging
 import math
 import os
-from collections import OrderedDict
 from dataclasses import dataclass
-from typing import *
-from typing import Optional
+from typing import Dict, Optional, Sequence, Tuple
 
 import svgwrite
 from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
+from PIL import Image
 from six import BytesIO
 
-from contracts import check_isinstance
 from duckietown_world import logger
-from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, RectangularArea)
+from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, PlacedObject, RectangularArea)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
@@ -140,13 +138,14 @@ def recurive_draw_list(draw_list, prefix):
 
 
 def draw_static(
-    root,
-    output_dir,
-    pixel_size=(480, 480),
+    root: PlacedObject,
+    output_dir: str,
+    pixel_size: Tuple[int, int] = (480, 480),
     area=None,
     images=None,
     timeseries=None,
     height_of_stored_images: Optional[int] = None,
+    main_robot_name: Optional[str] = None
 ) -> Sequence[str]:
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
 
@@ -159,6 +158,7 @@ def draw_static(
     fn_html = os.path.join(output_dir, "drawing.html")
 
     timestamps = get_sampling_points(root)
+    # logger.info(f'timestamps: {timestamps}')
     if len(timestamps) == 0:
         keyframes = SampledSequence[Timestamp]([0], [0])
     else:
@@ -363,17 +363,17 @@ def draw_static(
 
 
 def get_resized_image(bytes_content, width):
-    from PIL import Image
-
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
     idata = BytesIO(bytes_content)
-    image = Image.open(idata).convert("RGB")
+    with Image.open(idata) as _:
+        image = _.convert("RGB")
     size = image.size
     height = int(size[1] * 1.0 / size[0] * width)
     image = image.resize((width, height))
     out = BytesIO()
     image.save(out, format="jpeg")
+
     return out.getvalue()
 
 
@@ -397,8 +397,9 @@ class TimeseriesPlot:
 
 
 def make_tabs(timeseries):
-    tabs = OrderedDict()
+    tabs = {}
     import plotly.offline as offline
+    include_plotlyjs = True
 
     i = 0
     for name, tsp in timeseries.items():
@@ -449,13 +450,14 @@ def make_tabs(timeseries):
                 fig.append_trace(scatter, 1, j + 1)
 
             # include_plotlyjs = True if i == 0 else False
-            include_plotlyjs = True
+
             res = offline.plot(
                 fig,
                 output_type="div",
                 show_link=False,
                 include_plotlyjs=include_plotlyjs,
             )
+            include_plotlyjs = False
             td.append(bs(res))
             i += 1
 
@@ -469,17 +471,13 @@ def make_tabs(timeseries):
     return render_tabs(tabs)
 
 
-import six
-
-
-class Tab(object):
-    def __init__(self, title, content):
-        check_isinstance(title, six.string_types)
+class Tab:
+    def __init__(self, title: str, content):
         self.title = title
         self.content = content
 
 
-def render_tabs(tabs):
+def render_tabs(tabs: Dict[str, Tab]) -> Tag:
     div_buttons = Tag(name="div")
     div_buttons.attrs["class"] = "tab"
     div_content = Tag(name="div")
@@ -505,7 +503,7 @@ def render_tabs(tabs):
         div_content.append(div_c)
 
     script = Tag(name="script")
-    # language=javascript
+    # language=js
     js = """
 function open_tab(evt, cityName) {
     // Declare all variables
@@ -681,7 +679,7 @@ def make_html_slider(
     # language=html
     doc = """\
 <html lang='en'>
-<head></head>
+<head><title></title></head>
 <body>
 <style>
 /*svg {{ background-color: #eee;}}*/
@@ -761,12 +759,11 @@ def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
 
 @memoized_reset
 def get_jpeg_bytes(fn):
-    from PIL import Image
-
     pl = logging.getLogger("PIL")
     pl.setLevel(logging.ERROR)
 
-    image = Image.open(fn).convert("RGB")
+    with Image.open(fn) as _:
+        image = _.convert("RGB")
 
     out = BytesIO()
     image.save(out, format="jpeg")
@@ -776,8 +773,6 @@ def get_jpeg_bytes(fn):
 def bs(fragment: str):
     """ Returns the contents wrapped in an element called "fragment".
         Expects fragment as a str in utf-8 """
-
-    check_isinstance(fragment, six.string_types)
 
     s = u"<fragment>%s</fragment>" % fragment
 

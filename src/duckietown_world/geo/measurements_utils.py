@@ -2,7 +2,7 @@
 import networkx as nx
 import numpy as np
 from dataclasses import dataclass
-from duckietown_world.seqs import Sequence
+from duckietown_world.seqs import GenericSequence
 from networkx import MultiDiGraph
 from typing import Callable, Iterator, List, Tuple
 
@@ -82,6 +82,7 @@ def get_flattened_measurement_graph(
 ) -> nx.DiGraph:
     from duckietown_world import TransformSequence
     from duckietown_world import SE2Transform
+
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()
@@ -101,7 +102,7 @@ def get_flattened_measurement_graph(
 
             transforms.append(sr)
 
-        if any(isinstance(_, Sequence) for _ in transforms):
+        if any(isinstance(_, GenericSequence) for _ in transforms):
             res = VariableTransformSequence(transforms)
         else:
             res = TransformSequence(transforms)
