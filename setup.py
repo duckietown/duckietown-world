@@ -28,7 +28,7 @@ install_requires = [
     "networkx>=2.2,<3",
     "duckietown-serialization-ds1<2",
     "svgwrite",
-    "PyGeometry>=1.5.6",
+    "PyGeometry-z6",
     "beautifulsoup4>=4.6.3",
     "lxml",
     "pillow",
@@ -39,7 +39,7 @@ install_requires = [
     "markdown",
     "zuper-typing-z6>=6.0.66",
 ]
-tests_require = ["comptests"]
+tests_require = ["comptests-z6"]
 system_version = tuple(sys.version_info)[:3]
 
 if system_version < (3, 7):
