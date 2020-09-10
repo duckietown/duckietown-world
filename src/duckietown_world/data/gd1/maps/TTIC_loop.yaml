@@ -1,0 +1,242 @@
+objects:
+  tag301:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.932
+        - 0.657
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 301
+  tag302:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.747
+        - 0.192
+        theta_deg: 135
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 302
+  tag303:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.547
+        - 0.547
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 303
+  tag304:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.657
+        - 1.472
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 304
+  tag305:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.332
+        - 1.142
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 305
+  tag307:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.332
+        - 1.252
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 307
+  tag308:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.037
+        - 2.882
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 308
+  tag309:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.157
+        - 3.4219999999999997
+        theta_deg: 45
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 309
+  tag310:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.072
+        - 2.802
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 310
+  tag311:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.012
+        - 2.557
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 311
+  tag312:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.882
+        - 2.432
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 312
+  tag313:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.881
+        - 1.737
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 313
+  tag314:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.2769999999999997
+        - 1.547
+        theta_deg: 315
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 314
+  tag315:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.8169999999999997
+        - 3.4069999999999996
+        theta_deg: 315
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 315
+  tag318:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.177
+        - 0.832
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 318
+  tag327:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.827
+        - 0.157
+        theta_deg: 225
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 327
+tile_size: 0.595
+tiles:
+- - curve_left/W
+  - straight/W
+  - straight/W
+  - straight/W
+  - curve_left/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - straight/N
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/N
+- - curve_left/S
+  - curve_right/E
+  - asphalt
+  - asphalt
+  - straight/N
+- - asphalt
+  - curve_left/S
+  - straight/E
+  - straight/E
+  - curve_left/E
+version: 1
