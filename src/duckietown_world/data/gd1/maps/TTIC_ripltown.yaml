@@ -213,29 +213,29 @@ tiles:
   - straight
   - 3way_right
   - straight
+  - straight
   - curve_left/N
 - - straight/S
   - grass
-  - straight/N
+  - straight/S
   - grass
-  - straight/N
+  - grass
+  - straight/S
 - - 3way_right/N
   - straight
   - 3way_left
-  - straight
-  - 3way_left/N
+  - grass
+  - grass
+  - straight/S
 - - straight/S
   - grass
+  - straight/S
   - grass
-  - grass
-  - straight/N
+  - curve_left/W
+  - curve_left/E
 - - curve_right/W
-  - curve_left/N
-  - grass
-  - grass
-  - straight/N
-- - asphalt
-  - curve_right/W
   - straight
+  - 3way_left
   - straight
   - curve_left/E
+  - asphalt
