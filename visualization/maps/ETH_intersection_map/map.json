@@ -1707,258 +1707,279 @@
                         },
                         "tile-2-2": {
                             "~Tile": {
-                                "kind": "3way_left",
-                                "drivable": false
+                                "kind": "3way_right",
+                                "drivable": true
                             },
                             "~PlacedObject": {
                                 "children": {
-                                    "3way_left": {
+                                    "3way_right": {
                                         "~PlacedObject": {
                                             "children": {
-                                                "west_go_straight": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
+                                                "template": {
+                                                    "~PlacedObject": {
+                                                        "children": {
+                                                            "west_go_straight": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        }
                                                                     ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            },
+                                                            "west_go_left": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": 45
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": 90,
+                                                                                "p": [
+                                                                                    0.22,
+                                                                                    0.5
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            },
+                                                            "north_go_left": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": 45
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": 90,
+                                                                                "p": [
+                                                                                    0.22,
+                                                                                    0.5
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            },
+                                                            "north_go_right": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": -45,
+                                                                                "p": [
+                                                                                    -0.3,
+                                                                                    -0.3
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": -90,
+                                                                                "p": [
+                                                                                    -0.22,
+                                                                                    -0.5
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            },
+                                                            "east_go_right": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": -45,
+                                                                                "p": [
+                                                                                    -0.3,
+                                                                                    -0.3
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "theta_deg": -90,
+                                                                                "p": [
+                                                                                    -0.22,
+                                                                                    -0.5
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            },
+                                                            "east_go_straight": {
+                                                                "~LaneSegment": {
+                                                                    "width": 0.376,
+                                                                    "control_points": [
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    -0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "~SE2Transform": {
+                                                                                "p": [
+                                                                                    0.5,
+                                                                                    -0.22
+                                                                                ]
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "~PlacedObject": {}
+                                                            }
+                                                        },
+                                                        "spatial_relations": {
+                                                            "west_go_straight": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "west_go_straight"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {}
+                                                                    }
                                                                 }
                                                             },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        0.5,
-                                                                        -0.22
-                                                                    ]
+                                                            "west_go_left": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "west_go_left"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {}
+                                                                    }
+                                                                }
+                                                            },
+                                                            "north_go_left": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "north_go_left"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {
+                                                                            "theta_deg": -90
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "north_go_right": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "north_go_right"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {
+                                                                            "theta_deg": -90
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "east_go_right": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "east_go_right"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {
+                                                                            "theta_deg": 180
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "east_go_straight": {
+                                                                "~GroundTruth": {},
+                                                                "~SpatialRelation": {
+                                                                    "b": [
+                                                                        "east_go_straight"
+                                                                    ],
+                                                                    "transform": {
+                                                                        "~SE2Transform": {
+                                                                            "theta_deg": 180
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
-                                                },
-                                                "west_go_left": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": 45
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": 90,
-                                                                    "p": [
-                                                                        0.22,
-                                                                        0.5
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
-                                                },
-                                                "north_go_left": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": 45
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": 90,
-                                                                    "p": [
-                                                                        0.22,
-                                                                        0.5
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
-                                                },
-                                                "north_go_right": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": -45,
-                                                                    "p": [
-                                                                        -0.3,
-                                                                        -0.3
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": -90,
-                                                                    "p": [
-                                                                        -0.22,
-                                                                        -0.5
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
-                                                },
-                                                "east_go_right": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": -45,
-                                                                    "p": [
-                                                                        -0.3,
-                                                                        -0.3
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "theta_deg": -90,
-                                                                    "p": [
-                                                                        -0.22,
-                                                                        -0.5
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
-                                                },
-                                                "east_go_straight": {
-                                                    "~LaneSegment": {
-                                                        "width": 0.376,
-                                                        "control_points": [
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        -0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            },
-                                                            {
-                                                                "~SE2Transform": {
-                                                                    "p": [
-                                                                        0.5,
-                                                                        -0.22
-                                                                    ]
-                                                                }
-                                                            }
-                                                        ]
-                                                    },
-                                                    "~PlacedObject": {}
+                                                        }
+                                                    }
                                                 }
                                             },
                                             "spatial_relations": {
-                                                "west_go_straight": {
+                                                "template": {
                                                     "~GroundTruth": {},
                                                     "~SpatialRelation": {
                                                         "b": [
-                                                            "west_go_straight"
-                                                        ],
-                                                        "transform": {
-                                                            "~SE2Transform": {}
-                                                        }
-                                                    }
-                                                },
-                                                "west_go_left": {
-                                                    "~GroundTruth": {},
-                                                    "~SpatialRelation": {
-                                                        "b": [
-                                                            "west_go_left"
-                                                        ],
-                                                        "transform": {
-                                                            "~SE2Transform": {}
-                                                        }
-                                                    }
-                                                },
-                                                "north_go_left": {
-                                                    "~GroundTruth": {},
-                                                    "~SpatialRelation": {
-                                                        "b": [
-                                                            "north_go_left"
-                                                        ],
-                                                        "transform": {
-                                                            "~SE2Transform": {
-                                                                "theta_deg": -90
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "north_go_right": {
-                                                    "~GroundTruth": {},
-                                                    "~SpatialRelation": {
-                                                        "b": [
-                                                            "north_go_right"
-                                                        ],
-                                                        "transform": {
-                                                            "~SE2Transform": {
-                                                                "theta_deg": -90
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "east_go_right": {
-                                                    "~GroundTruth": {},
-                                                    "~SpatialRelation": {
-                                                        "b": [
-                                                            "east_go_right"
-                                                        ],
-                                                        "transform": {
-                                                            "~SE2Transform": {
-                                                                "theta_deg": 180
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                "east_go_straight": {
-                                                    "~GroundTruth": {},
-                                                    "~SpatialRelation": {
-                                                        "b": [
-                                                            "east_go_straight"
+                                                            "template"
                                                         ],
                                                         "transform": {
                                                             "~SE2Transform": {
@@ -1976,7 +1997,7 @@
                                         "~GroundTruth": {},
                                         "~SpatialRelation": {
                                             "b": [
-                                                "3way_left"
+                                                "3way_right"
                                             ],
                                             "transform": {
                                                 "~SE2Transform": {}
@@ -3578,7 +3599,7 @@
                                     "~TileCoords": {
                                         "i": 2,
                                         "j": 2,
-                                        "orientation": "E"
+                                        "orientation": "S"
                                     }
                                 }
                             }

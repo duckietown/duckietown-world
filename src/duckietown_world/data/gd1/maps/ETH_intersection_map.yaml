@@ -236,7 +236,7 @@ tiles:
   - straight/S
 - - 3way_right/N
   - straight
-  - 3way_left
+  - 3way_right/S
   - grass
   - grass
   - straight/S
