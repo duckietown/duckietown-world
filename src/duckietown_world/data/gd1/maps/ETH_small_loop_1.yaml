@@ -1,0 +1,90 @@
+objects:
+  tag321:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.6119999999999999
+        - 0.14800000000000002
+        theta_deg: 225
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 321
+  tag322:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.734
+        - -0.044
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 322
+  tag323:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.14600000000000002
+        - 0.14400000000000002
+        theta_deg: 135
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 323
+  tag324:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.14400000000000002
+        - 1.607
+        theta_deg: 45
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 324
+  tag326:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.1059999999999999
+        - 1.107
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 326
+  tag327:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.613
+        - 1.609
+        theta_deg: 315
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 327
+tile_size: 0.585
+tiles:
+- - curve_left/W
+  - straight/W
+  - curve_left/N
+- - straight/S
+  - asphalt
+  - straight/N
+- - curve_left/S
+  - straight/E
+  - curve_left/E
