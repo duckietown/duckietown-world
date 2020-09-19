@@ -1,5 +1,6 @@
 import os
 
+import yaml
 import numpy as np
 
 import geometry as geo
@@ -51,8 +52,6 @@ def test_pwm1():
     tile_size: 0.61
     """
 
-    import yaml
-
     map_data = yaml.load(map_data_yaml)
 
     root = construct_map(map_data)
@@ -96,9 +95,7 @@ def angular_from_se2(x: se2v) -> float:
     return angular
 
 
-def integrate_dynamics(
-    factory, q0, v0, dt, t_max, fixed_commands
-) -> SampledSequence[TSE2v]:
+def integrate_dynamics(factory, q0, v0, dt, t_max, fixed_commands) -> SampledSequence[TSE2v]:
     # starting time
     t0 = 0
     c0 = q0, v0

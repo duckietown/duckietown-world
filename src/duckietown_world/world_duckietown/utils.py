@@ -1,5 +1,8 @@
+import numpy as np
+
 import geometry as geo
 from duckietown_world import SampledSequence
+from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.world_duckietown.types import SE2v, se2v
 
@@ -24,9 +27,16 @@ def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se
 def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
     delta = t2 - t1
     if not delta > 0:
-        raise ValueError("invalid sequence")
+        msg = f"invalid delta {delta}"
+        raise ValueError(msg)
 
     x = SE2.multiply(SE2.inverse(q1), q2)
     xt = SE2.algebra_from_group(x)
     v = xt / delta
     return v
+
+
+def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
+    assert isinstance(base, np.ndarray), base
+    assert isinstance(pose, np.ndarray), pose
+    return np.dot(np.linalg.inv(base), pose)

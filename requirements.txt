@@ -1,31 +1,33 @@
 
-PyYAML
+PyYAML==5.3
 
-six==1.11.0
-networkx==2.2
-svgwrite==1.1.12
-pillow
-duckietown-serialization-ds1==1.0.7
+six==1.14.0
+networkx>=2.4,<3
+svgwrite==1.3.1
+pillow==7.0.0
+duckietown-serialization-ds1>=1.0.9,<2
 
-PyGeometry==1.5.6
+PyGeometry-z6
 
-beautifulsoup4>=4.6.3
-lxml
-future
-scipy
-oyaml
-plotly
-markdown
-PyContracts>=1.8.12
+beautifulsoup4>=4.8.2
+lxml==4.5.0
+future==0.18.2
+scipy==1.4.1
+oyaml==0.9
+plotly==4.5.3
+markdown==3.2.1
+PyContracts3
 
 # testing
-comptests==1.4.34
-coverage
-coveralls
+comptests-z6
+coverage==5.0.3
+coveralls==1.11.1
 
 
-jupyter
-nbconvert
-dataclasses
-zuper-typing-z5>=5.0.12
-codecov
+jupyter==1.0.0
+nbconvert==5.6.1
+dataclasses==0.6; python_version < '3.7'
+zuper-typing-z6==6.0.66
+codecov==2.0.16
+pipdeptree==0.13.2
+compmake-z6

@@ -54,9 +54,7 @@ class GenericObject(PlacedObject):
 
 class Duckie(PlacedObject):
     def draw_svg(self, drawing, g):
-        c = drawing.circle(
-            center=(0, 0), r=0.065, fill="yellow", stroke="black", stroke_width=0.01
-        )
+        c = drawing.circle(center=(0, 0), r=0.065, fill="yellow", stroke="black", stroke_width=0.01)
         g.add(c)
 
 
@@ -66,9 +64,7 @@ class Decoration(PlacedObject):
 
 class Tree(Decoration):
     def draw_svg(self, drawing, g):
-        c = drawing.circle(
-            center=(0, 0), r=0.25, fill="green", stroke="black", stroke_width=0.01
-        )
+        c = drawing.circle(center=(0, 0), r=0.25, fill="green", stroke="black", stroke_width=0.01)
         g.add(c)
 
 
@@ -78,9 +74,7 @@ class Vehicle(PlacedObject):
 
 class Cone(PlacedObject):
     def draw_svg(self, drawing, g):
-        c = drawing.circle(
-            center=(0, 0), r=0.03, fill="orange", stroke="black", stroke_width=0.01
-        )
+        c = drawing.circle(center=(0, 0), r=0.03, fill="orange", stroke="black", stroke_width=0.01)
         g.add(c)
 
 
@@ -88,11 +82,7 @@ class Bus(Vehicle):
     def draw_svg(self, drawing, g):
         L, W = 0.3, 0.2
         c = drawing.rect(
-            insert=(-L / 2, -W / 2),
-            fill="grey",
-            size=(L, W),
-            stroke_width="0.01",
-            stroke="#eeeeee",
+            insert=(-L / 2, -W / 2), fill="grey", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
         )
         g.add(c)
 
@@ -101,11 +91,7 @@ class Truck(Vehicle):
     def draw_svg(self, drawing, g):
         L, W = 0.4, 0.2
         c = drawing.rect(
-            insert=(-L / 2, -W / 2),
-            fill="blue",
-            size=(L, W),
-            stroke_width="0.01",
-            stroke="#eeeeee",
+            insert=(-L / 2, -W / 2), fill="blue", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
         )
         g.add(c)
 
@@ -114,11 +100,7 @@ class House(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2),
-            fill="red",
-            size=(L, W),
-            stroke_width="0.01",
-            stroke="#eeeeee",
+            insert=(-L / 2, -W / 2), fill="red", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
         )
         g.add(c)
 
@@ -127,11 +109,7 @@ class Barrier(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2),
-            fill="pink",
-            size=(L, W),
-            stroke_width="0.01",
-            stroke="#eeeeee",
+            insert=(-L / 2, -W / 2), fill="pink", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
         )
         g.add(c)
 
@@ -141,11 +119,7 @@ class Building(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2),
-            fill="red",
-            size=(L, W),
-            stroke_width="0.01",
-            stroke="#eeeeee",
+            insert=(-L / 2, -W / 2), fill="red", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
         )
         g.add(c)
 
@@ -186,7 +160,8 @@ class Sign(PlacedObject):
             g.add(c)
 
         else:
-            texture = open(fn, "rb").read()
+            with open(fn, "rb") as _:
+                texture = _.read()
             from duckietown_world.world_duckietown.tile import data_encoded_for_src
 
             href = data_encoded_for_src(texture, mime_from_fn(fn))

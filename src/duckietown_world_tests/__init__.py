@@ -8,6 +8,8 @@ from .tags import *
 from .world_building import *
 from .sampling_poses import *
 from .pwm_dynamics import *
+from .lane_at_point import *
+from .typing_tests import *
 
 #
 # def jobs_comptests(context):

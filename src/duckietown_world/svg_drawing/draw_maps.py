@@ -41,16 +41,14 @@ def draw_maps_main(args=None):
         # print('written to %s' % fn)
 
 
-def draw_map(output, duckietown_map):
+def draw_map(output: str, duckietown_map: "DuckietownMap") -> None:
     from duckietown_world.world_duckietown import DuckietownMap
 
     if not os.path.exists(output):
         os.makedirs(output)
     assert isinstance(duckietown_map, DuckietownMap)
 
-    fns = draw_static(
-        duckietown_map, output_dir=output, pixel_size=(640, 640), area=None
-    )
+    fns = draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
     for fn in fns:
         logger.info("Written to %s" % fn)
 

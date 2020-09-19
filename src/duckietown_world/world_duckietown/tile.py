@@ -1,49 +1,40 @@
 # coding=utf-8
 from dataclasses import dataclass
-from typing import Any
+from typing import Iterator, Tuple
 
 import numpy as np
 from svgwrite.container import Use
 
-from contracts import contract
 from duckietown_world import logger
 from duckietown_world.geo import (
+    Matrix2D,
     PlacedObject,
     RectangularArea,
-    TransformSequence,
-    Matrix2D,
     SE2Transform,
     Transform,
+    TransformSequence,
 )
-from duckietown_world.geo.transforms import SE2value
+from duckietown_world.geo.measurements_utils import (
+    iterate_by_class,
+    IterateByTestResult,
+)
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
-from duckietown_world.world_duckietown.types import SE2v
 from geometry import extract_pieces
+from .lane_segment import LanePose, LaneSegment
+from .tile_coords import TileCoords
+from .types import SE2v
 
 __all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight"]
 
-
-@dataclass
-class GetLanePoseResult:
-    tile: Any
-    tile_fqn: Any
-    tile_transform: Any
-    tile_relative_pose: Any
-    lane_segment: Any
-    lane_segment_fqn: Any
-    lane_pose: Any
-    lane_segment_relative_pose: Any
-    tile_coords: Any
-    lane_segment_transform: Any
-    center_point: Any
+from .utils import relative_pose
 
 
 class SignSlot(PlacedObject):
     """ Represents a slot where you can put a sign. """
 
-    L = 0.1
+    L = 0.065 / 0.61
 
     def get_footprint(self):
         L = SignSlot.L
@@ -135,14 +126,13 @@ class Tile(PlacedObject):
     def draw_svg(self, drawing, g):
         T = 0.562 / 0.585
         S = 1.0
-        rect = drawing.rect(
-            insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none"
-        )
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none")
         g.add(rect)
 
         if self.fn:
             # texture = get_jpeg_bytes(self.fn)
-            texture = open(self.fn, "rb").read()
+            with open(self.fn, "rb") as _:
+                texture = _.read()
             if b"git-lfs" in texture:
                 msg = f"The file {self.fn} is a Git LFS pointer. Repo not checked out correctly."
                 raise Exception(msg)
@@ -182,14 +172,22 @@ class Tile(PlacedObject):
         draw_children(drawing, self, g)
 
 
-def get_lane_poses(dw, q: SE2v, tol=0.000001):
-    from duckietown_world.geo.measurements_utils import (
-        iterate_by_class,
-        IterateByTestResult,
-    )
-    from .lane_segment import LaneSegment
-    from duckietown_world import TileCoords
+@dataclass
+class GetLanePoseResult:
+    tile: Tile
+    tile_fqn: Tuple[str, ...]
+    tile_transform: TransformSequence
+    tile_relative_pose: Matrix2D
+    lane_segment: LaneSegment
+    lane_segment_fqn: Tuple[str, ...]
+    lane_pose: LanePose
+    lane_segment_relative_pose: Matrix2D
+    tile_coords: TileCoords
+    lane_segment_transform: TransformSequence
+    center_point: Matrix2D
 
+
+def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLanePoseResult]:
     for it in iterate_by_class(dw, Tile):
         assert isinstance(it, IterateByTestResult), it
         assert isinstance(it.object, Tile), it.object
@@ -215,15 +213,11 @@ def get_lane_poses(dw, q: SE2v, tol=0.000001):
             lane_segment_fqn = tile_fqn + it2.fqn
             assert isinstance(lane_segment, LaneSegment), lane_segment
             lane_segment_wrt_tile = it2.transform_sequence.asmatrix2d()
-            lane_segment_relative_pose = relative_pose(
-                lane_segment_wrt_tile.m, tile_relative_pose
-            )
+            lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile.m, tile_relative_pose)
             lane_segment_transform = TransformSequence(
                 tile_transform.transforms + it2.transform_sequence.transforms
             )
-            lane_pose = lane_segment.lane_pose_from_SE2(
-                lane_segment_relative_pose, tol=tol
-            )
+            lane_pose = lane_segment.lane_pose_from_SE2(lane_segment_relative_pose, tol=tol)
 
             M = lane_segment_transform.asmatrix2d().m
             center_point = lane_pose.center_point.as_SE2()
@@ -231,11 +225,7 @@ def get_lane_poses(dw, q: SE2v, tol=0.000001):
             center_point_abs = np.dot(M, center_point)
             center_point_abs_t = Matrix2D(center_point_abs)
 
-            if (
-                lane_pose.along_inside
-                and lane_pose.inside
-                and lane_pose.correct_direction
-            ):
+            if lane_pose.along_inside and lane_pose.inside and lane_pose.correct_direction:
                 yield GetLanePoseResult(
                     tile=tile,
                     tile_fqn=tile_fqn,
@@ -265,16 +255,9 @@ def get_lane_poses(dw, q: SE2v, tol=0.000001):
         #     logger.warning(msg)
 
 
-@contract(returns="array[2]")  # pose='O3',
 def translation_from_O3(pose) -> np.ndarray:
     _, t, _, _ = extract_pieces(pose)
     return t
-
-
-def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
-    assert isinstance(base, np.ndarray), base
-    assert isinstance(pose, np.ndarray), pose
-    return np.dot(np.linalg.inv(base), pose)
 
 
 class GetClosestLane:
@@ -304,9 +287,7 @@ class Anchor(PlacedObject):
 
     def draw_svg(self, drawing, g):
         draw_axes(drawing, g, klass="anchor-axes")
-        c = drawing.circle(
-            center=(0, 0), r=0.03, fill="blue", stroke="black", stroke_width=0.001
-        )
+        c = drawing.circle(center=(0, 0), r=0.03, fill="blue", stroke="black", stroke_width=0.001)
         g.add(c)
 
 
@@ -329,12 +310,8 @@ def create_lane_highlight(poses_sequence: SampledSequence, dw):
             lane_segment = lane_pose_result.lane_segment
             rt = lane_pose_result.lane_segment_transform
             s = SampledSequence[Transform]([timestamp], [rt])
-            visualization.set_object(
-                "ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s
-            )
+            visualization.set_object("ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s)
             p = SampledSequence[Transform]([timestamp], [lane_pose_result.center_point])
-            visualization.set_object(
-                "ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p
-            )
+            visualization.set_object("ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p)
 
     return lane_pose_results

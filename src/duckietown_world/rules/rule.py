@@ -84,11 +84,7 @@ class RuleEvaluationResult:
     ):
         check_isinstance(name, tuple)
         self.metrics[name] = EvaluatedMetric(
-            total=total,
-            incremental=incremental,
-            title=title,
-            description=description,
-            cumulative=cumulative,
+            total=total, incremental=incremental, title=title, description=description, cumulative=cumulative,
         )
 
     def __repr__(self):
@@ -107,10 +103,7 @@ class Rule(metaclass=ABCMeta):
 
 
 def evaluate_rules(
-    poses_sequence,
-    interval: SampledSequence[Timestamp],
-    world: PlacedObject,
-    ego_name: str,
+    poses_sequence, interval: SampledSequence[Timestamp], world: PlacedObject, ego_name: str,
 ) -> Dict[str, RuleEvaluationResult]:
     from duckietown_world.world_duckietown import create_lane_highlight
 
@@ -165,8 +158,6 @@ def make_timeseries(evaluated) -> Dict[str, "TimeseriesPlot"]:
             kk = "/".join((k,) + km)
             # title = evaluated_metric.title + ( '(%s)' % evaluated_metric.title if km else "")
             title = evaluated_metric.title
-            timeseries[kk] = TimeseriesPlot(
-                title or kk, evaluated_metric.description, sequences
-            )
+            timeseries[kk] = TimeseriesPlot(title or kk, evaluated_metric.description, sequences)
 
     return timeseries

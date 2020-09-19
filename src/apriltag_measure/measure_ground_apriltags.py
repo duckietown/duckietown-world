@@ -42,9 +42,7 @@ def header(string: str):
 
 def separater(string: str = None):
     if string == None:
-        warning(
-            "--------------------------------------------------------------------------------------"
-        )
+        warning("--------------------------------------------------------------------------------------")
     else:
         warning(
             "--------------------------------------------------------------------------------------\n%s"
@@ -99,9 +97,7 @@ class Apriltag:
         return {
             "kind": "floor_tag",
             "pose": {"~SE2Transform": {"p": [self.x, self.y], "theta_deg": self.angle}},
-            "tag": {
-                "~TagInstance": {"family": "36h11", "size": 0.08, "tag_id": self.tag_id}
-            },
+            "tag": {"~TagInstance": {"family": "36h11", "size": 0.08, "tag_id": self.tag_id}},
         }
 
 
@@ -114,7 +110,7 @@ class Apriltag_measurer:
         elif modify_file:
             self.map_yaml = load_yaml_file(full_path)
             if "objects" not in self.map_yaml:
-                self.map_yaml['objects'] = dict()
+                self.map_yaml["objects"] = dict()
             self.ground_tag_dict = self.get_ground_tag_dict()
         else:
             self.map_yaml = create_empty_map_file()
@@ -134,35 +130,21 @@ class Apriltag_measurer:
         return apriltag_dict
 
     def get_at_dict(self, at_number):
-        x_count = input_int(
-            "give x coordinate of tile (first tile at origin is (0,0)) : "
-        )
+        x_count = input_int("give x coordinate of tile (first tile at origin is (0,0)) : ")
         if x_count is not None:
-            y_count = input_int(
-                "give y coordinate of tile (first tile at origin is (0,0)) : "
-            )
+            y_count = input_int("give y coordinate of tile (first tile at origin is (0,0)) : ")
             if y_count is not None:
-                x_measure = input_float(
-                    "give x measure in meters from interior side of tile : "
-                )
+                x_measure = input_float("give x measure in meters from interior side of tile : ")
                 if x_measure is not None:
-                    y_measure = input_float(
-                        "give y measure in meters from interior side of tile : "
-                    )
+                    y_measure = input_float("give y measure in meters from interior side of tile : ")
                     if y_measure is not None:
                         angle_measure = input_int(
                             "give angle of apriltag in degrees (turned as readable from origin is 0) : "
                         )
                         if angle_measure is not None:
-                            complete_x = (
-                                self.tile_size * x_count + x_measure + self.x_offset
-                            )
-                            complete_y = (
-                                self.tile_size * y_count + y_measure + self.y_offset
-                            )
-                            apriltag = Apriltag(
-                                at_number, complete_x, complete_y, angle_measure
-                            )
+                            complete_x = self.tile_size * x_count + x_measure + self.x_offset
+                            complete_y = self.tile_size * y_count + y_measure + self.y_offset
+                            apriltag = Apriltag(at_number, complete_x, complete_y, angle_measure)
                             return apriltag.to_dict()
         return {}
 
@@ -179,9 +161,7 @@ class Apriltag_measurer:
             if at_number < 0:
                 break
             if at_number < 300 or at_number >= 400:
-                warning(
-                    "This april tag number (%i) is not in the 300-399 range" % at_number
-                )
+                warning("This april tag number (%i) is not in the 300-399 range" % at_number)
                 continue_anyway = input("Are you sure you want to proceed? (y/n) : ")
                 if continue_anyway != "y":
                     continue
@@ -215,9 +195,7 @@ MAP_PATH = "src/duckietown_world/data/gd1/maps"
 def main():
     parser = argparse.ArgumentParser(description="")
 
-    parser.add_argument(
-        "map_name", type=str, help="name of the map to create or change"
-    )
+    parser.add_argument("map_name", type=str, help="name of the map to create or change")
 
     args = parser.parse_args()
 
@@ -241,25 +219,17 @@ def main():
         if not os.path.isdir(abs_path):
             error("the directory %s does not exist" % abs_path)
         else:
-            warning(
-                "file %s does not exist,\nbut directory %s is there."
-                % (full_path, abs_path)
-            )
-            new_file_asked = input(
-                "Do you want to create file %s ? (y/n) : " % map_name
-            )
+            warning("file %s does not exist,\nbut directory %s is there." % (full_path, abs_path))
+            new_file_asked = input("Do you want to create file %s ? (y/n) : " % map_name)
             if new_file_asked == "y":
                 new_file = False
             else:
-                error(
-                    "Program is closing as map file doesnt exist and is not to be created"
-                )
+                error("Program is closing as map file doesnt exist and is not to be created")
                 exit()
     else:
         header("File %s is already present." % map_name)
         continue_file = input(
-            "Would you like to load and modify april tag positions for %s ? (y/n) : "
-            % map_name
+            "Would you like to load and modify april tag positions for %s ? (y/n) : " % map_name
         )
         if continue_file == "y":
             modify_file = True

@@ -1,15 +1,14 @@
 # coding=utf-8
-from dataclasses import dataclass
-from typing import Tuple, List, Iterator, Callable
-
 import networkx as nx
 import numpy as np
+from dataclasses import dataclass
+from duckietown_world.seqs import GenericSequence
 from networkx import MultiDiGraph
+from typing import Callable, Iterator, List, Tuple
 
-from duckietown_world.seqs import Sequence
-from .placed_object import PlacedObject, FQN, SpatialRelation
+from .placed_object import FQN, PlacedObject, SpatialRelation
 from .rectangular_area import RectangularArea
-from .transforms import VariableTransformSequence, Transform
+from .transforms import TransformSequence, VariableTransformSequence
 
 __all__ = [
     "iterate_measurements_relations",
@@ -21,9 +20,7 @@ __all__ = [
 ]
 
 
-def iterate_measurements_relations(
-    po_name: FQN, po: PlacedObject
-) -> Iterator[Tuple[FQN, SpatialRelation]]:
+def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
     assert isinstance(po_name, tuple)
     for sr_name, sr in po.spatial_relations.items():
         a = po_name + sr.a
@@ -78,9 +75,10 @@ def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
     return static, dynamic
 
 
-def get_flattened_measurement_graph(
-    po: PlacedObject, include_root_to_self=False
-) -> nx.DiGraph:
+def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool = False) -> nx.DiGraph:
+    from duckietown_world import TransformSequence
+    from duckietown_world import SE2Transform
+
     G = get_meausurements_graph(po)
     G2 = nx.DiGraph()
     root_name = ()
@@ -100,17 +98,13 @@ def get_flattened_measurement_graph(
 
             transforms.append(sr)
 
-        from duckietown_world import TransformSequence
-
-        if any(isinstance(_, Sequence) for _ in transforms):
+        if any(isinstance(_, GenericSequence) for _ in transforms):
             res = VariableTransformSequence(transforms)
         else:
             res = TransformSequence(transforms)
         G2.add_edge(root_name, name, transform_sequence=res)
 
     if include_root_to_self:
-        from duckietown_world import SE2Transform
-
         transform_sequence = SE2Transform.identity()
         G2.add_edge(root_name, root_name, transform_sequence=transform_sequence)
 
@@ -120,7 +114,7 @@ def get_flattened_measurement_graph(
 @dataclass
 class IterateByTestResult:
     fqn: Tuple[str]
-    transform_sequence: List[Transform]
+    transform_sequence: TransformSequence
     object: PlacedObject
     parents: Tuple[PlacedObject, ...]
 
@@ -133,23 +127,20 @@ def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestRes
     yield from iterate_by_test(po, t)
 
 
-def iterate_by_test(
-    po: PlacedObject, testf: Callable[[PlacedObject], bool]
-) -> Iterator[IterateByTestResult]:
+def iterate_by_test(po: PlacedObject, testf: Callable[[PlacedObject], bool]) -> Iterator[IterateByTestResult]:
     G = get_flattened_measurement_graph(po, include_root_to_self=True)
     root_name = ()
+
     for name in G:
         ob = po.get_object_from_fqn(name)
+
         if testf(ob):
             transform_sequence = G.get_edge_data(root_name, name)["transform_sequence"]
 
             parents = get_parents(po, name)
 
             yield IterateByTestResult(
-                fqn=name,
-                transform_sequence=transform_sequence,
-                object=ob,
-                parents=parents,
+                fqn=name, transform_sequence=transform_sequence, object=ob, parents=parents,
             )
 
 

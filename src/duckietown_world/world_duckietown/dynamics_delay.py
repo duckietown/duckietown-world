@@ -17,9 +17,7 @@ class ApplyDelay(PlatformDynamicsFactory):
         self.delay = delay
         self.u0 = u0
 
-    def initialize(
-        self, c0: TSE2v, t0: float = 0, seed: int = None
-    ) -> PlatformDynamics:
+    def initialize(self, c0: TSE2v, t0: float = 0, seed: int = None) -> PlatformDynamics:
         """
             Returns the dynamics initalized at a certain configuration.
 
@@ -55,9 +53,7 @@ class DelayedDynamics(PlatformDynamics):
         a = np.array(self.timestamps)
         idx = np.searchsorted(a, t, side="left")
 
-        if idx > 0 and (
-            idx == len(a) or math.fabs(t - a[idx - 1]) < math.fabs(t - a[idx])
-        ):
+        if idx > 0 and (idx == len(a) or math.fabs(t - a[idx - 1]) < math.fabs(t - a[idx])):
             return idx, a[idx], self.commands[idx - 1]
         else:
             return idx, a[idx], self.commands[idx]

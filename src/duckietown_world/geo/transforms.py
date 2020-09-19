@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import geometry
 from abc import ABCMeta, abstractmethod
 from typing import NewType
 
@@ -9,6 +9,8 @@ from duckietown_serialization_ds1 import Serializable
 import geometry as geo
 from contracts import contract, new_contract
 from duckietown_world.seqs.tsequence import Timestamp
+from duckietown_world.seqs import GenericSequence
+
 
 __all__ = ["TransformSequence", "Transform", "SE2Transform", "Scale2D", "Matrix2D"]
 
@@ -53,9 +55,6 @@ class TransformSequence(Transform):
         return "TransformSequence(%s)" % self.transforms
 
 
-from duckietown_world.seqs import GenericSequence
-
-
 class VariableTransformSequence(TransformSequence, GenericSequence[Transform]):  # XXX
     def at(self, t: Timestamp):
         res = []
@@ -82,7 +81,8 @@ class SE2Transform(Transform, Serializable):
         self.theta = float(theta)
 
     def __repr__(self):
-        return "SE2Transform(%s,%s)" % (self.p.tolist(), self.theta)
+        d = np.rad2deg(self.theta)
+        return "SE2Transform(%s,%.1f)" % (self.p.tolist(), d)
 
     @classmethod
     def identity(cls) -> "SE2Transform":
@@ -129,7 +129,6 @@ class SE2Transform(Transform, Serializable):
         return dict(p=p, theta=theta)
 
     def as_SE2(self) -> SE2value:
-        import geometry
 
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
         return M
