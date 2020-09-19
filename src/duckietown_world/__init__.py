@@ -1,9 +1,5 @@
 # coding=utf-8
-<<<<<<< HEAD
 __version__ = "5.3.22"
-=======
-__version__ = "5.1.2"
->>>>>>> origin/daffy
 
 # import zuper_json
 import logging
