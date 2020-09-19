@@ -1,6 +1,6 @@
 # Linear stretch of road. Basic test case.
 tiles:
-- [straight/N]
+- [curve_left/N]
 - [straight/N]
 - [straight/N]
 - [straight/N]

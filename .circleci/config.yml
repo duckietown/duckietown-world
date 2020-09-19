@@ -4,6 +4,7 @@ workflows:
   test:
     jobs:
       - test-3.6
+<<<<<<< HEAD
       - test-3.7
       - test-3.7.5
       - test-3.7.6
@@ -11,6 +12,9 @@ workflows:
       - test-3.8.0
       - test-3.8.1
       - test-3.8.2 
+=======
+      - test-3.8
+>>>>>>> origin/daffy
 jobs:
   test-3.6: &test-template
     environment:
@@ -127,6 +131,7 @@ jobs:
   test-3.7:
     <<: *test-template
     docker:
+<<<<<<< HEAD
       - image: python:3.7
   test-3.7.5:
     <<: *test-template
@@ -136,10 +141,14 @@ jobs:
     <<: *test-template
     docker:
       - image: python:3.7.6 
+=======
+    - image: python:3.7
+>>>>>>> origin/daffy
   test-3.8:
     <<: *test-template
     docker:
     - image: python:3.8
+<<<<<<< HEAD
   test-3.8.0:
     <<: *test-template
     docker:
@@ -152,3 +161,5 @@ jobs:
     <<: *test-template
     docker:
       - image: python:3.8.2
+=======
+>>>>>>> origin/daffy
