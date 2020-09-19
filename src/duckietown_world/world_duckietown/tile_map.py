@@ -38,9 +38,7 @@ class TileMap(PlacedObject):
             raise KeyError(msg)
         return self.children[coords]
 
-    def add_tile(
-        self, i: int, j: int, orientation: str, tile: Tile, can_be_outside: bool = False
-    ):
+    def add_tile(self, i: int, j: int, orientation: str, tile: Tile, can_be_outside: bool = False):
         if not can_be_outside:
             assert 0 <= i < self.H, (i, self.H)
             assert 0 <= j < self.W, (j, self.W)

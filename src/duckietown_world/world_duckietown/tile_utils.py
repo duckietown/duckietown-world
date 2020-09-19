@@ -130,9 +130,7 @@ def get_interest_map(m: DuckietownMap, q: SE2value) -> DuckietownMap:
                 first = sr.b[0]
                 if first in tiles2:
                     sr2[sr_id] = sr
-            tilemap2 = TileMap(
-                H=tilemap.H, W=tilemap.W, children=tiles2, spatial_relations=sr2
-            )
+            tilemap2 = TileMap(H=tilemap.H, W=tilemap.W, children=tiles2, spatial_relations=sr2)
             children2[name] = tilemap2
         else:
             t: Transform = get_child_transform(m, name)
@@ -153,6 +151,4 @@ def get_interest_map(m: DuckietownMap, q: SE2value) -> DuckietownMap:
         first = sr.b[0]
         if first in children2:
             sr2[sr_id] = sr
-    return DuckietownMap(
-        tile_size=m.tile_size, children=children2, spatial_relations=sr2
-    )
+    return DuckietownMap(tile_size=m.tile_size, children=children2, spatial_relations=sr2)

@@ -68,11 +68,7 @@ for i, entry in enumerate(data):
     # rotation = rotation + 90
     sign = dict(
         kind=kind,
-        tag={
-            "~TagInstance": dict(
-                tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE
-            )
-        },
+        tag={"~TagInstance": dict(tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE)},
         attach=dict(tile=[x, y], slot=slot),
     )
 
@@ -98,18 +94,11 @@ for entry in data:
     rotation = int(rotation)
 
     sign = dict(
-        kind="floor_tag",
-        tag={
-            "~TagInstance": dict(
-                tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE
-            )
-        },
+        kind="floor_tag", tag={"~TagInstance": dict(tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE)},
     )
     sign["pose"] = SE2Transform([x, y], np.deg2rad(rotation)).as_json_dict()
 
     objects[quadrant] = sign
 
-s = yaml.safe_dump(
-    map_data, encoding="utf-8", indent=4, allow_unicode=True, default_flow_style=False
-)
+s = yaml.safe_dump(map_data, encoding="utf-8", indent=4, allow_unicode=True, default_flow_style=False)
 print(s)

@@ -99,12 +99,13 @@ def is_static(transform):
 #         else:
 #             return ob
 
+
 def get_sampling_points(ob0: PlacedObject) -> List[Timestamp]:
     points = set()
 
     def f(ob: PlacedObject) -> PlacedObject:
         # print(ob)
-        if hasattr(ob, 'get_sampling_points'):
+        if hasattr(ob, "get_sampling_points"):
             if not isinstance(ob, GenericSequence):
                 raise ZValueError(ob=ob)
             sp = ob.get_sampling_points()

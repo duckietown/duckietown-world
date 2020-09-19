@@ -27,9 +27,7 @@ class WheelVelocityCommands(Serializable):
     left_wheel_angular_velocity: float
     right_wheel_angular_velocity: float
 
-    def __init__(
-        self, left_wheel_angular_velocity: float, right_wheel_angular_velocity: float
-    ):
+    def __init__(self, left_wheel_angular_velocity: float, right_wheel_angular_velocity: float):
         self.left_wheel_angular_velocity = left_wheel_angular_velocity
         self.right_wheel_angular_velocity = right_wheel_angular_velocity
 

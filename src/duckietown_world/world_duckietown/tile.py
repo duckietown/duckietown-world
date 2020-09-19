@@ -126,9 +126,7 @@ class Tile(PlacedObject):
     def draw_svg(self, drawing, g):
         T = 0.562 / 0.585
         S = 1.0
-        rect = drawing.rect(
-            insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none"
-        )
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none")
         g.add(rect)
 
         if self.fn:
@@ -215,15 +213,11 @@ def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLaneP
             lane_segment_fqn = tile_fqn + it2.fqn
             assert isinstance(lane_segment, LaneSegment), lane_segment
             lane_segment_wrt_tile = it2.transform_sequence.asmatrix2d()
-            lane_segment_relative_pose = relative_pose(
-                lane_segment_wrt_tile.m, tile_relative_pose
-            )
+            lane_segment_relative_pose = relative_pose(lane_segment_wrt_tile.m, tile_relative_pose)
             lane_segment_transform = TransformSequence(
                 tile_transform.transforms + it2.transform_sequence.transforms
             )
-            lane_pose = lane_segment.lane_pose_from_SE2(
-                lane_segment_relative_pose, tol=tol
-            )
+            lane_pose = lane_segment.lane_pose_from_SE2(lane_segment_relative_pose, tol=tol)
 
             M = lane_segment_transform.asmatrix2d().m
             center_point = lane_pose.center_point.as_SE2()
@@ -231,11 +225,7 @@ def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLaneP
             center_point_abs = np.dot(M, center_point)
             center_point_abs_t = Matrix2D(center_point_abs)
 
-            if (
-                lane_pose.along_inside
-                and lane_pose.inside
-                and lane_pose.correct_direction
-            ):
+            if lane_pose.along_inside and lane_pose.inside and lane_pose.correct_direction:
                 yield GetLanePoseResult(
                     tile=tile,
                     tile_fqn=tile_fqn,
@@ -297,9 +287,7 @@ class Anchor(PlacedObject):
 
     def draw_svg(self, drawing, g):
         draw_axes(drawing, g, klass="anchor-axes")
-        c = drawing.circle(
-            center=(0, 0), r=0.03, fill="blue", stroke="black", stroke_width=0.001
-        )
+        c = drawing.circle(center=(0, 0), r=0.03, fill="blue", stroke="black", stroke_width=0.001)
         g.add(c)
 
 
@@ -322,12 +310,8 @@ def create_lane_highlight(poses_sequence: SampledSequence, dw):
             lane_segment = lane_pose_result.lane_segment
             rt = lane_pose_result.lane_segment_transform
             s = SampledSequence[Transform]([timestamp], [rt])
-            visualization.set_object(
-                "ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s
-            )
+            visualization.set_object("ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s)
             p = SampledSequence[Transform]([timestamp], [lane_pose_result.center_point])
-            visualization.set_object(
-                "ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p
-            )
+            visualization.set_object("ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p)
 
     return lane_pose_results

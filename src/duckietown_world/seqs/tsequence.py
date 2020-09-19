@@ -35,6 +35,7 @@ X = TypeVar("X")
 Y = TypeVar("Y")
 Timestamp = float
 
+
 @dataclass
 class GenericSequence(Generic[X]):
     CONTINUOUS = "continuous-sampling"
@@ -62,7 +63,7 @@ class GenericSequence(Generic[X]):
 
 
 Sequence = GenericSequence
- 
+
 
 @dataclass
 class SampledSequence(GenericSequence):
@@ -151,9 +152,7 @@ class SampledSequence(GenericSequence):
     def __len__(self) -> int:
         return len(self.timestamps)
 
-    def transform_values(
-        self, f: Callable[[X], Y], YT: Type[Y] = object
-    ) -> "SampledSequence[Y]":
+    def transform_values(self, f: Callable[[X], Y], YT: Type[Y] = object) -> "SampledSequence[Y]":
         values = []
         timestamps = []
         for t, _ in self:
@@ -231,7 +230,7 @@ class SampledSequenceBuilder(Generic[X]):
         # print(type(self), self.__dict__)
         if self.timestamps:
             if t == self.timestamps[-1]:
-                msg = 'Repeated time stamp'
+                msg = "Repeated time stamp"
                 raise ZValueError(msg, t=t, timestamps=self.timestamps)
         self.timestamps.append(t)
         self.values.append(v)

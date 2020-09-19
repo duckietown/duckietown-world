@@ -142,9 +142,7 @@ def construct_map(yaml_data: dict) -> DuckietownMap:
 
             tile = Tile(kind=kind, drivable=drivable)
             if kind in templates:
-                tile.set_object(
-                    kind, templates[kind], ground_truth=SE2Transform.identity()
-                )
+                tile.set_object(kind, templates[kind], ground_truth=SE2Transform.identity())
             else:
                 pass
                 # msg = 'Could not find %r in %s' % (kind, templates)

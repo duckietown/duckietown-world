@@ -130,7 +130,6 @@ class SE2Transform(Transform, Serializable):
 
     def as_SE2(self) -> SE2value:
 
-
         M = geometry.SE2_from_translation_angle(self.p, self.theta)
         return M
 

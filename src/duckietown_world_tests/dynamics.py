@@ -53,15 +53,9 @@ def kinematics2d_test():
         q1, v1 = _.TSE2_from_state()
         print("%s" % geo.SE2.friendly(q1))
 
-    assert_almost_equal(
-        geo.translation_from_SE2(s1.TSE2_from_state()[0]), [radius, radius]
-    )
-    assert_almost_equal(
-        geo.translation_from_SE2(s2.TSE2_from_state()[0]), [0, radius * 2]
-    )
-    assert_almost_equal(
-        geo.translation_from_SE2(s3.TSE2_from_state()[0]), [-radius, radius]
-    )
+    assert_almost_equal(geo.translation_from_SE2(s1.TSE2_from_state()[0]), [radius, radius])
+    assert_almost_equal(geo.translation_from_SE2(s2.TSE2_from_state()[0]), [0, radius * 2])
+    assert_almost_equal(geo.translation_from_SE2(s3.TSE2_from_state()[0]), [-radius, radius])
     assert_almost_equal(geo.translation_from_SE2(s4.TSE2_from_state()[0]), [0, 0])
 
 
@@ -72,9 +66,7 @@ def dd_test():
     radius_right = radius
     wheel_distance = 0.5
     dddp = DifferentialDriveDynamicsParameters(
-        radius_left=radius_left,
-        radius_right=radius_right,
-        wheel_distance=wheel_distance,
+        radius_left=radius_left, radius_right=radius_right, wheel_distance=wheel_distance,
     )
     q0 = geo.SE2_from_translation_angle([0, 0], 0)
     v0 = geo.se2.zero()

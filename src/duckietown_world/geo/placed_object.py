@@ -218,10 +218,7 @@ def get_child_transform(po: PlacedObject, child: str) -> Transform:
 
 
 def get_object_tree(
-    po: PlacedObject,
-    levels: int = 100,
-    spatial_relations: bool = False,
-    attributes: bool = False,
+    po: PlacedObject, levels: int = 100, spatial_relations: bool = False, attributes: bool = False,
 ) -> str:
     ss = []
     ss.append("%s" % type(po).__name__)
@@ -231,13 +228,7 @@ def get_object_tree(
 
     if attributes:
         if d:
-            ds = yaml.safe_dump(
-                d,
-                encoding="utf-8",
-                indent=4,
-                allow_unicode=True,
-                default_flow_style=False,
-            )
+            ds = yaml.safe_dump(d, encoding="utf-8", indent=4, allow_unicode=True, default_flow_style=False,)
             if isinstance(ds, bytes):
                 ds = ds.decode("utf-8")
             ss.append("\n" + indent(ds, " "))
@@ -254,10 +245,7 @@ def get_object_tree(
                 prefix1 = u"└ %s ┐ " % child_name
                 prefix2 = u"  %s │ " % (" " * len(child_name))
             c = get_object_tree(
-                child,
-                attributes=attributes,
-                spatial_relations=spatial_relations,
-                levels=levels - 1,
+                child, attributes=attributes, spatial_relations=spatial_relations, levels=levels - 1,
             )
             sc = indent(c, prefix2, prefix1)
             n = max(len(_) for _ in sc.split("\n"))
@@ -269,8 +257,7 @@ def get_object_tree(
             ss.append("")
             for r_name, rel in po.spatial_relations.items():
                 ss.append(
-                    '- from "%s" to "%s"  %s '
-                    % (url_from_fqn(rel.a), url_from_fqn(rel.b), rel.transform)
+                    '- from "%s" to "%s"  %s ' % (url_from_fqn(rel.a), url_from_fqn(rel.b), rel.transform)
                 )
 
     return "\n".join(ss)

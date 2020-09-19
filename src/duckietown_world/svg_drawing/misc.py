@@ -14,7 +14,12 @@ from PIL import Image
 from six import BytesIO
 
 from duckietown_world import logger
-from duckietown_world.geo import (get_extent_points, get_static_and_dynamic, PlacedObject, RectangularArea)
+from duckietown_world.geo import (
+    get_extent_points,
+    get_static_and_dynamic,
+    PlacedObject,
+    RectangularArea,
+)
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
@@ -54,9 +59,7 @@ def get_basic_upright2(filename: str, area: RectangularArea, size=(1024, 768)):
     grid = drawing.g(id="grid")
     for i, j in itertools.product(range(i0, i1), range(j0, j1)):
         where = (i, j)
-        rect = drawing.rect(
-            insert=where, fill="none", size=(1, 1), stroke_width=0.01, stroke="#eeeeee"
-        )
+        rect = drawing.rect(insert=where, fill="none", size=(1, 1), stroke_width=0.01, stroke="#eeeeee")
         grid.add(rect)
 
     base.add(grid)
@@ -92,11 +95,7 @@ def draw_recursive(drawing, po, g, draw_list=()):
 def draw_children(drawing, po, g, draw_list=()):
     for child_name in po.get_drawing_children():
         child = po.children[child_name]
-        transforms = [
-            _
-            for _ in po.spatial_relations.values()
-            if _.a == () and _.b == (child_name,)
-        ]
+        transforms = [_ for _ in po.spatial_relations.values() if _.a == () and _.b == (child_name,)]
         if transforms:
 
             rlist = recurive_draw_list(draw_list, child_name)
@@ -145,7 +144,7 @@ def draw_static(
     images=None,
     timeseries=None,
     height_of_stored_images: Optional[int] = None,
-    main_robot_name: Optional[str] = None
+    main_robot_name: Optional[str] = None,
 ) -> Sequence[str]:
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
 
@@ -399,6 +398,7 @@ class TimeseriesPlot:
 def make_tabs(timeseries):
     tabs = {}
     import plotly.offline as offline
+
     include_plotlyjs = True
 
     i = 0
@@ -416,9 +416,7 @@ def make_tabs(timeseries):
         tr.append(td)
 
         td = Tag(name="td")
-        td.attrs[
-            "style"
-        ] = "width: calc(100%-16em); min-height: 20em; vertical-align: top;"
+        td.attrs["style"] = "width: calc(100%-16em); min-height: 20em; vertical-align: top;"
 
         import plotly.graph_objs as go
         import plotly.tools as tools
@@ -428,10 +426,7 @@ def make_tabs(timeseries):
             assert isinstance(sequence, SampledSequence)
 
             trace = go.Scatter(
-                x=sequence.timestamps,
-                y=sequence.values,
-                mode="lines+markers",
-                name=name_sequence,
+                x=sequence.timestamps, y=sequence.values, mode="lines+markers", name=name_sequence,
             )
             scatters.append(trace)
 
@@ -451,12 +446,7 @@ def make_tabs(timeseries):
 
             # include_plotlyjs = True if i == 0 else False
 
-            res = offline.plot(
-                fig,
-                output_type="div",
-                show_link=False,
-                include_plotlyjs=include_plotlyjs,
-            )
+            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs,)
             include_plotlyjs = False
             td.append(bs(res))
             i += 1
@@ -589,9 +579,7 @@ function open_tab(evt, cityName) {
     return main
 
 
-def make_html_slider(
-    drawing, keyframes, obs_div, other, div_timeseries, visualize_controls
-):
+def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visualize_controls):
     nkeyframes = len(keyframes.timestamps)
 
     # language=html
@@ -744,14 +732,10 @@ def data_encoded_for_src(data, mime):
 def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
     g2 = drawing.g()
     g2.attribs["class"] = klass
-    line = drawing.line(
-        start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red"
-    )
+    line = drawing.line(start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red")
     g2.add(line)
 
-    line = drawing.line(
-        start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green"
-    )
+    line = drawing.line(start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green")
     g2.add(line)
 
     g.add(g2)

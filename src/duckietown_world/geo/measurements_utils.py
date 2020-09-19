@@ -20,9 +20,7 @@ __all__ = [
 ]
 
 
-def iterate_measurements_relations(
-    po_name: FQN, po: PlacedObject
-) -> Iterator[Tuple[FQN, SpatialRelation]]:
+def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
     assert isinstance(po_name, tuple)
     for sr_name, sr in po.spatial_relations.items():
         a = po_name + sr.a
@@ -77,9 +75,7 @@ def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
     return static, dynamic
 
 
-def get_flattened_measurement_graph(
-    po: PlacedObject, include_root_to_self: bool = False
-) -> nx.DiGraph:
+def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool = False) -> nx.DiGraph:
     from duckietown_world import TransformSequence
     from duckietown_world import SE2Transform
 
@@ -131,9 +127,7 @@ def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestRes
     yield from iterate_by_test(po, t)
 
 
-def iterate_by_test(
-    po: PlacedObject, testf: Callable[[PlacedObject], bool]
-) -> Iterator[IterateByTestResult]:
+def iterate_by_test(po: PlacedObject, testf: Callable[[PlacedObject], bool]) -> Iterator[IterateByTestResult]:
     G = get_flattened_measurement_graph(po, include_root_to_self=True)
     root_name = ()
 
@@ -146,10 +140,7 @@ def iterate_by_test(
             parents = get_parents(po, name)
 
             yield IterateByTestResult(
-                fqn=name,
-                transform_sequence=transform_sequence,
-                object=ob,
-                parents=parents,
+                fqn=name, transform_sequence=transform_sequence, object=ob, parents=parents,
             )
 
 

@@ -20,7 +20,6 @@ __all__ = ["LaneSegment", "LanePose"]
 class LanePose(Serializable):
     """ Very detailed information about the "position in the lane". """
 
-
     ### Am I inside the lane? If not why not?
 
     # am I "inside" the lane?
@@ -33,7 +32,7 @@ class LanePose(Serializable):
     # am I "inside" considering the longitudinal position?
     along_inside: bool
     # if not, am I outside before? (along_lane < 0)
-    along_before: bool #
+    along_before: bool  #
     # or am I outside after? (along_lane > L)
     along_after: bool
 
@@ -64,7 +63,6 @@ class LanePose(Serializable):
 
     # center_point: anchor point on the center of the lane
     center_point: SE2Transform
-
 
     def __init__(
         self,
@@ -113,9 +111,7 @@ def almost_equal(a, b):
 
 
 class LaneSegment(PlacedObject):
-    def __init__(
-        self, width: float, control_points: List[SE2Transform], *args, **kwargs
-    ):
+    def __init__(self, width: float, control_points: List[SE2Transform], *args, **kwargs):
         # noinspection PyArgumentList
         PlacedObject.__init__(self, *args, **kwargs)
         self.width = float(width)
@@ -156,13 +152,9 @@ class LaneSegment(PlacedObject):
         W = self.width
         lateral = np.random.uniform(-W / 2, +W / 2)
         angle = np.random.uniform(-np.pi / 2, +np.pi / 2)
-        return self.lane_pose(
-            along_lane=along_lane, lateral=lateral, relative_heading=angle
-        )
+        return self.lane_pose(along_lane=along_lane, lateral=lateral, relative_heading=angle)
 
-    def lane_pose(
-        self, along_lane: float, lateral: float, relative_heading: float
-    ) -> LanePose:
+    def lane_pose(self, along_lane: float, lateral: float, relative_heading: float) -> LanePose:
         beta = self.beta_from_along_lane(along_lane)
         center_point = self.center_point(beta)
 
@@ -239,9 +231,7 @@ class LaneSegment(PlacedObject):
         lateral = tas.translation[1]
         along_lane = tas.translation[0]
         relative_heading = tas.angle
-        return self.lane_pose(
-            relative_heading=relative_heading, lateral=lateral, along_lane=along_lane
-        )
+        return self.lane_pose(relative_heading=relative_heading, lateral=lateral, along_lane=along_lane)
 
     @contract(q="euclidean2")
     def lane_pose_from_SE2_generic(self, q, tol=0.001):
@@ -256,9 +246,7 @@ class LaneSegment(PlacedObject):
         # extra = r[0]
         # along_lane -= extra
         # logger.info('ms: %s' % r[0])
-        return self.lane_pose(
-            relative_heading=relative_heading, lateral=lateral, along_lane=along_lane
-        )
+        return self.lane_pose(relative_heading=relative_heading, lateral=lateral, along_lane=along_lane)
 
     def find_along_lane_closest_point(self, p, tol=0.001):
         def get_delta(beta):
@@ -365,11 +353,7 @@ class LaneSegment(PlacedObject):
         center_points = self.center_line_points(points_per_segment=10)
         center_points = [geo.translation_angle_from_SE2(_)[0] for _ in center_points]
         p = drawing.polyline(
-            points=center_points,
-            stroke=fill,
-            fill="none",
-            stroke_dasharray="0.02",
-            stroke_width=0.01,
+            points=center_points, stroke=fill, fill="none", stroke_dasharray="0.02", stroke_width=0.01,
         )
         glane.add(p)
 
@@ -383,10 +367,7 @@ class LaneSegment(PlacedObject):
             gp = drawing.g()
             gp.attribs["class"] = "control-point"
             l = drawing.line(
-                start=p1.tolist(),
-                end=p2.tolist(),
-                stroke="black",
-                stroke_width=self.width / 20.0,
+                start=p1.tolist(), end=p2.tolist(), stroke="black", stroke_width=self.width / 20.0,
             )
             gp.add(l)
             c = drawing.circle(
@@ -432,7 +413,7 @@ class LaneSegment(PlacedObject):
         return res
 
     @memoized_reset
-    def lane_profile(self, points_per_segment: int=5):
+    def lane_profile(self, points_per_segment: int = 5):
         points_left = []
         points_right = []
         n = len(self.control_points) - 1

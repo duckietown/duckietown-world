@@ -6,7 +6,7 @@ logger = ZLogger(__name__)
 
 
 def test_typing():
-    s = SampledSequence.from_iterator([(0, 'a'), (1, 'b'), (2, 'c')], str)
+    s = SampledSequence.from_iterator([(0, "a"), (1, "b"), (2, "c")], str)
     T = GenericSequence[object]
 
     r = can_be_used_as2(type(s), T)

@@ -22,9 +22,7 @@ class ACGvGen(object):
     For example of usage, please see the __main__ function
     """
 
-    def __init__(
-        self, legend_name=None, options="compound=true;"
-    ):  # allow links between clusters
+    def __init__(self, legend_name=None, options="compound=true;"):  # allow links between clusters
         self.max_line_width = 10
         self.max_arrow_width = 2
         self.line_factor = 1
@@ -138,9 +136,7 @@ class ACGvGen(object):
     # if not linkfrom:
     #         self.__links.append(link)
 
-    def __link_new(
-        self, from_node, to_node, label=None, cl_from_node=None, cl_to_node=None
-    ):
+    def __link_new(self, from_node, to_node, label=None, cl_from_node=None, cl_to_node=None):
         """
         Creates a link between two nodes
         @from_node: The node the link comes from
@@ -296,15 +292,11 @@ class ACGvGen(object):
         allProps.update(props)
 
         if self.__has_children(node):
-            propStringList = [
-                "%s=%s;\n" % (k, format_property(k, v)) for k, v in allProps.items()
-            ]
+            propStringList = ["%s=%s;\n" % (k, format_property(k, v)) for k, v in allProps.items()]
             properties = "".join(propStringList)
         else:
             if props:
-                propStringList = [
-                    "%s=%s" % (k, format_property(k, v)) for k, v in allProps.items()
-                ]
+                propStringList = ["%s=%s" % (k, format_property(k, v)) for k, v in allProps.items()]
                 properties = "[" + ",".join(propStringList) + "]"
             else:
                 properties = ""
@@ -327,12 +319,7 @@ class ACGvGen(object):
 
         properties = ""
         if props:
-            properties += ",".join(
-                [
-                    "%s=%s" % (str(k), format_property(k, val))
-                    for k, val in props.items()
-                ]
-            )
+            properties += ",".join(["%s=%s" % (str(k), format_property(k, val)) for k, val in props.items()])
         return properties
 
     def propertyForeachLinksAppend(self, node, key, val):
@@ -393,10 +380,7 @@ class ACGvGen(object):
 
     def tree_debug(self, level, node, children):
         if children:
-            print(
-                "(level:%d) Eid:%d has children (%s)"
-                % (level, node["id"], str(children))
-            )
+            print("(level:%d) Eid:%d has children (%s)" % (level, node["id"], str(children)))
         else:
             print("Eid:" + str(node["id"]) + " has no children")
 
@@ -458,12 +442,7 @@ class ACGvGen(object):
                     last_cluster_str = "None"
                 print(
                     "/* e[parent] = %s, last_cluster = %s, last_level = %d, opened_braces: %s */"
-                    % (
-                        parent_str,
-                        last_cluster_str,
-                        last_level,
-                        str(self.__opened_braces),
-                    )
+                    % (parent_str, last_cluster_str, last_level, str(self.__opened_braces),)
                 )
 
             # Write children/parent with properties
@@ -475,10 +454,7 @@ class ACGvGen(object):
                             last_level += 1
                             # We browse any property to build a string
                             self.fd.write(last_level * self.padding_str)
-                            self.fd.write(
-                                self.padding_str
-                                + "node%d %s;\n" % (node["id"], properties)
-                            )
+                            self.fd.write(self.padding_str + "node%d %s;\n" % (node["id"], properties))
                             node["lock"] = 1
                         else:
                             self.fd.write(last_level * self.padding_str)
@@ -486,9 +462,7 @@ class ACGvGen(object):
                             self.__opened_braces.pop()
                 else:
                     self.fd.write(level * self.padding_str)
-                    self.fd.write(
-                        self.padding_str + "node%d %s;\n" % (node["id"], properties)
-                    )
+                    self.fd.write(self.padding_str + "node%d %s;\n" % (node["id"], properties))
                     node["lock"] = 1
                     cl = self.collectUnlockedLeaves(node["parent"])
                     for l in cl:
@@ -496,9 +470,7 @@ class ACGvGen(object):
                         properties = self.propertiesAsStringGet(l, props)
                         self.fd.write(last_level * self.padding_str)
                         self.fd.write(
-                            self.padding_str
-                            + self.padding_str
-                            + "node%d %s;\n" % (l["id"], properties)
+                            self.padding_str + self.padding_str + "node%d %s;\n" % (l["id"], properties)
                         )
                         node["lock"] = 1
                         self.lockNode(l)
@@ -507,9 +479,7 @@ class ACGvGen(object):
                     self.__opened_braces.pop()
 
             else:
-                self.fd.write(
-                    self.padding_str + "node%d %s;\n" % (node["id"], properties)
-                )
+                self.fd.write(self.padding_str + "node%d %s;\n" % (node["id"], properties))
                 node["lock"] = 1
 
     def browse(self, node, cb):
@@ -560,9 +530,7 @@ class ACGvGen(object):
     def structure(self):
         def example(level, node, children_results):  # @UnusedVariable
             if children_results:
-                c = ", ".join(
-                    ["%s" % v for k, v in children_results.items()]
-                )  # @UnusedVariable
+                c = ", ".join(["%s" % v for k, v in children_results.items()])  # @UnusedVariable
                 return "%s { %s } " % (node["id"], c)
             else:
                 return node["id"]

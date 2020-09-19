@@ -272,9 +272,7 @@ class DrivenLength(Rule):
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
                         ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
-                        c0_ = geo.SE2_from_translation_angle(
-                            ctas.translation, ctas.angle
-                        )
+                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
                         prelc0 = relative_pose(c0_, p1)
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 
@@ -381,9 +379,7 @@ class DrivenLengthConsecutive(Rule):
                         assert isinstance(lpr, GetLanePoseResult)
                         c0 = lpr.center_point
                         ctas = geo.translation_angle_scale_from_E2(c0.asmatrix2d().m)
-                        c0_ = geo.SE2_from_translation_angle(
-                            ctas.translation, ctas.angle
-                        )
+                        c0_ = geo.SE2_from_translation_angle(ctas.translation, ctas.angle)
                         prelc0 = relative_pose(c0_, p1)
                         tas = geo.translation_angle_scale_from_E2(prelc0)
 

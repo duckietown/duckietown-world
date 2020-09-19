@@ -182,10 +182,7 @@ def lane_pose_test1():
     # Rule evaluation (do not touch)
     interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
     evaluated = evaluate_rules(
-        poses_sequence=transforms_sequence,
-        interval=interval,
-        world=dw,
-        ego_name=ego_name,
+        poses_sequence=transforms_sequence, interval=interval, world=dw, ego_name=ego_name,
     )
     timeseries = make_timeseries(evaluated)
     # Drawing
@@ -216,9 +213,7 @@ def get_robot_trajectory(factory, q0, commands_sequence):
     c0 = q0, geo.se2.zero()
     s0 = factory.initialize(c0=c0, t0=t0)
 
-    states_sequence = SampledSequence.from_iterator(
-        integrate_commands(s0, commands_sequence)
-    )
+    states_sequence = SampledSequence.from_iterator(integrate_commands(s0, commands_sequence))
     f = lambda _: _.TSE2_from_state()[0]
     poses_sequence = states_sequence.transform_values(f, np.ndarray)
     return poses_sequence
@@ -230,9 +225,7 @@ def reasonable_duckiebot():
     radius_right = radius
     wheel_distance = 0.5
     dddp = DifferentialDriveDynamicsParameters(
-        radius_left=radius_left,
-        radius_right=radius_right,
-        wheel_distance=wheel_distance,
+        radius_left=radius_left, radius_right=radius_right, wheel_distance=wheel_distance,
     )
     return dddp
 

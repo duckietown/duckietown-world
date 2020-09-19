@@ -17,13 +17,9 @@ class TileCoords(Transform, Serializable):
     orientation: str  # N S W E
 
     def asmatrix2d(self):
-        angle0 = {"N": 0, "E": -np.pi / 2, "S": np.pi, "W": +np.pi / 2}[
-            self.orientation
-        ] + np.pi / 2
+        angle0 = {"N": 0, "E": -np.pi / 2, "S": np.pi, "W": +np.pi / 2}[self.orientation] + np.pi / 2
 
-        angle = {"N": np.pi / 2, "E": 0, "S": np.pi + np.pi / 2, "W": np.pi}[
-            self.orientation
-        ]
+        angle = {"N": np.pi / 2, "E": 0, "S": np.pi + np.pi / 2, "W": np.pi}[self.orientation]
 
         assert np.allclose(angle, angle0)
 
