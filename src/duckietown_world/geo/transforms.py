@@ -9,12 +9,12 @@ from duckietown_serialization_ds1 import Serializable
 import geometry as geo
 from contracts import contract, new_contract
 from duckietown_world.seqs.tsequence import Timestamp
+from duckietown_world.seqs import GenericSequence
+
 
 __all__ = ["TransformSequence", "Transform", "SE2Transform", "Scale2D", "Matrix2D"]
 
 SE2value = NewType("SE2value", np.ndarray)
-
-from duckietown_world.seqs import GenericSequence
 
 
 class Transform(metaclass=ABCMeta):

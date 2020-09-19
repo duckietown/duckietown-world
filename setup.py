@@ -45,7 +45,7 @@ system_version = tuple(sys.version_info)[:3]
 if system_version < (3, 7):
     install_requires.append("dataclasses")
 
-line = "daffy-aido4"
+line = "daffy"
 
 setup(
     name=f"duckietown-world-{line}",
