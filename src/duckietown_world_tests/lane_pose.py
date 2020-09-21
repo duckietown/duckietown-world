@@ -2,14 +2,14 @@
 
 import os
 
+import geometry as geo
 import numpy as np
-from comptests import comptest, run_module_tests, get_comptests_output_dir
+from comptests import comptest, get_comptests_output_dir, run_module_tests
 from numpy.testing import assert_almost_equal
 
-import geometry as geo
-from duckietown_world import LaneSegment, RectangularArea, PlacedObject, SE2Transform
+from duckietown_world import LaneSegment, PlacedObject, RectangularArea, SE2Transform
 from duckietown_world.rules import evaluate_rules
-from duckietown_world.rules.rule import EvaluatedMetric, make_timeseries
+from duckietown_world.rules.rule import make_timeseries
 from duckietown_world.seqs.tsequence import SampledSequence
 from duckietown_world.svg_drawing import draw_static
 from duckietown_world.world_duckietown.differential_drive_dynamics import (

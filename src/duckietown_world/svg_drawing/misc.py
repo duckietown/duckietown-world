@@ -9,10 +9,6 @@ from typing import Dict, Optional, Sequence, Tuple
 
 import svgwrite
 from bs4 import BeautifulSoup, Tag
-from past.builtins import reduce
-from PIL import Image
-from six import BytesIO
-
 from duckietown_world import logger
 from duckietown_world.geo import (
     get_extent_points,
@@ -23,6 +19,9 @@ from duckietown_world.geo import (
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
+from past.builtins import reduce
+from PIL import Image
+from six import BytesIO
 
 __all__ = [
     "draw_recursive",
@@ -31,6 +30,7 @@ __all__ = [
     "draw_axes",
     "draw_children",
     "data_encoded_for_src",
+    "TimeseriesPlot",
 ]
 
 
@@ -245,8 +245,10 @@ def draw_static(
             <input id='checkbox-textures' type="checkbox"  onclick="hideshow(this);" checked>textures</input>
             <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
             <br/>
-            <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane segments</input>
-            (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(this);">control 
+            <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane 
+            segments</input>
+            (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(
+            this);">control 
             points</input>)</p>
             </p>
            
@@ -255,8 +257,10 @@ def draw_static(
             <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>vehicles</input>
             <input id='checkbox-duckies' type="checkbox"  onclick="hideshow(this);" checked>duckies</input>
             <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
-            <input id='checkbox-sign-papers' type="checkbox"  onclick="hideshow(this);" checked>signs textures</input>
-            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" checked>decorations</input>
+            <input id='checkbox-sign-papers' type="checkbox"  onclick="hideshow(this);" checked>signs 
+            textures</input>
+            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" 
+            checked>decorations</input>
           
             </p>
              <p>
@@ -446,7 +450,7 @@ def make_tabs(timeseries):
 
             # include_plotlyjs = True if i == 0 else False
 
-            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs,)
+            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs, )
             include_plotlyjs = False
             td.append(bs(res))
             i += 1

@@ -2,15 +2,16 @@ import os
 
 import yaml
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world import PlacedObject, logger
-from duckietown_world.utils import memoized_reset
-
-__all__ = ["get_apriltagsDB_raw", "get_sign_type_from_tag_id"]
-
+from PIL import Image
 from six import BytesIO
 
+from duckietown_world import logger, PlacedObject
+from duckietown_world.utils import memoized_reset
 
 # DEFAULT_FAMILY = '36h11'
+
+
+__all__ = ["get_apriltagsDB_raw", "get_sign_type_from_tag_id"]
 
 
 class TagInstance(Serializable):
@@ -39,8 +40,6 @@ class TagInstance(Serializable):
         #                     stroke="black", )
         # g.add(rect)
         if self.fn:
-            from PIL import Image
-
             with Image.open(self.fn) as _:
                 image = _.convert("RGB")
             image = image.resize((64, 64), resample=Image.NEAREST)

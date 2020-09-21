@@ -1,18 +1,18 @@
 from abc import ABCMeta, abstractmethod
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import *
+from typing import Dict, Optional, Tuple, Union
 
 from duckietown_serialization_ds1 import Serializable
-
-from contracts import check_isinstance
 from duckietown_world import LanePose
 from duckietown_world.geo import PlacedObject, SE2Transform
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
+from zuper_commons.types import check_isinstance
 
-__all__ = ["RuleEvaluationContext", "RuleEvaluationResult", "Rule", "evaluate_rules"]
+__all__ = ["RuleEvaluationContext", "RuleEvaluationResult", "Rule", "evaluate_rules", 'EvaluatedMetric',
+           'make_timeseries']
 
 
 @dataclass

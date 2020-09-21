@@ -3,26 +3,20 @@ __version__ = "6.0.3"
 
 import logging
 
-
 logging.basicConfig()
 logger = logging.getLogger("dt-world")
 logger.setLevel(logging.DEBUG)
 
 logger.info("duckietown-world %s" % __version__)
-# for templating to work
-# from zuper_ipce import logger as l
-# _ = l
 
 # remove noisy logging
 from duckietown_serialization_ds1 import logger as dslogger
 
 dslogger.setLevel(logging.CRITICAL)
 
-from contracts import disable_all, __version__ as contracts_version
+from contracts import disable_all
 
-# logger.info('contracts %s ' % contracts_version)
 disable_all()
-
 
 from .geo import *
 from .seqs import *

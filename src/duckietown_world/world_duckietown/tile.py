@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Iterator, Tuple
 
 import numpy as np
+from geometry import extract_pieces
 from svgwrite.container import Use
 
 from duckietown_world import logger
@@ -21,7 +22,6 @@ from duckietown_world.geo.measurements_utils import (
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
-from geometry import extract_pieces
 from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
 from .types import SE2v
