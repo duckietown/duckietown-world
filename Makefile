@@ -10,9 +10,12 @@ bump: # v2
 	git push --tags
 	git push
 
-upload: # v2
+upload: # v3
 	aido-check-not-dirty
 	aido-check-tagged
+	aido-check-need-upload --package duckietown-world-daffy make upload-do
+
+upload-do:
 	rm -f dist/*
 	rm -rf src/*.egg-info
 	python setup.py sdist
