@@ -92,7 +92,7 @@ Wrappers are provided for the [EasyLogs commands][easy_logs].
     $ dts logs make-thumbnails
     $ dts logs make-video
 
-[easy_logs]: http://docs.duckietown.org/software_devel/out/easy_logs.html
+[easy_logs]: https://docs.duckietown.org/software_devel/out/easy_logs.html
 
 ### Summary, details
 
