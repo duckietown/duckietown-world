@@ -11,8 +11,14 @@ from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
 from zuper_commons.types import check_isinstance
 
-__all__ = ["RuleEvaluationContext", "RuleEvaluationResult", "Rule", "evaluate_rules", 'EvaluatedMetric',
-           'make_timeseries']
+__all__ = [
+    "RuleEvaluationContext",
+    "RuleEvaluationResult",
+    "Rule",
+    "evaluate_rules",
+    "EvaluatedMetric",
+    "make_timeseries",
+]
 
 
 @dataclass

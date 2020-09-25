@@ -239,17 +239,17 @@ def get_object_tree(
         for i, (child_name, child) in enumerate(po.children.items()):
 
             if i != N - 1:
-                prefix1 = u"├ %s ┐ " % child_name
-                prefix2 = u"│ %s │ " % (" " * len(child_name))
+                prefix1 = "├ %s ┐ " % child_name
+                prefix2 = "│ %s │ " % (" " * len(child_name))
             else:
-                prefix1 = u"└ %s ┐ " % child_name
-                prefix2 = u"  %s │ " % (" " * len(child_name))
+                prefix1 = "└ %s ┐ " % child_name
+                prefix2 = "  %s │ " % (" " * len(child_name))
             c = get_object_tree(
                 child, attributes=attributes, spatial_relations=spatial_relations, levels=levels - 1,
             )
             sc = indent(c, prefix2, prefix1)
             n = max(len(_) for _ in sc.split("\n"))
-            sc += "\n" + prefix2[:-2] + u"└" + u"─" * (n - len(prefix2) + 3)
+            sc += "\n" + prefix2[:-2] + "└" + "─" * (n - len(prefix2) + 3)
             ss.append(sc)
 
     if spatial_relations:

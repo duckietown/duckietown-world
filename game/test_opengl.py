@@ -15,7 +15,9 @@ def square():
     glVertex2f(100, 200)
     glEnd()
 
+
 a = 0
+
 
 def iterate():
     global a
@@ -23,10 +25,9 @@ def iterate():
     glViewport(0, 0, 500, 500)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(0.0, 500, 0.0, 500+a, 0.0, 1.0)
+    glOrtho(0.0, 500, 0.0, 500 + a, 0.0, 1.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-
 
 
 def showScreen():
@@ -37,7 +38,10 @@ def showScreen():
     square()
     glutSwapBuffers()
 
+
 import numpy as np
+
+
 def get_texture(img: np.ndarray):
     h, w = img.shape[:2]
 
@@ -47,9 +51,9 @@ def get_texture(img: np.ndarray):
     glBindTexture(GL_TEXTURE_2D, textureID)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, h, w,
-                 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, h, w, 0, GL_RGB, GL_UNSIGNED_BYTE, img.tobytes())
     return textureID
+
 
 def go():
     glutInit()
@@ -57,14 +61,13 @@ def go():
     glutInitWindowSize(500, 500)
     glutInitWindowPosition(0, 0)
 
-    window_name = 'wn'
+    window_name = "wn"
     md = MapDistribution(n=500, min_d=50, max_d=80, width_road=10)
     wm = create_map(md)
     N = 200
     N_min = 100
     cars = sample_cars(wm, n=N)
     bg = get_background_image(wm)
-
 
     textureID = get_texture(bg)
 
@@ -95,7 +98,6 @@ def go():
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
 
-
     # while True:
     #     it += 1
     #     update_cars(wm, cars, dt=Decimal(1), min_cars=N_min)
@@ -120,9 +122,10 @@ def go():
     #         draw_cars(bg, frame, cars, erase=True)
     #         cv2.waitKey(1)
 
-            # print(it)
+    # print(it)
     # cv2.destroyAllWindows()
     glutMainLoop()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     go()

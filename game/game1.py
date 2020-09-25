@@ -11,13 +11,13 @@ class GameDescription:
     half_width: int  # 5
 
 
-PL_SELF = 'self'
-PL_NATURE = 'nature'
-PL_OTHER = 'nature'
+PL_SELF = "self"
+PL_NATURE = "nature"
+PL_OTHER = "nature"
 
 # what choices
 
-X = TypeVar('X')
+X = TypeVar("X")
 
 
 @dataclass
@@ -115,7 +115,7 @@ class CarObservations:
 class Car:
     cp: CarProperties
     cs: CarState
-    policy: 'Policy'
+    policy: "Policy"
     obs_history: List[CarObservations]
 
 
@@ -144,7 +144,7 @@ class AvoidPolicy(Policy):
 
         close1 = np.rad2deg(np.abs(theta)) < 50
 
-        close2 = np.logical_and(dx>2, dx < 20)
+        close2 = np.logical_and(dx > 2, dx < 20)
         close = np.logical_and(close1, close2)
         if np.any(last.local_obs[close]):
             gas = 0
@@ -172,16 +172,18 @@ def sample_car(wm: WorldMap) -> Car:
     if pick:
         theta = theta + Decimal(np.pi)
 
-    pose = DecPose(x=Decimal(i), y=Decimal(j), theta=Decimal(theta),
-                   vx=Decimal(1))
+    pose = DecPose(x=Decimal(i), y=Decimal(j), theta=Decimal(theta), vx=Decimal(1))
     field_of_view = np.random.randint(10, 50)
     cs = CarState(pose=pose, turn_signal=0, front_light=False, brake_light=False)
-    cp = CarProperties(width=Decimal(2), length=Decimal(3),
-                       max_vx=Decimal(3),
-                       max_accel=Decimal(1),
-                       max_brake=Decimal(2),
-                       field_of_view=Decimal(field_of_view),
-                       max_side_by_vx=[Decimal(0), Decimal(0), Decimal(1), Decimal(2)])
+    cp = CarProperties(
+        width=Decimal(2),
+        length=Decimal(3),
+        max_vx=Decimal(3),
+        max_accel=Decimal(1),
+        max_brake=Decimal(2),
+        field_of_view=Decimal(field_of_view),
+        max_side_by_vx=[Decimal(0), Decimal(0), Decimal(1), Decimal(2)],
+    )
 
     if random.random() > 0.4:
         policy = AvoidPolicy()
@@ -200,12 +202,12 @@ def sample_cars(wm: WorldMap, n: int) -> Dict[str, Car]:
 
 
 def zoom_d(a, z: int):
-    return np.kron(a, np.ones((z, z), 'uint8'))
+    return np.kron(a, np.ones((z, z), "uint8"))
 
 
 def get_background_image(wm: WorldMap):
     h, w = wm.obstacles.shape
-    rgb = np.zeros((h, w, 3), 'uint8')
+    rgb = np.zeros((h, w, 3), "uint8")
     rgb[wm.obstacles] = 255
     return rgb
 
@@ -331,7 +333,6 @@ def clip(shape, i1, i2, j1, j2):
 
 def draw_cars(background, rgb, cars: Dict[str, Car], erase=False):
 
-
     shape = background.shape[:2]
     for k, car in cars.items():
         cs: CarState = car.cs
@@ -350,12 +351,12 @@ def draw_cars(background, rgb, cars: Dict[str, Car], erase=False):
         assert 0 <= i1 <= i2
 
         colors = {
-            (0,1): (255,0,0),
-            (0,-1):(0,255,0),
-            (1, 0):(0,0,255),
-            (-1, 0):(120,0,120),
+            (0, 1): (255, 0, 0),
+            (0, -1): (0, 255, 0),
+            (1, 0): (0, 0, 255),
+            (-1, 0): (120, 0, 120),
         }
-        color = colors[(nx,ny)]
+        color = colors[(nx, ny)]
         if erase:
             rgb[i1:i2, j1:j2, :] = background[i1:i2, j1:j2, :]
         else:
@@ -364,8 +365,7 @@ def draw_cars(background, rgb, cars: Dict[str, Car], erase=False):
     return rgb
 
 
-def compute_collisions(wm: WorldMap, cars: Dict[str, Car]) -> \
-    Tuple[Set[Tuple[str, str]], Set[str]]:
+def compute_collisions(wm: WorldMap, cars: Dict[str, Car]) -> Tuple[Set[Tuple[str, str]], Set[str]]:
     c = np.zeros(wm.obstacles.shape, dtype=int)
     c.fill(-1)
     names = list(cars)
@@ -380,11 +380,11 @@ def compute_collisions(wm: WorldMap, cars: Dict[str, Car]) -> \
         w = 1  # int(car.cp.width / 2)
         l = 1  # int(car.cp.length / 2)
 
-        obstacles = wm.obstacles[i - w:i + w + 1, j - l:j + l + 1]
+        obstacles = wm.obstacles[i - w : i + w + 1, j - l : j + l + 1]
         if np.any(obstacles):
             outside.add(names[m])
 
-        ground = c[i - w:i + w + 1, j - l:j + l + 1]
+        ground = c[i - w : i + w + 1, j - l : j + l + 1]
         if len(ground.flatten()) == 0:
             continue
 
@@ -392,7 +392,7 @@ def compute_collisions(wm: WorldMap, cars: Dict[str, Car]) -> \
         if already >= 0:
             collisions.add((names[already], names[m]))
 
-        c[i - w:i + w, j - l:j + l] = m
+        c[i - w : i + w, j - l : j + l] = m
 
     return collisions, outside
 
@@ -422,14 +422,15 @@ def create_map(md: MapDistribution) -> WorldMap:
     w = width_road
 
     for i in i_s:
-        x[i - w:i + w, :] = False
-        horizontal[i - w:i + w, :] = i
+        x[i - w : i + w, :] = False
+        horizontal[i - w : i + w, :] = i
     for j in j_s:
-        x[:, j - w:j + w] = False
-        vertical[:, j - w:j + w] = j
+        x[:, j - w : j + w] = False
+        vertical[:, j - w : j + w] = j
 
-    return WorldMap(obstacles=x, horizontal=horizontal, vertical=vertical,
-                    horizontal_roads=i_s, vertical_roads=j_s)
+    return WorldMap(
+        obstacles=x, horizontal=horizontal, vertical=vertical, horizontal_roads=i_s, vertical_roads=j_s
+    )
 
 
 def get_roads(n: int, min_d: int, max_d: int, width: int) -> List[int]:
@@ -471,7 +472,9 @@ def reset_coords(wm: WorldMap, cp1: DecPose, cp2: DecPose) -> DecPose:
     return DecPose(x=x, y=y, vx=vx, theta=theta)
 
 
-def update_pose(wm: WorldMap, cp: DecPose, cprop: CarProperties, commands: CarCommands, dt: Decimal) -> DecPose:
+def update_pose(
+    wm: WorldMap, cp: DecPose, cprop: CarProperties, commands: CarCommands, dt: Decimal
+) -> DecPose:
     assert dt == 1
     nx = Decimal(np.cos(float(cp.theta)))
     ny = Decimal(np.sin(float(cp.theta)))
@@ -523,15 +526,15 @@ def update_cars(wm: WorldMap, cars: Dict[str, Car], dt: Decimal, min_cars: int):
     global carnames
     for i in range(toadd):
         car = sample_car(wm)
-        name = str('new%s' % carnames)
+        name = str("new%s" % carnames)
         carnames += 1
         cars[name] = car
 
 
 def pretty_obs(obs: CarObservations):
-    a = obs.local_map.astype('uint8') * 255
-    b = obs.local_obs.astype('uint8') * 255
-    c = np.logical_not(obs.visible).astype('uint8') * 128
+    a = obs.local_map.astype("uint8") * 255
+    b = obs.local_obs.astype("uint8") * 255
+    c = np.logical_not(obs.visible).astype("uint8") * 128
 
     # rgb = np.zeros((a.shape[0], a.shape[1], 3), 'uint8')
     # rgb[obs.local_map, 0] = 255
@@ -547,7 +550,7 @@ def pretty_obs(obs: CarObservations):
 
 
 def go():
-    window_name = 'wn'
+    window_name = "wn"
     md = MapDistribution(n=500, min_d=50, max_d=80, width_road=10)
     wm = create_map(md)
     N = 200
@@ -569,7 +572,7 @@ def go():
                 if not cars[k].obs_history:
                     continue
                 pretty = pretty_obs(cars[k].obs_history[-1])
-                pretties.append(np.ones((pretty.shape[0], 5, 3), 'uint8') * 255)
+                pretties.append(np.ones((pretty.shape[0], 5, 3), "uint8") * 255)
                 pretties.append(pretty)
 
             rgb = np.hstack(tuple(pretties))
@@ -585,5 +588,5 @@ def go():
     cv2.destroyAllWindows()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     go()

@@ -24,7 +24,7 @@ __all__ = [
     "SampledSequence",
     "IterateDT",
     "iterate_with_dt",
-    'Timestamp',
+    "Timestamp",
 ]
 
 

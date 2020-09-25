@@ -239,36 +239,36 @@ def draw_static(
                 display: none;
             }
             </style>
-        
+
             <p>
             <input id='checkbox-static' type="checkbox"  onclick="hideshow(this);" checked>static data</input>
             <input id='checkbox-textures' type="checkbox"  onclick="hideshow(this);" checked>textures</input>
             <input id='checkbox-axes' type="checkbox"  onclick="hideshow(this);">axes</input>
             <br/>
-            <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane 
+            <input id='checkbox-lane_segments' type="checkbox"  onclick="hideshow(this);">map lane
             segments</input>
             (<input id='checkbox-lane_segments-control_points' type="checkbox"  onclick="hideshow(
-            this);">control 
+            this);">control
             points</input>)</p>
             </p>
-           
-            
+
+
             <p>
             <input id='checkbox-vehicles' type="checkbox"  onclick="hideshow(this);" checked>vehicles</input>
             <input id='checkbox-duckies' type="checkbox"  onclick="hideshow(this);" checked>duckies</input>
             <input id='checkbox-signs' type="checkbox"  onclick="hideshow(this);" checked>signs</input>
-            <input id='checkbox-sign-papers' type="checkbox"  onclick="hideshow(this);" checked>signs 
+            <input id='checkbox-sign-papers' type="checkbox"  onclick="hideshow(this);" checked>signs
             textures</input>
-            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);" 
+            <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);"
             checked>decorations</input>
-          
+
             </p>
              <p>
             <input id='checkbox-current_lane' type="checkbox"  onclick="hideshow(this);">current lane</input>
             <input id='checkbox-anchors' type="checkbox"  onclick="hideshow(this);">anchor point</input>
             </p>
             <script>
-                var checkboxValues = null; 
+                var checkboxValues = null;
                 name2selector = {
                     "checkbox-static": "g.static",
                     "checkbox-textures": "g.static .tile-textures",
@@ -301,7 +301,7 @@ def draw_static(
                         console.log(error);
                     }
                 }
-                
+
                 function init() {
                     for(var name in name2selector) {
                         console.log(name);
@@ -309,24 +309,24 @@ def draw_static(
                         if(name in checkboxValues) {
                             element.checked = checkboxValues[name];
                         }
-                        
+
                         hideshow(element);
-                    } 
+                    }
                 }
-                
+
                 document.addEventListener("DOMContentLoaded", function(event) {
-                    init();     
+                    init();
                 });
-                
+
                 try {
                     checkboxValues =  JSON.parse(localStorage.getItem('checkboxValues')) || {};
-                
+
                 } catch (error) {
                     console.log('cannot load preferences.');
                     console.log(error);
                     checkboxValues = {}
                 }
-                
+
                 init();
                 console.log(checkboxValues);
             </script>
@@ -354,7 +354,7 @@ def draw_static(
         g.axes, .LaneSegment {
             display: none;
         }
-         
+
     """
     drawing.defs.add(drawing.style(style))
 
@@ -450,7 +450,7 @@ def make_tabs(timeseries):
 
             # include_plotlyjs = True if i == 0 else False
 
-            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs, )
+            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs,)
             include_plotlyjs = False
             td.append(bs(res))
             i += 1
@@ -519,8 +519,8 @@ function open_tab(evt, cityName) {
     document.getElementById(cityName).style.display = "block";
     document.getElementById(cityName).style.opacity = 1.0;
     evt.currentTarget.className += " active";
-} 
-    
+}
+
     """
     script.append(js)
 
@@ -537,7 +537,7 @@ function open_tab(evt, cityName) {
 
 /* Style the buttons that are used to open the tab content */
 .tab button {
-    
+
     font-size: 80%;
     background-color: inherit;
     float: left;
@@ -571,7 +571,7 @@ function open_tab(evt, cityName) {
     border-top: none;
     width: 100%;
 }
-    
+
     """
     )
     main = Tag(name="div")
@@ -591,7 +591,7 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
 
 <div id="slidecontainer">
 <div id='fixedui'>
-    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range" 
+    Select time: <input autofocus type="range" min="0" max="%s" value="0" class="slider" id="time-range"
     onchange="showVal(this.value)" oninput="showVal(this.value)"/>
     <span id="time-display"></span>
     </div>
@@ -603,8 +603,8 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     #time-range {
     width: 50%%;
     }
-    #fixedui { 
-    position: fixed; 
+    #fixedui {
+    position: fixed;
     width: 100%%;
     height: 3em;
     background-color: white;
@@ -619,17 +619,17 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
         padding: 1em;
         vertical-align: top;
     }
-    
+
     #observation_sequence {
         width: 320px;
     }
-    td#obs img { width: 90%%;} 
+    td#obs img { width: 90%%;}
 </style>
 <script type='text/javascript'>
     function showVal(newVal) {
         elements = document.querySelectorAll('.keyframe');
         elements.forEach(_ => _.setAttribute('visualize', 'hide'));
-        elements_show = document.querySelectorAll('.keyframe' + newVal );  
+        elements_show = document.querySelectorAll('.keyframe' + newVal );
         elements_show.forEach(_ => _.setAttribute('visualize', 'show'));
     }
     document.addEventListener("DOMContentLoaded", function(event) {
@@ -695,7 +695,7 @@ body {{
 </table>
 
 <script type='text/javascript'>
-    showVal(0); 
+    showVal(0);
 </script>
 
 {div_timeseries}
@@ -762,7 +762,7 @@ def bs(fragment: str):
     """ Returns the contents wrapped in an element called "fragment".
         Expects fragment as a str in utf-8 """
 
-    s = u"<fragment>%s</fragment>" % fragment
+    s = "<fragment>%s</fragment>" % fragment
 
     wire = s.encode("utf-8")
     parsed = BeautifulSoup(wire, "lxml")
