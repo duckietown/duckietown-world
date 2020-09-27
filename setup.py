@@ -28,7 +28,7 @@ install_requires = [
     "networkx>=2.2,<3",
     "duckietown-serialization-ds1<2",
     "svgwrite",
-    "PyGeometry-z6",
+    "PyGeometry-z6>=2.0.2",
     "beautifulsoup4>=4.6.3",
     "lxml",
     "pillow",
