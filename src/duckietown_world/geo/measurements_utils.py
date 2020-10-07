@@ -113,7 +113,7 @@ def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool
 
 @dataclass
 class IterateByTestResult:
-    fqn: Tuple[str]
+    fqn: Tuple[str, ...]
     transform_sequence: TransformSequence
     object: PlacedObject
     parents: Tuple[PlacedObject, ...]

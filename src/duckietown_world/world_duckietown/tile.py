@@ -256,6 +256,7 @@ def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLaneP
 
 
 def translation_from_O3(pose) -> np.ndarray:
+    """ Returns a 2x array """
     _, t, _, _ = extract_pieces(pose)
     return t
 

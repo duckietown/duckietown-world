@@ -21,9 +21,9 @@ FQN = Tuple[str, ...]
 
 @dataclass
 class SpatialRelation(Serializable):
-    a: Tuple[str]
+    a: Tuple[str, ...]
     transform: Transform
-    b: Tuple[str]
+    b: Tuple[str, ...]
 
     def filter_all(self, f):
         t2 = f(self.transform)
@@ -75,7 +75,7 @@ class PlacedObject(Serializable):
         for k, v in list(self.spatial_relations.items()):
             if isinstance(v, Transform):
                 if k in self.children:
-                    b: Tuple[str] = (k,)
+                    b: Tuple[str, ...] = (k,)
                     sr = GroundTruth(a=root, b=b, transform=v)
                     self.spatial_relations[k] = sr
                 else:
