@@ -64,6 +64,7 @@ setup(
         "console_scripts": [
             # 'dt-world-draw-log = duckietown_world.svg_drawing:draw_logs_main',
             "dt-world-draw-maps = duckietown_world.svg_drawing:draw_maps_main",
+            "dt-world-export-gltf = duckietown_world.gltf:gltf_export_main",
         ]
     },
 )

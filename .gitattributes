@@ -3,3 +3,7 @@
 #*png filter=lfs diff=lfs merge=lfs -text
 #*.html filter=lfs diff=lfs merge=lfs -text
 *ipynb filter=lfs diff=lfs merge=lfs -text
+resources/normalmap.png filter=lfs diff=lfs merge=lfs -text
+resources/texture.png filter=lfs diff=lfs merge=lfs -text
+resources/wood.jpg filter=lfs diff=lfs merge=lfs -text
+*blend filter=lfs diff=lfs merge=lfs -text
