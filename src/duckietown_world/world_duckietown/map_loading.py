@@ -34,7 +34,7 @@ from .. import logger
 from ..geo import Scale2D, SE2Transform
 from ..geo.measurements_utils import iterate_by_class
 
-__all__ = ["create_map", "list_maps", "construct_map", "load_map"]
+__all__ = ["create_map", "list_maps", "construct_map", "load_map", "get_texture_file"]
 
 
 def create_map(H=3, W=3) -> TileMap:

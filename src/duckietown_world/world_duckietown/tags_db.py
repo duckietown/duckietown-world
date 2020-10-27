@@ -1,17 +1,17 @@
 import os
 
 import yaml
-from duckietown_serialization_ds1 import Serializable
 from PIL import Image
 from six import BytesIO
 
+from duckietown_serialization_ds1 import Serializable
 from duckietown_world import logger, PlacedObject
 from duckietown_world.utils import memoized_reset
 
 # DEFAULT_FAMILY = '36h11'
 
 
-__all__ = ["get_apriltagsDB_raw", "get_sign_type_from_tag_id"]
+__all__ = ["get_apriltagsDB_raw", "get_sign_type_from_tag_id", "FloorTag"]
 
 
 class TagInstance(Serializable):
@@ -19,14 +19,14 @@ class TagInstance(Serializable):
         self.tag_id = tag_id
         self.family = family
         self.size = size
-
-        texture = "tag%s_%05d.png" % (family.replace("h", "_"), tag_id)
+        f = family.replace("h", "_")
+        texture = f"tag{f}_{tag_id:05d}.png"
         try:
             from duckietown_world.world_duckietown.map_loading import get_texture_file
 
             self.fn = get_texture_file(texture)
         except KeyError:
-            msg = "Cannot find april tag image for %s" % texture
+            msg = f"Cannot find april tag image for {texture}"
             logger.warning(msg)
             self.fn = None
 

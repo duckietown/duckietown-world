@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import svgwrite
+
+# noinspection PyProtectedMember
 from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
 from PIL import Image
@@ -35,6 +37,7 @@ __all__ = [
     "draw_children",
     "data_encoded_for_src",
     "TimeseriesPlot",
+    "mime_from_fn",
 ]
 
 

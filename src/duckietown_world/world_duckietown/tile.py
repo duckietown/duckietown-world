@@ -24,9 +24,8 @@ from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_c
 from duckietown_world.svg_drawing.misc import mime_from_fn
 from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
-from .types import SE2v
 
-__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight"]
+__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight", "translation_from_O3"]
 
 from .utils import relative_pose
 
@@ -187,7 +186,7 @@ class GetLanePoseResult:
     center_point: Matrix2D
 
 
-def get_lane_poses(dw: PlacedObject, q: SE2value, tol=0.000001) -> Iterator[GetLanePoseResult]:
+def get_lane_poses(dw: PlacedObject, q: SE2value, tol: float = 0.000001) -> Iterator[GetLanePoseResult]:
     for it in iterate_by_class(dw, Tile):
         assert isinstance(it, IterateByTestResult), it
         assert isinstance(it.object, Tile), it.object
