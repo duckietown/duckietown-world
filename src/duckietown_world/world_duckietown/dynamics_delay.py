@@ -6,7 +6,7 @@ import numpy as np
 from duckietown_world.world_duckietown.types import TSE2v
 from .platform_dynamics import PlatformDynamics, PlatformDynamicsFactory
 
-__all__ = ["ApplyDelay"]
+__all__ = ["ApplyDelay", "DelayedDynamics"]
 
 
 class ApplyDelay(PlatformDynamicsFactory):
