@@ -99,3 +99,8 @@ test-python-3.6-local: build-python-3.6
 
 black:
 	black -l 110 -t py38 .
+
+
+export:
+	dt-world-export-gltf --map udem1 --out out-udem1
+	scp -r out-udem1 @sandy:dev/duckietown-rendering-pyrender/code

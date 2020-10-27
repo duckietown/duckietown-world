@@ -8,6 +8,7 @@ __all__ = ["gltf_export_main"]
 
 import trimesh
 
+from duckietown_world.gltf.background import add_background
 from duckietown_world.world_duckietown.tile_map import ij_from_tilename
 from zuper_commons.logs import ZLogger
 from zuper_commons.text import get_md5
@@ -261,21 +262,26 @@ def export(dm: DuckietownMap, outdir: str):
         i, j = ij_from_tilename(name)
         c = (i + j) % 2
         color = [1, 0, 0, 1.0] if c else [0, 1, 0, 1.0]
-        material_back = make_material(model, resources, doubleSided=False, baseColorFactor=color)
-        back_mesh_index = add_polygon(
-            model,
-            resources,
-            name + "-mesh",
-            vertices=mi.vertices,
-            texture=mi.textures,
-            colors=mi.color,
-            normals=mi.normals,
-            material=material_back,
-        )
+        add_back = False
+        if add_back:
 
-        flip = np.diag([1.0, 1.0, -1.0, 1.0])
-        flip[2, 3] = -0.01
-        back_index = add_node(model, Node(mesh=back_mesh_index, matrix=gm(flip)))
+            material_back = make_material(model, resources, doubleSided=False, baseColorFactor=color)
+            back_mesh_index = add_polygon(
+                model,
+                resources,
+                name + "-mesh",
+                vertices=mi.vertices,
+                texture=mi.textures,
+                colors=mi.color,
+                normals=mi.normals,
+                material=material_back,
+            )
+
+            flip = np.diag([1.0, 1.0, -1.0, 1.0])
+            flip[2, 3] = -0.01
+            back_index = add_node(model, Node(mesh=back_mesh_index, matrix=gm(flip)))
+        else:
+            back_index = None
 
         tile_transform = it.transform_sequence
         tile_matrix2d = tile_transform.asmatrix2d().m
@@ -285,7 +291,11 @@ def export(dm: DuckietownMap, outdir: str):
         tile_matrix = tile_matrix @ scale
 
         tile_matrix_float = list(tile_matrix.T.flatten())
-        tile_node = Node(name=name, matrix=tile_matrix_float, children=[node1_index, back_index])
+        if back_index is not None:
+            children = [node1_index, back_index]
+        else:
+            children = [node1_index]
+        tile_node = Node(name=name, matrix=tile_matrix_float, children=children)
         tile_node_index = add_node(model, tile_node)
 
         map_nodes.append(tile_node_index)
@@ -299,6 +309,9 @@ def export(dm: DuckietownMap, outdir: str):
     def export_duckie(model, resources, name, ob):
         fn = "src/duckietown_world/data/gd1/meshes/duckie2/main.gltf"
         return embed_external(model, resources, fn)
+
+    bg_index = add_background(model, resources)
+    add_node_to_scene(model, scene_index, bg_index)
 
     exports = {
         "Sign": export_sign,
@@ -352,7 +365,7 @@ def export(dm: DuckietownMap, outdir: str):
     )
     model.cameras.append(camera)
 
-    t = np.array([2, 2, 0.1])
+    t = np.array([2, 2, 0.15])
     matrix = look_at(pos=t, target=np.array([0, 2, 0]))
     cam_index = add_node(model, Node(name="cameranode", camera=0, matrix=list(matrix.T.flatten())))
     add_node_to_scene(model, scene_index, cam_index)
@@ -574,8 +587,9 @@ def make_material(
     baseColorFactor: List = None,
     fn: str = None,
     fn_normals: str = None,
+    fn_emissive: str = None,
 ):
-    key = (tuple(baseColorFactor), fn, fn_normals)
+    key = (tuple(baseColorFactor), fn, fn_normals, fn_emissive, doubleSided)
     if key not in cacheMaterial:
         res = make_material_(
             model,
@@ -584,6 +598,7 @@ def make_material(
             baseColorFactor=baseColorFactor,
             fn=fn,
             fn_normals=fn_normals,
+            fn_emissive=fn_emissive,
         )
         cacheMaterial[key] = res
     return cacheMaterial[key]
@@ -597,6 +612,7 @@ def make_material_(
     baseColorFactor: List = None,
     fn: str = None,
     fn_normals: str = None,
+    fn_emissive: str = None,
 ) -> int:
     # uri = os.path.basename(fn)
     # doubleSided = True
@@ -615,18 +631,30 @@ def make_material_(
     else:
         normalTexture = None
 
+    if fn_emissive is not None:
+        emissive_map_index = make_texture(model, resources, fn_emissive)
+        emissiveTexture = NormalTextureInfo(index=emissive_map_index)
+        s = 1.0
+        emissiveFactor = [s, s, s]
+    else:
+        emissiveTexture = None
+        emissiveFactor = None
+
     m = Material(
         doubleSided=doubleSided,
         pbrMetallicRoughness=PBRMetallicRoughness(
             baseColorFactor=baseColorFactor, baseColorTexture=baseColorTexture,
         ),
+        alphaMode="BLEND",
+        emissiveTexture=emissiveTexture,
+        emissiveFactor=emissiveFactor,
         normalTexture=normalTexture,
     )
 
     return add_material(model, m)
 
 
-def look_at(pos: np.ndarray, target: np.ndarray) -> SE3value:
+def look_at(pos: np.ndarray, target: np.ndarray, gltf: bool = True) -> SE3value:
     diff = target - pos
     dist = np.linalg.norm(diff)
     x = diff / dist

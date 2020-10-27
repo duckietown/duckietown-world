@@ -1,14 +1,12 @@
 # coding=utf-8
 from dataclasses import dataclass
 
+import geometry as geo
 import numpy as np
 
-import geometry as geo
-from duckietown_world.world_duckietown.dynamics_delay import ApplyDelay
-from .generic_kinematics import GenericKinematicsSE2
+from .dynamics_delay import ApplyDelay
+from .generic_kinematics import GenericKinematicsSE2, TSE2value
 from .platform_dynamics import PlatformDynamicsFactory
-
-# from duckietown_serialization_ds1 import Serializable
 
 __all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands"]
 
@@ -24,6 +22,11 @@ class PWMCommands:
 
 
 class DynamicModelParameters(PlatformDynamicsFactory):
+    wheel_radius_left: float
+    wheel_radius_right: float
+    wheel_distance: float
+    encoder_resolution_rad: float
+
     def __init__(self, u1, u2, u3, w1, w2, w3, uar, ual, war, wal):
         # parameters for autonomous dynamics
         self.u1 = u1
@@ -38,9 +41,17 @@ class DynamicModelParameters(PlatformDynamicsFactory):
         self.u_alpha_l = ual
         self.w_alpha_r = war
         self.w_alpha_l = wal
+        R = 0.067 / 2  # 6.7 cm diameter
+        D = 0.1  # 10 cm
+        self.wheel_radius_left = R
+        self.wheel_radius_right = R
+        self.wheel_distance = D
+        ticks = 180  # XXX
+        res = np.pi * 2 / ticks
+        self.encoder_resolution_rad = res
 
-    def initialize(self, c0, t0=0, seed=None) -> "DynamicModel" "":
-        return DynamicModel(self, c0, t0)
+    def initialize(self, c0, t0: float = 0, seed: int = None) -> "DynamicModel":
+        return DynamicModel(self, c0, t0, 0.0, 0.0)
 
 
 def get_DB18_nominal(delay: float) -> PlatformDynamicsFactory:
@@ -100,14 +111,32 @@ class DynamicModel(GenericKinematicsSE2):
 
     parameters: DynamicModelParameters
 
-    def __init__(self, parameters: DynamicModelParameters, c0, t0):
+    axis_left_rad: float
+    axis_left_ticks: int
+    axis_right_rad: float
+    axis_right_ticks: int
+
+    def __init__(
+        self,
+        parameters: DynamicModelParameters,
+        c0: TSE2value,
+        t0: float,
+        axis_left_rad: float,
+        axis_right_rad: float,
+    ):
         self.parameters = parameters
         GenericKinematicsSE2.__init__(self, c0, t0)
 
+        self.axis_left_rad = axis_left_rad
+        self.axis_right_rad = axis_right_rad
+        self.axis_left_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
+        self.axis_right_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
+
     @staticmethod
-    def model(input: PWMCommands, parameters: DynamicModelParameters, u=None, w=None):
+    def model(commands: PWMCommands, parameters: DynamicModelParameters, u=None, w=None):
+        """ Returns the second derivative of x"""
         ## Unpack Inputs
-        U = np.array([input.motor_right, input.motor_left])
+        U = np.array([commands.motor_right, commands.motor_left])
         V = U.reshape(U.size, 1)
         V = np.clip(V, -1, +1)
         # parameters for autonomous dynamics
@@ -125,9 +154,9 @@ class DynamicModel(GenericKinematicsSE2):
 
         ## Calculate Dynamics
         # nonlinear Dynamics - autonomous response
-        f_dynamic = np.array([[-u1 * u - u2 * w + u3 * w ** 2], [-w1 * w - w2 * u - w3 * u * w]])
+        f_dynamic = np.array([[-u1 * u - u2 * w + u3 * w ** 2], [-w1 * w - w2 * u - w3 * u * w]])  #
         # input Matrix
-        B = np.array([[u_alpha_r, u_alpha_l], [w_alpha_r, -w_alpha_l]])
+        B = np.array([[u_alpha_r, u_alpha_l], [w_alpha_r, -w_alpha_l]])  #
         # forced response
         f_forced = np.matmul(B, V)
         # acceleration
@@ -163,4 +192,24 @@ class DynamicModel(GenericKinematicsSE2):
         c1 = s1.q0, s1.v0
         t1 = s1.t0
 
-        return DynamicModel(self.parameters, c1, t1)
+        # now we compute the axis rotation using the inverse way...
+        # forward = both wheels spin positive
+        # angular_velocity = wR/d - Wl/d   # if R rotates more, we increase theta
+        # linear_velocity = (wR*R_r + Wl*R_l)/2
+
+        # that is
+        # [lin, ang] = [ 1/d -1/d; Rr/2 Rl/2]  [wR wL]
+        d = self.parameters.wheel_distance
+        Rr = self.parameters.wheel_radius_right
+        Rl = self.parameters.wheel_radius_left
+        M = np.array([[1 / d, -1 / d], [Rr / 2, Rl / 2]])
+        linang = np.array((linear, angular))
+        wRL = np.linalg.solve(M, linang)
+        wR = wRL[0]
+        wL = wRL[1]
+        axis_left_rad = self.axis_left_rad + wL * dt
+        axis_right_rad = self.axis_right_rad + wR * dt
+
+        return DynamicModel(
+            self.parameters, c1, t1, axis_left_rad=axis_left_rad, axis_right_rad=axis_right_rad
+        )

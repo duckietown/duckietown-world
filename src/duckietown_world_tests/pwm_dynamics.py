@@ -1,22 +1,15 @@
 import os
 
-import yaml
-import numpy as np
-
 import geometry as geo
-from comptests import comptest, run_module_tests, get_comptests_output_dir
-from duckietown_world import (
-    PWMCommands,
-    SampledSequence,
-    draw_static,
-    SE2Transform,
-    DB18,
-    construct_map,
-)
+import numpy as np
+import yaml
+from comptests import comptest, get_comptests_output_dir, run_module_tests
+
+from duckietown_world import construct_map, DB18, draw_static, PWMCommands, SampledSequence, SE2Transform
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 from duckietown_world.svg_drawing.misc import TimeseriesPlot
 from duckietown_world.world_duckietown.pwm_dynamics import get_DB18_nominal
-from duckietown_world.world_duckietown.types import TSE2v, se2v
+from duckietown_world.world_duckietown.types import se2v, TSE2v
 from duckietown_world.world_duckietown.utils import get_velocities_from_sequence
 
 
@@ -46,7 +39,7 @@ def test_pwm1():
     map_data_yaml = """
 
     tiles:
-    - [floor/W,floor/W, floor/W, floor/W, floor/W] 
+    - [floor/W,floor/W, floor/W, floor/W, floor/W]
     - [straight/W   , straight/W   , straight/W, straight/W, straight/W]
     - [floor/W,floor/W, floor/W, floor/W, floor/W]
     tile_size: 0.61
