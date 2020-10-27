@@ -5,10 +5,14 @@ import logging
 import math
 import os
 from dataclasses import dataclass
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import svgwrite
 from bs4 import BeautifulSoup, Tag
+from past.builtins import reduce
+from PIL import Image
+from six import BytesIO
+
 from duckietown_world import logger
 from duckietown_world.geo import (
     get_extent_points,
@@ -19,9 +23,9 @@ from duckietown_world.geo import (
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
-from past.builtins import reduce
-from PIL import Image
-from six import BytesIO
+
+pl = logging.getLogger("PIL")
+pl.setLevel(logging.ERROR)
 
 __all__ = [
     "draw_recursive",
@@ -142,7 +146,8 @@ def draw_static(
     pixel_size: Tuple[int, int] = (480, 480),
     area=None,
     images=None,
-    timeseries=None,
+    timeseries: "Dict[str, TimeseriesPlot]" = None,
+    timeseries_groups: "Dict[str, TimeseriesGroups]" = None,
     height_of_stored_images: Optional[int] = None,
     main_robot_name: Optional[str] = None,
 ) -> Sequence[str]:
@@ -332,7 +337,7 @@ def draw_static(
             </script>
         """
 
-    div_timeseries = str(make_tabs(timeseries))
+    div_timeseries = str(make_tabs(timeseries, timeseries_groups))
 
     obs_div = str(obs_div)
     html = make_html_slider(
@@ -366,8 +371,6 @@ def draw_static(
 
 
 def get_resized_image(bytes_content, width):
-    pl = logging.getLogger("PIL")
-    pl.setLevel(logging.ERROR)
     idata = BytesIO(bytes_content)
     with Image.open(idata) as _:
         image = _.convert("RGB")
@@ -378,6 +381,12 @@ def get_resized_image(bytes_content, width):
     image.save(out, format="jpeg")
 
     return out.getvalue()
+
+
+@dataclass
+class TimeseriesGroups:
+    title: str
+    contains: List[str]
 
 
 @dataclass
@@ -399,7 +408,9 @@ class TimeseriesPlot:
         return self.long_description
 
 
-def make_tabs(timeseries):
+def make_tabs(
+    timeseries: Dict[str, TimeseriesPlot], timeseries_groups: Optional[Dict[str, TimeseriesGroups]]
+) -> Tag:
     tabs = {}
     import plotly.offline as offline
 
@@ -462,42 +473,85 @@ def make_tabs(timeseries):
 
         tabs[name] = Tab(title=tsp.title, content=div)
 
-    return render_tabs(tabs)
+    groups = make_groups(tabs, timeseries_groups)
+
+    return render_tabs(groups)
 
 
+@dataclass
 class Tab:
-    def __init__(self, title: str, content):
-        self.title = title
-        self.content = content
+    title: str
+    content: Tag
 
 
-def render_tabs(tabs: Dict[str, Tab]) -> Tag:
+@dataclass
+class TabGroup:
+    title: str
+    tabs: Dict[str, Tab]
+
+
+def make_groups(
+    tabs: Dict[str, Tab], timeseries_groups: Optional[Dict[str, TimeseriesGroups]]
+) -> Dict[str, TabGroup]:
+    if timeseries_groups:
+        raise NotImplementedError()
+    else:
+        groups = {}
+        for tid, tab in tabs.items():
+            if "/" in tid:
+                this_group, _, code = tid.partition("/")
+
+            else:
+                this_group = "main"
+                code = tid
+            if this_group not in groups:
+                groups[this_group] = TabGroup(this_group, {})
+            groups[this_group].tabs[code] = tab
+        return groups
+    # return {'main': TabGroup('main', tabs)}
+
+
+def render_tabs(groups: Dict[str, TabGroup]) -> Tag:
+
     div_buttons = Tag(name="div")
     div_buttons.attrs["class"] = "tab"
     div_content = Tag(name="div")
+    i = 0
+    for group_id, group in groups.items():
+        div_buttons_group = Tag(name="div")
+        div_buttons_group.attrs["id"] = f"group-{group_id}"
+        div_buttons_group.attrs["class"] = f"group"
 
-    for i, (name, tab) in enumerate(tabs.items()):
-        assert isinstance(tab, Tab), tab
+        title = Tag(name="span")
+        title.attrs["class"] = "group-title"
+        title.append(group.title)
+        div_buttons_group.append(title)
+        div_buttons.append(div_buttons_group)
 
-        tid = "tab%s" % i
-        button = Tag(name="button")
-        button.attrs["class"] = "tablinks"
-        button.attrs["onclick"] = "open_tab(event,'%s')" % tid
-        button.append(tab.title)
-        div_buttons.append(button)
+        for name, tab in group.tabs.items():
+            assert isinstance(tab, Tab), tab
 
-        div_c = Tag(name="div")
-        div_c.attrs["id"] = tid
-        div_c.attrs["style"] = ""  # ''display: none; width:100%; height:100vh'
+            tid = f"tab{i}"
+            button = Tag(name="button")
+            button.attrs["class"] = "tablinks"
+            button.attrs["onclick"] = f"open_tab(event,'{tid}')"
+            button.append(tab.title)
+            div_buttons_group.append(button)
 
-        div_c.attrs["class"] = "tabcontent"
+            div_c = Tag(name="div")
+            div_c.attrs["id"] = tid
+            div_c.attrs["style"] = ""  # ''display: none; width:100%; height:100vh'
 
-        div_c.append(tab.content)
+            div_c.attrs["class"] = "tabcontent"
 
-        div_content.append(div_c)
+            div_c.append(tab.content)
+
+            div_content.append(div_c)
+
+            i += 1
 
     script = Tag(name="script")
-    # language=js
+    # language=javascript
     js = """
 function open_tab(evt, cityName) {
     // Declare all variables
@@ -540,7 +594,8 @@ function open_tab(evt, cityName) {
 
     font-size: 80%;
     background-color: inherit;
-    float: left;
+    /* float: left; */
+    margin-left: 1em;
     border: solid 0.5px gray;
     outline: none;
     cursor: pointer;

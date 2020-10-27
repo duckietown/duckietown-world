@@ -145,7 +145,7 @@ def get_interest_map(m: DuckietownMap, q: SE2value) -> DuckietownMap:
                 children2[name] = child
             else:
                 print(f"cutting {name}")
-    print(debug_print(children2))
+    # print(debug_print(children2))
     sr2 = {}
     for sr_id, sr in list(m.spatial_relations.items()):
         first = sr.b[0]

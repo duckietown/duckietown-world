@@ -5,6 +5,8 @@ import geometry
 import geometry as geo
 import numpy as np
 from contracts import contract, new_contract
+from typing import Sequence
+
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.seqs import GenericSequence
 from duckietown_world.seqs.tsequence import Timestamp
@@ -76,7 +78,7 @@ class VariableTransformSequence(TransformSequence, GenericSequence[Transform]): 
 
 class SE2Transform(Transform, Serializable):
     @contract(p="seq[2](float|int)")
-    def __init__(self, p, theta):
+    def __init__(self, p: Sequence[float], theta: float):
         self.p = np.array(p, dtype="float64")
         self.theta = float(theta)
 

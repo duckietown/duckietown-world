@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Iterator, Tuple
 
 import numpy as np
-from geometry import extract_pieces
+from geometry import extract_pieces, SE2value
 from svgwrite.container import Use
 
 from duckietown_world import logger
@@ -187,7 +187,7 @@ class GetLanePoseResult:
     center_point: Matrix2D
 
 
-def get_lane_poses(dw: PlacedObject, q: SE2v, tol=0.000001) -> Iterator[GetLanePoseResult]:
+def get_lane_poses(dw: PlacedObject, q: SE2value, tol=0.000001) -> Iterator[GetLanePoseResult]:
     for it in iterate_by_class(dw, Tile):
         assert isinstance(it, IterateByTestResult), it
         assert isinstance(it.object, Tile), it.object

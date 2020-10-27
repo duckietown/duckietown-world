@@ -1,6 +1,6 @@
 from typing import Tuple
 
-__all__ = ["SE2v", "se2v", "TSE2v", TSE2value]
+__all__ = ["SE2v", "se2v", "TSE2v", "TSE2value"]
 
 from geometry import SE2value, se2value
 

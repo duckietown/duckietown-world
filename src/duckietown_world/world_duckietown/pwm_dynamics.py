@@ -5,10 +5,11 @@ import geometry as geo
 import numpy as np
 
 from .dynamics_delay import ApplyDelay
-from .generic_kinematics import GenericKinematicsSE2, TSE2value
+from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
+from .types import TSE2value
 
-__all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands"]
+__all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands", "get_DB18_nominal"]
 
 
 @dataclass
@@ -47,7 +48,7 @@ class DynamicModelParameters(PlatformDynamicsFactory):
         self.wheel_radius_right = R
         self.wheel_distance = D
         ticks = 180  # XXX
-        res = np.pi * 2 / ticks
+        res = (np.pi * 2) / ticks
         self.encoder_resolution_rad = res
 
     def initialize(self, c0, t0: float = 0, seed: int = None) -> "DynamicModel":
@@ -112,9 +113,9 @@ class DynamicModel(GenericKinematicsSE2):
     parameters: DynamicModelParameters
 
     axis_left_rad: float
-    axis_left_ticks: int
     axis_right_rad: float
-    axis_right_ticks: int
+    axis_left_obs_rad: float
+    axis_right_obs_rad: float
 
     def __init__(
         self,
@@ -129,8 +130,10 @@ class DynamicModel(GenericKinematicsSE2):
 
         self.axis_left_rad = axis_left_rad
         self.axis_right_rad = axis_right_rad
-        self.axis_left_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
-        self.axis_right_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
+        left_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
+        right_ticks = int(np.round(axis_right_rad / parameters.encoder_resolution_rad))
+        self.axis_left_obs_rad = left_ticks * parameters.encoder_resolution_rad
+        self.axis_right_obs_rad = right_ticks * parameters.encoder_resolution_rad
 
     @staticmethod
     def model(commands: PWMCommands, parameters: DynamicModelParameters, u=None, w=None):
@@ -198,15 +201,17 @@ class DynamicModel(GenericKinematicsSE2):
         # linear_velocity = (wR*R_r + Wl*R_l)/2
 
         # that is
-        # [lin, ang] = [ 1/d -1/d; Rr/2 Rl/2]  [wR wL]
+        # [ang, lin ] = [ Rr/d -Rl/d; Rr/2 Rl/2]  [wR wL]
         d = self.parameters.wheel_distance
         Rr = self.parameters.wheel_radius_right
         Rl = self.parameters.wheel_radius_left
-        M = np.array([[1 / d, -1 / d], [Rr / 2, Rl / 2]])
-        linang = np.array((linear, angular))
-        wRL = np.linalg.solve(M, linang)
-        wR = wRL[0]
-        wL = wRL[1]
+        M = np.array([[Rr / d, -Rl / d], [Rr / 2, Rl / 2]])
+        anglin = np.array((angular, longitudinal))
+        MInv = np.linalg.inv(M)
+        wRL = MInv @ anglin
+        wR = float(wRL[0, 0])
+        wL = float(wRL[1, 0])
+
         axis_left_rad = self.axis_left_rad + wL * dt
         axis_right_rad = self.axis_right_rad + wR * dt
 

@@ -8,6 +8,8 @@ import numpy as np
 import oyaml as yaml
 
 import geometry as geo
+from zuper_commons.types import ZKeyError
+
 from duckietown_serialization_ds1 import Serializable
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
@@ -299,6 +301,6 @@ def get_texture_file(tex_name: str) -> str:
 
     if not res:
         msg = "Could not find any texture for %s" % tex_name
-        logger.debug("tried %s" % tried)
-        raise KeyError(msg)
+        # logger.debug("tried %s" % tried)
+        raise ZKeyError(msg, tried=tried)
     return res[0]
