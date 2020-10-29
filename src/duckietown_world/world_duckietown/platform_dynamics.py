@@ -1,7 +1,7 @@
 # coding=utf-8
 from abc import ABCMeta, abstractmethod
 
-from .types import *
+from .types import TSE2value
 
 __all__ = ["PlatformDynamicsFactory", "PlatformDynamics"]
 
@@ -26,20 +26,20 @@ class PlatformDynamics(metaclass=ABCMeta):
         """
             Returns the result of applying commands for dt.
 
-            :param dt > 0: time interval
+            :param dt: time interval
             :param commands: class-specific commands
             :return: the next state
         """
 
     @abstractmethod
-    def TSE2_from_state(self) -> TSE2v:
+    def TSE2_from_state(self) -> TSE2value:
         """ Returns pose, velocity for the state. """
 
 
 class PlatformDynamicsFactory(metaclass=ABCMeta):
     @classmethod
     @abstractmethod
-    def initialize(cls, c0: TSE2v, t0: float = 0, seed: int = None) -> PlatformDynamics:
+    def initialize(cls, c0: TSE2value, t0: float = 0, seed: int = None) -> PlatformDynamics:
         """
             Returns the dynamics initalized at a certain configuration.
 

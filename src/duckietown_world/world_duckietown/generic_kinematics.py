@@ -1,14 +1,12 @@
 # coding=utf-8
-from duckietown_serialization_ds1 import Serializable
-
 import geometry as geo
-from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
-from .types import *
+
+from duckietown_serialization_ds1 import Serializable
+from .platform_dynamics import PlatformDynamics, PlatformDynamicsFactory
+from .types import TSE2value
+
 
 __all__ = ["GenericKinematicsSE2"]
-
-# noinspection PyUnresolvedReferences
-from geometry.poses import *
 
 
 class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializable):
@@ -19,10 +17,10 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
     """
 
     @classmethod
-    def initialize(cls, c0: TSE2v, t0: float = 0, seed=None):
+    def initialize(cls, c0: TSE2value, t0: float = 0, seed=None):
         return GenericKinematicsSE2(c0, t0)
 
-    def __init__(self, c0: TSE2v, t0: float):
+    def __init__(self, c0: TSE2value, t0: float):
         # start at q0, v0
         q0, v0 = c0
         geo.SE2.belongs(q0)
@@ -31,7 +29,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         self.v0 = v0
         self.q0 = q0
 
-    def integrate(self, dt: float, commands: se2v) -> "GenericKinematicsSE2":
+    def integrate(self, dt: float, commands: geo.se2value) -> "GenericKinematicsSE2":
         """ commands = velocity in body frame """
         # convert to float
         dt = float(dt)
@@ -49,5 +47,5 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         # return the new state
         return GenericKinematicsSE2(c1, t1)
 
-    def TSE2_from_state(self) -> TSE2v:
+    def TSE2_from_state(self) -> TSE2value:
         return self.q0, self.v0

@@ -8,6 +8,8 @@ import numpy as np
 import oyaml as yaml
 
 import geometry as geo
+from zuper_commons.types import ZKeyError
+
 from duckietown_serialization_ds1 import Serializable
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
@@ -32,7 +34,7 @@ from .. import logger
 from ..geo import Scale2D, SE2Transform
 from ..geo.measurements_utils import iterate_by_class
 
-__all__ = ["create_map", "list_maps", "construct_map", "load_map"]
+__all__ = ["create_map", "list_maps", "construct_map", "load_map", "get_texture_file"]
 
 
 def create_map(H=3, W=3) -> TileMap:
@@ -299,6 +301,6 @@ def get_texture_file(tex_name: str) -> str:
 
     if not res:
         msg = "Could not find any texture for %s" % tex_name
-        logger.debug("tried %s" % tried)
-        raise KeyError(msg)
+        # logger.debug("tried %s" % tried)
+        raise ZKeyError(msg, tried=tried)
     return res[0]

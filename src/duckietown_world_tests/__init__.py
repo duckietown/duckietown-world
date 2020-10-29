@@ -1,4 +1,8 @@
-# coding=utf-8
+import logging
+
+logger = logging.getLogger("dt-world-tests")
+logger.setLevel(logging.DEBUG)
+
 from .dynamics import *
 from .lane_pose import *
 from .measurements import *

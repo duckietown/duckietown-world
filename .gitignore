@@ -11,3 +11,7 @@ artifacts
 .ipynb_checkpoints
 .compmake_history.txt
 testplotly.html
+glTF-Sample-Models
+src/duckietown_world/data/gd1/meshes/duckie2.blend1
+src/duckietown_world/data/gd1/meshes/duckiebot.glb
+src/duckietown_world/data/gd1/meshes/tree.blend1

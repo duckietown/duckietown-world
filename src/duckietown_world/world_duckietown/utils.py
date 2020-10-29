@@ -1,16 +1,13 @@
-import numpy as np
-
 import geometry as geo
+import numpy as np
+from geometry import SE2, SE2value
+
 from duckietown_world import SampledSequence
-from duckietown_world.geo.transforms import SE2value
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder
-from duckietown_world.world_duckietown.types import SE2v, se2v
-
-from geometry import SE2
 
 
-def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se2v]:
-    ssb = SampledSequenceBuilder[se2v]()
+def get_velocities_from_sequence(s: SampledSequence[SE2value]) -> SampledSequence[SE2value]:
+    ssb = SampledSequenceBuilder[SE2value]()
     ssb.add(0, geo.se2.zero())
     for i in range(1, len(s)):
         t0 = s.timestamps[i - 1]
@@ -24,7 +21,7 @@ def get_velocities_from_sequence(s: SampledSequence[SE2v]) -> SampledSequence[se
     return ssb.as_sequence()
 
 
-def velocity_from_poses(t1: float, q1: SE2v, t2: float, q2: SE2v) -> se2v:
+def velocity_from_poses(t1: float, q1: SE2value, t2: float, q2: SE2value) -> SE2value:
     delta = t2 - t1
     if not delta > 0:
         msg = f"invalid delta {delta}"

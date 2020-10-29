@@ -5,7 +5,7 @@ from duckietown_world.world_duckietown.tile_coords import ALLOWED_ORIENTATIONS
 from ..geo import PlacedObject
 from ..world_duckietown import Tile, TileCoords
 
-__all__ = ["TileMap"]
+__all__ = ["TileMap", "ij_from_tilename", "tilename_from_ij"]
 
 
 def tilename_from_ij(i: int, j: int):

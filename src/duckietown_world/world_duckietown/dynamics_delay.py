@@ -1,12 +1,12 @@
 import math
-from typing import Tuple, Any
+from typing import Any, Tuple
 
 import numpy as np
 
 from duckietown_world.world_duckietown.types import TSE2v
-from .platform_dynamics import PlatformDynamicsFactory, PlatformDynamics
+from .platform_dynamics import PlatformDynamics, PlatformDynamicsFactory
 
-__all__ = ["ApplyDelay"]
+__all__ = ["ApplyDelay", "DelayedDynamics"]
 
 
 class ApplyDelay(PlatformDynamicsFactory):
@@ -62,7 +62,7 @@ class DelayedDynamics(PlatformDynamics):
         """
             Returns the result of applying commands for dt.
 
-            :param dt > 0: time interval
+            :param dt: time interval
             :param commands: class-specific commands
             :return: the next state
         """
@@ -73,7 +73,7 @@ class DelayedDynamics(PlatformDynamics):
         # print(f't = {self.t}, t old = {told}'  )
         state2 = self.state.integrate(dt, use_commands)
 
-        next = DelayedDynamics(
+        next_state = DelayedDynamics(
             state2,
             self.delay,
             self.t,
@@ -81,7 +81,7 @@ class DelayedDynamics(PlatformDynamics):
             commands=list(self.commands),
             timestamps=list(self.timestamps),
         )
-        return next
+        return next_state
 
     def TSE2_from_state(self) -> TSE2v:
         return self.state.TSE2_from_state()

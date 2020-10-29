@@ -1,9 +1,9 @@
 from typing import Tuple
 
-import numpy as np
+__all__ = ["SE2v", "se2v", "TSE2v", "TSE2value"]
 
-__all__ = ["SE2v", "se2v", "TSE2v"]
+from geometry import SE2value, se2value
 
-SE2v = np.ndarray
-se2v = np.ndarray
-TSE2v = Tuple[SE2v, se2v]
+SE2v = SE2value
+se2v = se2value
+TSE2value = TSE2v = Tuple[SE2v, se2v]

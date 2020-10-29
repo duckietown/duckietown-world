@@ -11,14 +11,14 @@ bump: # v2
 	git push
 
 upload: # v3
-	aido-check-not-dirty
-	aido-check-tagged
-	aido-check-need-upload --package duckietown-world-daffy make upload-do
+	dts -q build_utils check-not-dirty
+	dts -q build_utils check-tagged
+	dt-check-need-upload --package duckietown-world-daffy make upload-do
 
 upload-do:
 	rm -f dist/*
 	rm -rf src/*.egg-info
-	python setup.py sdist
+	python3 setup.py sdist
 	twine upload --skip-existing --verbose dist/*
 
 comptest_package=duckietown_world_tests
@@ -99,3 +99,8 @@ test-python-3.6-local: build-python-3.6
 
 black:
 	black -l 110 -t py38 .
+
+
+export:
+	dt-world-export-gltf --map udem1 --out out-udem1
+	scp -r out-udem1 @sandy:dev/duckietown-rendering-pyrender/code
