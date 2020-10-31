@@ -1,0 +1,13 @@
+map_name: udem1
+robots_npcs: [npc1, npc2]
+robots_pcs: [ego1, ego2]
+robots_parked: []
+theta_tol_deg: 40
+dist_tol_m: 0.04
+min_dist: 0.5
+delta_y_m: 0.04
+only_straight: false
+nduckies: 10
+duckie_min_dist_from_other_duckie: 0.04
+duckie_min_dist_from_robot: 0.3
+duckie_y_bounds: [-0.1, -0.2]

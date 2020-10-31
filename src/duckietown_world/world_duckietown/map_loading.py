@@ -2,15 +2,18 @@
 import itertools
 import os
 import traceback
-from typing import List
-
-import numpy as np
-import oyaml as yaml
+from functools import lru_cache
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 import geometry as geo
+import numpy as np
+import oyaml as yaml
+from zuper_commons.fs import locate_files
 from zuper_commons.types import ZKeyError
 
 from duckietown_serialization_ds1 import Serializable
+from . import logger
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
 from .other_objects import (
@@ -30,14 +33,21 @@ from .tile import Tile
 from .tile_map import TileMap
 from .tile_template import load_tile_types
 from .traffic_light import TrafficLight
-from .. import logger
 from ..geo import Scale2D, SE2Transform
 from ..geo.measurements_utils import iterate_by_class
 
-__all__ = ["create_map", "list_maps", "construct_map", "load_map", "get_texture_file"]
+__all__ = [
+    "create_map",
+    "list_maps",
+    "construct_map",
+    "load_map",
+    "get_texture_file",
+    "_get_map_yaml",
+    "get_resource_path",
+]
 
 
-def create_map(H=3, W=3) -> TileMap:
+def create_map(H: int = 3, W: int = 3) -> TileMap:
     tile_map = TileMap(H=H, W=W)
 
     for i, j in itertools.product(range(H), range(W)):
@@ -66,18 +76,45 @@ def get_maps_dir() -> str:
     return d
 
 
-def get_texture_dirs() -> List[str]:
+def get_data_dir() -> str:
+    """ location of data dir """
     abs_path_module = os.path.realpath(__file__)
-    module_dir = os.path.dirname(abs_path_module)
-    d = os.path.join(module_dir, "../data/gd1/textures")
-    assert os.path.exists(d), d
-    d2 = os.path.join(module_dir, "../data/gd1/meshes")
-    assert os.path.exists(d2), d2
+    module_dir = Path(os.path.dirname(abs_path_module))
+    return str(module_dir.parent / "data")
 
-    d3 = os.path.join(module_dir, "../data/tag36h11")
-    assert os.path.exists(d3), d3
 
-    return [d, d2, d3]
+@lru_cache(maxsize=None)
+def get_data_resources() -> Tuple[Dict[str, str], List[str]]:
+    data = get_data_dir()
+    logger.info(data=data)
+    files = locate_files(data, pattern=["*.png", "*.jpg", "*.yaml", "*.gltf"])
+    res2 = []
+    res1 = {}
+    for f in files:
+        basename = os.path.basename(f)
+        if basename in res1:
+            msg = "Double basename."
+            logger.warning(msg, basename=basename, f1=f, f2=res1[basename])
+        else:
+            res1[basename] = f
+        res2.append(f)
+
+    # logger.info(resources=res2, res1=list(res1))
+    return res1, res2
+
+
+def get_resource_path(basename: str) -> str:
+    res1, res2 = get_data_resources()
+    if "/" in basename:
+        for v in res2:
+            if v.endswith(basename):
+                return v
+
+    else:
+        if basename in res1:
+            return res1[basename]
+    msg = f"Could not find resource {basename!r}."
+    raise ZKeyError(msg, known=sorted(res2), res1=sorted(res1))
 
 
 def _get_map_yaml(map_name: str) -> str:
@@ -92,7 +129,7 @@ def _get_map_yaml(map_name: str) -> str:
 
 
 def load_map(map_name: str) -> DuckietownMap:
-    logger.info("loading map %s" % map_name)
+    logger.info(f"loading map {map_name}")
     data = _get_map_yaml(map_name)
     yaml_data = yaml.load(data, Loader=yaml.SafeLoader)
 
@@ -288,19 +325,19 @@ def get_xy_slot(i):
 
 
 def get_texture_file(tex_name: str) -> str:
+    resources, _ = get_data_resources()
     res = []
     tried = []
-    for d in get_texture_dirs():
-        suffixes = ["", "_1", "_2", "_3", "_4"]
-        for s in suffixes:
-            for ext in [".jpg", ".png", ""]:
-                path = os.path.join(d, tex_name + s + ext)
-                tried.append(path)
-                if os.path.exists(path):
-                    res.append(path)
+
+    suffixes = ["", "_1", "_2", "_3", "_4"]
+    extensions = [".jpg", ".png"]
+    for s, e in itertools.product(suffixes, extensions):
+        basename = f"{tex_name}{s}{e}"
+        if basename in resources:
+            return resources[basename]
+        tried.append(basename)
 
     if not res:
-        msg = "Could not find any texture for %s" % tex_name
-        # logger.debug("tried %s" % tried)
+        msg = f"Could not find any texture for {tex_name}"
         raise ZKeyError(msg, tried=tried)
     return res[0]

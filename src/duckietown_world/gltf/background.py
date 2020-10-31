@@ -1,22 +1,29 @@
-import os
-from typing import List
-
 import numpy as np
-from geometry import rotx, roty, rotz, SE3_from_SO3, SE3value
-from geometry.poses import pose_from_rotation_translation
+from geometry import SE3_roty, SE3_rotz, SE3_trans
 
-from gltflib import GLTFModel, Node
+from gltflib import Node
+
+__all__ = ["add_background"]
+
+from gltflib import GLTF
+
+from . import logger
+from ..world_duckietown.map_loading import get_resource_path
 
 
-def add_background(model: GLTFModel, resources: List) -> int:
-    root = "resources/banners/pannello %02d.pdf.jpg"
+def add_background(gltf: GLTF) -> int:
+    model = gltf.model
+    resources = gltf.resources
+    root = "pannello %02d.pdf.jpg"
     found = []
     for i in range(1, 27):
-        fn = root % i
-        if os.path.exists(fn):
-            found.append(fn)
+        basename = root % i
+        try:
+            fn = get_resource_path(basename)
+        except KeyError:
+            logger.warn(f"not found {basename!r}")
         else:
-            print(f"not found {fn}")
+            found.append(fn)
 
     found = found[:9]
     n = len(found)
@@ -35,8 +42,7 @@ def add_background(model: GLTFModel, resources: List) -> int:
         # if i > 5:
         #     break
         material_index = make_material(
-            model,
-            resources,
+            gltf,
             doubleSided=True,
             baseColorFactor=[0.5, 0.5, 0.5, 1.0],
             fn_emissive=fn
@@ -47,8 +53,7 @@ def add_background(model: GLTFModel, resources: List) -> int:
         mi = get_square()
 
         mesh_index = add_polygon(
-            model,
-            resources,
+            gltf,
             f"bg-{i}",
             vertices=mi.vertices,
             texture=mi.textures,
@@ -69,23 +74,7 @@ def add_background(model: GLTFModel, resources: List) -> int:
             @ SE3_trans(np.array([0, 0.35, 0]))
         )
 
-        node1_index = add_node(model, Node(name=f"panel-{i}", mesh=mesh_index, matrix=gm(matrix)))
+        node1_index = add_node(gltf, Node(name=f"panel-{i}", mesh=mesh_index, matrix=gm(matrix)))
         nodes_panels.append(node1_index)
     node = Node(children=nodes_panels)
-    return add_node(model, node)
-
-
-def SE3_rotz(alpha: float) -> SE3value:
-    return SE3_from_SO3(rotz(alpha))
-
-
-def SE3_roty(alpha: float) -> SE3value:
-    return SE3_from_SO3(roty(alpha))
-
-
-def SE3_rotx(alpha: float) -> SE3value:
-    return SE3_from_SO3(rotx(alpha))
-
-
-def SE3_trans(t: np.ndarray) -> SE3value:
-    return pose_from_rotation_translation(np.eye(3), np.array(t))
+    return add_node(gltf, node)

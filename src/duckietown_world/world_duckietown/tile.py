@@ -6,7 +6,7 @@ import numpy as np
 from geometry import extract_pieces, SE2value
 from svgwrite.container import Use
 
-from duckietown_world import logger
+from . import logger
 from duckietown_world.geo import (
     Matrix2D,
     PlacedObject,
@@ -25,9 +25,9 @@ from duckietown_world.svg_drawing.misc import mime_from_fn
 from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
 
-__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight", "translation_from_O3"]
-
 from .utils import relative_pose
+
+__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight", "translation_from_O3"]
 
 
 class SignSlot(PlacedObject):
@@ -87,6 +87,9 @@ def get_tile_slots():
 
 
 class Tile(PlacedObject):
+    kind: str
+    drivable: bool
+
     def __init__(self, kind, drivable, **kwargs):
         # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
@@ -97,9 +100,9 @@ class Tile(PlacedObject):
 
         try:
             self.fn = get_texture_file(kind)
-        except KeyError:
-            msg = "Cannot find texture for %s" % kind
-            logger.warning(msg)
+        except KeyError as e:
+            msg = f"Cannot find texture for tile of type {kind}"
+            logger.warning(msg, e=e)
 
             self.fn = None
         # if kind in ['asphalt']:

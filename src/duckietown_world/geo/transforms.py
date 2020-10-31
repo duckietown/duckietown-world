@@ -1,22 +1,25 @@
 # coding=utf-8
 from abc import ABCMeta, abstractmethod
+from typing import Sequence
 
 import geometry
 import geometry as geo
 import numpy as np
 from contracts import contract, new_contract
-from typing import Sequence
+from geometry import SE2value
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.seqs import GenericSequence
 from duckietown_world.seqs.tsequence import Timestamp
 
-__all__ = ["TransformSequence", "Transform", "SE2Transform", "Scale2D", "Matrix2D"]
-
-# SE2value = NewType("SE2value", np.ndarray)
-from geometry import SE2value
-
-_ = SE2value
+__all__ = [
+    "TransformSequence",
+    "Transform",
+    "SE2Transform",
+    "Scale2D",
+    "Matrix2D",
+    "VariableTransformSequence",
+]
 
 
 class Transform(metaclass=ABCMeta):

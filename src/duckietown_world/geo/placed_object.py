@@ -2,19 +2,18 @@
 
 import copy
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Union, Callable
+from typing import Callable, Dict, List, Tuple, Union
 
 import yaml
-from duckietown_serialization_ds1 import Serializable
-
-
-from duckietown_world.seqs import UndefinedAtTime
 from zuper_commons.text import indent
 from zuper_commons.types import check_isinstance
+
+from duckietown_serialization_ds1 import Serializable
+from duckietown_world.seqs import UndefinedAtTime
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
-__all__ = ["PlacedObject", "SpatialRelation", "GroundTruth", "get_object_tree", "FQN"]
+__all__ = ["PlacedObject", "SpatialRelation", "GroundTruth", "get_object_tree", "FQN", "get_child_transform"]
 
 FQN = Tuple[str, ...]
 
@@ -51,7 +50,7 @@ class SpatialRelation(Serializable):
 
 class GroundTruth(SpatialRelation):
     def __repr__(self):
-        return "GroundTruth(%r -> %r  %s)" % (self.a, self.b, self.transform)
+        return f"GroundTruth({self.a!r} -> {self.b!r}  {self.transform})"
 
     @classmethod
     def params_from_json_dict(cls, d):
@@ -79,7 +78,7 @@ class PlacedObject(Serializable):
                     sr = GroundTruth(a=root, b=b, transform=v)
                     self.spatial_relations[k] = sr
                 else:
-                    msg = 'What is the "%s" referring to?' % k
+                    msg = f'What is the "{k}" referring to?'
                     raise ValueError(msg)
 
         if not self.spatial_relations:

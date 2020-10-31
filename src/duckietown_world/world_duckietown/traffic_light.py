@@ -1,10 +1,10 @@
 # coding=utf-8
 from duckietown_serialization_ds1.serialization1 import as_json_dict
 from duckietown_world.geo import PlacedObject
-from duckietown_world.seqs import Constant
-from duckietown_world.seqs.tsequence import GenericSequence
 
 __all__ = ["TrafficLight"]
+
+
 # TrafficLightStatus = str
 
 

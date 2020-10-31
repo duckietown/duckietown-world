@@ -44,9 +44,6 @@ def get_meausurements_graph(po: PlacedObject) -> MultiDiGraph:
     return G
 
 
-# FlattenResult = namedtuple('FlattenResult', 'po old2new')
-
-
 def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
     assert isinstance(po, PlacedObject)
 
@@ -117,9 +114,6 @@ class IterateByTestResult:
     transform_sequence: TransformSequence
     object: PlacedObject
     parents: Tuple[PlacedObject, ...]
-
-
-# IterateByTestResult = namedtuple('IterateByTestResult', 'fqn transform_sequence object')
 
 
 def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestResult]:

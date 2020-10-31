@@ -1,17 +1,17 @@
 import random
-
-import numpy as np
+from typing import cast
 
 import geometry as geo
+import numpy as np
+
 from duckietown_world import (
     iterate_by_class,
-    LaneSegment,
     IterateByTestResult,
-    Tile,
-    logger,
-    PlacedObject,
     LanePose,
+    LaneSegment,
+    PlacedObject,
     SE2Transform,
+    Tile,
 )
 
 __all__ = ["sample_good_starting_pose"]
@@ -27,9 +27,7 @@ __all__ = ["sample_good_starting_pose"]
 #     tile: Any
 
 
-def sample_good_starting_pose(
-    m: PlacedObject, only_straight: bool = True, along_lane: float = 0.2
-) -> np.ndarray:
+def sample_good_starting_pose(m: PlacedObject, only_straight: bool, along_lane: float) -> geo.SE2value:
     """ Samples a good starting pose on a straight lane """
     choices = list(iterate_by_class(m, LaneSegment))
 
@@ -52,8 +50,8 @@ def sample_good_starting_pose(
     return g
 
 
-def is_straight(choice: IterateByTestResult):
-    segment: LaneSegment = choice.object
+def is_straight(choice: IterateByTestResult) -> bool:
+    segment = cast(LaneSegment, choice.object)
     lane_segment_is_straight = np.allclose(segment.get_lane_length(), 1.0)
     tiles = [_ for _ in choice.parents if isinstance(_, Tile)]
     assert len(tiles) == 1

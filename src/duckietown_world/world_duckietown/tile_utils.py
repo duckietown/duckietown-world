@@ -2,24 +2,22 @@ from dataclasses import dataclass
 from typing import cast, Dict, Set, Tuple
 
 import numpy as np
-from geometry import translation_from_SE2
+from geometry import SE2value
 from networkx import connected_components
+from zuper_commons.types import ZException, ZValueError
 
-from duckietown_world import get_skeleton_graph, TileMap, logger
+from duckietown_world import get_skeleton_graph, TileMap
 from duckietown_world.geo.measurements_utils import (
     iterate_by_class,
     IterateByTestResult,
 )
 from duckietown_world.geo.placed_object import get_child_transform
-from duckietown_world.geo.transforms import SE2value, Transform
+from duckietown_world.geo.transforms import Transform
 from duckietown_world.world_duckietown.tile_map import ij_from_tilename
-from zuper_commons.types import ZException
-from zuper_typing import debug_print
-from zuper_commons.types import ZValueError
 from .duckietown_map import DuckietownMap
 from .tile import Tile, translation_from_O3
-from .utils import relative_pose
 from .tile_coords import TileCoords
+from .utils import relative_pose
 
 
 class NotInMap(ZException):

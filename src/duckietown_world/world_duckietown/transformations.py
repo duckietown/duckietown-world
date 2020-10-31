@@ -3,18 +3,19 @@ from typing import List
 
 from duckietown_world import GenericSequence, PlacedObject, TransformSequence
 
+from duckietown_world.seqs.tsequence import Timestamp
+from zuper_commons.types import ZValueError
+
 __all__ = [
     "ChooseTime",
     # 'RemoveVariable',
     # 'RemoveStatic',
     "get_sampling_points",
+    "is_static",
 ]
 
-from duckietown_world.seqs.tsequence import Timestamp
-from zuper_commons.types import ZValueError
 
-
-class ChooseTime(object):
+class ChooseTime:
     def __init__(self, t):
         self.t = t
 

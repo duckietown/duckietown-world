@@ -1,7 +1,6 @@
-import logging
+from zuper_commons.logs import ZLogger
 
-logger = logging.getLogger("dt-world-tests")
-logger.setLevel(logging.DEBUG)
+logger = ZLogger(__name__)
 
 from .dynamics import *
 from .lane_pose import *

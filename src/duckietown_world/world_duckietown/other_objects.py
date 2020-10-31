@@ -1,8 +1,5 @@
-# coding=utf-8
-
-from duckietown_world import logger
-from duckietown_world.svg_drawing.misc import mime_from_fn, draw_axes
-
+from . import logger
+from duckietown_world.svg_drawing.misc import draw_axes, mime_from_fn
 from ..geo import PlacedObject
 
 __all__ = [
@@ -53,6 +50,10 @@ class GenericObject(PlacedObject):
 
 
 class Duckie(PlacedObject):
+    def __init__(self, color: str = "yellow", **kwargs):
+        self.color = color
+        PlacedObject.__init__(self, **kwargs)
+
     def draw_svg(self, drawing, g):
         c = drawing.circle(center=(0, 0), r=0.065, fill="yellow", stroke="black", stroke_width=0.01)
         g.add(c)
@@ -146,9 +147,9 @@ class Sign(PlacedObject):
             from .map_loading import get_texture_file
 
             fn = get_texture_file(texture)
-        except KeyError:
-            msg = "Cannot find texture for %s" % texture
-            logger.warning(msg)
+        except KeyError as e:
+            msg = f"Cannot find texture for {texture!r}"
+            logger.warning(msg, e=e)
 
             c = drawing.rect(
                 insert=(x, y),
