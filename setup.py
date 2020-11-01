@@ -29,7 +29,7 @@ install_requires = [
     "duckietown-serialization-ds1<2",
     "svgwrite",
     "PyGeometry-z6>=2.0.4",
-    "beautifulsoup4>=4.6.3",
+    "beautifulsoup4>=4.6.3,<=4.7.1",
     "lxml",
     "pillow",
     "future",
