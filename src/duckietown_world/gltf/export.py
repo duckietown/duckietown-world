@@ -33,7 +33,7 @@ from gltflib import (
     TextureInfo,
 )
 
-import pyrender
+
 from duckietown_world.world_duckietown.map_loading import get_resource_path, get_texture_file
 
 import numpy as np
@@ -391,10 +391,13 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
     logger.info(f"writing to {fnb}")
     gltf.export(fnb)
 
-    res = trimesh.load(fn)
-    # camera_pose, _ = res.graph['cameranode']
-    # logger.info(res=res)
-    scene = pyrender.Scene.from_trimesh_scene(res)
+    if False:
+        res = trimesh.load(fn)
+        # camera_pose, _ = res.graph['cameranode']
+        # logger.info(res=res)
+        import pyrender
+
+        scene = pyrender.Scene.from_trimesh_scene(res)
     # r = pyrender.OffscreenRenderer(640, 480)
     # cam = PerspectiveCamera(yfov=(np.pi / 3.0))
     # scene.add(cam, pose=camera_pose)
