@@ -34,3 +34,4 @@ pipdeptree==0.13.2
 compmake-z6
 trimesh
 gltflib
+pyrender
