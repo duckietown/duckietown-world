@@ -38,6 +38,8 @@ install_requires = [
     "oyaml",
     "markdown",
     "zuper-typing-z6>=6.0.66",
+    "trimesh",
+    "gltflib",
 ]
 tests_require = ["comptests-z6"]
 system_version = tuple(sys.version_info)[:3]

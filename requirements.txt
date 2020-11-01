@@ -32,3 +32,5 @@ zuper-typing-z6==6.0.66
 codecov==2.0.16
 pipdeptree==0.13.2
 compmake-z6
+trimesh
+gltflib
