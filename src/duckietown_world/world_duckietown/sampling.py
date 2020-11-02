@@ -3,22 +3,24 @@ import os
 from dataclasses import dataclass
 from typing import cast, List, Sequence, Tuple, Union
 
+import duckietown_world as dw
 import geometry as g
 import numpy as np
 import yaml
+from aido_schemas import (
+    PROTOCOL_FULL,
+    PROTOCOL_NORMAL,
+    RobotConfiguration,
+    RobotName,
+    Scenario,
+    ScenarioDuckieSpec,
+    ScenarioRobotSpec,
+)
 from geometry import SE2value
 from zuper_commons.fs import read_ustring_from_utf8_file, write_ustring_to_utf8_file
 from zuper_commons.logs import setup_logging, ZLogger
 from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
 
-import duckietown_world as dw
-from aido_schemas import (
-    RobotConfiguration,
-    RobotName,
-    Scenario,
-    ScenarioRobotSpec,
-)
-from aido_schemas.protocol_simulator import MOTION_MOVING, MOTION_PARKED, ScenarioDuckieSpec
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..gltf.export import export_gltf
@@ -108,6 +110,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
             gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
             gt = dw.SE2Transform.from_SE2(pose)
             ob = dw.DB18(color=robot_spec.color)
+            # noinspection PyTypeChecker
             dm.set_object(robot_name, ob, ground_truth=gt)
 
     if True:
@@ -120,6 +123,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
 
             ob = dw.Duckie(color=duckie_spec.color)
 
+            # noinspection PyTypeChecker
             dm.set_object(duckie_name, ob, ground_truth=gt)
     return dm
 
@@ -177,10 +181,11 @@ def make_scenario(
 
         robots[robot_name] = ScenarioRobotSpec(
             description=f"Playable robot {robot_name}",
-            playable=True,
+            controllable=True,
             configuration=configuration,
-            motion=None,
+            # motion=None,
             color=COLOR_PLAYABLE,
+            protocol=PROTOCOL_NORMAL,
         )
 
     for i, robot_name in enumerate(robots_npcs):
@@ -191,10 +196,11 @@ def make_scenario(
 
         robots[robot_name] = ScenarioRobotSpec(
             description=f"NPC robot {robot_name}",
-            playable=False,
+            controllable=True,
             configuration=configuration,
-            motion=MOTION_MOVING,
+            # motion=MOTION_MOVING,
             color=COLOR_NPC,
+            protocol=PROTOCOL_FULL,
         )
 
     for i, robot_name in enumerate(robots_parked):
@@ -205,10 +211,11 @@ def make_scenario(
 
         robots[robot_name] = ScenarioRobotSpec(
             description=f"Parked robot {robot_name}",
-            playable=False,
+            controllable=False,
             configuration=configuration,
-            motion=MOTION_PARKED,
+            # motion=MOTION_PARKED,
             color=COLOR_PARKED,
+            protocol=None,
         )
     # logger.info(duckie_y_bounds=duckie_y_bounds)
     names = [f"duckie{i:02d}" for i in range(nduckies)]
@@ -223,7 +230,13 @@ def make_scenario(
     )
     d = [ScenarioDuckieSpec("yellow", _) for _ in poses]
     duckies = dict(zip(names, d))
-    ms = Scenario(scenario_name=scenario_name, environment=yaml_str, robots=robots, duckies=duckies)
+    ms = Scenario(
+        scenario_name=scenario_name,
+        environment=yaml_str,
+        robots=robots,
+        duckies=duckies,
+        player_robots=list(robots_pcs),
+    )
     return ms
 
 

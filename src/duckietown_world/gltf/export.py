@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass, replace
 from typing import cast, List, Optional, Tuple
 
-__all__ = ["gltf_export_main"]
+__all__ = ["gltf_export_main", "export_gltf"]
 
 import trimesh
 from networkx import DiGraph, find_cycle, NetworkXNoCycle
