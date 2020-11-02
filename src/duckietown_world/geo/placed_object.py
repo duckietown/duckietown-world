@@ -65,7 +65,7 @@ root: FQN = ()
 
 @dataclass
 class PlacedObject(Serializable):
-    children: Dict[str, "PlacedObject"] = field(default_factory=dict)
+    children: "Dict[str, PlacedObject]" = field(default_factory=dict)
     spatial_relations: Dict[str, SpatialRelation] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -98,6 +98,7 @@ class PlacedObject(Serializable):
         children = dict((k, v) for k, v in self.children.items())
         spatial_relations = dict((k, v) for k, v in self.spatial_relations.items())
         kwargs.update(dict(children=children, spatial_relations=spatial_relations))
+        # noinspection PyArgumentList
         return type(self)(*args, **kwargs)
 
     def _copy(self):

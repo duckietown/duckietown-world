@@ -143,7 +143,11 @@ class SampledSequence(GenericSequence):
     def from_iterator(cls, i: Iterator[X], T: Type[X] = object) -> "SampledSequence[X]":
         timestamps = []
         values = []
-        for t, v in i:
+        for x in i:
+            if len(x) != 2:
+                raise ZValueError(x=x)
+            t = x[0]
+            v = x[1]
             assert isinstance(t, (float, int)), type(t)
             t = Timestamp(t)
             timestamps.append(t)
