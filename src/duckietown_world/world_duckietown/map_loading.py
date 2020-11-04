@@ -94,7 +94,7 @@ def get_data_resources() -> Tuple[Dict[str, str], List[str]]:
         basename = os.path.basename(f)
         if basename in res1:
             msg = "Double basename."
-            logger.warning(msg, basename=basename, f1=f, f2=res1[basename])
+            # logger.warning(msg, basename=basename, f1=f, f2=res1[basename])
         else:
             res1[basename] = f
         res2.append(f)

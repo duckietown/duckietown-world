@@ -67,7 +67,7 @@ class EvaluatedMetric(Serializable):
         self.description = description
 
     def __repr__(self):
-        return "EvaluatedMetric(%s, %s)" % (self.title, self.total)
+        return f"EvaluatedMetric({self.title}, {self.total})"
 
 
 class RuleEvaluationResult:
@@ -93,7 +93,7 @@ class RuleEvaluationResult:
         )
 
     def __repr__(self):
-        return "RuleEvaluationResult(%s, %s)" % (self.rule, self.metrics)
+        return f"RuleEvaluationResult({self.rule}, {self.metrics})"
 
 
 class Rule(metaclass=ABCMeta):
