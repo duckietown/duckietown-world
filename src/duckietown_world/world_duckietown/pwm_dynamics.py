@@ -47,7 +47,7 @@ class DynamicModelParameters(PlatformDynamicsFactory):
         self.wheel_radius_left = R
         self.wheel_radius_right = R
         self.wheel_distance = D
-        ticks = 180  # XXX
+        ticks = 135
         res = (np.pi * 2) / ticks
         self.encoder_resolution_rad = res
 
@@ -130,10 +130,11 @@ class DynamicModel(GenericKinematicsSE2):
 
         self.axis_left_rad = axis_left_rad
         self.axis_right_rad = axis_right_rad
-        left_ticks = int(np.round(axis_left_rad / parameters.encoder_resolution_rad))
-        right_ticks = int(np.round(axis_right_rad / parameters.encoder_resolution_rad))
-        self.axis_left_obs_rad = left_ticks * parameters.encoder_resolution_rad
-        self.axis_right_obs_rad = right_ticks * parameters.encoder_resolution_rad
+        resolution = parameters.encoder_resolution_rad
+        left_ticks = int(np.round(axis_left_rad / resolution))
+        right_ticks = int(np.round(axis_right_rad / resolution))
+        self.axis_left_obs_rad = left_ticks * resolution
+        self.axis_right_obs_rad = right_ticks * resolution
 
     @staticmethod
     def model(commands: PWMCommands, parameters: DynamicModelParameters, u=None, w=None):
@@ -197,11 +198,11 @@ class DynamicModel(GenericKinematicsSE2):
 
         # now we compute the axis rotation using the inverse way...
         # forward = both wheels spin positive
-        # angular_velocity = wR/d - Wl/d   # if R rotates more, we increase theta
+        # angular_velocity = wR*R_r/d - Wl*R_l/d   # if R rotates more, we increase theta
         # linear_velocity = (wR*R_r + Wl*R_l)/2
 
         # that is
-        # [ang, lin ] = [ Rr/d -Rl/d; Rr/2 Rl/2]  [wR wL]
+        # [ang, lin ] = [ Rr/d -Rl/d; Rr/2 Rl/2] * [wR wL]
         d = self.parameters.wheel_distance
         Rr = self.parameters.wheel_radius_right
         Rl = self.parameters.wheel_radius_left
