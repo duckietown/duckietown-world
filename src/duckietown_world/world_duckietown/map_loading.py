@@ -325,6 +325,13 @@ def get_xy_slot(i):
 
 
 def get_texture_file(tex_name: str) -> str:
+    if tex_name.endswith(".png"):
+        logger.warn(f"do not provide extension: {tex_name}")
+        tex_name = tex_name.strip(".png")
+    if tex_name.endswith(".jpg"):
+        logger.warn(f"do not provide extension: {tex_name}")
+        tex_name = tex_name.strip(".jpg")
+
     resources, _ = get_data_resources()
     res = []
     tried = []

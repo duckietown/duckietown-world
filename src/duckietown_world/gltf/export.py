@@ -431,10 +431,10 @@ def set_duckiebot_color(gltf: GLTF, mname: str, color: List[float]):
     for m in gltf.model.materials:
         if m.name == mname:
             m.pbrMetallicRoughness.baseColorFactor = color
-            logger.info("found material", m=m)
+            # logger.info("found material", m=m)
             break
     else:
-        logger.error("could not find material")
+        logger.error(f"could not find material {mname}")
 
 
 def embed_external(gltf: GLTF, fn: str) -> int:
@@ -610,7 +610,7 @@ def embed(gltf: GLTF, g2: GLTF) -> int:
     node = Node(children=scene_nodes)
 
     node_index = add_node(gltf, node)
-    logger.info(f"the main scene node for imported is {node_index}")
+    # logger.debug(f"the main scene node for imported is {node_index}")
     # model.scenes[0].nodes.extend(nodes)
 
     gltf.resources.extend(g2.resources)

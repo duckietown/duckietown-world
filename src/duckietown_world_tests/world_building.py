@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from comptests import comptest, run_module_tests, get_comptests_output_dir
+from comptests import comptest, get_comptests_output_dir, run_module_tests
 
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world import list_maps

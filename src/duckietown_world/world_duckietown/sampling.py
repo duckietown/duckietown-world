@@ -3,6 +3,8 @@ import os
 from dataclasses import dataclass
 from typing import cast, List, Sequence, Tuple, Union
 
+from PIL import Image
+
 import duckietown_world as dw
 import geometry as g
 import numpy as np
@@ -16,10 +18,12 @@ from aido_schemas import (
     ScenarioDuckieSpec,
     ScenarioRobotSpec,
 )
+from aido_schemas.protocol_simulator import ProtocolDesc
 from geometry import SE2value
-from zuper_commons.fs import read_ustring_from_utf8_file, write_ustring_to_utf8_file
+from zuper_commons.fs import make_sure_dir_exists, read_ustring_from_utf8_file, write_ustring_to_utf8_file
 from zuper_commons.logs import setup_logging, ZLogger
 from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
+
 
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
@@ -51,6 +55,9 @@ class ScenarioGenerationParam:
     duckie_min_dist_from_robot: float
     duckie_y_bounds: List[float]
 
+    pc_robot_protocol: ProtocolDesc
+    npc_robot_protocol: ProtocolDesc
+
 
 iedo = IEDO(use_remembered_classes=True, remember_deserialized_classes=True)
 ieso = IESO(with_schema=False)
@@ -71,7 +78,7 @@ def make_scenario_main(args=None):
     interpreted = yaml.load(data, Loader=yaml.Loader)
     n: int = parsed.num
     output: str = parsed.output
-    params = object_from_ipce(interpreted, ScenarioGenerationParam, iedo=iedo)
+    params: ScenarioGenerationParam = object_from_ipce(interpreted, ScenarioGenerationParam, iedo=iedo)
     for i in range(n):
         scenario_name = f"{basename}-{i:03d}"
         yaml_str = _get_map_yaml(params.map_name)
@@ -89,7 +96,25 @@ def make_scenario_main(args=None):
             duckie_min_dist_from_robot=params.duckie_min_dist_from_robot,
             duckie_y_bounds=params.duckie_y_bounds,
             delta_theta_rad=np.deg2rad(params.theta_tol_deg),
+            pc_robot_protocol=params.pc_robot_protocol,
+            npc_robot_protocol=params.npc_robot_protocol,
         )
+        try:
+            from gym_duckietown.simulator import Simulator
+        except ImportError:
+            pass
+        else:
+            sim = Simulator("4way", domain_rand=False)
+            sim.reset()
+            m = yaml.load(scenario.environment, Loader=yaml.Loader)
+            sim._interpret_map(m)
+            sim.reset()
+            img = sim.render("top_down")
+            image = Image.fromarray(img)
+            out = os.path.join(output, f"sim.jpg")
+            make_sure_dir_exists(out)
+            image.save(out, format="jpeg")
+
         scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
         scenario_yaml = yaml.dump(scenario_struct)
         filename = os.path.join(output, f"{scenario_name}.scenario.yaml")
@@ -142,6 +167,8 @@ def make_scenario(
     duckie_min_dist_from_other_duckie: float,
     duckie_min_dist_from_robot: float,
     duckie_y_bounds: Sequence[float],
+    pc_robot_protocol: ProtocolDesc = PROTOCOL_NORMAL,
+    npc_robot_protocol: ProtocolDesc = PROTOCOL_FULL,
 ) -> Scenario:
     yaml_data = yaml.load(yaml_str, Loader=yaml.SafeLoader)
     po = dw.construct_map(yaml_data)
@@ -185,7 +212,7 @@ def make_scenario(
             configuration=configuration,
             # motion=None,
             color=COLOR_PLAYABLE,
-            protocol=PROTOCOL_NORMAL,
+            protocol=pc_robot_protocol,
         )
 
     for i, robot_name in enumerate(robots_npcs):
@@ -198,9 +225,8 @@ def make_scenario(
             description=f"NPC robot {robot_name}",
             controllable=True,
             configuration=configuration,
-            # motion=MOTION_MOVING,
             color=COLOR_NPC,
-            protocol=PROTOCOL_FULL,
+            protocol=npc_robot_protocol,
         )
 
     for i, robot_name in enumerate(robots_parked):
@@ -289,7 +315,8 @@ def sample_duckies_poses(
         return True
 
     while len(poses) < nduckies:
-        pose = sample_good_starting_pose(po, only_straight=False, along_lane=0.2)
+        along_lane = np.random.uniform(0, 1)
+        pose = sample_good_starting_pose(po, only_straight=False, along_lane=along_lane)
         if not far_enough(pose):
             continue
 

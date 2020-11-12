@@ -41,6 +41,8 @@ install_requires = [
     "trimesh",
     "gltflib",
     "pyrender",
+    "coloredlogs",
+    "colorama",
 ]
 tests_require = ["comptests-z6"]
 system_version = tuple(sys.version_info)[:3]

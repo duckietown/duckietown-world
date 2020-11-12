@@ -5,6 +5,8 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
+import coloredlogs
+
 if TYPE_CHECKING:
     from duckietown_world.world_duckietown import DuckietownMap
 
@@ -15,6 +17,7 @@ __all__ = ["draw_maps_main"]
 
 
 def draw_maps_main(args=None):
+    coloredlogs.install(level="DEBUG")
     from duckietown_world.world_duckietown import list_maps, load_map
 
     if args is None:

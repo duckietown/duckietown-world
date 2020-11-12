@@ -9,7 +9,13 @@ from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 from .types import TSE2value
 
-__all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands", "get_DB18_nominal"]
+__all__ = [
+    "DynamicModelParameters",
+    "DynamicModel",
+    "PWMCommands",
+    "get_DB18_nominal",
+    "get_DB18_uncalibrated",
+]
 
 
 @dataclass
