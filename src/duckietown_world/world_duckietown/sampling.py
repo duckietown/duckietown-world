@@ -1,14 +1,20 @@
 import argparse
 import os
+import time
 from dataclasses import dataclass
 from typing import cast, List, Sequence, Tuple, Union
 
-from PIL import Image
-
-import duckietown_world as dw
 import geometry as g
 import numpy as np
 import yaml
+from geometry import SE2value
+from PIL import Image
+from zuper_commons.fs import make_sure_dir_exists, read_ustring_from_utf8_file, write_ustring_to_utf8_file
+from zuper_commons.logs import setup_logging, ZLogger
+from zuper_commons.types import ZException
+from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
+
+import duckietown_world as dw
 from aido_schemas import (
     PROTOCOL_FULL,
     PROTOCOL_NORMAL,
@@ -19,12 +25,6 @@ from aido_schemas import (
     ScenarioRobotSpec,
 )
 from aido_schemas.protocol_simulator import ProtocolDesc
-from geometry import SE2value
-from zuper_commons.fs import make_sure_dir_exists, read_ustring_from_utf8_file, write_ustring_to_utf8_file
-from zuper_commons.logs import setup_logging, ZLogger
-from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
-
-
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..gltf.export import export_gltf
@@ -90,7 +90,7 @@ def make_scenario_main(args=None):
             delta_y_m=params.delta_y_m,
             robots_npcs=params.robots_npcs,
             robots_parked=params.robots_parked,
-            robots_pcs=params.robots_parked,
+            robots_pcs=params.robots_pcs,
             nduckies=params.nduckies,
             duckie_min_dist_from_other_duckie=params.duckie_min_dist_from_other_duckie,
             duckie_min_dist_from_robot=params.duckie_min_dist_from_robot,
@@ -104,20 +104,20 @@ def make_scenario_main(args=None):
         except ImportError:
             pass
         else:
-            sim = Simulator("4way", domain_rand=False)
+            sim = Simulator("4way", domain_rand=False, num_tris_distractors=0, color_ground=(0, 0, 0))
             sim.reset()
             m = yaml.load(scenario.environment, Loader=yaml.Loader)
             sim._interpret_map(m)
             sim.reset()
             img = sim.render("top_down")
             image = Image.fromarray(img)
-            out = os.path.join(output, f"sim.jpg")
+            out = os.path.join(output, scenario_name, "top_down.jpg")
             make_sure_dir_exists(out)
             image.save(out, format="jpeg")
 
         scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
         scenario_yaml = yaml.dump(scenario_struct)
-        filename = os.path.join(output, f"{scenario_name}.scenario.yaml")
+        filename = os.path.join(output, scenario_name, f"scenario.yaml")
         write_ustring_to_utf8_file(scenario_yaml, filename)
         dm = interpret_scenario(scenario)
         output_dir = os.path.join(output, scenario_name)
@@ -273,6 +273,7 @@ def sample_many_good_starting_poses(
     min_dist: float,
     delta_theta_rad: float,
     delta_y_m: float,
+    timeout: float = 10,
 ) -> List[np.ndarray]:
     poses = []
 
@@ -282,6 +283,7 @@ def sample_many_good_starting_poses(
                 return False
         return True
 
+    t0 = time.time()
     while len(poses) < nrobots:
         pose = sample_good_starting_pose(po, only_straight=only_straight, along_lane=0.2)
         if far_enough(pose):
@@ -291,6 +293,11 @@ def sample_many_good_starting_poses(
             q = g.SE2_from_translation_angle(t, theta)
             pose = g.SE2.multiply(pose, q)
             poses.append(pose)
+
+        dt = time.time() - t0
+        if dt > timeout:
+            msg = "Cannot sample the poses"
+            raise ZException(msg)
     return poses
 
 
@@ -302,6 +309,7 @@ def sample_duckies_poses(
     min_dist_from_other_duckie: float,
     from_side_bounds: Tuple[float, float],
     delta_theta_rad: float,
+    timeout: float = 10,
 ) -> List[np.ndarray]:
     poses: List[SE2value] = []
 
@@ -314,6 +322,7 @@ def sample_duckies_poses(
                 return False
         return True
 
+    t0 = time.time()
     while len(poses) < nduckies:
         along_lane = np.random.uniform(0, 1)
         pose = sample_good_starting_pose(po, only_straight=False, along_lane=along_lane)
@@ -326,6 +335,11 @@ def sample_duckies_poses(
         q = g.SE2_from_translation_angle(t, theta)
         pose = g.SE2.multiply(pose, q)
         poses.append(pose)
+
+        dt = time.time() - t0
+        if dt > timeout:
+            msg = "Cannot sample in time."
+            raise ZException(msg)
     return poses
 
 
