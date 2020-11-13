@@ -7,7 +7,7 @@ logging.basicConfig()
 logger = logging.getLogger("dt-world")
 logger.setLevel(logging.DEBUG)
 
-logger.info("duckietown-world %s" % __version__)
+logger.debug(f"duckietown-world version {__version__}")
 
 # remove noisy logging
 from duckietown_serialization_ds1 import logger as dslogger
