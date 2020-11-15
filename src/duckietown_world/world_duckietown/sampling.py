@@ -177,7 +177,7 @@ def make_scenario(
     num_parked = len(robots_parked)
     nrobots = num_npcs + num_pcs + num_parked
 
-    poses = sample_many_good_starting_poses(
+    all_robot_poses = sample_many_good_starting_poses(
         po,
         nrobots,
         only_straight=only_straight,
@@ -185,16 +185,17 @@ def make_scenario(
         delta_theta_rad=delta_theta_rad,
         delta_y_m=delta_y_m,
     )
+    remaining_robot_poses = list(all_robot_poses)
 
-    poses_pcs = poses[:num_pcs]
-    poses = poses[num_pcs:]
+    poses_pcs = remaining_robot_poses[:num_pcs]
+    remaining_robot_poses = remaining_robot_poses[num_pcs:]
     #
-    poses_npcs = poses[:num_npcs]
-    poses = poses[num_npcs:]
+    poses_npcs = remaining_robot_poses[:num_npcs]
+    remaining_robot_poses = remaining_robot_poses[num_npcs:]
     #
-    poses_parked = poses[:num_parked]
-    poses = poses[num_parked:]
-    assert len(poses) == 0
+    poses_parked = remaining_robot_poses[:num_parked]
+    remaining_robot_poses = remaining_robot_poses[num_parked:]
+    assert len(remaining_robot_poses) == 0
 
     COLOR_PLAYABLE = "red"
     COLOR_NPC = "blue"
@@ -248,7 +249,7 @@ def make_scenario(
     poses = sample_duckies_poses(
         po,
         nduckies,
-        robot_positions=poses,
+        robot_positions=all_robot_poses,
         min_dist_from_other_duckie=duckie_min_dist_from_other_duckie,
         min_dist_from_robot=duckie_min_dist_from_robot,
         from_side_bounds=(duckie_y_bounds[0], duckie_y_bounds[1]),
