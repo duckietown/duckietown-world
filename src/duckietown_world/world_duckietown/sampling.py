@@ -7,7 +7,7 @@ from typing import cast, List, Sequence, Tuple, Union
 import geometry as g
 import numpy as np
 import yaml
-from geometry import SE2value
+from geometry import SE2value, translation_angle_from_SE2
 from PIL import Image
 from zuper_commons.fs import make_sure_dir_exists, read_ustring_from_utf8_file, write_ustring_to_utf8_file
 from zuper_commons.logs import setup_logging, ZLogger
@@ -104,16 +104,45 @@ def make_scenario_main(args=None):
         except ImportError:
             pass
         else:
-            sim = Simulator("4way", domain_rand=False, num_tris_distractors=0, color_ground=(0, 0, 0))
+            sim = Simulator(
+                "4way",
+                enable_leds=True,
+                domain_rand=False,
+                num_tris_distractors=0,
+                camera_width=640,
+                camera_height=480,
+                distortion=True,
+                color_ground=[0, 0.3, 0],  # green
+            )
             sim.reset()
             m = yaml.load(scenario.environment, Loader=yaml.Loader)
+            tile_size = 0.585
+            if "objects" not in m:
+                m["objects"] = []
+            for robot_name, srobot in scenario.robots.items():
+                t, theta = translation_angle_from_SE2(srobot.configuration.pose)
+                rotate = -np.rad2deg(theta)
+
+                pos = [t[0] / tile_size, t[1] / tile_size]
+                m["objects"].append(dict(kind="duckiebot", pos=pos, rotate=rotate, height=0.12))
+            for duckie_name, duckie in scenario.duckies.items():
+                t, theta = translation_angle_from_SE2(duckie.pose)
+                rotate = -np.rad2deg(theta)
+                pos = [t[0] / tile_size, t[1] / tile_size]
+                m["objects"].append(dict(kind="duckie", pos=pos, rotate=rotate, height=0.08))
+
             sim._interpret_map(m)
             sim.reset()
+
+            img = sim.render()
+            out = os.path.join(output, scenario_name, "cam.jpg")
+            save_rgb_to_png(img, out)
+
+            sim.cur_pos = [-100.0, -100.0, -100.0]
+
             img = sim.render("top_down")
-            image = Image.fromarray(img)
             out = os.path.join(output, scenario_name, "top_down.jpg")
-            make_sure_dir_exists(out)
-            image.save(out, format="jpeg")
+            save_rgb_to_png(img, out)
 
         scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
         scenario_yaml = yaml.dump(scenario_struct)
@@ -123,6 +152,13 @@ def make_scenario_main(args=None):
         output_dir = os.path.join(output, scenario_name)
         dw.draw_static(dm, output_dir=output_dir)
         export_gltf(dm, output_dir, background=False)
+
+
+def save_rgb_to_png(img: np.ndarray, out: str):
+    make_sure_dir_exists(out)
+    image = Image.fromarray(img)
+    image.save(out, format="png")
+    logger.info(f"written {out}")
 
 
 def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
