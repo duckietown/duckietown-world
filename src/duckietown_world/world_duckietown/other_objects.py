@@ -146,7 +146,7 @@ class Sign(PlacedObject):
         try:
             from .map_loading import get_texture_file
 
-            fn = get_texture_file(texture)
+            fn = get_texture_file(texture)[0]
         except KeyError as e:
             msg = f"Cannot find texture for {texture!r}"
             logger.warning(msg, e=e)

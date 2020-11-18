@@ -1,46 +1,13 @@
 import argparse
 import json
+import operator
 import os
+import struct
 from dataclasses import dataclass, replace
 from typing import cast, List, Optional, Tuple
 
-__all__ = ["gltf_export_main", "export_gltf"]
-
-import trimesh
-from networkx import DiGraph, find_cycle, NetworkXNoCycle
-from zuper_commons.types import ZValueError
-
-from duckietown_world.gltf.background import add_background
-from duckietown_world.world_duckietown.tile_map import ij_from_tilename
-from zuper_commons.logs import ZLogger
-from zuper_commons.text import get_md5
-
-import struct
-import operator
-
-from gltflib import (
-    Accessor,
-    AccessorType,
-    Camera,
-    ComponentType,
-    Image,
-    Material,
-    NormalTextureInfo,
-    PBRMetallicRoughness,
-    PerspectiveCameraInfo,
-    Sampler,
-    Texture,
-    TextureInfo,
-)
-
-
-from duckietown_world.world_duckietown.map_loading import get_resource_path, get_texture_file
-
 import numpy as np
-from geometry import rotx, roty, rotz, SE3_from_SE2, SE3value
-from geometry.poses import SE3_from_rotation_translation
-from zuper_commons.fs import make_sure_dir_exists
-
+import trimesh
 from duckietown_world import (
     DB18,
     DuckietownMap,
@@ -51,22 +18,43 @@ from duckietown_world import (
     Sign,
     Tile,
 )
-
+from geometry import rotx, roty, rotz, SE3_from_rotation_translation, SE3_from_SE2, SE3_rotz, SE3value
 from gltflib import (
-    GLTF as GLTF0,
-    GLTFModel,
+    Accessor,
+    AccessorType,
     Asset,
-    Scene,
-    Node,
-    Mesh,
-    Primitive,
     Attributes,
     Buffer,
-    BufferView,
     BufferTarget,
+    BufferView,
+    Camera,
+    ComponentType,
     FileResource,
+    GLTF as GLTF0,
+    GLTFModel,
+    Image,
+    Material,
+    Mesh,
+    Node,
+    NormalTextureInfo,
+    PBRMetallicRoughness,
+    PerspectiveCameraInfo,
+    Primitive,
+    Sampler,
+    Scene,
+    Texture,
+    TextureInfo,
 )
+from networkx import DiGraph, find_cycle, NetworkXNoCycle
+from zuper_commons.fs import make_sure_dir_exists
+from zuper_commons.logs import ZLogger
+from zuper_commons.text import get_md5
+from zuper_commons.types import ZValueError
 
+from .background import add_background
+from ..world_duckietown import get_resource_path, get_texture_file, ij_from_tilename
+
+__all__ = ["gltf_export_main", "export_gltf"]
 logger = ZLogger(__name__)
 
 
@@ -188,8 +176,7 @@ def add_polygon(
         TEXCOORD_0=tex.accessor_index,
         NORMAL=normal.accessor_index,
     )
-    primitives = []
-    primitives.append(Primitive(attributes=attributes, material=material))
+    primitives = [Primitive(attributes=attributes, material=material)]
     mesh = Mesh(primitives=primitives)
 
     return add_mesh(gltf, mesh)
@@ -350,7 +337,7 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
 
         tile_transform = it.transform_sequence
         tile_matrix2d = tile_transform.asmatrix2d().m
-        tile_matrix = SE3_from_SE2(tile_matrix2d)
+        tile_matrix = SE3_from_SE2(tile_matrix2d) @ SE3_rotz(np.pi / 2)
         sign_node_index = add_node(gltf, Node(children=[thing_index]))
         tile_matrix_float = list(tile_matrix.T.flatten())
         tile_node = Node(name=it.fqn[-1], matrix=tile_matrix_float, children=[sign_node_index])
@@ -868,7 +855,7 @@ def export_sign(gltf: GLTF, name: str, sign: Sign) -> int:
     y = BASE_SIGN
     x = -PAPER_WIDTH / 2
 
-    fn = get_texture_file(texture)
+    fn = get_texture_file(texture)[0]
 
     material_index = make_material(gltf, doubleSided=False, baseColorFactor=[1, 1, 1, 1.0], fn=fn)
     mi = get_square()
@@ -884,7 +871,7 @@ def export_sign(gltf: GLTF, name: str, sign: Sign) -> int:
     sign_node = Node(mesh=mesh_index)
     sign_node_index = add_node(gltf, sign_node)
 
-    fn = get_texture_file("wood")
+    fn = get_texture_file("wood")[0]
     material_index_white = make_material(gltf, doubleSided=False, baseColorFactor=[0.5, 0.5, 0.5, 1], fn=fn)
     back_mesh_index = add_polygon(
         gltf,

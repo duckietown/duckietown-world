@@ -99,59 +99,66 @@ def make_scenario_main(args=None):
             pc_robot_protocol=params.pc_robot_protocol,
             npc_robot_protocol=params.npc_robot_protocol,
         )
-        try:
-            from gym_duckietown.simulator import Simulator
-        except ImportError:
-            pass
-        else:
-            sim = Simulator(
-                "4way",
-                enable_leds=True,
-                domain_rand=False,
-                num_tris_distractors=0,
-                camera_width=640,
-                camera_height=480,
-                distortion=True,
-                color_ground=[0, 0.3, 0],  # green
-            )
-            sim.reset()
-            m = yaml.load(scenario.environment, Loader=yaml.Loader)
-            tile_size = 0.585
-            if "objects" not in m:
-                m["objects"] = []
-            for robot_name, srobot in scenario.robots.items():
-                t, theta = translation_angle_from_SE2(srobot.configuration.pose)
-                rotate = -np.rad2deg(theta)
+        for style in ["synthetic", "synthetic-F", "photos", "smooth"]:
+            try:
+                from gym_duckietown.simulator import Simulator
+            except ImportError:
+                Simulator = None
+            else:
+                sim = Simulator(
+                    "4way",
+                    enable_leds=True,
+                    domain_rand=False,
+                    num_tris_distractors=0,
+                    camera_width=640,
+                    camera_height=480,
+                    # distortion=True,
+                    color_ground=[0, 0.3, 0],  # green
+                    style=style,
+                )
+                sim.reset()
+                m = cast(dw.MapFormat1, yaml.load(scenario.environment, Loader=yaml.Loader))
+                tile_size = m["tile_size"]
+                if "objects" not in m:
+                    m["objects"] = []
+                obs = m["objects"]
 
-                pos = [t[0] / tile_size, t[1] / tile_size]
-                m["objects"].append(dict(kind="duckiebot", pos=pos, rotate=rotate, height=0.12))
-            for duckie_name, duckie in scenario.duckies.items():
-                t, theta = translation_angle_from_SE2(duckie.pose)
-                rotate = -np.rad2deg(theta)
-                pos = [t[0] / tile_size, t[1] / tile_size]
-                m["objects"].append(dict(kind="duckie", pos=pos, rotate=rotate, height=0.08))
+                if isinstance(obs, list):
+                    for robot_name, srobot in scenario.robots.items():
+                        t, theta = translation_angle_from_SE2(srobot.configuration.pose)
+                        rotate = -np.rad2deg(theta)
 
-            sim._interpret_map(m)
-            sim.reset()
+                        pos = [t[0] / tile_size, t[1] / tile_size]
+                        m["objects"].append(dict(kind="duckiebot", pos=pos, rotate=rotate, height=0.12))
+                    for duckie_name, duckie in scenario.duckies.items():
+                        t, theta = translation_angle_from_SE2(duckie.pose)
+                        rotate = -np.rad2deg(theta)
+                        pos = [t[0] / tile_size, t[1] / tile_size]
+                        m["objects"].append(dict(kind="duckie", pos=pos, rotate=rotate, height=0.08))
 
-            img = sim.render()
-            out = os.path.join(output, scenario_name, "cam.jpg")
-            save_rgb_to_png(img, out)
+                sim._interpret_map(m)
+                sim.reset()
 
-            sim.cur_pos = [-100.0, -100.0, -100.0]
+                img = sim.render()
+                out = os.path.join(output, scenario_name, style, "cam.jpg")
+                save_rgb_to_png(img, out)
 
-            img = sim.render("top_down")
-            out = os.path.join(output, scenario_name, "top_down.jpg")
-            save_rgb_to_png(img, out)
+                sim.cur_pos = [-100.0, -100.0, -100.0]
+
+                img = sim.render("top_down")
+                out = os.path.join(output, scenario_name, style, "top_down.jpg")
+                save_rgb_to_png(img, out)
+
+                dw.Tile.style = style
+                dm = interpret_scenario(scenario)
+                output_dir = os.path.join(output, scenario_name, style)
+                dw.draw_static(dm, output_dir=output_dir)
+                export_gltf(dm, output_dir, background=False)
 
         scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
         scenario_yaml = yaml.dump(scenario_struct)
         filename = os.path.join(output, scenario_name, f"scenario.yaml")
         write_ustring_to_utf8_file(scenario_yaml, filename)
-        dm = interpret_scenario(scenario)
-        output_dir = os.path.join(output, scenario_name)
-        dw.draw_static(dm, output_dir=output_dir)
-        export_gltf(dm, output_dir, background=False)
 
 
 def save_rgb_to_png(img: np.ndarray, out: str):
@@ -164,6 +171,7 @@ def save_rgb_to_png(img: np.ndarray, out: str):
 def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
     """  """
     y = yaml.load(s.environment, Loader=yaml.SafeLoader)
+
     dm = construct_map(y)
     if True:
         for robot_name, robot_spec in s.robots.items():

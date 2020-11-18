@@ -90,6 +90,8 @@ class Tile(PlacedObject):
     kind: str
     drivable: bool
 
+    style = "photos"
+
     def __init__(self, kind, drivable, **kwargs):
         # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
@@ -99,9 +101,10 @@ class Tile(PlacedObject):
         from duckietown_world.world_duckietown.map_loading import get_texture_file
 
         try:
-            self.fn = get_texture_file(kind)
+            self.fn = get_texture_file(f"{Tile.style}/{kind}")[0]
+            logger.debug(f"using {self.fn}")
         except KeyError as e:
-            msg = f"Cannot find texture for tile of type {kind}"
+            msg = f"Cannot find texture for tile of type {Tile.style}/{kind}"
             logger.warning(msg, e=e)
 
             self.fn = None
@@ -127,18 +130,17 @@ class Tile(PlacedObject):
 
     def draw_svg(self, drawing, g):
         T = 0.562 / 0.585
+        T = 1
         S = 1.0
-        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none")
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#0a0", stroke="none")
         g.add(rect)
 
         if self.fn:
-            # texture = get_jpeg_bytes(self.fn)
             with open(self.fn, "rb") as _:
                 texture = _.read()
             if b"git-lfs" in texture:
                 msg = f"The file {self.fn} is a Git LFS pointer. Repo not checked out correctly."
                 raise Exception(msg)
-            # print(f'drawing defs {drawing.defs}')
 
             ID = f"texture-{self.kind}"
 
@@ -152,7 +154,8 @@ class Tile(PlacedObject):
                     href=href,
                     size=(T, T),
                     insert=(-T / 2, -T / 2),
-                    style="transform: rotate(90deg) scaleX(-1)  rotate(-90deg) ",
+                    # style=" ",
+                    style="transform: rotate(0deg) scaleX(-1)  rotate(-90deg) ",
                 )
                 img.attribs["class"] = "tile-textures"
 

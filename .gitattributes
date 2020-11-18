@@ -12,3 +12,5 @@ pan*png filter=lfs diff=lfs merge=lfs -text
 pan*jpg filter=lfs diff=lfs merge=lfs -text
 src/duckietown_world/data/gd1/textures/normalmap.png filter=lfs diff=lfs merge=lfs -text
 src/duckietown_world/data/gd1/meshes/duckiebot3/main.gltf filter=lfs diff=lfs merge=lfs -text
+*png filter=lfs diff=lfs merge=lfs -text
+*bmp filter=lfs diff=lfs merge=lfs -text

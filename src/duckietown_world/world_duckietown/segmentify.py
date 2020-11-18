@@ -58,14 +58,14 @@ class MeetingPoint:
 
 
 def discretize(tran: SE2Transform) -> PointLabel:
-    def D(x):
+    def D(x) -> float:
         return np.round(x, decimals=2)
 
     p, theta = geo.translation_angle_from_SE2(tran.as_SE2())
     return D(p[0]), D(p[1]), D(np.cos(theta)), D(np.sin(theta))
 
 
-def graph_for_meeting_points(mp: Dict[str, MeetingPoint]) -> DiGraph:
+def graph_for_meeting_points(mp: Dict[PointLabel, MeetingPoint]) -> DiGraph:
     G = DiGraph()
     for k, p in mp.items():
         G.add_node(k, meeting_point=p)
@@ -80,7 +80,7 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
 
     root = PlacedObject()
 
-    meeting_points: Dict[str, MeetingPoint] = defaultdict(MeetingPoint)
+    meeting_points: Dict[PointLabel, MeetingPoint] = defaultdict(MeetingPoint)
 
     for i, it in enumerate(iterate_by_class(po, LaneSegment)):
         lane_segment = cast(LaneSegment, it.object)
@@ -91,7 +91,7 @@ def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
         lane_segment_transformed = transform_lane_segment(lane_segment, absolute_pose)
 
         identity = SE2Transform.identity()
-        name = "ls%03d" % i
+        name = f"ls{i:03d}"
         root.set_object(name, lane_segment_transformed, ground_truth=identity)
 
         p0 = discretize(lane_segment_transformed.control_points[0])

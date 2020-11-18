@@ -9,10 +9,10 @@ from typing import Dict, List, Tuple
 import geometry as geo
 import numpy as np
 import oyaml as yaml
+from duckietown_serialization_ds1 import Serializable
 from zuper_commons.fs import locate_files
 from zuper_commons.types import ZKeyError
 
-from duckietown_serialization_ds1 import Serializable
 from . import logger
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
@@ -83,11 +83,14 @@ def get_data_dir() -> str:
     return str(module_dir.parent / "data")
 
 
+RESOURCES_PATTERNS = ["*.png", "*.jpg", "*.yaml", "*.gltf", "*.obj", "*.mtl", "*.json"]
+
+
 @lru_cache(maxsize=None)
 def get_data_resources() -> Tuple[Dict[str, str], List[str]]:
     data = get_data_dir()
     logger.info(data=data)
-    files = locate_files(data, pattern=["*.png", "*.jpg", "*.yaml", "*.gltf"])
+    files = locate_files(data, pattern=RESOURCES_PATTERNS)
     res2 = []
     res1 = {}
     for f in files:
@@ -249,13 +252,13 @@ def get_object(desc):
         klass = kind2klass[kind]
         try:
             obj = klass(**attrs)
-        except TypeError:
+        except TypeError as e:
             msg = "Could not initialize %s with attrs %s:\n%s" % (
                 klass.__name__,
                 attrs,
                 traceback.format_exc(),
             )
-            raise Exception(msg)
+            raise Exception(msg) from e
 
     else:
         logger.debug("Do not know special kind %s" % kind)
@@ -324,15 +327,15 @@ def get_xy_slot(i):
     return x, y
 
 
-def get_texture_file(tex_name: str) -> str:
+def get_texture_file(tex_name: str) -> List[str]:
     if tex_name.endswith(".png"):
         logger.warn(f"do not provide extension: {tex_name}")
-        tex_name = tex_name.strip(".png")
+        tex_name = tex_name.replace(".png", "")
     if tex_name.endswith(".jpg"):
         logger.warn(f"do not provide extension: {tex_name}")
-        tex_name = tex_name.strip(".jpg")
+        tex_name = tex_name.replace(".jpg", "")
 
-    resources, _ = get_data_resources()
+    resources, res2 = get_data_resources()
     res = []
     tried = []
 
@@ -340,11 +343,17 @@ def get_texture_file(tex_name: str) -> str:
     extensions = [".jpg", ".png"]
     for s, e in itertools.product(suffixes, extensions):
         basename = f"{tex_name}{s}{e}"
-        if basename in resources:
-            return resources[basename]
+
+        for v in res2:
+            if v.endswith(basename):
+                res.append(v)
+        #
+        #
+        # if basename in resources:
+        #     return resources[basename]
         tried.append(basename)
 
     if not res:
         msg = f"Could not find any texture for {tex_name}"
         raise ZKeyError(msg, tried=tried)
-    return res[0]
+    return res

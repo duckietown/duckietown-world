@@ -220,8 +220,7 @@ def get_child_transform(po: PlacedObject, child: str) -> Transform:
 def get_object_tree(
     po: PlacedObject, levels: int = 100, spatial_relations: bool = False, attributes: bool = False,
 ) -> str:
-    ss = []
-    ss.append("%s" % type(po).__name__)
+    ss = [f"{type(po).__name__}"]
     d = po.params_to_json_dict()
     d.pop("children", None)
     d.pop("spatial_relations", None)

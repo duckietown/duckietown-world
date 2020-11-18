@@ -1,7 +1,7 @@
 # coding=utf-8
 from typing import Tuple
 
-from duckietown_world.world_duckietown.tile_coords import ALLOWED_ORIENTATIONS
+from .tile_coords import ALLOWED_ORIENTATIONS
 from ..geo import PlacedObject
 from ..world_duckietown import Tile, TileCoords
 
@@ -9,7 +9,7 @@ __all__ = ["TileMap", "ij_from_tilename", "tilename_from_ij"]
 
 
 def tilename_from_ij(i: int, j: int):
-    tile_name = "tile-%d-%d" % (i, j)
+    tile_name = f"tile-{i}-{j}"
     return tile_name
 
 
@@ -34,7 +34,7 @@ class TileMap(PlacedObject):
     def __getitem__(self, coords: Tuple[int, int]) -> Tile:
         tilename = tilename_from_ij(coords[0], coords[1])
         if not tilename in self.children:
-            msg = 'Tile "%s" not available' % coords.__repr__()
+            msg = f"Tile {coords!r} not available"
             raise KeyError(msg)
         return self.children[coords]
 
@@ -44,7 +44,7 @@ class TileMap(PlacedObject):
             assert 0 <= j < self.W, (j, self.W)
 
         assert orientation in ALLOWED_ORIENTATIONS, orientation
-        tile_name = "tile-%d-%d" % (i, j)
+        tile_name = tilename_from_ij(i, j)
         placement = TileCoords(i, j, orientation)
         self.set_object(tile_name, tile, ground_truth=placement)
 
