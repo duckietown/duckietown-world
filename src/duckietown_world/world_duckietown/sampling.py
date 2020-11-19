@@ -30,7 +30,7 @@ from aido_schemas import (
     ScenarioRobotSpec,
 )
 from aido_schemas.protocol_simulator import ProtocolDesc
-from gym_duckietown.simulator import FrameBufferMemory
+
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..gltf.export import export_gltf
@@ -154,6 +154,7 @@ def make_scenario_main(args=None):
                 save_rgb_to_jpg(img, out)
 
                 sim.cur_pos = [-100.0, -100.0, -100.0]
+                from gym_duckietown.simulator import FrameBufferMemory
 
                 td = FrameBufferMemory(width=1900, height=1024)
                 horiz = sim._render_img(

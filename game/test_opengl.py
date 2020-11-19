@@ -1,8 +1,6 @@
+from game1 import create_map, get_background_image, MapDistribution, sample_cars
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from OpenGL.raw.GLU import gluBuild2DMipmaps
-
-from game1 import MapDistribution, create_map, sample_cars, get_background_image
 
 w, h = 500, 500
 
