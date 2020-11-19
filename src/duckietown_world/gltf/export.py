@@ -8,6 +8,19 @@ from typing import cast, List, Optional, Tuple
 
 import numpy as np
 import trimesh
+from geometry import rotx, roty, rotz, SE3_from_rotation_translation, SE3_from_SE2, SE3_rotz, SE3value
+from networkx import DiGraph, find_cycle, NetworkXNoCycle
+from zuper_commons.fs import (
+    FilePath,
+    make_sure_dir_exists,
+    read_bytes_from_file,
+    read_ustring_from_utf8_file,
+    write_ustring_to_utf8_file,
+)
+from zuper_commons.logs import ZLogger
+from zuper_commons.text import get_md5
+from zuper_commons.types import ZValueError
+
 from duckietown_world import (
     DB18,
     DuckietownMap,
@@ -18,7 +31,6 @@ from duckietown_world import (
     Sign,
     Tile,
 )
-from geometry import rotx, roty, rotz, SE3_from_rotation_translation, SE3_from_SE2, SE3_rotz, SE3value
 from gltflib import (
     Accessor,
     AccessorType,
@@ -37,6 +49,7 @@ from gltflib import (
     Mesh,
     Node,
     NormalTextureInfo,
+    OcclusionTextureInfo,
     PBRMetallicRoughness,
     PerspectiveCameraInfo,
     Primitive,
@@ -45,12 +58,6 @@ from gltflib import (
     Texture,
     TextureInfo,
 )
-from networkx import DiGraph, find_cycle, NetworkXNoCycle
-from zuper_commons.fs import make_sure_dir_exists
-from zuper_commons.logs import ZLogger
-from zuper_commons.text import get_md5
-from zuper_commons.types import ZValueError
-
 from .background import add_background
 from ..world_duckietown import get_resource_path, get_texture_file, ij_from_tilename
 
@@ -243,10 +250,19 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
         tile = cast(Tile, it.object)
         name = it.fqn[-1]
         fn = tile.fn
-        fn_normal = get_resource_path("normalmap.png")
-        # fn_normal = None
+        fn_normal = tile.fn_normal
+        fn_emissive = tile.fn_emissive
+        fn_metallic_roughness = tile.fn_metallic_roughness
+        fn_occlusion = tile.fn_occlusion
         material_index = make_material(
-            gltf, doubleSided=False, baseColorFactor=[1, 1, 1, 1.0], fn=fn, fn_normals=fn_normal
+            gltf,
+            doubleSided=False,
+            baseColorFactor=[1, 1, 1, 1.0],
+            fn=fn,
+            fn_normals=fn_normal,
+            fn_emissive=fn_emissive,
+            fn_metallic_roughness=fn_metallic_roughness,
+            fn_occlusion=fn_occlusion,
         )
         mi = get_square()
         mesh_index = add_polygon(
@@ -288,7 +304,7 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
         s = dm.tile_size
         scale = np.diag([s, s, s, 1])
         tile_matrix = SE3_from_SE2(tile_matrix2d)
-        tile_matrix = tile_matrix @ scale
+        tile_matrix = tile_matrix @ scale @ SE3_rotz(-np.pi / 2)
 
         tile_matrix_float = list(tile_matrix.T.flatten())
         if back_index is not None:
@@ -369,11 +385,12 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
     logger.info(f"writing to {fn}")
     gltf.export(fn)
     if True:
-        with open(fn) as f:
-            data = f.read()
+        data = read_ustring_from_utf8_file(fn)
+
         j = json.loads(data)
-        with open(fn, "w") as f:
-            f.write(json.dumps(j, indent=2))
+        data2 = json.dumps(j, indent=2)
+        write_ustring_to_utf8_file(data2, fn)
+
     fnb = os.path.join(outdir, "main.glb")
     logger.info(f"writing to {fnb}")
     gltf.export(fnb)
@@ -625,10 +642,15 @@ def check_loops(gltf: GLTF):
         raise ZValueError("cycle found", c=c)
 
 
-def make_texture(gltf: GLTF, fn: str):
+def make_texture(gltf: GLTF, fn: str) -> int:
+    data = read_bytes_from_file(fn)
+    md5 = get_md5(data)
+    bn = os.path.basename(fn)
+    noext, ext = os.path.splitext(bn)
     if fn not in gltf.fn2texture_index:
-        uri = os.path.basename(fn)
-        gltf.resources.append(resource_from_file(fn))
+        uri = f"textures/{noext}-{md5}{ext}"
+        rf = FileResource(uri, data=data)
+        gltf.resources.append(rf)
         image = Image(uri=uri)
         image_index = add_image(gltf, image)
         texture = Texture(sampler=0, source=image_index)
@@ -646,6 +668,8 @@ def make_material(
     fn: str = None,
     fn_normals: str = None,
     fn_emissive: str = None,
+    fn_metallic_roughness: str = None,
+    fn_occlusion: str = None,
 ):
     key = (tuple(baseColorFactor), fn, fn_normals, fn_emissive, doubleSided)
     if key not in gltf.cacheMaterial:
@@ -656,7 +680,10 @@ def make_material(
             fn=fn,
             fn_normals=fn_normals,
             fn_emissive=fn_emissive,
+            fn_metallic_roughness=fn_metallic_roughness,
+            fn_occlusion=fn_occlusion,
         )
+
         gltf.cacheMaterial[key] = res
     return gltf.cacheMaterial[key]
 
@@ -669,6 +696,8 @@ def make_material_(
     fn: str = None,
     fn_normals: str = None,
     fn_emissive: str = None,
+    fn_metallic_roughness: str = None,
+    fn_occlusion: str = None,
 ) -> int:
     # uri = os.path.basename(fn)
     # doubleSided = True
@@ -689,22 +718,37 @@ def make_material_(
 
     if fn_emissive is not None:
         emissive_map_index = make_texture(gltf, fn_emissive)
-        emissiveTexture = NormalTextureInfo(index=emissive_map_index)
+        emissiveTexture = TextureInfo(index=emissive_map_index)
         s = 1.0
         emissiveFactor = [s, s, s]
     else:
         emissiveTexture = None
         emissiveFactor = None
 
+    if fn_metallic_roughness is not None:
+        mr_index = make_texture(gltf, fn_metallic_roughness)
+        metallicRoughnessTexture = TextureInfo(index=mr_index)
+    else:
+        metallicRoughnessTexture = None
+
+    if fn_occlusion is not None:
+        occlusion_index = make_texture(gltf, fn_occlusion)
+        occlusionTexture = OcclusionTextureInfo(index=occlusion_index)
+    else:
+        occlusionTexture = None
+
     m = Material(
         doubleSided=doubleSided,
         pbrMetallicRoughness=PBRMetallicRoughness(
-            baseColorFactor=baseColorFactor, baseColorTexture=baseColorTexture,
+            baseColorFactor=baseColorFactor,
+            baseColorTexture=baseColorTexture,
+            metallicRoughnessTexture=metallicRoughnessTexture,
         ),
         alphaMode="BLEND",
         emissiveTexture=emissiveTexture,
         emissiveFactor=emissiveFactor,
         normalTexture=normalTexture,
+        occlusionTexture=occlusionTexture,
     )
 
     return add_material(gltf, m)
@@ -764,9 +808,8 @@ def cleanup_model(gltf: GLTF):
             setattr(model, a, None)
 
 
-def resource_from_file(fn: str) -> FileResource:
-    with open(fn, "rb") as f:
-        data = f.read()
+def resource_from_file(fn: FilePath) -> FileResource:
+    data = read_bytes_from_file(fn)
 
     bn = os.path.basename(fn)
     return FileResource(bn, data=data)
@@ -786,7 +829,7 @@ def add_node(gltf: GLTF, node: Node) -> int:
     return n
 
 
-def add_node_to_scene(gltf: GLTF, scene, node):
+def add_node_to_scene(gltf: GLTF, scene: int, node: int):
     model = gltf.model
     model.scenes[scene].nodes.append(node)
 

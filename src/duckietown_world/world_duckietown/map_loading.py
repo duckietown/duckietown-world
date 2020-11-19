@@ -4,13 +4,13 @@ import os
 import traceback
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import cast, Dict, List, Tuple
 
 import geometry as geo
 import numpy as np
 import oyaml as yaml
 from duckietown_serialization_ds1 import Serializable
-from zuper_commons.fs import locate_files
+from zuper_commons.fs import DirPath, FilePath, locate_files
 from zuper_commons.types import ZKeyError
 
 from . import logger
@@ -76,23 +76,23 @@ def get_maps_dir() -> str:
     return d
 
 
-def get_data_dir() -> str:
+def get_data_dir() -> DirPath:
     """ location of data dir """
     abs_path_module = os.path.realpath(__file__)
     module_dir = Path(os.path.dirname(abs_path_module))
-    return str(module_dir.parent / "data")
+    return cast(DirPath, str(module_dir.parent / "data"))
 
 
-RESOURCES_PATTERNS = ["*.png", "*.jpg", "*.yaml", "*.gltf", "*.obj", "*.mtl", "*.json"]
+RESOURCES_PATTERNS = ["*.png", "*.jpg", "*.yaml", "*.gltf", "*.obj", "*.mtl", "*.json", "*.tga", "*.bmp"]
 
 
 @lru_cache(maxsize=None)
-def get_data_resources() -> Tuple[Dict[str, str], List[str]]:
+def get_data_resources() -> Tuple[Dict[str, FilePath], List[FilePath]]:
     data = get_data_dir()
     logger.info(data=data)
     files = locate_files(data, pattern=RESOURCES_PATTERNS)
-    res2 = []
-    res1 = {}
+    res2: List[FilePath] = []
+    res1: Dict[str, FilePath] = {}
     for f in files:
         basename = os.path.basename(f)
         if basename in res1:
@@ -327,7 +327,7 @@ def get_xy_slot(i):
     return x, y
 
 
-def get_texture_file(tex_name: str) -> List[str]:
+def get_texture_file(tex_name: str) -> List[FilePath]:
     if tex_name.endswith(".png"):
         logger.warn(f"do not provide extension: {tex_name}")
         tex_name = tex_name.replace(".png", "")
@@ -336,11 +336,11 @@ def get_texture_file(tex_name: str) -> List[str]:
         tex_name = tex_name.replace(".jpg", "")
 
     resources, res2 = get_data_resources()
-    res = []
+    res: List[FilePath] = []
     tried = []
 
     suffixes = ["", "_1", "_2", "_3", "_4"]
-    extensions = [".jpg", ".png"]
+    extensions = [".jpg", ".png", ".tga", ".bmp"]
     for s, e in itertools.product(suffixes, extensions):
         basename = f"{tex_name}{s}{e}"
 

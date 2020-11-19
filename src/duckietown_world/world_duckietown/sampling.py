@@ -9,7 +9,12 @@ import numpy as np
 import yaml
 from geometry import SE2value, translation_angle_from_SE2
 from PIL import Image
-from zuper_commons.fs import make_sure_dir_exists, read_ustring_from_utf8_file, write_ustring_to_utf8_file
+from zuper_commons.fs import (
+    FilePath,
+    make_sure_dir_exists,
+    read_ustring_from_utf8_file,
+    write_ustring_to_utf8_file,
+)
 from zuper_commons.logs import setup_logging, ZLogger
 from zuper_commons.types import ZException
 from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
@@ -25,6 +30,7 @@ from aido_schemas import (
     ScenarioRobotSpec,
 )
 from aido_schemas.protocol_simulator import ProtocolDesc
+from gym_duckietown.simulator import FrameBufferMemory
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..gltf.export import export_gltf
@@ -99,7 +105,9 @@ def make_scenario_main(args=None):
             pc_robot_protocol=params.pc_robot_protocol,
             npc_robot_protocol=params.npc_robot_protocol,
         )
-        for style in ["synthetic", "synthetic-F", "photos", "smooth"]:
+        styles = ["synthetic", "synthetic-F", "photos", "smooth"]
+        # styles = ['smooth']
+        for style in styles:
             try:
                 from gym_duckietown.simulator import Simulator
             except ImportError:
@@ -139,15 +147,28 @@ def make_scenario_main(args=None):
                 sim._interpret_map(m)
                 sim.reset()
 
-                img = sim.render()
-                out = os.path.join(output, scenario_name, style, "cam.jpg")
+                img = sim.render_obs()
+                out = os.path.join(output, scenario_name, style, "cam.png")
                 save_rgb_to_png(img, out)
+                out = os.path.join(output, scenario_name, style, "cam.jpg")
+                save_rgb_to_jpg(img, out)
 
                 sim.cur_pos = [-100.0, -100.0, -100.0]
 
-                img = sim.render("top_down")
-                out = os.path.join(output, scenario_name, style, "top_down.jpg")
-                save_rgb_to_png(img, out)
+                td = FrameBufferMemory(width=1900, height=1024)
+                horiz = sim._render_img(
+                    width=td.width,
+                    height=td.height,
+                    multi_fbo=td.multi_fbo,
+                    final_fbo=td.final_fbo,
+                    img_array=td.img_array,
+                    top_down=True,
+                )
+                # img = sim.render("top_down")
+                out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.jpg"))
+                save_rgb_to_jpg(horiz, out)
+                out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.png"))
+                save_rgb_to_png(horiz, out)
 
                 dw.Tile.style = style
                 dm = interpret_scenario(scenario)
@@ -161,10 +182,17 @@ def make_scenario_main(args=None):
         write_ustring_to_utf8_file(scenario_yaml, filename)
 
 
-def save_rgb_to_png(img: np.ndarray, out: str):
+def save_rgb_to_png(img: np.ndarray, out: FilePath):
     make_sure_dir_exists(out)
     image = Image.fromarray(img)
     image.save(out, format="png")
+    logger.info(f"written {out}")
+
+
+def save_rgb_to_jpg(img: np.ndarray, out: FilePath):
+    make_sure_dir_exists(out)
+    image = Image.fromarray(img)
+    image.save(out, format="jpeg")
     logger.info(f"written {out}")
 
 
