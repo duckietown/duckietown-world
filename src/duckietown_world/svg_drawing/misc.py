@@ -269,6 +269,10 @@ def draw_static(
             textures</input>
             <input id='checkbox-decorations' type="checkbox"  onclick="hideshow(this);"
             checked>decorations</input>
+            <input id='checkbox-watchtowers' type="checkbox"  onclick="hideshow(this);"
+            checked>watchtowers</input>
+            <input id='checkbox-regions' type="checkbox"  onclick="hideshow(this);"
+            checked>regions</input>
 
             </p>
              <p>
@@ -290,6 +294,8 @@ def draw_static(
                     "checkbox-vehicles": ".Vehicle",
                     "checkbox-decorations": ".Decoration",
                     'checkbox-anchors': '.Anchor',
+                    "checkbox-watchtowers": ".Watchtower",
+                    "checkbox-regions": ".Region",
                 };
                 function hideshow(element) {
                     console.log(element);

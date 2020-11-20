@@ -1,0 +1,11 @@
+frames:
+  watchtower1:
+    relative_to: ~
+    pose:
+      x: 1.6
+      y: 1.6
+  map_1:
+    relative_to: ~
+    pose:
+      x: 0.0
+      y: 0.0

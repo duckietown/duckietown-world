@@ -1,0 +1,5 @@
+main:
+  frames:      !include frames.yaml
+  tile_maps:   !include tile_maps.yaml
+  tiles:       !include tiles.yaml
+  watchtowers: !include watchtowers.yaml
