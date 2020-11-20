@@ -1,6 +1,6 @@
 from typing import Union
 
-from .AbstractLayer import AbstractLayer
+from . import AbstractLayer
 
 
 class LayerGeneral(AbstractLayer):
@@ -8,6 +8,7 @@ class LayerGeneral(AbstractLayer):
     def serialize(self) -> dict:
         pass
 
-    def deserialize(self, data: Union[str, dict]) -> 'LayerGeneral':
+    @classmethod
+    def deserialize(cls, data: Union[str, dict]) -> 'LayerGeneral':
         pass
 

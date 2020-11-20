@@ -10,9 +10,9 @@ class AbstractEntity(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def deserialize(cls, data: Union[str, dict]) -> 'AbstractEntity':
+    def deserialize(cls, data: dict, **kwargs) -> 'AbstractEntity':
         pass
 
-    @abc.abstractmethod
-    def draw_svg(self):
-        pass
+    # @abc.abstractmethod
+    # def draw_svg(self):
+    #     pass

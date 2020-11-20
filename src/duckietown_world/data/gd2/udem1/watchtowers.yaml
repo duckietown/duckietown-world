@@ -1,4 +1,5 @@
 watchtowers:
   map_1/watchtower1:
     configuration: WT18
-    frame: watchtower1
+  map_1/watchtower1/watchtower2:
+    configuration: WT18

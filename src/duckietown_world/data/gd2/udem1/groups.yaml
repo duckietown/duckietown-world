@@ -1,0 +1,16 @@
+groups:
+  fleet_1:
+    description: "main duckietown fleet"
+    members:
+    - duckiebot1
+    - duckiebot2
+  parking_1:
+    description: "central parking"
+    members:
+    - map_1/tile_0_0
+    - map_1/tile_0_1
+  map_1:
+    description: "map 'map_1'"
+    members:
+    - map_1/tile_0_0
+    - map_1/tile_0_1

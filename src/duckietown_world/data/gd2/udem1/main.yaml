@@ -3,3 +3,4 @@ main:
   tile_maps:   !include tile_maps.yaml
   tiles:       !include tiles.yaml
   watchtowers: !include watchtowers.yaml
+  groups:      !include groups.yaml
