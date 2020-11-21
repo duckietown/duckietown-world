@@ -104,24 +104,35 @@ class FancyTextures:
     fn_metallic_roughness: Optional[FilePath] = None
     fn_occlusion: Optional[FilePath] = None
 
-    def write(self, prefix: str):
-        from .sampling import save_rgb_to_jpg
+    def write(self, prefix: str, ff: str):
+        from duckietown_world.world_duckietown.sampling import save_rgb_to_jpg
+        from duckietown_world.world_duckietown.sampling import save_rgb_to_png
+
+        if ff == "jpg":
+            ext = ".jpg"
+
+            f = save_rgb_to_jpg
+        elif ff == "png":
+            ext = ".png"
+            f = save_rgb_to_png
+        else:
+            raise ValueError(ff)
 
         if self.texture is not None:
-            self.fn_texture = os.path.join(prefix, "texture.jpg")
-            save_rgb_to_jpg(self.texture, self.fn_texture)
+            self.fn_texture = os.path.join(prefix, f"texture{ext}")
+            f(self.texture, self.fn_texture)
         if self.emissive is not None:
-            self.fn_emissive = os.path.join(prefix, "emissive.jpg")
-            save_rgb_to_jpg(self.emissive, self.fn_emissive)
+            self.fn_emissive = os.path.join(prefix, f"emissive{ext}")
+            f(self.emissive, self.fn_emissive)
         if self.normals is not None:
-            self.fn_normals = os.path.join(prefix, "normals.jpg")
-            save_rgb_to_jpg(self.normals, self.fn_normals)
+            self.fn_normals = os.path.join(prefix, f"normals{ext}")
+            f(self.normals, self.fn_normals)
         if self.metallic_roughness is not None:
-            self.fn_metallic_roughness = os.path.join(prefix, "metallic_roughness.jpg")
-            save_rgb_to_jpg(self.metallic_roughness, self.fn_metallic_roughness)
+            self.fn_metallic_roughness = os.path.join(prefix, f"metallic_roughness{ext}")
+            f(self.metallic_roughness, self.fn_metallic_roughness)
         if self.occlusion is not None:
-            self.fn_occlusion = os.path.join(prefix, "occlusion.jpg")
-            save_rgb_to_jpg(self.occlusion, self.fn_occlusion)
+            self.fn_occlusion = os.path.join(prefix, f"occlusion{ext}")
+            f(self.occlusion, self.fn_occlusion)
 
 
 from PIL import Image
@@ -345,11 +356,11 @@ def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
 
 
 def get_if_exists(style, kind, which: str) -> Optional[FilePath]:
-    from .map_loading import get_resource_path
+    from .map_loading import get_resource_path, get_texture_file
 
-    q = f"tiles-processed/{style}/{kind}/{which}.jpg"
+    q = f"tiles-processed/{style}/{kind}/{which}"
     try:
-        fn = get_resource_path(q)
+        fn = get_texture_file(q)[0]
 
     except KeyError:
         logger.warn(f"Could not get {q}")

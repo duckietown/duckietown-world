@@ -40,4 +40,5 @@ def compile_textures_main(args=None):
         for kind in tile_types:
             ft = get_fancy_textures(style, kind)
             out = os.path.join(parsed.output, style, kind)
-            ft.write(out)
+            ff = "jpg"
+            ft.write(out, ff)
