@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+import traceback
 from dataclasses import dataclass
 from typing import cast, List, Sequence, Tuple, Union
 
@@ -83,8 +84,10 @@ def make_scenario_main(args=None):
     )
 
     parsed = parser.parse_args(args=args)
-    styles = parsed.styles.split(",")
-    # styles = ["synthetic", "synthetic-F", "photos", "smooth"]
+    if parsed.styles == "all":
+        styles = ["synthetic", "synthetic-F", "photos", "smooth"]
+    else:
+        styles = parsed.styles.split(",")
     config: str = parsed.config
     basename = os.path.basename(config).split(".")[0]
     data = read_ustring_from_utf8_file(config)
@@ -118,6 +121,7 @@ def make_scenario_main(args=None):
             try:
                 from gym_duckietown.simulator import Simulator
             except ImportError:
+                logger.warning(traceback.format_exc())
                 Simulator = None
             else:
                 sim = Simulator(
@@ -131,6 +135,7 @@ def make_scenario_main(args=None):
                     color_ground=[0, 0.3, 0],  # green
                     style=style,
                 )
+                logger.info("resetting")
                 sim.reset()
                 m = cast(dw.MapFormat1, yaml.load(scenario.environment, Loader=yaml.Loader))
                 tile_size = m["tile_size"]
@@ -157,7 +162,7 @@ def make_scenario_main(args=None):
 
                 sim._interpret_map(m)
                 sim.reset()
-
+                logger.info("rendering obs")
                 img = sim.render_obs()
                 out = os.path.join(output, scenario_name, style, "cam.png")
                 save_rgb_to_png(img, out)
@@ -167,7 +172,7 @@ def make_scenario_main(args=None):
                 sim.cur_pos = [-100.0, -100.0, -100.0]
                 from gym_duckietown.simulator import FrameBufferMemory
 
-                td = FrameBufferMemory(width=1900, height=1024)
+                td = FrameBufferMemory(width=1024, height=1024)
                 horiz = sim._render_img(
                     width=td.width,
                     height=td.height,
@@ -198,12 +203,13 @@ def save_rgb_to_png(img: np.ndarray, out: FilePath):
     make_sure_dir_exists(out)
     image = Image.fromarray(img)
     image.save(out, format="png")
-    logger.info(f"written {out}")
+    # logger.info(f"written {out}")
 
 
 def save_rgb_to_jpg(img: np.ndarray, out: FilePath):
     make_sure_dir_exists(out)
     image = Image.fromarray(img)
+    image = image.convert("RGB")
     image.save(out, format="jpeg")
     logger.info(f"written {out}")
 

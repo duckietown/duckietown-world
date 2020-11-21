@@ -71,6 +71,7 @@ setup(
             "dt-world-draw-maps = duckietown_world.svg_drawing:draw_maps_main",
             "dt-world-export-gltf = duckietown_world.gltf:gltf_export_main",
             "dt-make-scenarios =duckietown_world.world_duckietown.sampling:make_scenario_main",
+            "dt-compile-textures=duckietown_world.world_duckietown.compile_textures:compile_textures_main",
         ]
     },
 )

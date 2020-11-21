@@ -106,7 +106,7 @@ def get_data_resources() -> Tuple[Dict[str, FilePath], List[FilePath]]:
     return res1, res2
 
 
-def get_resource_path(basename: str) -> str:
+def get_resource_path(basename: str) -> FilePath:
     res1, res2 = get_data_resources()
     if "/" in basename:
         for v in res2:

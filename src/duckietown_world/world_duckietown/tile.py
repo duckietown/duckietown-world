@@ -85,6 +85,7 @@ def get_tile_slots():
         # theta = np.deg2rad(theta_deg)
         theta = 0
         t = SE2Transform((-LM + x, -LM + y), theta)
+        # noinspection PyTypeChecker
         po.set_object(name, sl, ground_truth=t)
     return po
 
@@ -104,23 +105,23 @@ class FancyTextures:
     fn_occlusion: Optional[FilePath] = None
 
     def write(self, prefix: str):
-        from .sampling import save_rgb_to_png
+        from .sampling import save_rgb_to_jpg
 
         if self.texture is not None:
-            self.fn_texture = os.path.join(prefix, "texture.png")
-            save_rgb_to_png(self.texture, self.fn_texture)
+            self.fn_texture = os.path.join(prefix, "texture.jpg")
+            save_rgb_to_jpg(self.texture, self.fn_texture)
         if self.emissive is not None:
-            self.fn_emissive = os.path.join(prefix, "emissive.png")
-            save_rgb_to_png(self.emissive, self.fn_emissive)
+            self.fn_emissive = os.path.join(prefix, "emissive.jpg")
+            save_rgb_to_jpg(self.emissive, self.fn_emissive)
         if self.normals is not None:
-            self.fn_normals = os.path.join(prefix, "normals.png")
-            save_rgb_to_png(self.normals, self.fn_normals)
+            self.fn_normals = os.path.join(prefix, "normals.jpg")
+            save_rgb_to_jpg(self.normals, self.fn_normals)
         if self.metallic_roughness is not None:
-            self.fn_metallic_roughness = os.path.join(prefix, "metallic_roughness.png")
-            save_rgb_to_png(self.metallic_roughness, self.fn_metallic_roughness)
+            self.fn_metallic_roughness = os.path.join(prefix, "metallic_roughness.jpg")
+            save_rgb_to_jpg(self.metallic_roughness, self.fn_metallic_roughness)
         if self.occlusion is not None:
-            self.fn_occlusion = os.path.join(prefix, "occlusion.png")
-            save_rgb_to_png(self.occlusion, self.fn_occlusion)
+            self.fn_occlusion = os.path.join(prefix, "occlusion.jpg")
+            save_rgb_to_jpg(self.occlusion, self.fn_occlusion)
 
 
 from PIL import Image
@@ -211,7 +212,7 @@ def get_textures_triple(style: str, kind: str) -> FancyTextures:
         metallic_roughness=metallic_roughness,
         occlusion=occlusion,
     )
-    ft.write(f"/tmp/duckietown/dw/textures/original/{style}/{kind}")
+    # ft.write(f"/tmp/duckietown/dw/textures/original/{style}/{kind}")
 
     return ft
 
@@ -332,7 +333,7 @@ def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
             occlusion[is_tape] = tape.occlusion[is_tape]
 
     ft = FancyTextures(texture, normals, emissive, metallic_roughness=metallic_roughness, occlusion=occlusion)
-    ft.write(f"/tmp/duckietown/dw/textures/{style}/processed/{tile_kind}")
+    # ft.write(f"/tmp/duckietown/dw/textures-processed/{style}/{tile_kind}")
 
     return ft
 
@@ -341,6 +342,20 @@ def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
 #
 # def write_textures(ft: FancyTextures, prefix: str):
 #
+
+
+def get_if_exists(style, kind, which: str) -> Optional[FilePath]:
+    from .map_loading import get_resource_path
+
+    q = f"tiles-processed/{style}/{kind}/{which}.jpg"
+    try:
+        fn = get_resource_path(q)
+
+    except KeyError:
+        logger.warn(f"Could not get {q}")
+        return None
+    else:
+        return fn
 
 
 class Tile(PlacedObject):
@@ -354,41 +369,21 @@ class Tile(PlacedObject):
     fn_emissive: Optional[FilePath]
     fn_metallic_roughness: Optional[FilePath]
 
-    ft: FancyTextures
-
     def __init__(self, kind, drivable, **kwargs):
         # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.kind = kind
         self.drivable = drivable
 
-        self.ft = get_fancy_textures(Tile.style, kind)
+        self.fn_emissive = get_if_exists(self.style, kind, "emissive")
+        self.fn_normal = get_if_exists(self.style, kind, "normals")
+        self.fn = get_if_exists(self.style, kind, "texture")
+        self.fn_metallic_roughness = get_if_exists(self.style, kind, "metallic_roughness")
+        self.fn_occlusion = get_if_exists(self.style, kind, "occlusion")
 
-        self.fn_emissive = self.ft.fn_emissive
-        self.fn_normal = self.ft.fn_normals
-        self.fn = self.ft.fn_texture
-        self.fn_metallic_roughness = self.ft.fn_metallic_roughness
-        self.fn_occlusion = self.ft.fn_occlusion
-        # try:
-        #     self.fn = get_texture_file(f"{Tile.style}/{kind}")[0]
-        #     # logger.debug(f"using {self.fn}")
-        # except KeyError as e:
-        #     msg = f"Cannot find texture for tile of type {Tile.style}/{kind}"
-        #     logger.warning(msg, e=e)
-        #     self.fn = None
-        #
-        # try:
-        #     self.fn_normal = get_texture_file(f"{Tile.style}/{kind}-normal")[0]
-        #     # logger.debug(f"using {self.fn}")
-        # except KeyError as e:
-        #     msg = f"Cannot find normal map {Tile.style}/{kind}-normal"
-        #     logger.warning(msg)
-        #     self.fn_normal = None
-        # self.fn_emissive = None
-
-        # if kind in ['asphalt']:
         if not "slots" in self.children:
             slots = get_tile_slots()
+            # noinspection PyTypeChecker
             self.set_object("slots", slots, ground_truth=SE2Transform.identity())
 
     def _copy(self):
