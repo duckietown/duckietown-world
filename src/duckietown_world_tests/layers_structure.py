@@ -25,8 +25,7 @@ def layers_map():
     draw_map(out, m)
 
     print("=========================== GROUPS ===========================")
-    import pprint
-    pprint.pprint(dict(dm.groups.items()))
+    print(dm.groups)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from typing import Union
 
-from . import AbstractLayer
+from .AbstractLayer import AbstractLayer
 
 
 class LayerGeneral(AbstractLayer):

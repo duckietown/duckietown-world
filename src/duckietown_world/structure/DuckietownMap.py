@@ -161,8 +161,6 @@ def get_map_path(map_name):
 
 
 if __name__ == '__main__':
-    fpath = '/data/maps/my_map/'
-    dm = DuckietownMap.deserialize(fpath)
+    map_name = "gd2/udem1"
+    dm = DuckietownMap.deserialize(map_name)
     print(dm.frames)
-
-    svg = dm.draw_svg()

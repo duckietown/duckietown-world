@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from typing import Union
 
-from . import AbstractEntity
+from pprint import pformat
+
+from .AbstractEntity import AbstractEntity
 
 
 class AbstractLayer(AbstractEntity, metaclass=ABCMeta):
@@ -27,6 +29,9 @@ class AbstractLayer(AbstractEntity, metaclass=ABCMeta):
 
     def items(self):
         return self._items.items()
+
+    def __str__(self):
+        return pformat(self._items)
 
     @classmethod
     @abstractmethod

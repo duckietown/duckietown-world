@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Union
 
-from . import AbstractLayer
+from .AbstractLayer import AbstractLayer
 
 from duckietown_world.geo import SE2Transform
 

@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Union
 
-from . import AbstractLayer
+from .AbstractLayer import AbstractLayer
 
 
 class LayerGroups(AbstractLayer, ABC):
