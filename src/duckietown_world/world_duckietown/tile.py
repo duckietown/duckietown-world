@@ -160,7 +160,7 @@ def read_rgb(fn: FilePath, resize: int) -> np.ndarray:
     return data
 
 
-TEX_SIZE = 1024
+TEX_SIZE = 512
 
 
 @lru_cache(maxsize=None)
