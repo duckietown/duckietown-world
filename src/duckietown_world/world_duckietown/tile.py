@@ -211,7 +211,7 @@ def get_textures_triple(style: str, kind: str) -> FancyTextures:
         metallic_roughness=metallic_roughness,
         occlusion=occlusion,
     )
-    ft.write(f"textures/{style}/{kind}")
+    ft.write(f"/tmp/duckietown/dw/textures/original/{style}/{kind}")
 
     return ft
 
@@ -332,7 +332,7 @@ def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
             occlusion[is_tape] = tape.occlusion[is_tape]
 
     ft = FancyTextures(texture, normals, emissive, metallic_roughness=metallic_roughness, occlusion=occlusion)
-    ft.write(f"textures/{style}/{tile_kind}-fancy")
+    ft.write(f"/tmp/duckietown/dw/textures/{style}/processed/{tile_kind}")
 
     return ft
 

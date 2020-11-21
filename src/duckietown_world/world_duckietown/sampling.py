@@ -76,8 +76,15 @@ def make_scenario_main(args=None):
     parser.add_argument("--config", help="Configuration", required=True)
     parser.add_argument("-o", "--output", help="Destination directory", required=True)
     parser.add_argument("-n", "--num", type=int, help="Number of scenarios to generate", required=True)
+    parser.add_argument(
+        "--styles",
+        default="smooth",
+        help="Draw preview in various styles, comma separated. (needs gym duckietown)",
+    )
 
     parsed = parser.parse_args(args=args)
+    styles = parsed.styles.split(",")
+    # styles = ["synthetic", "synthetic-F", "photos", "smooth"]
     config: str = parsed.config
     basename = os.path.basename(config).split(".")[0]
     data = read_ustring_from_utf8_file(config)
@@ -105,7 +112,7 @@ def make_scenario_main(args=None):
             pc_robot_protocol=params.pc_robot_protocol,
             npc_robot_protocol=params.npc_robot_protocol,
         )
-        styles = ["synthetic", "synthetic-F", "photos", "smooth"]
+
         # styles = ['smooth']
         for style in styles:
             try:
@@ -137,12 +144,16 @@ def make_scenario_main(args=None):
                         rotate = -np.rad2deg(theta)
 
                         pos = [t[0] / tile_size, t[1] / tile_size]
-                        m["objects"].append(dict(kind="duckiebot", pos=pos, rotate=rotate, height=0.12))
+                        m["objects"].append(
+                            dict(kind="duckiebot", pos=pos, rotate=rotate, height=0.12, color=srobot.color)
+                        )
                     for duckie_name, duckie in scenario.duckies.items():
                         t, theta = translation_angle_from_SE2(duckie.pose)
                         rotate = -np.rad2deg(theta)
                         pos = [t[0] / tile_size, t[1] / tile_size]
-                        m["objects"].append(dict(kind="duckie", pos=pos, rotate=rotate, height=0.08))
+                        m["objects"].append(
+                            dict(kind="duckie", pos=pos, rotate=rotate, height=0.08, color=duckie.color)
+                        )
 
                 sim._interpret_map(m)
                 sim.reset()

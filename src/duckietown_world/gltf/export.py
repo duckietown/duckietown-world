@@ -8,7 +8,16 @@ from typing import cast, List, Optional, Tuple
 
 import numpy as np
 import trimesh
-from geometry import rotx, roty, rotz, SE3_from_rotation_translation, SE3_from_SE2, SE3_rotz, SE3value
+from geometry import (
+    rotx,
+    roty,
+    rotz,
+    SE3_from_R3,
+    SE3_from_rotation_translation,
+    SE3_from_SE2,
+    SE3_rotz,
+    SE3value,
+)
 from networkx import DiGraph, find_cycle, NetworkXNoCycle
 from zuper_commons.fs import (
     FilePath,
@@ -327,8 +336,11 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
         "Tree": None,
         "Duckie": export_duckie,
         "DB18": export_DB18,
-        # 'Duckie': None,
+        # "Bus": export_bus,
+        # "Truck": export_truck,
+        # "House": export_house,
         "TileMap": None,
+        "TrafficLight": export_trafficlight,
         "LaneSegment": None,
         "PlacedObject": None,
         "DuckietownMap": None,
@@ -417,17 +429,58 @@ def export_tree(gltf: GLTF, name, ob):
 
 def export_duckie(gltf: GLTF, name, ob):
     _ = get_resource_path("duckie2/main.gltf")
-    return embed_external(gltf, _)
+
+    return embed_external(gltf, _, key="normal")
+
+
+def export_trafficlight(gltf: GLTF, name, ob):
+    _ = get_resource_path("trafficlight/main.gltf")
+
+    return embed_external(gltf, _, key="normal")
+
+
+def export_house(gltf: GLTF, name, ob):
+    _ = get_resource_path("house/main.gltf")
+
+    return embed_external(gltf, _, key="normal")
+
+
+def export_bus(gltf: GLTF, name, ob):
+    _ = get_resource_path("bus/main.gltf")
+
+    return embed_external(gltf, _, key="normal")
+
+
+def export_truck(gltf: GLTF, name, ob):
+    _ = get_resource_path("truck/main.gltf")
+
+    return embed_external(gltf, _, key="normal")
+
+
+def get_duckiebot_color_from_colorname(color: str) -> List[float]:
+    colors = {
+        "green": [0, 0.5, 0, 1],
+        "red": [0.5, 0, 0, 1],
+        "grey": [0.3, 0.3, 0.3, 1],
+        "blue": [0, 0, 0.5, 1],
+    }
+    color = colors[color]
+    return color
 
 
 def export_DB18(gltf: GLTF, name, ob: DB18) -> int:
     _ = get_resource_path("duckiebot3/main.gltf")
 
     g2 = GLTF.load(_)
-    color = [0, 1, 0, 1]
+    # color = [0, 1, 0, 1]
+    color = get_duckiebot_color_from_colorname(ob.color)
     set_duckiebot_color(g2, "gkmodel0_chassis_geom0_mat_001-material.001", color)
     set_duckiebot_color(g2, "gkmodel0_chassis_geom0_mat_001-material", color)
-    index = embed(gltf, g2)
+    index0 = embed(gltf, g2)
+    radius = 0.0318
+    M = SE3_from_R3(np.array([0, 0, radius]))
+    node = Node(children=[index0], matrix=gm(M))
+    index = add_node(gltf, node)
     return index
 
 
@@ -441,13 +494,15 @@ def set_duckiebot_color(gltf: GLTF, mname: str, color: List[float]):
         logger.error(f"could not find material {mname}")
 
 
-def embed_external(gltf: GLTF, fn: str) -> int:
-    if fn not in gltf.fn2node:
+def embed_external(gltf: GLTF, fn: str, key: str, transform=None) -> int:
+    the_key = (fn, key)
+    if the_key not in gltf.fn2node:
         g2 = GLTF.load(fn)
-
-        index = gltf.fn2node[fn] = embed(gltf, g2)
+        if transform is not None:
+            g2 = transform(g2)
+        index = gltf.fn2node[the_key] = embed(gltf, g2)
         return index
-    index = gltf.fn2node[fn]
+    index = gltf.fn2node[the_key]
     return make_node_copy(gltf, index)
 
 
@@ -884,7 +939,24 @@ def add_buffer(gltf: GLTF, bf: Buffer) -> int:
     return n
 
 
-def export_sign(gltf: GLTF, name: str, sign: Sign) -> int:
+def export_sign(gltf: GLTF, name, ob: Sign):
+    _ = get_resource_path("sign_generic/main.gltf")
+    tname = ob.get_name_texture()
+    logger.info(f"t = {type(ob)} tname = {tname}")
+    fn_texture = get_texture_file(tname)[0]
+    uri = os.path.join("textures/signs", os.path.basename(fn_texture))
+    data = read_bytes_from_file(fn_texture)
+
+    def transform(g: GLTF) -> GLTF:
+        rf = FileResource(uri, data=data)
+        g.resources.append(rf)
+        g.model.images[0] = Image(name=tname, uri=uri)
+        return g
+
+    return embed_external(gltf, _, key=tname, transform=transform)
+
+
+def export_sign_2(gltf: GLTF, name: str, sign: Sign) -> int:
     texture = sign.get_name_texture()
     # x = -0.2
     CM = 0.01
@@ -932,7 +1004,9 @@ def export_sign(gltf: GLTF, name: str, sign: Sign) -> int:
 
     scale = np.diag([PAPER_WIDTH, PAPER_HEIGHT, PAPER_WIDTH, 1])
     rot = SE3_from_rotation_translation(
-        rotz(np.pi / 2) @ rotx(np.pi / 2) @ rotz(np.pi), np.array([0, 0, 0.8 * PAPER_HEIGHT])
+        rotz(np.pi / 2) @ rotx(np.pi / 2),
+        # @ rotz(np.pi),
+        np.array([0, 0, 0.8 * PAPER_HEIGHT]),
     )
     M = rot @ scale
 

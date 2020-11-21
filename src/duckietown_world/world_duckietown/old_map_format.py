@@ -18,7 +18,7 @@ class MapFormat1Object(TypedDict, total=False):
     pos: List[float]
     rotate: float
     optional: bool
-
+    color: str
     static: bool
     height: float
     scale: float
