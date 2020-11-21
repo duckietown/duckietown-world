@@ -1,17 +1,17 @@
-import abc
+from abc import ABC, abstractmethod
 from typing import Union
 
 
-class AbstractEntity(abc.ABC):
+class AbstractEntity(ABC):
 
-    @abc.abstractmethod
+    @abstractmethod
     def serialize(self) -> dict:
         pass
 
-    @classmethod
-    @abc.abstractmethod
-    def deserialize(cls, data: dict, **kwargs) -> 'AbstractEntity':
-        pass
+    # @classmethod
+    # @abstractmethod
+    # def deserialize(cls, data: dict, **kwargs) -> 'AbstractEntity':
+    #     pass
 
     # @abc.abstractmethod
     # def draw_svg(self):

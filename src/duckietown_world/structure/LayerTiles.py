@@ -10,19 +10,17 @@ from duckietown_world.geo import PlacedObject, SE2Transform, Scale2D
 
 
 class LayerTiles(AbstractLayer, ABC):
-    tiles: dict
-
-    def __init__(self, data: dict, **kwargs):
-        self.tiles = {}
-        if "tile_maps" not in kwargs:
+    def __init__(self, data: dict, dm: 'DuckietownMap'):
+        super().__init__()
+        if "tile_maps" not in dm:
             msg = "must load tile_maps before tiles"
             raise ValueError(msg)
 
         for name, desc in data.items():
             map_name, tile_name = name.split("/")
-            assert map_name in kwargs["tile_maps"].tile_maps
-            kwargs["tile_maps"].tile_maps[map_name]["tiles"][tile_name] = desc
-        for _, tile_map in kwargs["tile_maps"].tile_maps.items():
+            assert map_name in dm.tile_maps
+            dm.tile_maps[map_name]["tiles"][name] = desc
+        for _, tile_map in dm.tile_maps.items():
             tiles = tile_map["tiles"]
             assert len(tiles) > 1
             A = max(map(lambda t: tiles[t]["j"], tiles)) + 1
@@ -46,10 +44,10 @@ class LayerTiles(AbstractLayer, ABC):
             templates = load_tile_types()
 
             DEFAULT_ORIENT = "E"
-            for _, t in tiles.items():
-                kind = t["type"]
-                if "orientation" in t:
-                    orient = t["orientation"]
+            for tile_name, tile_data in tiles.items():
+                kind = tile_data["type"]
+                if "orientation" in tile_data:
+                    orient = tile_data["orientation"]
                     drivable = True
                 else:
                     orient = DEFAULT_ORIENT
@@ -59,7 +57,8 @@ class LayerTiles(AbstractLayer, ABC):
                 if kind in templates:
                     tile.set_object(kind, templates[kind], ground_truth=SE2Transform.identity())
 
-                tm.add_tile(t["i"], (A - 1) - t["j"], orient, tile)
+                tm.add_tile(tile_data["i"], (A - 1) - tile_data["j"], orient, tile)
+                self._items[tile_name] = tile
 
             wrapper = PlacedObject()
             wrapper.set_object("tilemap", tm, ground_truth=Scale2D(tile_map["map_object"].tile_size))
@@ -69,5 +68,5 @@ class LayerTiles(AbstractLayer, ABC):
         pass
 
     @classmethod
-    def deserialize(cls, data: dict, **kwargs) -> 'LayerTiles':
-        return LayerTiles(data, **kwargs)
+    def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerTiles':
+        return LayerTiles(data, dm)

@@ -7,28 +7,23 @@ import duckietown_world.world_duckietown as wd
 
 
 class LayerTileMaps(AbstractLayer, ABC):
-    tile_maps: dict
-
-    def __init__(self, data: dict, **kwargs):
-        self.tile_maps = {}
-        if "frames" not in kwargs:
+    def __init__(self, data: dict, dm: 'DuckietownMap'):
+        super().__init__()
+        if "frames" not in dm:
             msg = "must load frames before tile_maps"
             raise ValueError(msg)
 
         for name, desc in data.items():
-            dm = wd.DuckietownMap(desc["tile_size"]["x"])  # TODO y-width
-            frame = kwargs["frames"].frames.get(name, None)
+            dt_map = wd.DuckietownMap(desc["tile_size"]["x"])  # TODO y-width
+            frame = dm.frames[name]
             if frame is None:
                 msg = "not found frame for map " + name
                 raise ValueError(msg)
-            self.tile_maps[name] = {"map_object": dm, "frame": frame, "tiles": {}}  # TODO: do we need tiles?
+            self._items[name] = {"map_object": dt_map, "frame": frame, "tiles": {}}  # TODO: do we need tiles?
 
     def serialize(self) -> dict:
         pass
 
     @classmethod
-    def deserialize(cls, data: dict, **kwargs) -> 'LayerTileMaps':
-        return LayerTileMaps(data, **kwargs)
-
-    def items(self):
-        return self.tile_maps.items()
+    def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerTileMaps':
+        return LayerTileMaps(data, dm)

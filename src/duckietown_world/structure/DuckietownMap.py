@@ -41,8 +41,13 @@ class DuckietownMap(AbstractEntity):
     LAYERS_ORDER = {
         'frames': 0,
         'tile_maps': 1,
-        'tiles': 2
+        'tiles': 2,
+        'default': 100,
+        'groups': 200
     }
+
+    def get_order(self, layer):
+        return self.LAYERS_ORDER.get(layer, self.LAYERS_ORDER["default"])
 
     @classmethod
     def deserialize(cls, map_name: str) -> Optional['DuckietownMap']:
@@ -69,17 +74,17 @@ class DuckietownMap(AbstractEntity):
     def __init__(self, yaml_data: dict):
         self._layers = {}
         self.root = PlacedObject()
-        data_items = sorted(yaml_data.items(), key=lambda x: x)
+        data_items = sorted(list(yaml_data.items()), key=lambda p: self.get_order(p[0]))
         for layer_key, layer_content in data_items:
             layer_class = self.LAYER_KEY_TO_CLASS[layer_key]
-            self._layers[layer_key] = layer_class.deserialize(layer_content, **self._layers)  # TODO assume basic layers exist
+            self._layers[layer_key] = layer_class.deserialize(layer_content, self)  # TODO assume basic layers exist
         self.bind_objects()
         self.finish_building()
 
     def bind_objects(self):
         processed_objects = {}
         for name, mp in self.tile_maps.items():
-            frame = self.frames.frames.get(name, None)
+            frame = self.frames.get(name, None)
             if frame is None:
                 msg = "not found frame for map " + name
                 raise ValueError(msg)
@@ -98,7 +103,7 @@ class DuckietownMap(AbstractEntity):
                 objects[depth].append(desc)
         for depth in objects:
             for o in objects[depth]:
-                frame = self.frames.frames.get(o["name"], None)
+                frame = self.frames.get(o["name"], None)
                 if frame is None:
                     msg = "not found frame for object " + o["name"]
                     raise ValueError(msg)
@@ -111,7 +116,7 @@ class DuckietownMap(AbstractEntity):
                     parent_object = self.root
                 else:
                     parent_frame = o["frame"]["relative_to"]
-                    parent_object = processed_objects.get(parent_frame, None)
+                    parent_object = processed_objects[parent_frame]
                     if parent_object is None:
                         msg = "not found object for frame " + parent_frame
                         raise ValueError(msg)
@@ -119,7 +124,7 @@ class DuckietownMap(AbstractEntity):
                 processed_objects[o["name"]] = o["obj"]
 
     def finish_building(self):
-        for _, tile_map in self.tile_maps.tile_maps.items():
+        for _, tile_map in self.tile_maps.items():
             for it in list(
                     iterate_by_class(tile_map["map_object"].children["tilemap_wrapper"].children["tilemap"], Tile)):
                 ob = it.object
@@ -134,8 +139,18 @@ class DuckietownMap(AbstractEntity):
     def __getattr__(self, item):
         return self._layers[item]
 
+    def __iter__(self):
+        return self._layers.__iter__()
+
     def has_layer(self, name: str) -> bool:
         return hasattr(self, name)
+
+    def inner_items(self):
+        items = {}
+        for layer_name, layer_data in self._layers.items():
+            if layer_name != "frames":
+                items.update(layer_data.items())
+        return items
 
 
 def get_map_path(map_name):

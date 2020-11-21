@@ -17,7 +17,7 @@ def layers_map():
     map_name = "gd2/udem1"
     dm = st.DuckietownMap.deserialize(map_name)
 
-    m: dw.DuckietownMap = dm.tile_maps.tile_maps["map_1"]["map_object"]
+    m: dw.DuckietownMap = dm.tile_maps.get("map_1")["map_object"]
     placed_object_check(m)
 
     outdir = get_comptests_output_dir()
@@ -26,7 +26,7 @@ def layers_map():
 
     print("=========================== GROUPS ===========================")
     import pprint
-    pprint.pprint(dm.groups.groups)
+    pprint.pprint(dict(dm.groups.items()))
 
 
 if __name__ == "__main__":
