@@ -171,11 +171,11 @@ def read_rgb(fn: FilePath, resize: int) -> np.ndarray:
     return data
 
 
-TEX_SIZE = 512
+# TEX_SIZE = 512
 
 
 @lru_cache(maxsize=None)
-def get_textures_triple(style: str, kind: str) -> FancyTextures:
+def get_textures_triple(style: str, kind: str, size: int) -> FancyTextures:
     from .map_loading import get_texture_file
 
     fn_texture = get_texture_file(f"{style}/{kind}")[0]
@@ -200,6 +200,7 @@ def get_textures_triple(style: str, kind: str) -> FancyTextures:
         logger.warn(f"No occlusion for {style}/{kind}-occlusion")
         fn_occlusion = None
 
+    TEX_SIZE = size
     texture = None if fn_texture is None else read_rgba(fn_texture, TEX_SIZE)
     normals = (
         get_straight_normal_map((TEX_SIZE, TEX_SIZE)) if fn_normal is None else read_rgb(fn_normal, TEX_SIZE)
@@ -258,28 +259,28 @@ def get_base_metallic_roughness(shape: Tuple[int, int]) -> np.ndarray:
 
 
 @lru_cache(maxsize=None)
-def get_floor_textures(style: str) -> FancyTextures:
-    return get_textures_triple(style, "floor")
+def get_floor_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "floor", size)
 
 
 @lru_cache(maxsize=None)
-def get_asphalt_textures(style: str) -> FancyTextures:
-    return get_textures_triple(style, "asphalt")
+def get_asphalt_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "asphalt", size)
 
 
 @lru_cache(maxsize=None)
-def get_tape_textures(style: str) -> FancyTextures:
-    return get_textures_triple(style, "tape")
+def get_tape_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "tape", size)
 
 
 @lru_cache(maxsize=None)
-def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
-    floor = get_floor_textures(style)
+def get_fancy_textures(style: str, tile_kind: str, size: int) -> FancyTextures:
+    floor = get_floor_textures(style, size)
 
-    asphalt = get_asphalt_textures(style)
-    tape = get_tape_textures(style)
+    asphalt = get_asphalt_textures(style, size)
+    tape = get_tape_textures(style, size)
 
-    base = get_textures_triple(style, tile_kind)
+    base = get_textures_triple(style, tile_kind, size)
 
     R = base.texture[:, :, 0]
     G = base.texture[:, :, 1]
@@ -356,7 +357,7 @@ def get_fancy_textures(style: str, tile_kind: str) -> FancyTextures:
 
 
 def get_if_exists(style, kind, which: str) -> Optional[FilePath]:
-    from .map_loading import get_resource_path, get_texture_file
+    from .map_loading import get_texture_file
 
     q = f"tiles-processed/{style}/{kind}/{which}"
     try:

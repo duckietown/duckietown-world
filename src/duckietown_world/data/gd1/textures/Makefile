@@ -1,2 +1,2 @@
 all:
-	dt-compile-textures -o tiles-processed
+	dt-compile-textures -o tiles-processed --size 512

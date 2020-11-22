@@ -132,7 +132,7 @@ def make_scenario_main(args=None):
                     camera_width=640,
                     camera_height=480,
                     # distortion=True,
-                    # color_ground=[0, 0.3, 0],  # green
+                    color_ground=[0, 0.3, 0],  # green
                     style=style,
                 )
                 logger.info("resetting")

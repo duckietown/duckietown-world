@@ -13,6 +13,7 @@ def compile_textures_main(args=None):
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-o", "--output", help="Destination directory", default="out-textures")
+    parser.add_argument("-s", "--size", help="Size", type=int, default=512)
     parser.add_argument(
         "--styles",
         default="all",
@@ -36,9 +37,10 @@ def compile_textures_main(args=None):
         "curve_right",
         "grass",
     ]
+    size = parsed.size
     for style in styles:
         for kind in tile_types:
-            ft = get_fancy_textures(style, kind)
+            ft = get_fancy_textures(style, kind, size)
             out = os.path.join(parsed.output, style, kind)
             ff = "jpg"
             ft.write(out, ff)
