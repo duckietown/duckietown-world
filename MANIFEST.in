@@ -3,3 +3,6 @@ prune visualization
 prune notebooks
 graft src/duckietown_world/data
 
+prune *.pxd
+prune src/duckietown_world_test
+prune test-scenarios
