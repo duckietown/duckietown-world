@@ -39,12 +39,15 @@ def draw_maps_main(args=None):
         map_names = list_maps()
     logger.info("Drawing the maps %s." % ", ".join(map_names))
 
+    from duckietown_world.gltf import export_gltf
+
     for map_name in map_names:
         duckietown_map = load_map(map_name)
         out = os.path.join(output, map_name)
 
         draw_map(out, duckietown_map)
         style = "synthetic-F"
+        export_gltf(duckietown_map, out)
         draw_map_gymd(map_name, out, style)
 
         y = duckietown_map.as_json_dict()

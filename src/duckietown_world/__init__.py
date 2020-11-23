@@ -22,5 +22,6 @@ disable_all()
 
 from .geo import *
 from .seqs import *
+from .resources import *
 from .svg_drawing import *
 from .world_duckietown import *
