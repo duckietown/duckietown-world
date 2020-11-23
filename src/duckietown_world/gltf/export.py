@@ -68,7 +68,8 @@ from gltflib import (
     TextureInfo,
 )
 from .background import add_background
-from ..world_duckietown import get_resource_path, get_texture_file, ij_from_tilename
+from ..world_duckietown import get_texture_file, ij_from_tilename
+from ..resources import get_resource_path
 
 __all__ = ["gltf_export_main", "export_gltf"]
 logger = ZLogger(__name__)

@@ -3,7 +3,7 @@ from geometry import SE3_roty, SE3_rotz, SE3_trans
 
 from gltflib import GLTF, Node
 from . import logger
-from ..world_duckietown.map_loading import get_resource_path
+from ..resources import get_resource_path
 
 __all__ = ["add_background"]
 

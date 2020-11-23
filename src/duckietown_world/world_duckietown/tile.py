@@ -105,8 +105,8 @@ class FancyTextures:
     fn_occlusion: Optional[FilePath] = None
 
     def write(self, prefix: str, ff: str):
-        from duckietown_world.world_duckietown.sampling import save_rgb_to_jpg
-        from duckietown_world.world_duckietown.sampling import save_rgb_to_png
+        from ..utils.images import save_rgb_to_jpg
+        from ..utils.images import save_rgb_to_png
 
         if ff == "jpg":
             ext = ".jpg"

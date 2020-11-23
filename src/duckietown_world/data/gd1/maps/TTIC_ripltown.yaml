@@ -210,10 +210,10 @@ objects:
 tile_size: 0.595
 tiles:
 - - curve_left/W
-  - straight
+  - straight/W
   - 3way_right
-  - straight
-  - straight
+  - straight/W
+  - straight/W
   - curve_left/N
 - - straight/S
   - grass
@@ -223,7 +223,7 @@ tiles:
   - straight/S
 - - 3way_right/N
   - straight
-  - 3way_left
+  - 3way_left/N
   - grass
   - grass
   - straight/S

@@ -2,17 +2,15 @@
 import itertools
 import os
 import traceback
-from functools import lru_cache
-from pathlib import Path
-from typing import cast, Dict, List, Tuple
+from typing import List
 
 import geometry as geo
 import numpy as np
 import oyaml as yaml
-from duckietown_serialization_ds1 import Serializable
-from zuper_commons.fs import DirPath, FilePath, locate_files
+from zuper_commons.fs import FilePath
 from zuper_commons.types import ZKeyError
 
+from duckietown_serialization_ds1 import Serializable
 from . import logger
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
@@ -38,13 +36,13 @@ from ..geo.measurements_utils import iterate_by_class
 
 __all__ = [
     "create_map",
-    "list_maps",
     "construct_map",
     "load_map",
     "get_texture_file",
     "_get_map_yaml",
-    "get_resource_path",
 ]
+
+from ..resources import get_data_resources, get_maps_dir
 
 
 def create_map(H: int = 3, W: int = 3) -> TileMap:
@@ -55,69 +53,6 @@ def create_map(H: int = 3, W: int = 3) -> TileMap:
         tile_map.add_tile(i, j, "N", tile)
 
     return tile_map
-
-
-def list_maps() -> List[str]:
-    maps_dir = get_maps_dir()
-
-    def f():
-        for map_file in os.listdir(maps_dir):
-            map_name = map_file.split(".")[0]
-            yield map_name
-
-    return list(f())
-
-
-def get_maps_dir() -> str:
-    abs_path_module = os.path.realpath(__file__)
-    module_dir = os.path.dirname(abs_path_module)
-    d = os.path.join(module_dir, "../data/gd1/maps")
-    assert os.path.exists(d), d
-    return d
-
-
-def get_data_dir() -> DirPath:
-    """ location of data dir """
-    abs_path_module = os.path.realpath(__file__)
-    module_dir = Path(os.path.dirname(abs_path_module))
-    return cast(DirPath, str(module_dir.parent / "data"))
-
-
-RESOURCES_PATTERNS = ["*.png", "*.jpg", "*.yaml", "*.gltf", "*.obj", "*.mtl", "*.json", "*.tga", "*.bmp"]
-
-
-@lru_cache(maxsize=None)
-def get_data_resources() -> Tuple[Dict[str, FilePath], List[FilePath]]:
-    data = get_data_dir()
-    logger.info(data=data)
-    files = locate_files(data, pattern=RESOURCES_PATTERNS)
-    res2: List[FilePath] = []
-    res1: Dict[str, FilePath] = {}
-    for f in files:
-        basename = os.path.basename(f)
-        if basename in res1:
-            msg = "Double basename."
-            # logger.warning(msg, basename=basename, f1=f, f2=res1[basename])
-        else:
-            res1[basename] = f
-        res2.append(f)
-
-    # logger.info(resources=res2, res1=list(res1))
-    return res1, res2
-
-
-def get_resource_path(basename: str) -> FilePath:
-    res1, res2 = get_data_resources()
-    if "/" in basename:
-        for v in res2:
-            if v.endswith(basename):
-                return v
-
-    else:
-        if basename in res1:
-            return res1[basename]
-    msg = f"Could not find resource {basename!r}."
-    raise ZKeyError(msg, known=sorted(res2), res1=sorted(res1))
 
 
 def _get_map_yaml(map_name: str) -> str:

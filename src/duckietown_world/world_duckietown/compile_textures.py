@@ -36,6 +36,7 @@ def compile_textures_main(args=None):
         "curve_left",
         "curve_right",
         "grass",
+        "calibration_tile",
     ]
     size = parsed.size
     for style in styles:

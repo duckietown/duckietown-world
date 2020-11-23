@@ -9,10 +9,8 @@ import geometry as g
 import numpy as np
 import yaml
 from geometry import SE2value, translation_angle_from_SE2
-from PIL import Image
 from zuper_commons.fs import (
     FilePath,
-    make_sure_dir_exists,
     read_ustring_from_utf8_file,
     write_ustring_to_utf8_file,
 )
@@ -31,10 +29,10 @@ from aido_schemas import (
     ScenarioRobotSpec,
 )
 from aido_schemas.protocol_simulator import ProtocolDesc
-
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..gltf.export import export_gltf
+from ..utils.images import save_rgb_to_jpg, save_rgb_to_png
 
 logger = ZLogger(__name__)
 
@@ -197,21 +195,6 @@ def make_scenario_main(args=None):
         scenario_yaml = yaml.dump(scenario_struct)
         filename = os.path.join(output, scenario_name, f"scenario.yaml")
         write_ustring_to_utf8_file(scenario_yaml, filename)
-
-
-def save_rgb_to_png(img: np.ndarray, out: FilePath):
-    make_sure_dir_exists(out)
-    image = Image.fromarray(img)
-    image.save(out, format="png")
-    # logger.info(f"written {out}")
-
-
-def save_rgb_to_jpg(img: np.ndarray, out: FilePath):
-    make_sure_dir_exists(out)
-    image = Image.fromarray(img)
-    image = image.convert("RGB")
-    image.save(out, format="jpeg")
-    logger.info(f"written {out}")
 
 
 def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
