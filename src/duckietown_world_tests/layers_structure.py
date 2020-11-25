@@ -17,15 +17,15 @@ def layers_map():
     map_name = "gd2/udem1"
     dm = st.DuckietownMap.deserialize(map_name)
 
-    m: dw.DuckietownMap = dm.tile_maps.get("map_1")["map_object"]
+    m: dw.DuckietownMap = dm.tile_maps["map_1"]["map_object"]
     placed_object_check(m)
 
-    outdir = get_comptests_output_dir()
-    out = os.path.join(outdir, map_name)
-    draw_map(out, m)
+    dm.draw("gd2/udem1_draw", "map_1")
 
     print("=========================== GROUPS ===========================")
     print(dm.groups)
+
+    dm.serialize("gd2/udem1_out")
 
 
 if __name__ == "__main__":

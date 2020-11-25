@@ -37,3 +37,7 @@ class AbstractLayer(AbstractEntity, metaclass=ABCMeta):
     @abstractmethod
     def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'AbstractLayer':
         pass
+
+    @abstractmethod
+    def serialize(self) -> dict:
+        pass

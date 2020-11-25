@@ -14,11 +14,15 @@ class LayerWatchtowers(AbstractLayer, ABC):
             obj_name = "ob%02d-%s" % (map_loading.obj_idx(), kind)
             desc["kind"] = kind
             obj = map_loading.get_object(desc)
-            self._items[name] = {"name": name, "obj_name": obj_name, "obj": obj, "frame": None}
-
-    def serialize(self) -> dict:
-        pass
+            self._items[name] = {"name": name, "obj_name": obj_name, "obj": obj, "frame": None,
+                                 "configuration": desc["configuration"]}
 
     @classmethod
     def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerWatchtowers':
         return LayerWatchtowers(data)
+
+    def serialize(self) -> dict:
+        yaml_dict = {}
+        for item_name, item_data in self._items.items():
+            yaml_dict[item_name] = {"configuration": item_data["configuration"]}
+        return {"watchtowers": yaml_dict}

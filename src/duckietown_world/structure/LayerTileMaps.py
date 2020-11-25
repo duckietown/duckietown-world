@@ -21,9 +21,13 @@ class LayerTileMaps(AbstractLayer, ABC):
                 raise ValueError(msg)
             self._items[name] = {"map_object": dt_map, "frame": frame, "tiles": {}}  # TODO: do we need tiles?
 
-    def serialize(self) -> dict:
-        pass
-
     @classmethod
     def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerTileMaps':
         return LayerTileMaps(data, dm)
+
+    def serialize(self) -> dict:
+        yaml_dict = {}
+        for item_name, item_data in self._items.items():
+            s = item_data["map_object"].tile_size
+            yaml_dict[item_name] = {"tile_size": {"x": s, "y": s}}
+        return {"tile_maps": yaml_dict}

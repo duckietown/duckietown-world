@@ -46,6 +46,7 @@ class LayerTiles(AbstractLayer, ABC):
             DEFAULT_ORIENT = "E"
             for tile_name, tile_data in tiles.items():
                 kind = tile_data["type"]
+                self._items[tile_name] = {"tile_data": tile_data}
                 if "orientation" in tile_data:
                     orient = tile_data["orientation"]
                     drivable = True
@@ -58,15 +59,18 @@ class LayerTiles(AbstractLayer, ABC):
                     tile.set_object(kind, templates[kind], ground_truth=SE2Transform.identity())
 
                 tm.add_tile(tile_data["i"], (A - 1) - tile_data["j"], orient, tile)
-                self._items[tile_name] = tile
+                self._items[tile_name]["tile_object"] = tile
 
             wrapper = PlacedObject()
             wrapper.set_object("tilemap", tm, ground_truth=Scale2D(tile_map["map_object"].tile_size))
             tile_map["map_object"].set_object("tilemap_wrapper", wrapper, ground_truth=tile_map["frame"]["transform"])
 
-    def serialize(self) -> dict:
-        pass
-
     @classmethod
     def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerTiles':
         return LayerTiles(data, dm)
+
+    def serialize(self) -> dict:
+        yaml_dict = {}
+        for item_name, item_data in self._items.items():
+            yaml_dict[item_name] = item_data["tile_data"]
+        return {"tiles": yaml_dict}

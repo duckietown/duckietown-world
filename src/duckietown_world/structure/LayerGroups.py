@@ -18,9 +18,12 @@ class LayerGroups(AbstractLayer, ABC):
                 member_objects.append(dm_items[member])
             group_data["members"] = {k: v for k, v in list(zip(group_data["members"], member_objects))}
 
-    def serialize(self) -> dict:
-        pass
-
     @classmethod
     def deserialize(cls, data: dict, dm: 'DuckietownMap') -> 'LayerGroups':
         return LayerGroups(data, dm)
+
+    def serialize(self) -> dict:
+        yaml_dict = {}
+        for item_name, item_data in self._items.items():
+            yaml_dict[item_name] = {"description": item_data["description"], "members": list(item_data["members"])}
+        return {"groups": yaml_dict}

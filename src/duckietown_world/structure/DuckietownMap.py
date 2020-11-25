@@ -13,10 +13,12 @@ from .LayerTiles import LayerTiles
 from .LayerWatchtowers import LayerWatchtowers
 from .LayerGroups import LayerGroups
 
+import duckietown_world as dw
 from duckietown_world.yaml_include import YamlIncludeConstructor
 from duckietown_world.world_duckietown.tile import Tile
 from duckietown_world.geo.measurements_utils import iterate_by_class
 from duckietown_world.geo import PlacedObject
+from duckietown_world.svg_drawing.draw_maps import draw_map
 
 
 class DuckietownMap(AbstractEntity):
@@ -64,12 +66,50 @@ class DuckietownMap(AbstractEntity):
         except FileNotFoundError:
             return None
 
-    def serialize(self) -> dict:
-        pass
+    class YamlLayer:
+        name: str
 
-    def draw_svg(self):
-        for layer in self._layers:
-            layer.draw_svg()
+        def __init__(self, name: str):
+            self.name = name
+
+        @staticmethod
+        def to_yaml(dumper, data):
+            return dumper.represent_scalar("!include", data.name, style=None)
+
+    def serialize(self, map_name: str) -> None:
+        map_path = get_existing_map_path(map_name)
+
+        def represent_none(self, _):
+            return self.represent_scalar('tag:yaml.org,2002:null', '~')
+
+        def quoted_presenter(dumper, data):
+            if len(data.split()) > 1:
+                return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='"')
+            return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+        yaml.add_representer(type(None), represent_none)
+        yaml.add_representer(str, quoted_presenter)
+        yaml.add_representer(DuckietownMap.YamlLayer, DuckietownMap.YamlLayer.to_yaml)
+
+        main_layer_file = os.path.join(map_path, "main.yaml")
+        main_layer = {"main": {}}
+
+        for layer_key, layer_content in self._layers.items():
+            layer_file_name = "%s.yaml" % layer_key
+            main_layer["main"][layer_key] = DuckietownMap.YamlLayer(layer_file_name)
+
+            layer_dict = self._layers[layer_key].serialize()
+            layer_file = os.path.join(map_path, layer_file_name)
+            with open(layer_file, 'w') as f:
+                yaml.dump(layer_dict, f)
+
+        with open(main_layer_file, 'w') as f:
+            yaml.dump(main_layer, f)
+
+    def draw(self, path, map_name):
+        map_path = get_existing_map_path(path)
+        m: dw.DuckietownMap = self.tile_maps[map_name]["map_object"]
+        draw_map(map_path, m)
 
     def __init__(self, yaml_data: dict):
         self._layers = {}
@@ -151,6 +191,13 @@ class DuckietownMap(AbstractEntity):
             if layer_name != "frames":
                 items.update(layer_data.items())
         return items
+
+
+def get_existing_map_path(map_name):
+    map_path = get_map_path(map_name)
+    if not os.path.exists(map_path):
+        os.makedirs(map_path)
+    return map_path
 
 
 def get_map_path(map_name):

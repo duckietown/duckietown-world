@@ -4,13 +4,13 @@ from typing import Union
 
 class AbstractEntity(ABC):
 
-    @abstractmethod
-    def serialize(self) -> dict:
+    # @abstractmethod
+    # def serialize(self) -> dict:
         pass
-
+    #
     # @classmethod
     # @abstractmethod
-    # def deserialize(cls, data: dict, **kwargs) -> 'AbstractEntity':
+    # def deserialize(cls, fpath: str) -> 'AbstractEntity':
     #     pass
 
     # @abc.abstractmethod
