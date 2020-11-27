@@ -423,8 +423,7 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
 
 def export_tree(gltf: GLTF, name, ob):
     _ = get_resource_path("tree/main.gltf")
-    # fn = "src/duckietown_world/data/gd1/meshes/tree/main.gltf"
-    tree_node_index = embed_external(gltf, _)
+    tree_node_index = embed_external(gltf, _, key="normal")
     return tree_node_index
 
 
