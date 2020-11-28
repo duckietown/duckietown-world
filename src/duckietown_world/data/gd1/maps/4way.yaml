@@ -8,10 +8,11 @@ tiles:
 - [curve_left/S , straight/E, 3way_left/E   , straight/E, curve_left/E]
 
 objects:
-- kind: trafficlight
-  pos: [2.2, 2.2]
-  rotate: 45
-  height: 0.4
-  optional: true
+  trafficlight:
+    kind: trafficlight
+    pos: [2.2, 2.2]
+    rotate: 45
+    height: 0.4
+    optional: true
 
 tile_size: 0.585

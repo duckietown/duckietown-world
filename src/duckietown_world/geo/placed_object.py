@@ -11,7 +11,7 @@ from zuper_commons.types import check_isinstance
 from duckietown_serialization_ds1 import Serializable
 from duckietown_world.seqs import UndefinedAtTime
 from .rectangular_area import RectangularArea
-from .transforms import Transform
+from .transforms import Scale2D, SE2Transform, Transform
 
 __all__ = ["PlacedObject", "SpatialRelation", "GroundTruth", "get_object_tree", "FQN", "get_child_transform"]
 
@@ -183,7 +183,9 @@ class PlacedObject(Serializable):
 
         return res
 
-    def set_object(self, name: str, ob: "PlacedObject", **transforms: SpatialRelation):
+    def set_object(
+        self, name: str, ob: "PlacedObject", **transforms: Union[SE2Transform, SpatialRelation, Scale2D]
+    ):
         assert self is not ob
         self.children[name] = ob
         type2klass = {"ground_truth": GroundTruth}

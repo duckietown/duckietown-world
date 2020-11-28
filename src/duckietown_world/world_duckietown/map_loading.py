@@ -14,6 +14,7 @@ from duckietown_serialization_ds1 import Serializable
 from . import logger
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
+from .old_map_format import MapFormat1Object
 from .other_objects import (
     Barrier,
     Building,
@@ -59,7 +60,7 @@ def _get_map_yaml(map_name: str) -> str:
     maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + ".yaml")
     if not os.path.exists(fn):
-        msg = "Could not find file %s" % fn
+        msg = f"Could not find file {fn}"
         raise ValueError(msg)
     with open(fn) as _:
         data = _.read()
@@ -127,16 +128,16 @@ def construct_map(yaml_data: dict) -> DuckietownMap:
 
             tm.add_tile(b, (A - 1) - a, orient, tile)
 
-    def go(obj_name, desc):
-        obj = get_object(desc)
-        transform = get_transform(desc, tm, tile_size)
-        dm.set_object(obj_name, obj, ground_truth=transform)
+    def go(obj_name0: str, desc0: MapFormat1Object):
+        obj = get_object(desc0)
+        transform = get_transform(desc0, tm.W, tile_size)
+        dm.set_object(obj_name0, obj, ground_truth=transform)
 
     objects = yaml_data.get("objects", [])
     if isinstance(objects, list):
         for obj_idx, desc in enumerate(objects):
             kind = desc["kind"]
-            obj_name = "ob%02d-%s" % (obj_idx, kind)
+            obj_name = f"ob{obj_idx:02d}-{kind}"
             go(obj_name, desc)
     elif isinstance(objects, dict):
         for obj_name, desc in objects.items():
@@ -158,7 +159,7 @@ def construct_map(yaml_data: dict) -> DuckietownMap:
     return dm
 
 
-def get_object(desc):
+def get_object(desc: MapFormat1Object):
     kind = desc["kind"]
 
     attrs = {}
@@ -201,15 +202,15 @@ def get_object(desc):
     return obj
 
 
-def get_transform(desc, tm, tile_size):
+def get_transform(desc: MapFormat1Object, W: int, tile_size: float) -> SE2Transform:
     rotate_deg = desc.get("rotate", 0)
     rotate = np.deg2rad(rotate_deg)
-
     if "pos" in desc:
+
         pos = desc["pos"]
         x = float(pos[0]) * tile_size
         # account for non-righthanded
-        y = float(tm.W - pos[1]) * tile_size
+        y = float(W - pos[1]) * tile_size
         # account for non-righthanded
         rotate = -rotate
         transform = SE2Transform([x, y], rotate)
@@ -218,11 +219,13 @@ def get_transform(desc, tm, tile_size):
     else:
 
         if "pose" in desc:
+            # noinspection PyTypedDict
             pose = Serializable.from_json_dict(desc["pose"])
         else:
             pose = SE2Transform.identity()
 
         if "attach" in desc:
+            # noinspection PyTypedDict
             attach = desc["attach"]
             tile_coords = tuple(attach["tile"])
             slot = str(attach["slot"])

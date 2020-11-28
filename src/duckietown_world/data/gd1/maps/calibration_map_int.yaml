@@ -26,7 +26,8 @@ start_pose: [[0.480, 0, 0.2925], 0]
 
 # For Intrinsic only
 objects:
-  - kind: checkerboard
+  checkerboard:
+    kind: checkerboard
     pos: [1.5, 3.5]
     rotate: 180
     height: 0.17

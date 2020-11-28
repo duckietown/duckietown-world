@@ -1,4 +1,4 @@
-from typing import List, NewType, TypedDict, Union
+from typing import Dict, List, NewType, TypedDict, Union
 
 __all__ = ["MapFormat1", "MapFormat1Object", "MapFormat1Constants"]
 
@@ -24,6 +24,22 @@ class MapFormat1Object(TypedDict, total=False):
     scale: float
 
 
+#
+#
+# class MapFormat2Object(TypedDict, total=False):
+#     kind: MapFormat1Constants.ObjectKind
+#
+#     pos: List[float]
+#     rotate: float
+#     optional: bool
+#     color: str
+#     static: bool
+#     height: float
+#     scale: float
+#     pose: object
+#     attache: object
+
+
 class MapFormat1(TypedDict, total=False):
     tiles: List[List[str]]
 
@@ -31,4 +47,4 @@ class MapFormat1(TypedDict, total=False):
     start_tile: List[int]
     # [[0.480, 0, 0.2925], 0]
     start_pose: List[Union[List[Union[float, int]], Union[float, int]]]
-    objects: List[MapFormat1Object]
+    objects: Dict[str, MapFormat1Object]

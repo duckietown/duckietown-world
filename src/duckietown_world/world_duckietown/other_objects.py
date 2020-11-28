@@ -65,7 +65,7 @@ class Decoration(PlacedObject):
 
 class Tree(Decoration):
     def draw_svg(self, drawing, g):
-        c = drawing.circle(center=(0, 0), r=0.25, fill="green", stroke="black", stroke_width=0.01)
+        c = drawing.circle(center=(0, 0), r=0.05, fill="green", stroke="black", stroke_width=0.01)
         g.add(c)
 
 

@@ -17,59 +17,68 @@ tiles:
 objects:
 
 # Top row
-- kind: bus
+ bus1:
+  kind: bus
   pos: [1.0, 0.5]
   rotate: 10
   height: 0.18
   optional: true
-- kind: bus
+ bus2:
+  kind: bus
   pos: [2.4, 0.65]
   rotate: -10
   height: 0.18
   optional: true
-- kind: bus
+ bus3:
+  kind: bus
   pos: [4.0, 0.65]
   rotate: -5
   height: 0.19
   optional: true
-- kind: bus
+ bus4:
+  kind: bus
   pos: [6.0, 0.5]
   rotate: 0
   height: 0.18
   optional: true
-- kind: truck
+ truck1 :
+  kind: truck
   pos: [7.5, 0.5]
   rotate: 180
   height: 0.2
   optional: true
 
 # Right-hand side
-- kind: bus
+ bus5:
+  kind: bus
   pos: [8.3, 1.5]
   rotate: 90
   height: 0.22
   optional: true
-- kind: bus
+ bus6:
+  kind: bus
   pos: [8.3, 3.0]
   rotate: 95
   height: 0.21
   optional: true
 
 # Bottom row
-- kind: truck
+ truck2:
+  kind: truck
   pos: [0.6, 8.3]
   rotate: -30
   height: 0.25
   optional: true
 
 # Miscellaneous objects
-- kind: tree
+ tree1:
+  kind: tree
   pos: [2.5, 4.5]
   rotate: 180
   height: 0.25
   optional: true
-
-- kind: sign_blank
+ sign12:
+  kind: sign_blank
   pos: [5.95, 2.4]
   rotate: -20
   height: 0.18
