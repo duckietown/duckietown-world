@@ -20,7 +20,7 @@ class TagInstance(Serializable):
         self.family = family
         self.size = size
         f = family.replace("h", "_")
-        texture = f"tag{f}_{tag_id:05d}.png"
+        texture = f"tag{f}_{tag_id:05d}"
         try:
             from duckietown_world.world_duckietown.map_loading import get_texture_file
 
