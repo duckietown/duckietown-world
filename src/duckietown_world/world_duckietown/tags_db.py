@@ -65,6 +65,7 @@ class TagInstance(Serializable):
 
 class FloorTag(PlacedObject):
     def __init__(self, tag=None, **kwargs):
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.tag = tag
 

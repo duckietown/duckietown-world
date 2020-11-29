@@ -1,12 +1,13 @@
 # coding=utf-8
 from dataclasses import dataclass
-from typing import *
+from typing import Optional, TypeVar
 
 from duckietown_serialization_ds1.serialization1 import as_json_dict
-
-from .tsequence import GenericSequence, X, Timestamp
+from .tsequence import GenericSequence, Timestamp
 
 __all__ = ["Constant"]
+
+X = TypeVar("X")
 
 
 @dataclass

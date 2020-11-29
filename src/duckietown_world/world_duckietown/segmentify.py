@@ -2,18 +2,18 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import cast, Dict, Optional, Set, Tuple
 
+import geometry as geo
+import networkx as nx
 import numpy as np
 from networkx import DiGraph, MultiDiGraph
-
-import geometry as geo
-from duckietown_world.geo import Matrix2D, PlacedObject, SE2Transform
-from duckietown_world.geo.measurements_utils import iterate_by_class
 from zuper_commons.types import ZException
+
 from .duckietown_map import DuckietownMap
 from .lane_segment import LaneSegment
 from .tile_coords import TileCoords
+from ..geo import iterate_by_class, Matrix2D, PlacedObject, SE2Transform
 
-import networkx as nx
+__all__ = ["get_skeleton_graph", "SkeletonGraphResult", "MeetingPoint"]
 
 
 @dataclass
@@ -24,8 +24,6 @@ class SkeletonGraphResult:
     # This is a graph with nodes PointLabels
     G0: DiGraph
 
-
-__all__ = ["get_skeleton_graph", "SkeletonGraphResult"]
 
 PointLabel = Tuple[float, float, float, float]
 

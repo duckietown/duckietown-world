@@ -71,7 +71,7 @@ from .background import add_background
 from ..world_duckietown import get_texture_file, ij_from_tilename
 from ..resources import get_resource_path
 
-__all__ = ["gltf_export_main", "export_gltf"]
+__all__ = ["gltf_export_main", "export_gltf", "make_material", "get_square", "add_node", "add_polygon", "gm"]
 logger = ZLogger(__name__)
 
 
@@ -407,8 +407,8 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
     fnb = os.path.join(outdir, "main.glb")
     logger.info(f"writing to {fnb}")
     gltf.export(fnb)
-
-    if False:
+    verify_trimesh = False
+    if verify_trimesh:
         res = trimesh.load(fn)
         # camera_pose, _ = res.graph['cameranode']
         # logger.info(res=res)

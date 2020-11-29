@@ -9,9 +9,9 @@ from zuper_commons.text import indent
 from zuper_commons.types import check_isinstance
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs import UndefinedAtTime
+from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from .rectangular_area import RectangularArea
-from .transforms import Scale2D, SE2Transform, Transform
+from .transforms import Transform
 
 __all__ = ["PlacedObject", "SpatialRelation", "GroundTruth", "get_object_tree", "FQN", "get_child_transform"]
 
@@ -184,7 +184,7 @@ class PlacedObject(Serializable):
         return res
 
     def set_object(
-        self, name: str, ob: "PlacedObject", **transforms: Union[SE2Transform, SpatialRelation, Scale2D]
+        self, name: str, ob: "PlacedObject", **transforms: Union[Transform, SpatialRelation, SampledSequence]
     ):
         assert self is not ob
         self.children[name] = ob

@@ -23,6 +23,8 @@ class MapFormat1Object(TypedDict, total=False):
     height: float
     scale: float
 
+    tag: object
+
 
 #
 #

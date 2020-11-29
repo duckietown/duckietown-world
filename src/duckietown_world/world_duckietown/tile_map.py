@@ -24,6 +24,7 @@ class TileMap(PlacedObject):
     W: int  # j
 
     def __init__(self, H: int, W: int, **kwargs):
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.H = H
         self.W = W

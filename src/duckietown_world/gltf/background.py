@@ -31,7 +31,7 @@ def add_background(gltf: GLTF) -> int:
     from .export import gm
 
     dist = 30
-    fov_y = np.deg2rad(45)
+    # fov_y = np.deg2rad(45)
     nodes_panels = []
     for i, fn in enumerate(found):
         # if i > 5:

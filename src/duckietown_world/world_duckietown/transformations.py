@@ -22,6 +22,7 @@ class ChooseTime:
     def __call__(self, ob):
         # if isinstance(ob, Sequence):
         if hasattr(ob, "at"):
+            # noinspection PyCallingNonCallable
             ob = ob.at(self.t)
             return ob
         else:

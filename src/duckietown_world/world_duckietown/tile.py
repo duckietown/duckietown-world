@@ -30,7 +30,14 @@ from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
 from .utils import relative_pose
 
-__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight", "translation_from_O3"]
+__all__ = [
+    "Tile",
+    "GetLanePoseResult",
+    "get_lane_poses",
+    "create_lane_highlight",
+    "translation_from_O3",
+    "compile_textures",
+]
 
 
 class SignSlot(PlacedObject):

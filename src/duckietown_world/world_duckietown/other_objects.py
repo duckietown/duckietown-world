@@ -39,6 +39,7 @@ __all__ = [
 class GenericObject(PlacedObject):
     def __init__(self, kind, **kwargs):
         self.kind = kind
+        # noinspection PyArgumentList,PyArgumentList
         PlacedObject.__init__(self, **kwargs)
 
     def params_to_json_dict(self):
@@ -52,6 +53,7 @@ class GenericObject(PlacedObject):
 class Duckie(PlacedObject):
     def __init__(self, color: str = "yellow", **kwargs):
         self.color = color
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
 
     def draw_svg(self, drawing, g):
@@ -127,6 +129,8 @@ class Building(Decoration):
 
 class Sign(PlacedObject):
     def __init__(self, tag=None, **kwargs):
+        # noinspection PyArgumentList
+
         PlacedObject.__init__(self, **kwargs)
         self.tag = tag
 

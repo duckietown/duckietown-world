@@ -26,6 +26,7 @@ def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[T
         a = po_name + sr.a
         b = po_name + sr.b
         klass = type(sr)
+        # noinspection PyArgumentList
         s = klass(a=a, b=b, transform=sr.transform)
         yield po_name + (sr_name,), s
 

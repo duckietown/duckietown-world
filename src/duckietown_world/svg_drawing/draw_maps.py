@@ -99,6 +99,7 @@ def draw_map_gymd(map_name: str, output: AbsDirPath, style: str):
     from gym_duckietown.simulator import FrameBufferMemory
 
     td = FrameBufferMemory(width=1024, height=1024)
+    # noinspection PyProtectedMember
     horiz = sim._render_img(
         width=td.width,
         height=td.height,

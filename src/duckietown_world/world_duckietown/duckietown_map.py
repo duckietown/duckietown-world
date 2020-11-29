@@ -11,6 +11,7 @@ class DuckietownMap(PlacedObject):
 
     def __init__(self, tile_size: float, *args, **kwargs):
         self.tile_size = tile_size
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, *args, **kwargs)
 
     def params_to_json_dict(self):

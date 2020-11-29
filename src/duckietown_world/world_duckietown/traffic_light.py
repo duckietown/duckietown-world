@@ -14,6 +14,7 @@ class TrafficLight(PlacedObject):
     def __init__(self, status=None, **kwargs):
         # if status is None:
         #     status = Constant[TrafficLightStatus]("off")
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.status = status
 
