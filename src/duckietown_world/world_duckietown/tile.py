@@ -36,7 +36,6 @@ __all__ = [
     "get_lane_poses",
     "create_lane_highlight",
     "translation_from_O3",
-    "compile_textures",
 ]
 
 
