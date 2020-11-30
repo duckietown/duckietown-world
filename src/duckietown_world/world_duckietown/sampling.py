@@ -6,20 +6,10 @@ import traceback
 from dataclasses import dataclass
 from typing import cast, Dict, List, Sequence, Tuple, Union
 
+import duckietown_world as dw
 import geometry as g
 import numpy as np
 import yaml
-from geometry import SE2_from_translation_angle, SE2value, translation_angle_from_SE2
-from zuper_commons.fs import (
-    FilePath,
-    read_ustring_from_utf8_file,
-    write_ustring_to_utf8_file,
-)
-from zuper_commons.logs import setup_logging, ZLogger
-from zuper_commons.types import ZException, ZValueError
-from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
-
-import duckietown_world as dw
 from aido_schemas import (
     PROTOCOL_FULL,
     PROTOCOL_NORMAL,
@@ -30,6 +20,16 @@ from aido_schemas import (
     ScenarioRobotSpec,
 )
 from aido_schemas.protocol_simulator import ProtocolDesc
+from geometry import SE2_from_translation_angle, SE2value
+from zuper_commons.fs import (
+    FilePath,
+    read_ustring_from_utf8_file,
+    write_ustring_to_utf8_file,
+)
+from zuper_commons.logs import setup_logging, ZLogger
+from zuper_commons.types import ZException, ZValueError
+from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
+
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..geo.measurements_utils import iterate_by_class, iterate_by_test
@@ -82,7 +82,7 @@ def make_scenario_main(args=None):
     parser.add_argument("-n", "--num", type=int, help="Number of scenarios to generate", required=True)
     parser.add_argument(
         "--styles",
-        default="smooth",
+        default="synthetic-F",
         help="Draw preview in various styles, comma separated. (needs gym duckietown)",
     )
 
@@ -143,26 +143,22 @@ def make_scenario_main(args=None):
                     logger.info("resetting")
                     sim.reset()
                     m = cast(dw.MapFormat1, yaml.load(scenario.environment, Loader=yaml.Loader))
-                    tile_size = m["tile_size"]
+
                     if "objects" not in m:
                         m["objects"] = {}
                     obs: Dict[str, object] = m["objects"]
 
                     for robot_name, srobot in scenario.robots.items():
-                        t, theta = translation_angle_from_SE2(srobot.configuration.pose)
-                        rotate = -np.rad2deg(theta)
+                        st = dw.SE2Transform.from_SE2(srobot.configuration.pose)
 
-                        pos = [t[0] / tile_size, t[1] / tile_size]
                         obs[robot_name] = dict(
-                            kind="duckiebot", pos=pos, rotate=rotate, height=0.12, color=srobot.color
+                            kind="duckiebot", pose=st.as_json_dict(), height=0.12, color=srobot.color
                         )
 
                     for duckie_name, duckie in scenario.duckies.items():
-                        t, theta = translation_angle_from_SE2(duckie.pose)
-                        rotate = -np.rad2deg(theta)
-                        pos = [t[0] / tile_size, t[1] / tile_size]
+                        st = dw.SE2Transform.from_SE2(duckie.pose)
                         obs[duckie_name] = dict(
-                            kind="duckie", pos=pos, rotate=rotate, height=0.08, color=duckie.color
+                            kind="duckie", pose=st.as_json_dict(), height=0.08, color=duckie.color
                         )
 
                     sim._interpret_map(m)
@@ -352,6 +348,8 @@ def make_scenario(
         st = dw.SE2Transform.from_SE2(pose_tree)
         objects[obname] = {"kind": "tree", "pose": st.as_json_dict(), "height": random.uniform(0.15, 0.4)}
 
+    add_signs(po, objects)
+
     yaml_str = yaml.dump(yaml_data)
     # logger.info(trees=trees)
 
@@ -366,6 +364,83 @@ def make_scenario(
 
 
 from numpy.random import choice
+
+
+def add_signs(po: dw.PlacedObject, objects):
+    def choose_tile(x: dw.PlacedObject) -> bool:
+        return isinstance(x, dw.Tile) and x.kind == "3way_left"
+
+    tiles = list(iterate_by_test(po, choose_tile))
+    i = 0
+
+    P = 0.54
+    D = 0.12
+    for tile in tiles:
+        # logger.info('found', tile=tile)
+
+        def add_sign(k: str, rel, theta_deg):
+            nonlocal i
+            obname = f"{i}-{k}"
+            i += 1
+
+            q = SE2_from_translation_angle(rel, np.deg2rad(theta_deg))
+            # logger.info(tile.transform_sequence)
+            m1 = tile.transform_sequence.asmatrix2d().m
+            pose = m1 @ q
+            st = dw.SE2Transform.from_SE2(pose)
+            objects[obname] = {"kind": k, "pose": st.as_json_dict(), "height": 0.18}
+
+        # add_sign('sign_stop', [0.1, 0], 20)
+
+        # for me
+        add_sign("sign_stop", [P, P], 180)
+        add_sign("sign_left_T_intersect", [P, -P], 180)
+
+        # coming from left
+        add_sign("sign_stop", [P + D, -P], 90)
+        add_sign("sign_T_intersect", [-P, -P], 90)
+
+        # coming from top
+        add_sign("sign_stop", [-P + D, -P], 0)
+        add_sign("sign_right_T_intersect", [-P, +P], 0)
+
+    def choose_tile(x: dw.PlacedObject) -> bool:
+        return isinstance(x, dw.Tile) and x.kind == "4way"
+
+    tiles = list(iterate_by_test(po, choose_tile))
+    i = 0
+    for tile in tiles:
+        # logger.info('found', tile=tile)
+
+        def add_sign(k: str, rel, theta_deg):
+            nonlocal i
+            obname = f"{i}-{k}"
+            i += 1
+
+            q = SE2_from_translation_angle(rel, np.deg2rad(theta_deg))
+            logger.info(tile.transform_sequence)
+            m1 = tile.transform_sequence.asmatrix2d().m
+            pose = m1 @ q
+            st = dw.SE2Transform.from_SE2(pose)
+            objects[obname] = {"kind": k, "pose": st.as_json_dict(), "height": 0.18}
+
+        # add_sign('sign_stop', [0.1, 0], 20)
+
+        # for me
+        add_sign("sign_t_light_ahead", [P, P + D], 180)
+        add_sign("sign_4_way_intersect", [P, -P], 180)
+
+        # coming from left
+        add_sign("sign_t_light_ahead", [P + D, -P], 90)
+        add_sign("sign_4_way_intersect", [-P, -P], 90)
+
+        # coming from top
+        add_sign("sign_t_light_ahead", [-P, -P - D], 0)
+        add_sign("sign_4_way_intersect", [-P, +P], 0)
+
+        # coming from right
+        add_sign("sign_t_light_ahead", [-P - D, P], 270)
+        add_sign("sign_4_way_intersect", [P, P], 270)
 
 
 def sample_trees(po: dw.PlacedObject, tree_density: float, tree_min_dist: float) -> List[SE2value]:

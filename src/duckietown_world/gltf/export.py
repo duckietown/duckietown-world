@@ -12,6 +12,7 @@ from geometry import (
     rotx,
     roty,
     rotz,
+    SE3_roty,
     SE3_from_R3,
     SE3_from_rotation_translation,
     SE3_from_SE2,
@@ -953,7 +954,11 @@ def export_sign(gltf: GLTF, name, ob: Sign):
         g.model.images[0] = Image(name=tname, uri=uri)
         return g
 
-    return embed_external(gltf, _, key=tname, transform=transform)
+    index = embed_external(gltf, _, key=tname, transform=transform)
+    # M = SE3_roty(np.pi/5)
+    M = SE3_rotz(-np.pi / 2)
+    n2 = Node(matrix=gm(M), children=[index])
+    return add_node(gltf, n2)
 
 
 def export_sign_2(gltf: GLTF, name: str, sign: Sign) -> int:
@@ -961,14 +966,14 @@ def export_sign_2(gltf: GLTF, name: str, sign: Sign) -> int:
     # x = -0.2
     CM = 0.01
     PAPER_WIDTH, PAPER_HEIGHT = 8.5 * CM, 15.5 * CM
-    PAPER_THICK = 0.01
+    # PAPER_THICK = 0.01
 
-    BASE_SIGN = 5 * CM
-    WIDTH_SIGN = 1.1 * CM
-
-    y = -1.5 * PAPER_HEIGHT  # XXX not sure why this is negative
-    y = BASE_SIGN
-    x = -PAPER_WIDTH / 2
+    # BASE_SIGN = 5 * CM
+    # WIDTH_SIGN = 1.1 * CM
+    #
+    # y = -1.5 * PAPER_HEIGHT  # XXX not sure why this is negative
+    # y = BASE_SIGN
+    # x = -PAPER_WIDTH / 2
 
     fn = get_texture_file(texture)[0]
 
