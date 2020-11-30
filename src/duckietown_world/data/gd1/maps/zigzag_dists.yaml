@@ -4,84 +4,131 @@
 # as a torture-test for lane-following.
 
 tiles:
-- [asphalt, asphalt     , asphalt       , asphalt       , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
-- [asphalt, curve_left/W, curve_left/N  , asphalt       , curve_left/W  , straight/W, straight/W    , curve_left/N, asphalt]
-- [asphalt, straight/S  , curve_right/W , straight/W    , curve_right/S , asphalt   , curve_right/N , curve_left/E, asphalt]
-- [asphalt, straight/S  , asphalt       , asphalt       , asphalt       , asphalt   , straight/N    , asphalt, asphalt]
-- [asphalt, straight/S  , asphalt       , asphalt       , curve_right/N , straight/E, curve_left/E  , asphalt, asphalt]
-- [asphalt, straight/S  , asphalt       , curve_right/N , curve_left/E  , asphalt   , asphalt       , asphalt, asphalt]
-- [asphalt, straight/S  , asphalt       , straight/N    , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
-- [asphalt, curve_left/S, straight/E    , curve_left/E  , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
-- [asphalt, asphalt     , asphalt       , asphalt       , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
+  - [asphalt, asphalt     , asphalt       , asphalt       , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
+  - [asphalt, curve_left/W, curve_left/N  , asphalt       , curve_left/W  , straight/W, straight/W    , curve_left/N, asphalt]
+  - [asphalt, straight/S  , curve_right/W , straight/W    , curve_right/S , asphalt   , curve_right/N , curve_left/E, asphalt]
+  - [asphalt, straight/S  , asphalt       , asphalt       , asphalt       , asphalt   , straight/N    , asphalt, asphalt]
+  - [asphalt, straight/S  , asphalt       , asphalt       , curve_right/N , straight/E, curve_left/E  , asphalt, asphalt]
+  - [asphalt, straight/S  , asphalt       , curve_right/N , curve_left/E  , asphalt   , asphalt       , asphalt, asphalt]
+  - [asphalt, straight/S  , asphalt       , straight/N    , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
+  - [asphalt, curve_left/S, straight/E    , curve_left/E  , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
+  - [asphalt, asphalt     , asphalt       , asphalt       , asphalt       , asphalt   , asphalt       , asphalt, asphalt]
 
 objects:
 
-# Top row
- bus1:
-  kind: bus
-  pos: [1.0, 0.5]
-  rotate: 10
-  height: 0.18
-  optional: true
- bus2:
-  kind: bus
-  pos: [2.4, 0.65]
-  rotate: -10
-  height: 0.18
-  optional: true
- bus3:
-  kind: bus
-  pos: [4.0, 0.65]
-  rotate: -5
-  height: 0.19
-  optional: true
- bus4:
-  kind: bus
-  pos: [6.0, 0.5]
-  rotate: 0
-  height: 0.18
-  optional: true
- truck1 :
-  kind: truck
-  pos: [7.5, 0.5]
-  rotate: 180
-  height: 0.2
-  optional: true
+  # Top row
+  bus1:
+    kind: bus
+    place:
+      tile: [0, 8]
+      relative:
+        ~SE2Transform:
+          p: [0.2,0]
+          theta_deg: 20
 
-# Right-hand side
- bus5:
-  kind: bus
-  pos: [8.3, 1.5]
-  rotate: 90
-  height: 0.22
-  optional: true
- bus6:
-  kind: bus
-  pos: [8.3, 3.0]
-  rotate: 95
-  height: 0.21
-  optional: true
+    height: 0.18
+    optional: true
+  bus2:
+    kind: bus
+    place:
+      tile: [2, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: -12
+    rotate: -10
+    height: 0.18
+    optional: true
+  bus3:
+    kind: bus
+    place:
+      tile: [4, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 6
+    rotate: -5
+    height: 0.19
+    optional: true
+  bus4:
+    kind: bus
+    place:
+      tile: [6, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: -8
+    rotate: 0
+    height: 0.18
+    optional: true
+  truck1:
+    kind: truck
+    place:
+      tile: [7, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 2
+    rotate: 180
+    height: 0.2
+    optional: true
 
-# Bottom row
- truck2:
-  kind: truck
-  pos: [0.6, 8.3]
-  rotate: -30
-  height: 0.25
-  optional: true
+  # Right-hand side
+  bus5:
+    kind: bus
+    place:
+      tile: [8, 7]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 80
+    height: 0.22
+    optional: true
+  bus6:
+    kind: bus
+    place:
+      tile: [8, 5]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 110
+    height: 0.21
+    optional: true
 
-# Miscellaneous objects
- tree1:
-  kind: tree
-  pos: [2.5, 4.5]
-  rotate: 180
-  height: 0.25
-  optional: true
- sign12:
-  kind: sign_blank
-  pos: [5.95, 2.4]
-  rotate: -20
-  height: 0.18
-  optional: true
+  # Bottom row
+  truck2:
+    kind: truck
+    place:
+      tile: [0, 0]
+      relative:
+        ~SE2Transform:
+          p: [0, 0]
+          theta_deg: -30
+
+    height: 0.25
+    optional: true
+
+  # Miscellaneous objects
+#  tree1:
+#    kind: tree
+#    place:
+#      tile: [2, 3]
+#      relative:
+#        ~SE2Transform:
+#          p: [0,0]
+#          theta_deg: 2
+#    height: 0.25
+#    optional: true
+  sign12:
+    kind: sign_blank
+    place:
+      tile: [5, 5]
+      relative:
+        ~SE2Transform:
+          p: [0.2,0]
+          theta_deg: 2
+    rotate: -20
+    height: 0.18
+    optional: true
 
 tile_size: 0.585

@@ -12,8 +12,12 @@ tiles:
 objects:
   trafficlight:
     kind: trafficlight
-    pos: [3.2, 3.2]
-    rotate: 45
+    place:
+      tile: [3,3]
+      relative:
+        ~SE2Transform:
+          p: [-0.18,-0.18]
+          theta_deg: 135
     height: 0.4
     optional: true
 

@@ -4,11 +4,10 @@ import os
 import traceback
 from typing import List
 
-import geometry as geo
 import numpy as np
 import oyaml as yaml
 from zuper_commons.fs import FilePath
-from zuper_commons.types import ZKeyError
+from zuper_commons.types import ZKeyError, ZValueError
 
 from duckietown_serialization_ds1 import Serializable
 from . import logger
@@ -210,37 +209,48 @@ def get_transform(desc: MapFormat1Object, W: int, tile_size: float) -> SE2Transf
         pos = desc["pos"]
         x = float(pos[0]) * tile_size
         # account for non-righthanded
-        y = float(W - pos[1]) * tile_size
+        y = float(W - 1 - pos[1]) * tile_size
         # account for non-righthanded
         rotate = -rotate
         transform = SE2Transform([x, y], rotate)
         return transform
 
+    elif "pose" in desc:
+        # noinspection PyTypedDict
+        pose = Serializable.from_json_dict(desc["pose"])
+        return pose
+    elif "place" in desc:
+        # noinspection PyTypedDict
+        place = desc["place"]
+        tile_coords = tuple(place["tile"])
+        relative = Serializable.from_json_dict(place["relative"])
+        p, theta = relative.p, relative.theta
+        i, j = tile_coords
+
+        fx = (i + 0.5) * tile_size + p[0]
+        fy = (j + 0.5) * tile_size + p[1]
+        transform = SE2Transform([fx, fy], theta)
+        logger.info(tile_coords=tile_coords, tile_size=tile_size, transform=transform)
+        return transform
+
+    elif "attach" in desc:
+        # noinspection PyTypedDict
+        attach = desc["attach"]
+        tile_coords = tuple(attach["tile"])
+        slot = str(attach["slot"])
+
+        x, y = get_xy_slot(slot)
+        i, j = tile_coords
+
+        u, v = (x + i) * tile_size, (y + j) * tile_size
+        transform = SE2Transform([u, v], rotate)
+
+        q = transform.as_SE2()
+
+        return SE2Transform.from_SE2(q)
     else:
-
-        if "pose" in desc:
-            # noinspection PyTypedDict
-            pose = Serializable.from_json_dict(desc["pose"])
-        else:
-            pose = SE2Transform.identity()
-
-        if "attach" in desc:
-            # noinspection PyTypedDict
-            attach = desc["attach"]
-            tile_coords = tuple(attach["tile"])
-            slot = str(attach["slot"])
-
-            x, y = get_xy_slot(slot)
-            i, j = tile_coords
-
-            u, v = (x + i) * tile_size, (y + j) * tile_size
-            transform = SE2Transform([u, v], rotate)
-
-            q = geo.SE2.multiply(transform.as_SE2(), pose.as_SE2())
-
-            return SE2Transform.from_SE2(q)
-        else:
-            return pose
+        msg = "Cannot find positiong"
+        raise ZValueError(msg, desc=desc)
 
 
 def get_xy_slot(i):
