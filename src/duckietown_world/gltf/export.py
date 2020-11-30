@@ -12,7 +12,6 @@ from geometry import (
     rotx,
     roty,
     rotz,
-    SE3_roty,
     SE3_from_R3,
     SE3_from_rotation_translation,
     SE3_from_SE2,
@@ -52,8 +51,10 @@ from gltflib import (
     Camera,
     ComponentType,
     FileResource,
+    GLBResource,
     GLTF as GLTF0,
     GLTFModel,
+    GLTFResource,
     Image,
     Material,
     Mesh,
@@ -69,8 +70,8 @@ from gltflib import (
     TextureInfo,
 )
 from .background import add_background
-from ..world_duckietown import get_texture_file, ij_from_tilename
 from ..resources import get_resource_path
+from ..world_duckietown import get_texture_file, ij_from_tilename
 
 __all__ = ["gltf_export_main", "export_gltf", "make_material", "get_square", "add_node", "add_polygon", "gm"]
 logger = ZLogger(__name__)
@@ -334,8 +335,8 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
     exports = {
         "Sign": export_sign,
         # XXX: the tree model is crewed up
-        # 'Tree': export_tree,
-        "Tree": None,
+        "Tree": export_tree,
+        # "Tree": None,
         "Duckie": export_duckie,
         "DB18": export_DB18,
         # "Bus": export_bus,
@@ -496,15 +497,57 @@ def set_duckiebot_color(gltf: GLTF, mname: str, color: List[float]):
 
 
 def embed_external(gltf: GLTF, fn: str, key: str, transform=None) -> int:
+    logger.info(f"embedding {fn}")
     the_key = (fn, key)
     if the_key not in gltf.fn2node:
-        g2 = GLTF.load(fn)
+        g2 = GLTF.load(fn, load_file_resources=True)
+        fix_uris(fn, g2)
         if transform is not None:
             g2 = transform(g2)
         index = gltf.fn2node[the_key] = embed(gltf, g2)
         return index
     index = gltf.fn2node[the_key]
     return make_node_copy(gltf, index)
+
+
+def fix_uris(fn: str, gltf: GLTF):
+    dn = os.path.dirname(fn)
+    resource: GLTFResource
+    uri2new = {}
+    toremove = []
+    for i, resource in list(enumerate(gltf.resources)):
+        logger.info(resource=resource.uri)
+        if resource.data is None:
+            f = os.path.join(dn, resource.uri)
+            resource.data = read_bytes_from_file(f)
+        md5 = get_md5(resource.data)
+        o = os.path.basename(resource.uri)
+        newuri = f"{md5}-{o}"
+        resource2 = GLBResource(resource.data)
+        resource2._uri = newuri
+        gltf.resources.append(resource2)
+        resource3 = gltf.convert_to_file_resource(resource2, filename=newuri)
+        gltf.resources.append(resource3)
+
+        gltf.resources.remove(resource)
+        # gltf.resources.remove(resource2)
+        # write_bytes_to_file(resource.data, newuri)
+
+        uri2new[resource.uri] = newuri
+        # resource._uri = newuri
+
+    if gltf.model:
+        image: Image
+        if gltf.model.images:
+            for image in gltf.model.images:
+                if image.uri in uri2new:
+                    image.uri = uri2new[image.uri]
+        buffer: Buffer
+        if gltf.model.buffers:
+            for buffer in gltf.model.buffers:
+                if buffer.uri in uri2new:
+                    buffer.uri = uri2new[buffer.uri]
+    logger.info("replaced uris", uri2new)
 
 
 def make_node_copy(gltf: GLTF, index: int) -> int:
