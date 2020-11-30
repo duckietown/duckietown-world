@@ -230,7 +230,7 @@ def get_transform(desc: MapFormat1Object, W: int, tile_size: float) -> SE2Transf
         fx = (i + 0.5) * tile_size + p[0]
         fy = (j + 0.5) * tile_size + p[1]
         transform = SE2Transform([fx, fy], theta)
-        logger.info(tile_coords=tile_coords, tile_size=tile_size, transform=transform)
+        # logger.info(tile_coords=tile_coords, tile_size=tile_size, transform=transform)
         return transform
 
     elif "attach" in desc:

@@ -516,7 +516,7 @@ def fix_uris(fn: str, gltf: GLTF):
     uri2new = {}
     toremove = []
     for i, resource in list(enumerate(gltf.resources)):
-        logger.info(resource=resource.uri)
+        # logger.info(resource=resource.uri)
         if resource.data is None:
             f = os.path.join(dn, resource.uri)
             resource.data = read_bytes_from_file(f)
