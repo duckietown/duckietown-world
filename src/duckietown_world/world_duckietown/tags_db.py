@@ -24,7 +24,7 @@ class TagInstance(Serializable):
         try:
             from duckietown_world.world_duckietown.map_loading import get_texture_file
 
-            self.fn = get_texture_file(texture)
+            self.fn = get_texture_file(texture)[0]
         except KeyError:
             msg = f"Cannot find april tag image for {texture}"
             logger.warning(msg)
@@ -65,6 +65,7 @@ class TagInstance(Serializable):
 
 class FloorTag(PlacedObject):
     def __init__(self, tag=None, **kwargs):
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
         self.tag = tag
 

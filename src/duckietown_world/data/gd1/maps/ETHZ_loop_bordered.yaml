@@ -1,0 +1,41 @@
+tile_size: 0.585
+tiles:
+  - [floor, floor, floor, floor, floor, floor]
+  - - floor
+    - curve_left/W
+    - straight/W
+    - curve_left/N
+    - floor/E
+    - floor
+  - - floor
+    - straight/N
+    - floor
+    - straight/N
+    - floor
+    - floor
+  - - floor
+    - straight/N
+    - floor
+    - curve_right/W
+    - curve_left/N
+    - floor
+  - - floor
+    - straight/N
+    - floor
+    - floor
+    - straight/N
+    - floor
+  - - floor
+    - straight/N
+    - floor
+    - floor
+    - straight/N
+    - floor
+  - - floor
+    - curve_left/S
+    - straight/E
+    - straight/E
+    - curve_left/E
+    - floor
+  - [floor, floor, floor, floor, floor, floor]
+version: 1

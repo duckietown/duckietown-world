@@ -13,7 +13,7 @@ import svgwrite
 from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
 from PIL import Image
-from six import BytesIO
+from io import BytesIO
 
 from duckietown_world import logger
 from duckietown_world.geo import (

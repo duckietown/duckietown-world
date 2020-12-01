@@ -4,7 +4,7 @@ import numpy as np
 from dataclasses import dataclass
 from duckietown_world.seqs import GenericSequence
 from networkx import MultiDiGraph
-from typing import Callable, Iterator, List, Tuple
+from typing import Callable, Generic, Iterator, List, Tuple, Type, TypeVar
 
 from .placed_object import FQN, PlacedObject, SpatialRelation
 from .rectangular_area import RectangularArea
@@ -26,6 +26,7 @@ def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[T
         a = po_name + sr.a
         b = po_name + sr.b
         klass = type(sr)
+        # noinspection PyArgumentList
         s = klass(a=a, b=b, transform=sr.transform)
         yield po_name + (sr_name,), s
 
@@ -108,15 +109,18 @@ def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool
     return G2
 
 
+X = TypeVar("X")
+
+
 @dataclass
-class IterateByTestResult:
+class IterateByTestResult(Generic[X]):
     fqn: Tuple[str, ...]
     transform_sequence: TransformSequence
-    object: PlacedObject
+    object: X
     parents: Tuple[PlacedObject, ...]
 
 
-def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestResult]:
+def iterate_by_class(po: PlacedObject, klass: Type[X]) -> Iterator[IterateByTestResult]:
     t = lambda _: isinstance(_, klass)
     yield from iterate_by_test(po, t)
 

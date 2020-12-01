@@ -9,7 +9,7 @@ from zuper_commons.text import indent
 from zuper_commons.types import check_isinstance
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs import UndefinedAtTime
+from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -183,7 +183,9 @@ class PlacedObject(Serializable):
 
         return res
 
-    def set_object(self, name: str, ob: "PlacedObject", **transforms: SpatialRelation):
+    def set_object(
+        self, name: str, ob: "PlacedObject", **transforms: Union[Transform, SpatialRelation, SampledSequence]
+    ):
         assert self is not ob
         self.children[name] = ob
         type2klass = {"ground_truth": GroundTruth}
@@ -220,8 +222,7 @@ def get_child_transform(po: PlacedObject, child: str) -> Transform:
 def get_object_tree(
     po: PlacedObject, levels: int = 100, spatial_relations: bool = False, attributes: bool = False,
 ) -> str:
-    ss = []
-    ss.append("%s" % type(po).__name__)
+    ss = [f"{type(po).__name__}"]
     d = po.params_to_json_dict()
     d.pop("children", None)
     d.pop("spatial_relations", None)

@@ -18,3 +18,4 @@ from .duckiebot import *
 from .transformations import *
 from .segmentify import *
 from .pwm_dynamics import *
+from .old_map_format import *

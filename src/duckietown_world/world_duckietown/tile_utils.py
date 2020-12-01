@@ -13,7 +13,7 @@ from duckietown_world.geo.measurements_utils import (
 )
 from duckietown_world.geo.placed_object import get_child_transform
 from duckietown_world.geo.transforms import Transform
-from duckietown_world.world_duckietown.tile_map import ij_from_tilename
+from .tile_map import ij_from_tilename
 from .duckietown_map import DuckietownMap
 from .tile import Tile, translation_from_O3
 from .tile_coords import TileCoords

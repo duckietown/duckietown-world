@@ -35,3 +35,5 @@ compmake-z6
 trimesh
 gltflib
 pyrender
+colorama
+coloredlogs

@@ -1,12 +1,15 @@
 # coding=utf-8
+import os
 from dataclasses import dataclass
-from typing import Iterator, Tuple
+from functools import lru_cache
+from typing import Iterator, Optional, Tuple
 
 import numpy as np
 from geometry import extract_pieces, SE2value
 from svgwrite.container import Use
+from zuper_commons.fs import FilePath
+from zuper_commons.types import ZValueError
 
-from . import logger
 from duckietown_world.geo import (
     Matrix2D,
     PlacedObject,
@@ -22,12 +25,18 @@ from duckietown_world.geo.measurements_utils import (
 from duckietown_world.seqs import SampledSequence
 from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
 from duckietown_world.svg_drawing.misc import mime_from_fn
+from . import logger
 from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
-
 from .utils import relative_pose
 
-__all__ = ["Tile", "GetLanePoseResult", "get_lane_poses", "create_lane_highlight", "translation_from_O3"]
+__all__ = [
+    "Tile",
+    "GetLanePoseResult",
+    "get_lane_poses",
+    "create_lane_highlight",
+    "translation_from_O3",
+]
 
 
 class SignSlot(PlacedObject):
@@ -82,13 +91,301 @@ def get_tile_slots():
         # theta = np.deg2rad(theta_deg)
         theta = 0
         t = SE2Transform((-LM + x, -LM + y), theta)
+        # noinspection PyTypeChecker
         po.set_object(name, sl, ground_truth=t)
     return po
+
+
+@dataclass
+class FancyTextures:
+    texture: np.ndarray
+    normals: Optional[np.ndarray]
+    emissive: Optional[np.ndarray]
+    metallic_roughness: Optional[np.ndarray]
+    occlusion: Optional[np.ndarray]
+
+    fn_texture: Optional[FilePath] = None
+    fn_normals: Optional[FilePath] = None
+    fn_emissive: Optional[FilePath] = None
+    fn_metallic_roughness: Optional[FilePath] = None
+    fn_occlusion: Optional[FilePath] = None
+
+    def write(self, prefix: str, ff: str):
+        from ..utils.images import save_rgb_to_jpg
+        from ..utils.images import save_rgb_to_png
+
+        if ff == "jpg":
+            ext = ".jpg"
+
+            f = save_rgb_to_jpg
+        elif ff == "png":
+            ext = ".png"
+            f = save_rgb_to_png
+        else:
+            raise ValueError(ff)
+
+        if self.texture is not None:
+            self.fn_texture = os.path.join(prefix, f"texture{ext}")
+            f(self.texture, self.fn_texture)
+        if self.emissive is not None:
+            self.fn_emissive = os.path.join(prefix, f"emissive{ext}")
+            f(self.emissive, self.fn_emissive)
+        if self.normals is not None:
+            self.fn_normals = os.path.join(prefix, f"normals{ext}")
+            f(self.normals, self.fn_normals)
+        if self.metallic_roughness is not None:
+            self.fn_metallic_roughness = os.path.join(prefix, f"metallic_roughness{ext}")
+            f(self.metallic_roughness, self.fn_metallic_roughness)
+        if self.occlusion is not None:
+            self.fn_occlusion = os.path.join(prefix, f"occlusion{ext}")
+            f(self.occlusion, self.fn_occlusion)
+
+
+from PIL import Image
+
+
+@lru_cache(maxsize=None)
+def read_rgba(fn: FilePath, resize: int) -> np.ndarray:
+    try:
+        im = Image.open(fn)
+    except Exception as e:
+        msg = f"Could not open filename {fn!r}"
+        raise ValueError(msg) from e
+
+    im = im.convert("RGBA")
+    im = im.resize((resize, resize))
+    data = np.array(im)
+    if data.ndim != 3:
+        raise ZValueError(fn=fn, shape=data.shape)
+    # assert data.ndim == 4
+    assert data.dtype == np.uint8
+    return data
+
+
+def read_rgb(fn: FilePath, resize: int) -> np.ndarray:
+    try:
+        im = Image.open(fn)
+    except Exception as e:
+        msg = f"Could not open filename {fn!r}"
+        raise ValueError(msg) from e
+
+    im = im.convert("RGB")
+    im = im.resize((resize, resize))
+    data = np.array(im)
+    assert data.ndim == 3
+    assert data.dtype == np.uint8
+    return data
+
+
+# TEX_SIZE = 512
+
+
+@lru_cache(maxsize=None)
+def get_textures_triple(style: str, kind: str, size: int) -> FancyTextures:
+    from .map_loading import get_texture_file
+
+    fn_texture = get_texture_file(f"{style}/{kind}")[0]
+    try:
+        fn_normal = get_texture_file(f"{style}/{kind}-normal")[0]
+    except KeyError:
+        logger.warn(f"No normal for {style}/{kind}-normal")
+        fn_normal = None
+    try:
+        fn_emissive = get_texture_file(f"{style}/{kind}-emissive")[0]
+    except KeyError:
+        logger.warn(f"No emissive {style}/{kind}-emissive")
+        fn_emissive = None
+    try:
+        fn_metallic_roughness = get_texture_file(f"{style}/{kind}-metallic_roughness")[0]
+    except KeyError:
+        logger.warn(f"No metallic_roughness  {style}/{kind}-metallic_roughness")
+        fn_metallic_roughness = None
+    try:
+        fn_occlusion = get_texture_file(f"{style}/{kind}-occlusion")[0]
+    except KeyError:
+        logger.warn(f"No occlusion for {style}/{kind}-occlusion")
+        fn_occlusion = None
+
+    TEX_SIZE = size
+    texture = None if fn_texture is None else read_rgba(fn_texture, TEX_SIZE)
+    normals = (
+        get_straight_normal_map((TEX_SIZE, TEX_SIZE)) if fn_normal is None else read_rgb(fn_normal, TEX_SIZE)
+    )
+    emissive = (
+        get_base_emissive((TEX_SIZE, TEX_SIZE)) if fn_emissive is None else read_rgb(fn_emissive, TEX_SIZE)
+    )
+    occlusion = (
+        get_base_occlusion((TEX_SIZE, TEX_SIZE)) if fn_occlusion is None else read_rgb(fn_occlusion, TEX_SIZE)
+    )
+    metallic_roughness = (
+        get_base_metallic_roughness((TEX_SIZE, TEX_SIZE))
+        if fn_metallic_roughness is None
+        else read_rgb(fn_metallic_roughness, TEX_SIZE)
+    )
+
+    ft = FancyTextures(
+        texture=texture,
+        normals=normals,
+        emissive=emissive,
+        metallic_roughness=metallic_roughness,
+        occlusion=occlusion,
+    )
+    # ft.write(f"/tmp/duckietown/dw/textures/original/{style}/{kind}")
+
+    return ft
+
+
+def get_straight_normal_map(shape: Tuple[int, int]) -> np.ndarray:
+    z = np.zeros((shape[0], shape[1], 3), dtype=np.uint8)
+    z[:, :, 0] = 128
+    z[:, :, 1] = 128
+    z[:, :, 2] = 255
+    return z
+
+
+def get_base_emissive(shape: Tuple[int, int]) -> np.ndarray:
+    z = np.zeros((shape[0], shape[1], 3), dtype=np.uint8)
+
+    return z
+
+
+def get_base_occlusion(shape: Tuple[int, int]) -> np.ndarray:
+    z = np.zeros((shape[0], shape[1], 3), dtype=np.uint8)
+    z.fill(255)
+    return z
+
+
+def get_base_metallic_roughness(shape: Tuple[int, int]) -> np.ndarray:
+    z = np.zeros((shape[0], shape[1], 3), dtype=np.uint8)
+    z[:, :, 0] = 255  # ignored
+    z[:, :, 1] = 255
+    z[:, :, 2] = 255
+
+    return z
+
+
+@lru_cache(maxsize=None)
+def get_floor_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "floor", size)
+
+
+@lru_cache(maxsize=None)
+def get_asphalt_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "asphalt", size)
+
+
+@lru_cache(maxsize=None)
+def get_tape_textures(style: str, size: int) -> FancyTextures:
+    return get_textures_triple(style, "tape", size)
+
+
+@lru_cache(maxsize=None)
+def get_fancy_textures(style: str, tile_kind: str, size: int) -> FancyTextures:
+    floor = get_floor_textures(style, size)
+
+    asphalt = get_asphalt_textures(style, size)
+    tape = get_tape_textures(style, size)
+
+    base = get_textures_triple(style, tile_kind, size)
+
+    R = base.texture[:, :, 0]
+    G = base.texture[:, :, 1]
+    B = base.texture[:, :, 2]
+    grey = base.texture[:, :, 0] + base.texture[:, :, 1] + base.texture[:, :, 2]
+    is_floor = base.texture[:, :, 3] == 0
+    is_not_floor = np.logical_not(is_floor)
+    is_asphalt = np.logical_and(grey == 0, is_not_floor)
+
+    is_white = np.logical_and(R > 250, np.logical_and(G > 250, B > 250))
+    is_red = np.logical_and(R > 250, np.logical_and(G < 5, B < 5))
+    is_yellow = np.logical_and(R > 250, np.logical_and(G > 250, B < 5))
+    is_tape = np.logical_or(is_red, np.logical_or(is_white, is_yellow))
+
+    texture = base.texture.copy()
+    texture[is_floor] = floor.texture[is_floor]
+
+    texture[is_asphalt] = asphalt.texture[is_asphalt]
+
+    if base.normals is None:
+        normals = None
+    else:
+        normals = base.normals.copy()
+        if floor.normals is not None:
+            normals[is_floor] = floor.normals[is_floor]
+        if asphalt.normals is not None:
+            normals[is_asphalt] = asphalt.normals[is_asphalt]
+        if tape.normals is not None:
+            normals[is_tape] = tape.normals[is_tape]
+
+    if base.emissive is None:
+        emissive = None
+    else:
+        emissive = base.emissive.copy()
+        if floor.emissive is not None:
+            emissive[is_floor] = floor.emissive[is_floor]
+        if asphalt.emissive is not None:
+            emissive[is_asphalt] = asphalt.emissive[is_asphalt]
+        if tape.emissive is not None:
+            emissive[is_tape] = tape.emissive[is_tape]
+
+    if base.metallic_roughness is None:
+        metallic_roughness = None
+    else:
+        metallic_roughness = base.metallic_roughness.copy()
+        if floor.metallic_roughness is not None:
+            metallic_roughness[is_floor] = floor.metallic_roughness[is_floor]
+        if asphalt.metallic_roughness is not None:
+            metallic_roughness[is_asphalt] = asphalt.metallic_roughness[is_asphalt]
+        if tape.metallic_roughness is not None:
+            metallic_roughness[is_tape] = tape.metallic_roughness[is_tape]
+
+    if base.occlusion is None:
+        occlusion = None
+    else:
+        occlusion = base.occlusion.copy()
+        if floor.occlusion is not None:
+            occlusion[is_floor] = floor.occlusion[is_floor]
+        if asphalt.occlusion is not None:
+            occlusion[is_asphalt] = asphalt.occlusion[is_asphalt]
+        if tape.occlusion is not None:
+            occlusion[is_tape] = tape.occlusion[is_tape]
+
+    ft = FancyTextures(texture, normals, emissive, metallic_roughness=metallic_roughness, occlusion=occlusion)
+    # ft.write(f"/tmp/duckietown/dw/textures-processed/{style}/{tile_kind}")
+
+    return ft
+
+
+#
+#
+# def write_textures(ft: FancyTextures, prefix: str):
+#
+
+
+def get_if_exists(style, kind, which: str) -> Optional[FilePath]:
+    from .map_loading import get_texture_file
+
+    q = f"tiles-processed/{style}/{kind}/{which}"
+    try:
+        fn = get_texture_file(q)[0]
+
+    except KeyError:
+        logger.warn(f"Could not get {q}")
+        return None
+    else:
+        return fn
 
 
 class Tile(PlacedObject):
     kind: str
     drivable: bool
+
+    style = "photos"
+
+    fn: Optional[FilePath]
+    fn_normal: Optional[FilePath]
+    fn_emissive: Optional[FilePath]
+    fn_metallic_roughness: Optional[FilePath]
 
     def __init__(self, kind, drivable, **kwargs):
         # noinspection PyArgumentList
@@ -96,18 +393,15 @@ class Tile(PlacedObject):
         self.kind = kind
         self.drivable = drivable
 
-        from duckietown_world.world_duckietown.map_loading import get_texture_file
+        self.fn_emissive = get_if_exists(self.style, kind, "emissive")
+        self.fn_normal = get_if_exists(self.style, kind, "normals")
+        self.fn = get_if_exists(self.style, kind, "texture")
+        self.fn_metallic_roughness = get_if_exists(self.style, kind, "metallic_roughness")
+        self.fn_occlusion = get_if_exists(self.style, kind, "occlusion")
 
-        try:
-            self.fn = get_texture_file(kind)
-        except KeyError as e:
-            msg = f"Cannot find texture for tile of type {kind}"
-            logger.warning(msg, e=e)
-
-            self.fn = None
-        # if kind in ['asphalt']:
         if not "slots" in self.children:
             slots = get_tile_slots()
+            # noinspection PyTypeChecker
             self.set_object("slots", slots, ground_truth=SE2Transform.identity())
 
     def _copy(self):
@@ -127,18 +421,17 @@ class Tile(PlacedObject):
 
     def draw_svg(self, drawing, g):
         T = 0.562 / 0.585
+        T = 1
         S = 1.0
-        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#222", stroke="none")
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#0a0", stroke="none")
         g.add(rect)
 
         if self.fn:
-            # texture = get_jpeg_bytes(self.fn)
             with open(self.fn, "rb") as _:
                 texture = _.read()
             if b"git-lfs" in texture:
                 msg = f"The file {self.fn} is a Git LFS pointer. Repo not checked out correctly."
                 raise Exception(msg)
-            # print(f'drawing defs {drawing.defs}')
 
             ID = f"texture-{self.kind}"
 
@@ -152,7 +445,8 @@ class Tile(PlacedObject):
                     href=href,
                     size=(T, T),
                     insert=(-T / 2, -T / 2),
-                    style="transform: rotate(90deg) scaleX(-1)  rotate(-90deg) ",
+                    # style=" ",
+                    style="transform: rotate(0deg) scaleX(-1)  rotate(-90deg) ",
                 )
                 img.attribs["class"] = "tile-textures"
 
