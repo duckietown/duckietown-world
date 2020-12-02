@@ -4,7 +4,6 @@ from collections import defaultdict
 import os
 import yaml
 
-from .AbstractEntity import AbstractEntity
 from .AbstractLayer import AbstractLayer
 from .LayerGeneral import LayerGeneral
 from .LayerFrames import LayerFrames
@@ -21,7 +20,7 @@ from duckietown_world.geo import PlacedObject
 from duckietown_world.svg_drawing.draw_maps import draw_map
 
 
-class DuckietownMap(AbstractEntity):
+class DuckietownMap:
 
     _layers: Dict[str, AbstractLayer]
     root: PlacedObject

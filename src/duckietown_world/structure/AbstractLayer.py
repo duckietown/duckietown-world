@@ -3,10 +3,8 @@ from typing import Union
 
 from pprint import pformat
 
-from .AbstractEntity import AbstractEntity
 
-
-class AbstractLayer(AbstractEntity, metaclass=ABCMeta):
+class AbstractLayer(metaclass=ABCMeta):
     _items: dict
 
     def __init__(self):

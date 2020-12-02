@@ -1,4 +1,3 @@
-from .AbstractEntity import *
 from .AbstractLayer import *
 from .LayerGeneral import *
 from .DuckietownMap import *
