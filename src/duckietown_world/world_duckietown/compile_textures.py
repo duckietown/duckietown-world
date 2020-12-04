@@ -22,7 +22,7 @@ def compile_textures_main(args=None):
 
     parsed = parser.parse_args(args=args)
     if parsed.styles == "all":
-        styles = ["synthetic", "synthetic-F", "photos", "smooth"]
+        styles = ["synthetic", "synthetic-F", "photos", "smooth", "segmentation"]
     else:
         styles = parsed.styles.split(",")
 
