@@ -358,7 +358,7 @@ def export_gltf(dm: DuckietownMap, outdir: str, background: bool = True):
             K = "Sign"
 
         if K not in exports:
-            logger.warn(f"cannot convert {type(ob)}")
+            logger.warn(f"cannot convert {type(ob).__name__}")
             continue
 
         f = exports[K]
@@ -497,7 +497,7 @@ def set_duckiebot_color(gltf: GLTF, mname: str, color: List[float]):
 
 
 def embed_external(gltf: GLTF, fn: str, key: str, transform=None) -> int:
-    logger.info(f"embedding {fn}")
+    # logger.info(f"embedding {fn}")
     the_key = (fn, key)
     if the_key not in gltf.fn2node:
         g2 = GLTF.load(fn, load_file_resources=True)
@@ -514,7 +514,6 @@ def fix_uris(fn: str, gltf: GLTF):
     dn = os.path.dirname(fn)
     resource: GLTFResource
     uri2new = {}
-    toremove = []
     for i, resource in list(enumerate(gltf.resources)):
         # logger.info(resource=resource.uri)
         if resource.data is None:
@@ -530,11 +529,8 @@ def fix_uris(fn: str, gltf: GLTF):
         gltf.resources.append(resource3)
 
         gltf.resources.remove(resource)
-        # gltf.resources.remove(resource2)
-        # write_bytes_to_file(resource.data, newuri)
 
         uri2new[resource.uri] = newuri
-        # resource._uri = newuri
 
     if gltf.model:
         image: Image
@@ -547,7 +543,7 @@ def fix_uris(fn: str, gltf: GLTF):
             for buffer in gltf.model.buffers:
                 if buffer.uri in uri2new:
                     buffer.uri = uri2new[buffer.uri]
-    logger.info("replaced uris", uri2new)
+    # logger.info("replaced uris", uri2new)
 
 
 def make_node_copy(gltf: GLTF, index: int) -> int:
