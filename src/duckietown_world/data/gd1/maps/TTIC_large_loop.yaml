@@ -194,6 +194,32 @@ objects:
         family: 36h11
         size: 0.08
         tag_id: 343
+  tag342:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+          - 1.744
+          - 1.13
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 342
+  tag344:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+          - 1.744
+          - 1.24
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 344
 tile_size: 0.595
 tiles:
 - - asphalt
