@@ -13,7 +13,7 @@ from .LayerWatchtowers import LayerWatchtowers
 from .LayerGroups import LayerGroups
 
 import duckietown_world as dw
-from duckietown_world.yaml_include import YamlIncludeConstructor
+from duckietown_world.yaml_include import DTYamlIncludeConstructor
 from duckietown_world.world_duckietown.tile import Tile
 from duckietown_world.geo.measurements_utils import iterate_by_class
 from duckietown_world.geo import PlacedObject
@@ -55,7 +55,7 @@ class DuckietownMap:
         map_path = get_map_path(map_name)
         assert os.path.exists(map_path)
 
-        YamlIncludeConstructor.add_to_loader_class(loader_class=yaml.FullLoader, base_dir=map_path)
+        DTYamlIncludeConstructor.add_to_loader_class(loader_class=yaml.FullLoader, base_dir=map_path)
 
         main_layer_file = os.path.join(map_path, "main.yaml")
         try:

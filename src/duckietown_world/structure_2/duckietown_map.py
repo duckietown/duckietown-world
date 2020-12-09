@@ -3,7 +3,7 @@ import yaml
 from collections import defaultdict
 from abc import ABC
 
-from duckietown_world.yaml_include import YamlIncludeConstructor
+from duckietown_world.yaml_include import DTYamlIncludeConstructor
 
 from .layers import *
 from .objects import *
@@ -61,7 +61,7 @@ class DuckietownMap(IBaseMap, ABC):
         map_path = get_map_path(map_name)
         assert os.path.exists(map_path)
 
-        YamlIncludeConstructor.add_to_loader_class(loader_class=yaml.FullLoader, base_dir=map_path)
+        DTYamlIncludeConstructor.add_to_loader_class(loader_class=yaml.FullLoader, base_dir=map_path)
 
         main_layer_file = os.path.join(map_path, "main.yaml")
         try:

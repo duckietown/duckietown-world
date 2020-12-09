@@ -35,3 +35,4 @@ compmake-z6
 trimesh
 gltflib
 pyrender
+pyyaml-include==1.2
