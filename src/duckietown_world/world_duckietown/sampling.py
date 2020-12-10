@@ -6,20 +6,9 @@ import traceback
 from dataclasses import dataclass
 from typing import cast, Dict, List, Sequence, Tuple, Union
 
-import duckietown_world as dw
 import geometry as g
 import numpy as np
 import yaml
-from aido_schemas import (
-    PROTOCOL_FULL,
-    PROTOCOL_NORMAL,
-    RobotConfiguration,
-    RobotName,
-    Scenario,
-    ScenarioDuckieSpec,
-    ScenarioRobotSpec,
-)
-from aido_schemas.protocol_simulator import ProtocolDesc
 from geometry import SE2_from_translation_angle, SE2value
 from zuper_commons.fs import (
     FilePath,
@@ -30,6 +19,17 @@ from zuper_commons.logs import setup_logging, ZLogger
 from zuper_commons.types import ZException, ZValueError
 from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
 
+import duckietown_world as dw
+from aido_schemas import (
+    PROTOCOL_FULL,
+    PROTOCOL_NORMAL,
+    RobotConfiguration,
+    RobotName,
+    Scenario,
+    ScenarioDuckieSpec,
+    ScenarioRobotSpec,
+)
+from aido_schemas.protocol_simulator import ProtocolDesc
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
 from ..geo.measurements_utils import iterate_by_class, iterate_by_test
@@ -281,7 +281,7 @@ def make_scenario(
     remaining_robot_poses = remaining_robot_poses[num_parked:]
     assert len(remaining_robot_poses) == 0
 
-    COLOR_PLAYABLE = "red"
+    COLORS_PLAYABLE = ["red", "green", "blue"]
     COLOR_NPC = "blue"
     COLOR_PARKED = "grey"
     robots = {}
@@ -291,12 +291,13 @@ def make_scenario(
 
         configuration = RobotConfiguration(pose=pose, velocity=vel)
 
+        color = COLORS_PLAYABLE[i % len(COLORS_PLAYABLE)]
         robots[robot_name] = ScenarioRobotSpec(
             description=f"Playable robot {robot_name}",
             controllable=True,
             configuration=configuration,
             # motion=None,
-            color=COLOR_PLAYABLE,
+            color=color,
             protocol=pc_robot_protocol,
         )
 

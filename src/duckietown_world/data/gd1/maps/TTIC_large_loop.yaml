@@ -4,8 +4,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.328
-        - 0.649
+        - 1.32
+        - 0.645
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -30,8 +30,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.227
-        - 2.826
+        - 2.215
+        - 2.81
         theta_deg: 315
     tag:
       ~TagInstance:
@@ -43,8 +43,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.473
-        - 2.212
+        - 1.465
+        - 2.2
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -56,8 +56,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.408
-        - 1.962
+        - 1.4
+        - 1.95
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -70,7 +70,7 @@ objects:
       ~SE2Transform:
         p:
         - 0.255
-        - 2.443
+        - 2.427
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -82,8 +82,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.678
-        - 1.533
+        - 1.67
+        - 1.525
         theta_deg: 315
     tag:
       ~TagInstance:
@@ -95,7 +95,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.227
+        - 2.215
         - 0.145
         theta_deg: 225
     tag:
@@ -108,8 +108,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 1.149
-          - 0.814
+          - 1.145
+          - 0.81
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -121,8 +121,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 1.726
-          - 0.646
+          - 1.718
+          - 0.642
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -134,7 +134,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 0.643
+          - 0.639
           - 0.33
         theta_deg: 0
     tag:
@@ -147,8 +147,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 0.746
-          - 2.826
+          - 0.742
+          - 2.81
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -160,8 +160,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 0.643
-          - 1.248
+          - 0.639
+          - 1.24
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -173,15 +173,54 @@ objects:
     pose:
       ~SE2Transform:
         p:
-          - 0.645
-          - 1.727
+          - 0.641
+          - 1.719
         theta_deg: 0
     tag:
       ~TagInstance:
         family: 36h11
         size: 0.08
         tag_id: 326
-tile_size: 0.599
+  tag343:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+          - 1.236
+          - 2.325
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 343
+  tag342:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+          - 1.744
+          - 1.13
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 342
+  tag344:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+          - 1.744
+          - 1.24
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.08
+        tag_id: 344
+tile_size: 0.595
 tiles:
 - - asphalt
   - curve_left/W
