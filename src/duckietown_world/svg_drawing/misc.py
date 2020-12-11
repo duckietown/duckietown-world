@@ -40,6 +40,7 @@ __all__ = [
     "data_encoded_for_src",
     "TimeseriesPlot",
     "mime_from_fn",
+    "TimeseriesGroups",
 ]
 
 
@@ -385,7 +386,7 @@ def draw_static(
     return [fn_svg, fn_html]
 
 
-def get_resized_image(bytes_content, width):
+def get_resized_image(bytes_content: bytes, width: int) -> bytes:
     idata = BytesIO(bytes_content)
     with Image.open(idata) as _:
         image = _.convert("RGB")

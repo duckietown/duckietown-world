@@ -25,6 +25,7 @@ __all__ = [
     "iterate_with_dt",
     "Timestamp",
     "SampledSequenceBuilder",
+    "downsample",
 ]
 
 

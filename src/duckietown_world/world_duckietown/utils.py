@@ -2,8 +2,19 @@ import geometry as geo
 import numpy as np
 from geometry import SE2, SE2value
 
-from duckietown_world import SampledSequence
-from duckietown_world.seqs.tsequence import SampledSequenceBuilder
+from ..svg_drawing import TimeseriesPlot
+from ..seqs import SampledSequence
+from ..seqs import SampledSequenceBuilder
+
+from geometry import se2value, linear_angular_from_se2
+from typing import Dict
+
+__all__ = [
+    "get_velocities_from_sequence",
+    "velocity_from_poses",
+    "relative_pose",
+    "timeseries_robot_velocity",
+]
 
 
 def get_velocities_from_sequence(s: SampledSequence[SE2value]) -> SampledSequence[SE2value]:
@@ -37,3 +48,35 @@ def relative_pose(base: SE2value, pose: SE2value) -> SE2value:
     assert isinstance(base, np.ndarray), base
     assert isinstance(pose, np.ndarray), pose
     return np.dot(np.linalg.inv(base), pose)
+
+
+def timeseries_robot_velocity(log_velocity: SampledSequence[se2value]) -> Dict[str, TimeseriesPlot]:
+    timeseries = {}
+    sequences = {}
+
+    # logger.info(log_velocity)
+
+    def speed(x: se2value) -> float:
+        l, omega_ = linear_angular_from_se2(x)
+        return l[0]
+
+    def omega(x: se2value) -> float:
+        l, omega_ = linear_angular_from_se2(x)
+        return np.rad2deg(omega_)
+
+    def lateral(x: se2value) -> float:
+        l, omega_ = linear_angular_from_se2(x)
+        return l[1]
+
+    sequences["angular"] = log_velocity.transform_values(omega, float)
+    sequences["longitudinal"] = log_velocity.transform_values(speed, float)
+    sequences["lateral"] = log_velocity.transform_values(lateral, float)
+    # logger.info("linear speed: %s" % sequences["linear_speed"])
+    # logger.info("angular velocity: %s" % sequences["angular_velocity"])
+    long_description = """
+
+Velocities in body frame. Given in m/s and deg/s.
+
+    """
+    timeseries["velocity"] = TimeseriesPlot("Velocities in body frame", long_description, sequences)
+    return timeseries
