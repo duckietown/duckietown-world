@@ -7,7 +7,7 @@ from typing import Iterator, Optional, Tuple
 import numpy as np
 from geometry import extract_pieces, SE2value
 from svgwrite.container import Use
-from zuper_commons.fs import FilePath
+from zuper_commons.fs import FilePath, read_bytes_from_file
 from zuper_commons.types import ZValueError
 
 from duckietown_world.geo import (
@@ -427,8 +427,7 @@ class Tile(PlacedObject):
         g.add(rect)
 
         if self.fn:
-            with open(self.fn, "rb") as _:
-                texture = _.read()
+            texture = read_bytes_from_file(self.fn)
             if b"git-lfs" in texture:
                 msg = f"The file {self.fn} is a Git LFS pointer. Repo not checked out correctly."
                 raise Exception(msg)
@@ -599,16 +598,19 @@ def create_lane_highlight(poses_sequence: SampledSequence, dw):
 
     lane_pose_results = poses_sequence.transform_values(GetClosestLane(dw), object)
 
-    visualization = PlacedObject()
-    dw.set_object("visualization", visualization, ground_truth=SE2Transform.identity())
-    for i, (timestamp, name2pose) in enumerate(lane_pose_results):
-        for name, lane_pose_result in name2pose.items():
-            assert isinstance(lane_pose_result, GetLanePoseResult)
-            lane_segment = lane_pose_result.lane_segment
-            rt = lane_pose_result.lane_segment_transform
-            s = SampledSequence[Transform]([timestamp], [rt])
-            visualization.set_object("ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s)
-            p = SampledSequence[Transform]([timestamp], [lane_pose_result.center_point])
-            visualization.set_object("ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p)
+    if False:
+        visualization = PlacedObject()
+        dw.set_object("visualization", visualization, ground_truth=SE2Transform.identity())
+
+        # center_points = lane_pose_seq.transform_values(lambda _: 1.0, float)
+        for i, (timestamp, name2pose) in enumerate(lane_pose_results):
+            for name, lane_pose_result in name2pose.items():
+                assert isinstance(lane_pose_result, GetLanePoseResult)
+                lane_segment = lane_pose_result.lane_segment
+                rt = lane_pose_result.lane_segment_transform
+                s = SampledSequence[Transform]([timestamp], [rt])
+                visualization.set_object("ls%s-%s-lane" % (i, name), lane_segment, ground_truth=s)
+                p = SampledSequence[Transform]([timestamp], [lane_pose_result.center_point])
+                visualization.set_object("ls%s-%s-anchor" % (i, name), Anchor(), ground_truth=p)
 
     return lane_pose_results

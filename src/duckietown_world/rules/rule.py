@@ -108,7 +108,7 @@ class Rule(metaclass=ABCMeta):
 
 
 def evaluate_rules(
-    poses_sequence, interval: SampledSequence[Timestamp], world: PlacedObject, ego_name: str,
+    poses_sequence, interval: SampledSequence[Timestamp], world: PlacedObject, ego_name: str
 ) -> Dict[str, RuleEvaluationResult]:
     from duckietown_world.world_duckietown import create_lane_highlight
 
@@ -144,11 +144,11 @@ def evaluate_rules(
     return evaluated
 
 
-def make_timeseries(evaluated: Dict[str, "RuleEvaluationResult"]) -> Dict[str, "TimeseriesPlot"]:
+def make_timeseries(evaluated: "Dict[str, RuleEvaluationResult]") -> "Dict[str, TimeseriesPlot]":
     timeseries = {}
     for k, rer in evaluated.items():
-        from duckietown_world.rules import RuleEvaluationResult
-        from duckietown_world.svg_drawing.misc import TimeseriesPlot
+        # from duckietown_world.rules import RuleEvaluationResult
+        from ..svg_drawing.misc import TimeseriesPlot
 
         assert isinstance(rer, RuleEvaluationResult)
 

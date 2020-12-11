@@ -50,9 +50,8 @@ def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
 
     G = get_flattened_measurement_graph(po)
 
-    static = []
+    static = [()]
 
-    static.append(())
     dynamic = []
     root_name = ()
     for name in G.nodes():

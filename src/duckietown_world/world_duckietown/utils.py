@@ -8,7 +8,7 @@ from duckietown_world.seqs.tsequence import SampledSequenceBuilder
 
 def get_velocities_from_sequence(s: SampledSequence[SE2value]) -> SampledSequence[SE2value]:
     ssb = SampledSequenceBuilder[SE2value]()
-    ssb.add(0, geo.se2.zero())
+    ssb.add(s.get_start(), geo.se2.zero())
     for i in range(1, len(s)):
         t0 = s.timestamps[i - 1]
         t1 = s.timestamps[i]

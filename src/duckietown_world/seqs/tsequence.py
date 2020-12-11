@@ -14,7 +14,7 @@ from typing import (
     Union,
 )
 
-from zuper_commons.types import ZValueError
+from zuper_commons.types import ZException, ZValueError
 from zuper_typing import dataclass, Generic
 
 __all__ = [
@@ -28,7 +28,7 @@ __all__ = [
 ]
 
 
-class UndefinedAtTime(Exception):
+class UndefinedAtTime(ZException):
     pass
 
 
@@ -81,17 +81,17 @@ class SampledSequence(GenericSequence):
 
         if len(timestamps) != len(values):
             msg = "Length mismatch"
-            raise ValueError(msg)
+            raise ZValueError(msg, timestamps=timestamps, values=values)
 
         for t in timestamps:
             if not isinstance(t, (float, int)):
-                msg = "I expected a number, got %s" % type(t)
-                raise ValueError(msg)
+                msg = "I expected a number"
+                raise ZValueError(msg, t=t)
         for i in range(len(timestamps) - 1):
             dt = timestamps[i + 1] - timestamps[i]
             if dt <= 0:
-                msg = "Invalid dt = %s at i = %s; ts= %s" % (dt, i, timestamps)
-                raise ValueError(msg)
+                msg = f"Invalid dt = {dt} at i = {i}"
+                raise ZValueError(msg, timestamps=timestamps)
         timestamps = list(map(Timestamp, timestamps))
         self.timestamps = timestamps
         self.values = values
@@ -100,8 +100,8 @@ class SampledSequence(GenericSequence):
         try:
             i = self.timestamps.index(t)
         except ValueError:
-            msg = "Could not find timestamp %s in %s" % (t, self.timestamps)
-            raise UndefinedAtTime(msg)
+            msg = "Could not find exact timestamp"
+            raise UndefinedAtTime(msg, t=t, timestamps=self.timestamps)
         else:
             return self.values[i]
 
@@ -165,6 +165,19 @@ class SampledSequence(GenericSequence):
             if res is not None:
                 values.append(res)
                 timestamps.append(t)
+
+        return SampledSequence[YT](timestamps, values)
+
+    def transform_timestamp(
+        self, f: Callable[[Timestamp], Optional[Timestamp]], YT: Type[Y] = object
+    ) -> "SampledSequence[Y]":
+        values = []
+        timestamps = []
+        for t, _ in self:
+            t2 = f(t)
+            if t2 is not None:
+                values.append(_)
+                timestamps.append(t2)
 
         return SampledSequence[YT](timestamps, values)
 
