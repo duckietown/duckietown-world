@@ -170,7 +170,7 @@ def draw_static(
 
     timestamps = get_sampling_points(root)
 
-    logger.info(timestamps=timestamps)
+    # logger.info(timestamps=timestamps)
     if len(timestamps) == 0:
         keyframes = SampledSequence[Timestamp]([0], [0])
     else:
@@ -220,7 +220,7 @@ def draw_static(
     # logger.debug(dynamic=dynamic, static=static)
     for i, t in keyframes:
         i = int(i)
-        logger.debug(i=i, t=t)
+        # logger.debug(i=i, t=t)
         g_t = drawing.g()
         g_t.attribs["class"] = f"keyframe keyframe{int(i)}"
 
