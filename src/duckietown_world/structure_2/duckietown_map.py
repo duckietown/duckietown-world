@@ -1,7 +1,6 @@
 import os
 import yaml
 from collections import defaultdict
-from abc import ABC
 
 from duckietown_world.yaml_include import DTYamlIncludeConstructor
 
@@ -55,6 +54,7 @@ class DuckietownMap(IBaseMap, ABC):
         self._items[(co.name, tp)] = co.obj
         self._items[(co.name, tp)].dm = self
         self._items[(co.name, _Frame)] = co.frame
+        self._items[(co.name, _Frame)].dm = self
 
     @classmethod
     def deserialize(cls, map_name: str) -> Optional['DuckietownMap']:
