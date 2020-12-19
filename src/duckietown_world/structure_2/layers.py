@@ -32,10 +32,19 @@ class AbstractLayer(metaclass=ABCMeta):
         layer_items = {(name, obj_type): obj_type(**desc, dm=dm) for name, desc in data.items()}
         return layer, layer_items
 
-    def __str__(self):
+    def dict(self):
         obj_type = self.item_type()
         items = self.dm.get_layer_objects(obj_type)
-        return pformat(items)
+        return items
+
+    def items(self):
+        return self.dict().items()
+
+    def __iter__(self):
+        return self.items().__iter__()
+
+    def __str__(self):
+        return pformat(self.dict())
 
 
 class LayerGeneral(AbstractLayer, ABC):
