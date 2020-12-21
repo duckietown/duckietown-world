@@ -37,6 +37,7 @@ install_requires = [
     "plotly",
     "oyaml",
     "markdown",
+    "zuper-ipce-z6",
     "zuper-typing-z6>=6.0.66",
     "trimesh",
     "gltflib",
