@@ -38,3 +38,4 @@ gltflib
 pyrender
 colorama
 coloredlogs
+aido-protocols-daffy

@@ -38,6 +38,7 @@ install_requires = [
     "oyaml",
     "markdown",
     "zuper-ipce-z6",
+    "aido-protocols-daffy",
     "zuper-typing-z6>=6.0.66",
     "trimesh",
     "gltflib",
