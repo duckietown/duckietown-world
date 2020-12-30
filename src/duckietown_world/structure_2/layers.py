@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Dict
 from pprint import pformat
 
 from .base_map import IBaseMap
-from .objects import _Object, _Frame, _Tile, _Group, _TileMap, _Watchtower
+from .objects import _Object, _Frame, _Tile, _Group, _TileMap, _Watchtower, _Citizen
 
 
 class AbstractLayer(metaclass=ABCMeta):
@@ -81,3 +81,9 @@ class LayerGroups(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _Group
+
+
+class LayerCitizens(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _Citizen

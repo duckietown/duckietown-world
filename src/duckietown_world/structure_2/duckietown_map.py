@@ -35,6 +35,7 @@ class DuckietownMap(IBaseMap, ABC):
         'tiles': LayerTiles,
         'watchtowers': LayerWatchtowers,
         'groups': LayerGroups,
+        'citizens': LayerCitizens
     })
 
     def __getattr__(self, item):

@@ -4,3 +4,4 @@ main:
   tiles:       !include tiles.yaml
   watchtowers: !include watchtowers.yaml
   groups:      !include groups.yaml
+  citizens:    !include citizens.yaml

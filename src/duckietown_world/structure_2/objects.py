@@ -5,7 +5,7 @@ from .base_map import IBaseMap
 
 
 __all__ = ['_Object', '_Pose', '_Frame', '_TileMap', '_Tile', '_Watchtower', '_Group',
-           'ConstructedObject', 'Watchtower']
+           'ConstructedObject', 'Watchtower', '_Citizen']
 
 
 @dataclass
@@ -55,6 +55,15 @@ class _Tile(_Object):
     j: int = 0
     type: str = 'floor'
     orientation: Optional[str] = None
+
+
+@dataclass
+class _Citizen(_Object):
+    color: str = 'yellow'
+
+    def __init__(self, color='yellow', dm=None):
+        super().__init__(dm)
+        self.color = color
 
 
 @dataclass

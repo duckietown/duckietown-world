@@ -12,3 +12,8 @@ frames:
     relative_to: map_1/watchtower1
     pose:
       y: 0.9
+  map_1/duckie1:
+    relative_to: ~
+    pose:
+      x: 1
+      y: 1
