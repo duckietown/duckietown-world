@@ -4,7 +4,8 @@ import re
 
 from yamlinclude import YamlIncludeConstructor
 
-__all__ = ['DTYamlIncludeConstructor']
+
+__all__ = ['DTYamlConstructor']
 
 
 def yml_tuple_constructor(loader, node):
@@ -73,7 +74,7 @@ def _del_from_url(file_dict, url):
     del val[names[-1]]
 
 
-class DTYamlIncludeConstructor(YamlIncludeConstructor):
+class DTYamlConstructor(YamlIncludeConstructor):
 
     def __call__(self, loader, node):
         args = []

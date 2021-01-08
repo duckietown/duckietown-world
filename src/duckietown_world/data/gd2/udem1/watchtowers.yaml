@@ -1,5 +1,7 @@
 watchtowers:
-  map_1/watchtower1:
+  watchtower1:
     configuration: WT18
-  map_1/watchtower1/watchtower2:
+  watchtower1/watchtower2:
+    configuration: WT18
+  map_1/tile_2_2/watchtower3:
     configuration: WT18

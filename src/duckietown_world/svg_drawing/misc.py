@@ -19,12 +19,16 @@ from duckietown_world import logger
 from duckietown_world.geo import (
     get_extent_points,
     get_static_and_dynamic,
-    PlacedObject,
+    get_transforms,
     RectangularArea,
 )
 from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import Timestamp
 from duckietown_world.utils import memoized_reset
+
+from duckietown_world.structure.bases import _Object, _PlacedObject, IBaseMap
+from svgwrite import Drawing as DrawingSVG
+from svgwrite.container import Group as GroupSVG
 
 pl = logging.getLogger("PIL")
 pl.setLevel(logging.ERROR)
@@ -34,7 +38,6 @@ __all__ = [
     "get_basic_upright2",
     "draw_static",
     "draw_axes",
-    "draw_children",
     "data_encoded_for_src",
     "TimeseriesPlot",
     "mime_from_fn",
@@ -93,58 +96,52 @@ def get_basic_upright2(filename: str, area: RectangularArea, size=(1024, 768)):
     return drawing, tofill
 
 
-def draw_recursive(drawing, po, g, draw_list=()):
-    if () in draw_list:
-        po.draw_svg(drawing, g)
-    draw_children(drawing, po, g, draw_list=draw_list)
+def draw(dm: "IBaseMap", drawing: "DrawingSVG", g: "GroupSVG", draw_list: List[Tuple[str, type]]) -> None:
+    draw_recursive(dm, None, drawing, g, draw_list)
 
 
-def draw_children(drawing, po, g, draw_list=()):
-    for child_name in po.get_drawing_children():
-        child = po.children[child_name]
-        transforms = [_ for _ in po.spatial_relations.values() if _.a == () and _.b == (child_name,)]
-        if transforms:
+def draw_recursive(dm: "IBaseMap", rel_ob: Optional["_PlacedObject"], drawing: "DrawingSVG", g: "GroupSVG",
+                   draw_list: List[Tuple[str, type]]) -> None:
+    if rel_ob is not None:
+        rel_ob.draw_svg(drawing, g)
+    rel_nm = dm.get_object_name(rel_ob)
+    for (nm, tp) in draw_list:
+        ob = dm.get_object(nm, tp)
+        frame = dm.get_object_frame(ob)
+        if frame.relative_to != rel_nm:
+            continue
 
-            rlist = recurive_draw_list(draw_list, child_name)
+        transforms = get_transforms(frame)
+        m = transforms.asmatrix2d().m
 
-            if rlist:
-                M = transforms[0].transform.asmatrix2d().m
-                svg_transform = "matrix(%s,%s,%s,%s,%s,%s)" % (
-                    M[0, 0],
-                    M[1, 0],
-                    M[0, 1],
-                    M[1, 1],
-                    M[0, 2],
-                    M[1, 2],
-                )
+        svg_transform = "matrix(%s,%s,%s,%s,%s,%s)" % (
+            m[0, 0],
+            m[1, 0],
+            m[0, 1],
+            m[1, 1],
+            m[0, 2],
+            m[1, 2],
+        )
 
-                g2 = drawing.g(id=child_name, transform=svg_transform)
-                classes = get_typenames_for_class(child)
-                if classes:
-                    g2.attribs["class"] = " ".join(classes)
-                draw_recursive(drawing, child, g2, draw_list=rlist)
+        g2 = drawing.g(id=nm, transform=svg_transform)
+        classes = get_typenames_for_class(ob)
+        if classes:
+            g2.attribs["class"] = " ".join(classes)
 
-                g.add(g2)
+        assert isinstance(ob, _PlacedObject)
+        draw_recursive(dm, ob, drawing, g2, draw_list)
+        g.add(g2)
 
 
 def get_typenames_for_class(ob):
     mro = type(ob).mro()
-    names = [_.__name__ for _ in mro]
-    for n in ["Serializable", "Serializable0", "PlacedObject", "object"]:
-        names.remove(n)
-    return names
-
-
-def recurive_draw_list(draw_list, prefix):
-    res = []
-    for _ in draw_list:
-        if _ and _[0] == prefix:
-            res.append(_[1:])
-    return res
+    for tp in [_PlacedObject, _Object, object]:
+        mro.remove(tp)
+    return [tp.__name__ for tp in mro]
 
 
 def draw_static(
-    root: PlacedObject,
+    dm: "IBaseMap",
     output_dir: str,
     pixel_size: Tuple[int, int] = (480, 480),
     area=None,
@@ -164,7 +161,7 @@ def draw_static(
     fn_svg = os.path.join(output_dir, "drawing.svg")
     fn_html = os.path.join(output_dir, "drawing.html")
 
-    timestamps = get_sampling_points(root)
+    timestamps = get_sampling_points(dm)
     # logger.info(f'timestamps: {timestamps}')
     if len(timestamps) == 0:
         keyframes = SampledSequence[Timestamp]([0], [0])
@@ -177,9 +174,10 @@ def draw_static(
         all_keyframes = keyframes.values
         keyframes_for_extent = [all_keyframes[0], all_keyframes[-1]]
         for t in keyframes_for_extent:
-            root_t = root.filter_all(ChooseTime(t))
+            dm_t = dm.copy()
+            dm_t.apply_operator(ChooseTime(t), UndefinedAtTime)
             # print(i, root_t)
-            rarea = get_extent_points(root_t)
+            rarea = get_extent_points(dm_t)
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
 
@@ -189,14 +187,15 @@ def draw_static(
     gmg = drawing.g()
     base.add(gmg)
 
-    static, dynamic = get_static_and_dynamic(root)
+    static, dynamic = get_static_and_dynamic(dm)
 
     t0 = keyframes.values[0]
-    root_t0 = root.filter_all(ChooseTime(t0))
+    dm_t0 = dm.copy()
+    dm_t0.apply_operator(ChooseTime(t0), UndefinedAtTime)
     g_static = drawing.g()
     g_static.attribs["class"] = "static"
 
-    draw_recursive(drawing, root_t0, g_static, draw_list=static)
+    draw(dm_t0, drawing, g_static, static)
     base.add(g_static)
 
     obs_div = Tag(name="div")
@@ -210,9 +209,10 @@ def draw_static(
         g_t = drawing.g()
         g_t.attribs["class"] = "keyframe keyframe%d" % i
 
-        root_t = root.filter_all(ChooseTime(t))
+        dm_t = dm.copy()
+        dm_t.apply_operator(ChooseTime(t), UndefinedAtTime)
 
-        draw_recursive(drawing, root_t, g_t, draw_list=dynamic)
+        draw(dm_t, drawing, g_t, dynamic)
         base.add(g_t)
 
         for name, sequence in images.items():
@@ -294,7 +294,7 @@ def draw_static(
                     "checkbox-vehicles": ".Vehicle",
                     "checkbox-decorations": ".Decoration",
                     'checkbox-anchors': '.Anchor',
-                    "checkbox-watchtowers": ".Watchtower",
+                    "checkbox-watchtowers": "._Watchtower",
                     "checkbox-regions": ".Region",
                 };
                 function hideshow(element) {

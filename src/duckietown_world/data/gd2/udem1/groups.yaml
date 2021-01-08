@@ -17,5 +17,5 @@ groups:
   observers_1:
     description: "watchtowers list"
     members:
-    - map_1/watchtower1
-    - map_1/watchtower1/watchtower2
+    - watchtower1
+    - watchtower1/watchtower2

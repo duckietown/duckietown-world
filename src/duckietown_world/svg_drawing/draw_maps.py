@@ -3,12 +3,10 @@ import argparse
 import json
 import os
 import sys
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from duckietown_world.world_duckietown import DuckietownMap
-
+from duckietown_world.structure.bases import IBaseMap
 from duckietown_world import logger
+
 from .misc import draw_static
 
 __all__ = ["draw_maps_main"]
@@ -45,12 +43,10 @@ def draw_maps_main(args=None):
         # print('written to %s' % fn)
 
 
-def draw_map(output: str, duckietown_map: "DuckietownMap") -> None:
-    from duckietown_world.world_duckietown import DuckietownMap
-
+def draw_map(output: str, duckietown_map: "IBaseMap") -> None:
+    assert isinstance(duckietown_map, IBaseMap)
     if not os.path.exists(output):
         os.makedirs(output)
-    assert isinstance(duckietown_map, DuckietownMap)
 
     fns = draw_static(duckietown_map, output_dir=output, pixel_size=(640, 640), area=None)
     for fn in fns:

@@ -22,4 +22,3 @@ from .geo import *
 from .seqs import *
 from .svg_drawing import *
 from .world_duckietown import *
-from .yaml_include import *

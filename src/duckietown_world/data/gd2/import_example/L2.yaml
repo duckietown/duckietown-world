@@ -1,8 +1,0 @@
-layer2:
-  (0, 0, 0):
-    angle: S
-    type: straight
-  (1, 0, 0):
-    angle: E
-    type: curve
-  tile_size: 0.123

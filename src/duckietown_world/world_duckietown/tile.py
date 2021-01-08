@@ -20,7 +20,7 @@ from duckietown_world.geo.measurements_utils import (
     IterateByTestResult,
 )
 from duckietown_world.seqs import SampledSequence
-from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
+from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes
 from duckietown_world.svg_drawing.misc import mime_from_fn
 from .lane_segment import LanePose, LaneSegment
 from .tile_coords import TileCoords
@@ -170,8 +170,6 @@ class Tile(PlacedObject):
         #         g.add(line)
 
         draw_axes(drawing, g)
-
-        draw_children(drawing, self, g)
 
 
 @dataclass

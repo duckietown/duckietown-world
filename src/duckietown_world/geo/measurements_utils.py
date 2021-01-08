@@ -1,111 +1,55 @@
-# coding=utf-8
-import networkx as nx
 import numpy as np
 from dataclasses import dataclass
-from duckietown_world.seqs import GenericSequence
-from networkx import MultiDiGraph
-from typing import Callable, Iterator, List, Tuple
+from typing import List, Tuple, Callable, Iterator
+from functools import reduce
 
 from .placed_object import FQN, PlacedObject, SpatialRelation
 from .rectangular_area import RectangularArea
-from .transforms import TransformSequence, VariableTransformSequence
+from .transforms import TransformSequence, Transform, Scale2D, SE2Transform
+from duckietown_world.structure.bases import _Frame, IBaseMap
 
 __all__ = [
-    "iterate_measurements_relations",
-    "get_meausurements_graph",
     "get_extent_points",
     "get_static_and_dynamic",
+    "get_transforms",
     "iterate_by_class",
     "IterateByTestResult",
 ]
 
 
-def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
-    assert isinstance(po_name, tuple)
-    for sr_name, sr in po.spatial_relations.items():
-        a = po_name + sr.a
-        b = po_name + sr.b
-        klass = type(sr)
-        s = klass(a=a, b=b, transform=sr.transform)
-        yield po_name + (sr_name,), s
-
-    for child_name, child in po.children.items():
-        cname = po_name + (child_name,)
-        yield from iterate_measurements_relations(cname, child)
+def frame2transforms(frame: "_Frame") -> List["Transform"]:
+    se2 = SE2Transform(p=[frame.pose.x, frame.pose.y], theta=frame.pose.yaw)
+    if frame.scale == 1.0:
+        return [se2]
+    else:
+        return [se2, Scale2D(frame.scale)]
 
 
-def get_meausurements_graph(po: PlacedObject) -> MultiDiGraph:
-    G = MultiDiGraph()
-    for name, sr in iterate_measurements_relations((), po):
-        a = sr.a
-        b = sr.b
-        attr_dict = dict(sr=sr)
-        G.add_edge(a, b, attr_dict=attr_dict)
-    return G
+def get_transform_sequence(dm: "IBaseMap", frame: "_Frame") -> "TransformSequence":
+    frames_list = dm.get_relative_frames_list(frame)
+    transforms_lists = list(map(frame2transforms, frames_list))
+    return TransformSequence([transform for transforms_list in transforms_lists for transform in transforms_list])
 
 
-def get_static_and_dynamic(po: PlacedObject) -> Tuple[List, List]:
-    assert isinstance(po, PlacedObject)
+def get_transforms(frame: "_Frame") -> "TransformSequence":
+    return TransformSequence(frame2transforms(frame))
 
-    G = get_flattened_measurement_graph(po)
 
-    static = []
+def get_static_and_dynamic(dm: "IBaseMap") -> Tuple[List[Tuple[str, type]], List[Tuple[str, type]]]:
+    placed_objects = dm.get_placed_objects()
 
-    static.append(())
-    dynamic = []
-    root_name = ()
-    for name in G.nodes():
-        if name == root_name:
-            continue
-        edge_data = G.get_edge_data(root_name, name)
-
-        transform = edge_data["transform_sequence"]
+    static, dynamic = [], []
+    for (nm, tp) in placed_objects:
+        frame = dm.get_frame_by_name(nm)
+        transform_sequence = get_transform_sequence(dm, frame)
         from duckietown_world.world_duckietown.transformations import is_static
 
-        it_is = is_static(transform)
-
-        if it_is:
-            static.append(name)
+        if is_static(transform_sequence):
+            static.append((nm, tp))
         else:
-            dynamic.append(name)
+            dynamic.append((nm, tp))
 
     return static, dynamic
-
-
-def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool = False) -> nx.DiGraph:
-    from duckietown_world import TransformSequence
-    from duckietown_world import SE2Transform
-
-    G = get_meausurements_graph(po)
-    G2 = nx.DiGraph()
-    root_name = ()
-    for name in G.nodes():
-        if name == root_name:
-            continue
-        path = nx.shortest_path(G, (), name)
-        transforms = []
-        for i in range(len(path) - 1):
-            a = path[i]
-            b = path[i + 1]
-            edges = G.get_edge_data(a, b)
-
-            k = list(edges)[0]
-            v = edges[k]
-            sr = v["attr_dict"]["sr"].transform
-
-            transforms.append(sr)
-
-        if any(isinstance(_, GenericSequence) for _ in transforms):
-            res = VariableTransformSequence(transforms)
-        else:
-            res = TransformSequence(transforms)
-        G2.add_edge(root_name, name, transform_sequence=res)
-
-    if include_root_to_self:
-        transform_sequence = SE2Transform.identity()
-        G2.add_edge(root_name, root_name, transform_sequence=transform_sequence)
-
-    return G2
 
 
 @dataclass
@@ -148,29 +92,24 @@ def get_parents(root: PlacedObject, child_fqn: FQN) -> Tuple[PlacedObject]:
     return tuple(parents)
 
 
-def get_extent_points(root: PlacedObject) -> RectangularArea:
-    G = get_flattened_measurement_graph(root, include_root_to_self=True)
+def get_extent_points(dm: "IBaseMap") -> "RectangularArea":
+    placed_objects = dm.get_placed_objects()
+
     points = []
-
-    root_name = ()
-    for name in G.nodes():
-
-        transform_sequence = G.get_edge_data(root_name, name)["transform_sequence"]
-        extent_points = root.get_object_from_fqn(name).extent_points()
+    for (nm, _), ob in placed_objects.items():
+        frame = dm.get_frame_by_name(nm)
+        transform_sequence = get_transform_sequence(dm, frame)
         m2d = transform_sequence.asmatrix2d()
-        for _ in extent_points:
-            p = np.dot(m2d.m, [_[0], _[1], 1])[:2]
+        extent_points = ob.extent_points()
+        for ep in extent_points:
+            p = np.dot(m2d.m, [ep[0], ep[1], 1])[:2]
             points.append(p)
 
     if not points:
         msg = "No points"
         raise ValueError(msg)
 
-    pmin = points[0]
-    pmax = points[0]
+    p_min = reduce(np.minimum, points)
+    p_max = reduce(np.maximum, points)
 
-    for p in points:
-        pmin = np.minimum(pmin, p)
-        pmax = np.maximum(pmax, p)
-
-    return RectangularArea(pmin, pmax)
+    return RectangularArea(p_min, p_max)

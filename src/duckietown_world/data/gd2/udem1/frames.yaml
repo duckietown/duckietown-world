@@ -3,12 +3,17 @@ frames:
     relative_to: ~
     pose:
       y: 0.0
-  map_1/watchtower1:
-    relative_to: map_1
+  watchtower1:
+    relative_to: ~
     pose:
-      x: 1.6
-      y: 1.6
-  map_1/watchtower1/watchtower2:
-    relative_to: map_1/watchtower1
+      x: 0.585
+      y: 0.0
+  watchtower1/watchtower2:
+    relative_to: watchtower1
     pose:
-      y: 0.9
+      y: 1.0
+  map_1/tile_2_2/watchtower3:
+    relative_to: map_1/tile_2_2
+    pose:
+      x: -0.35
+      y: 0.35
