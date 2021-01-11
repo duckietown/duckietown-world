@@ -9,7 +9,7 @@ from duckietown_world.world_duckietown.tile import Tile
 from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
 
-__all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group',
+__all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen',
            'Watchtower']
 
 
@@ -55,6 +55,18 @@ class _Watchtower(_PlacedObject):
         s = 0.1
         rect = drawing.rect(insert=(-s / 2, -s / 2), size=(s, s), fill='brown', stroke='black', stroke_width=0.01)
         g.add(rect)
+
+
+@dataclass
+class _Citizen(_PlacedObject):
+    color: str = 'yellow'
+
+    def dict(self) -> Dict[str, Any]:
+        return {'color': self.color}
+
+    def __init__(self, color='yellow', dm=None):
+        super().__init__(dm)
+        self.color = color
 
 
 @dataclass

@@ -4,7 +4,7 @@ from re import search
 import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
-from .objects import _Tile, _Group, _TileMap, _Watchtower
+from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -80,3 +80,9 @@ class LayerGroups(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _Group
+
+
+class LayerCitizens(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _Citizen
