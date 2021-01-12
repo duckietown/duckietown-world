@@ -9,6 +9,8 @@ from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerW
 
 
 def get_existing_map_path(map_name: str) -> str:
+    if os.path.isabs(map_name):
+        return map_name
     map_path = get_map_path(map_name)
     if not os.path.exists(map_path):
         os.makedirs(map_path)

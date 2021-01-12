@@ -74,7 +74,7 @@ class DuckietownMap(IBaseMap, ABC):
     def dump(dm: "DuckietownMap") -> Dict[str, str]:
         layers = DuckietownMap.serialize(dm)['main']
         layers['main'] = {key: DTYamlLayer('%s.yaml' % key) for key in layers}
-        return {key: DTYaml.dump(layer) for key, layer in layers.items()}
+        return {key: DTYaml.dump({key: layer}) for key, layer in layers.items()}
 
     def get_object_name(self, obj: "_Object") -> Optional[str]:
         for (nm, _), ob in self._items.items():

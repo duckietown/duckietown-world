@@ -10,7 +10,7 @@ from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
 
 __all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen',
-           'Watchtower']
+           'Watchtower', 'Citizen']
 
 
 @dataclass
@@ -83,3 +83,9 @@ class Watchtower(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _Watchtower
+
+
+class Citizen(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Citizen
