@@ -64,9 +64,10 @@ class _Citizen(_PlacedObject):
     def dict(self) -> Dict[str, Any]:
         return {'color': self.color}
 
-    def __init__(self, color='yellow', dm=None):
-        super().__init__(dm)
-        self.color = color
+    def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
+        s = 0.1
+        rect = drawing.rect(insert=(-s / 2, -s / 2), size=(s, s), fill=self.color, stroke='black', stroke_width=0.01)
+        g.add(rect)
 
 
 @dataclass

@@ -288,7 +288,7 @@ def draw_static(
                     "checkbox-lane_segments": "g.static .LaneSegment",
                     "checkbox-lane_segments-control_points": " .control-point",
                     "checkbox-current_lane": "g.keyframe .LaneSegment",
-                    "checkbox-duckies": ".Duckie",
+                    "checkbox-duckies": "._Citizen",
                     "checkbox-signs": ".Sign",
                     "checkbox-sign-papers": ".Sign .sign-paper",
                     "checkbox-vehicles": ".Vehicle",

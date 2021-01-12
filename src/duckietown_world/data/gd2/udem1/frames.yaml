@@ -17,3 +17,8 @@ frames:
     pose:
       x: -0.35
       y: 0.35
+  map_1/duckie1:
+    relative_to: ~
+    pose:
+      x: 3.7
+      y: 1
