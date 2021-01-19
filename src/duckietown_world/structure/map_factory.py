@@ -5,7 +5,8 @@ from collections import defaultdict
 from duckietown_world.dt_yaml.dt_yaml import DTYaml
 
 from .duckietown_map import DuckietownMap
-from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerWatchtowers, LayerGroups, LayerCitizens
+from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerWatchtowers, LayerGroups, LayerCitizens, \
+    LayerTrafficSigns, LayerGroundTags
 
 
 def get_existing_map_path(map_name: str) -> str:
@@ -32,7 +33,9 @@ class MapFactory:
         'tiles': LayerTiles,
         'watchtowers': LayerWatchtowers,
         'groups': LayerGroups,
-        'citizens': LayerCitizens
+        'citizens': LayerCitizens,
+        'groundtags': LayerGroundTags,
+        'trafficsigns': LayerTrafficSigns
     })
 
     @classmethod
@@ -49,6 +52,7 @@ class MapFactory:
 
 if __name__ == '__main__':
     from .objects import Watchtower
+
     map_name = 'gd2/udem1'
     dm = MapFactory.load_map(map_name)
     print(dm.frames)

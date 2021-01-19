@@ -29,6 +29,10 @@ class IBaseMap(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def get_objects_by_name(self, name: str) -> Dict[Tuple[str, type], "_Object"]:
+        pass
+
+    @abstractmethod
     def get_objects_by_type(self, obj_type: type) -> Dict[Tuple[str, type], "_Object"]:
         pass
 

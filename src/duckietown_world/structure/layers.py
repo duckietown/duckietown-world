@@ -1,10 +1,10 @@
 from abc import ABC
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional, List, Iterator
 from re import search
 import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
-from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen
+from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -69,6 +69,16 @@ class LayerTiles(AbstractLayer, ABC):
 
         return tile_frames
 
+    def only_tiles(self) -> [List[_Tile]]:
+        array_of_tile: [List[List[_Tile]]] = []
+        for (name, tp), tile in self.items():
+            assert isinstance(tile, _Tile)
+            col = tile.i
+            if col > len(array_of_tile) - 1:
+                array_of_tile.append([])
+            array_of_tile[col].append(tile)
+        return array_of_tile
+
 
 class LayerWatchtowers(AbstractLayer, ABC):
     @classmethod
@@ -86,3 +96,15 @@ class LayerCitizens(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _Citizen
+
+
+class LayerTrafficSigns(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _TrafficSign
+
+
+class LayerGroundTags(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _GroundTag

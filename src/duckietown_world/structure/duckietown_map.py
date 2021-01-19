@@ -26,7 +26,7 @@ class DuckietownMap(IBaseMap, ABC):
             self._items.update(new_items)
 
     def __getattr__(self, item: str) -> "AbstractLayer":
-        return self._layers[item]
+        return self._layers.get(item, None)
 
     def add(self, co: ConstructedObject) -> None:
         tp = co.obj.__class__
