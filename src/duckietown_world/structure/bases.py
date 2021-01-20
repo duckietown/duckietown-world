@@ -153,7 +153,10 @@ class AbstractLayer(metaclass=ABCMeta):
             Tuple["AbstractLayer", Dict[Tuple[str, type], "_Object"]]:
         layer = cls(dm)
         obj_type = cls.item_type()
-        layer_items = {(name, obj_type): obj_type(**desc, dm=dm) for name, desc in data.items()}
+        if data:
+            layer_items = {(name, obj_type): obj_type(**desc, dm=dm) for name, desc in data.items()}
+        else:
+            return layer, {}
         return layer, layer_items
 
     def serialize(self) -> Dict[str, Dict[str, Any]]:
