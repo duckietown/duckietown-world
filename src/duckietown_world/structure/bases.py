@@ -70,6 +70,9 @@ class _Object(metaclass=ABCMeta):
         params.update(dm=dm)
         return self.__class__(**params)
 
+    def __setitem__(self, key, value):
+        self.__setattr__(key, value)
+
 
 class _PlacedObject(_Object, metaclass=ABCMeta):
     @property

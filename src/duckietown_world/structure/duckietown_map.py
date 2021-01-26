@@ -102,5 +102,9 @@ class DuckietownMap(IBaseMap, ABC):
     def get_placed_objects(self) -> Dict[Tuple[str, type], "_Object"]:
         return {key: ob for key, ob in self._items.items() if isinstance(ob, _PlacedObject)}
 
+    def update(self, obj: Dict[Tuple[str, type], "_Object"]) -> None:
+        self._items.update(obj)
+
     def __iter__(self) -> Iterator[Tuple[str, type]]:
         return self._items.__iter__()
+
