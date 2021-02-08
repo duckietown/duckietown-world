@@ -18,7 +18,9 @@ __all__ = [
 
 
 def frame2transforms(frame: "_Frame") -> List["Transform"]:
+    print([frame.pose.x, frame.pose.y])
     se2 = SE2Transform(p=[frame.pose.x, frame.pose.y], theta=frame.pose.yaw)
+    print(se2)
     if frame.scale == 1.0:
         return [se2]
     else:

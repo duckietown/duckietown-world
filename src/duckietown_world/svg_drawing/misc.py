@@ -112,6 +112,7 @@ def draw_recursive(dm: "IBaseMap", rel_ob: Optional["_PlacedObject"], drawing: "
             continue
 
         transforms = get_transforms(frame)
+        logger.info("{} - {} - {}".format(nm, frame, transforms))
         m = transforms.asmatrix2d().m
 
         svg_transform = "matrix(%s,%s,%s,%s,%s,%s)" % (
@@ -122,9 +123,10 @@ def draw_recursive(dm: "IBaseMap", rel_ob: Optional["_PlacedObject"], drawing: "
             m[0, 2],
             m[1, 2],
         )
-
+        logger.debug(nm)
         g2 = drawing.g(id=nm, transform=svg_transform)
         classes = get_typenames_for_class(ob)
+        logger.debug(classes)
         if classes:
             g2.attribs["class"] = " ".join(classes)
 
@@ -178,6 +180,7 @@ def draw_static(
             dm_t.apply_operator(ChooseTime(t), UndefinedAtTime)
             # print(i, root_t)
             rarea = get_extent_points(dm_t)
+            logger.debug(rarea)
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
 
@@ -188,7 +191,8 @@ def draw_static(
     base.add(gmg)
 
     static, dynamic = get_static_and_dynamic(dm)
-
+    logger.info(static)
+    logger.info(dynamic)
     t0 = keyframes.values[0]
     dm_t0 = dm.copy()
     dm_t0.apply_operator(ChooseTime(t0), UndefinedAtTime)

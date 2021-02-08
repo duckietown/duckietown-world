@@ -19,8 +19,8 @@ def print_tiles(dm: DuckietownMap):
 @comptest
 def layers_map():
     #map_name = "gd2/udem1"
-    #map_name = "maps/demo"
-    map_name = "maps/empty"
+    map_name = "maps/test_draw_3"
+    #map_name = "maps/empty"
     dm = MapFactory.load_map(map_name)
 
     print("================ internal map objects ================")

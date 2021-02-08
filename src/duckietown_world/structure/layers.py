@@ -54,18 +54,18 @@ class LayerTiles(AbstractLayer, ABC):
                     parent_nm, i, j = s.group(1), s.group(2), s.group(3)
                 except AttributeError:
                     raise ValueError('Cannot parse tile name: %s' % nm)
-                x = float(i) + 0.5
-                y = float(j) + 0.5
+                x = float(int(i) * 0.585) + 0.2925
+                y = float(int(j) * 0.585) + 0.2925
                 assert isinstance(ob, _Tile)
                 orientation = ob.orientation if ob.orientation is not None else 'E'
                 yaw = {'E': 0, 'N': np.pi * 0.5, 'W': np.pi, 'S': np.pi * 1.5}[orientation]
                 tile_frames[(nm, _Frame)] = _Frame({'x': x, 'y': y, 'yaw': yaw}, relative_to=parent_nm, dm=dm)
 
         # invert y axes
-        if tile_frames:
-            w = max([ob.pose.y for _, ob in tile_frames.items()]) - 0.5
-            for _, ob in tile_frames.items():
-                ob.pose.y = w - (ob.pose.y - 0.5) + 0.5
+        #if tile_frames:
+        #    w = max([ob.pose.y for _, ob in tile_frames.items()]) - 0.5
+        #    for _, ob in tile_frames.items():
+        #        ob.pose.y = w - (ob.pose.y - 0.5) + 0.5
 
         return tile_frames
 
