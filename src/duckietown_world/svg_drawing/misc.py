@@ -113,7 +113,7 @@ def draw_recursive(dm: "IBaseMap", rel_ob: Optional["_PlacedObject"], drawing: "
         frame = dm.get_object_frame(ob)
         if frame.relative_to != rel_nm:
             continue
-
+        print('NM ', nm)
         transforms = get_transforms(frame)
         logger.info("{} - {} - {}".format(nm, frame, transforms))
         m = transforms.asmatrix2d().m

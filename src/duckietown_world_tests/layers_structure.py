@@ -19,7 +19,7 @@ def print_tiles(dm: DuckietownMap):
 @comptest
 def layers_map():
     #map_name = "gd2/udem1"
-    map_name = "maps/test_draw_3"
+    map_name = "maps/test_draw_8"
     #map_name = "maps/empty"
     dm = MapFactory.load_map(map_name)
 
@@ -33,19 +33,6 @@ def layers_map():
     print("------------------------------------------------------")
     print_tiles(dm)
     print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    i_size, j_size = 5, 4
-    for i in range(i_size):
-        for j in range(j_size):
-            tile = Tile("map_1/tile_{}_{}".format(i,j))
-            tile.obj.i = i
-            tile.obj.j = j
-            tile.frame.pose.x = i + 0.5
-            tile.frame.pose.y = j + 0.5
-            tile.frame.relative_to = 'map_1'
-            tile.frame.dm = dm
-            print(i, j, tile, tile.obj.i, tile.obj.j)
-            dm.add(tile)
-    print_tiles(dm)
     print('---- !---- ! -')
     print(dm.frames)
     print(dm.tile_maps['map_1'].x)

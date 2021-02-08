@@ -40,6 +40,7 @@ class _Tile(_PlacedObject):
         return (0.0, 0.5), (0.5, 0.0)
 
     def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
+        print(self.type)
         old_tile(kind=self.type, drivable=False).draw_svg(drawing=drawing, g=g)  # TODO: transfer implementation
 
 
