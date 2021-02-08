@@ -101,15 +101,13 @@ class SE2Transform(Transform, Serializable):
 
     def params_to_json_dict(self):
         res = {}
-        if np.allclose(self.theta, 0):
-            pass
+
+        for a in [-270, -180, -90, -45, +45, 90, 180, 270]:
+            if np.allclose(a, np.rad2deg(self.theta)):
+                res["theta_deg"] = a
+                break
         else:
-            for a in [-270, -180, -90, -45, +45, 90, 180, 270]:
-                if np.allclose(a, np.rad2deg(self.theta)):
-                    res["theta_deg"] = a
-                    break
-            else:
-                res["theta"] = self.theta
+            res["theta"] = self.theta
         if np.allclose(np.linalg.norm(self.p), 0):
             pass
         else:

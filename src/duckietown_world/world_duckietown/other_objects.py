@@ -39,6 +39,7 @@ __all__ = [
 class GenericObject(PlacedObject):
     def __init__(self, kind, **kwargs):
         self.kind = kind
+        # noinspection PyArgumentList,PyArgumentList
         PlacedObject.__init__(self, **kwargs)
 
     def params_to_json_dict(self):
@@ -52,6 +53,7 @@ class GenericObject(PlacedObject):
 class Duckie(PlacedObject):
     def __init__(self, color: str = "yellow", **kwargs):
         self.color = color
+        # noinspection PyArgumentList
         PlacedObject.__init__(self, **kwargs)
 
     def draw_svg(self, drawing, g):
@@ -65,7 +67,7 @@ class Decoration(PlacedObject):
 
 class Tree(Decoration):
     def draw_svg(self, drawing, g):
-        c = drawing.circle(center=(0, 0), r=0.25, fill="green", stroke="black", stroke_width=0.01)
+        c = drawing.circle(center=(0, 0), r=0.05, fill="green", stroke="black", stroke_width=0.01)
         g.add(c)
 
 
@@ -127,6 +129,8 @@ class Building(Decoration):
 
 class Sign(PlacedObject):
     def __init__(self, tag=None, **kwargs):
+        # noinspection PyArgumentList
+
         PlacedObject.__init__(self, **kwargs)
         self.tag = tag
 
@@ -146,7 +150,7 @@ class Sign(PlacedObject):
         try:
             from .map_loading import get_texture_file
 
-            fn = get_texture_file(texture)
+            fn = get_texture_file(texture)[0]
         except KeyError as e:
             msg = f"Cannot find texture for {texture!r}"
             logger.warning(msg, e=e)

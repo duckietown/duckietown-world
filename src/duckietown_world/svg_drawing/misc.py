@@ -5,6 +5,7 @@ import logging
 import math
 import os
 from dataclasses import dataclass
+from io import BytesIO
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import svgwrite
@@ -13,7 +14,8 @@ import svgwrite
 from bs4 import BeautifulSoup, Tag
 from past.builtins import reduce
 from PIL import Image
-from six import BytesIO
+from svgwrite.container import Use
+from zuper_commons.fs import write_ustring_to_utf8_file
 
 from duckietown_world import logger
 from duckietown_world.geo import (
@@ -41,6 +43,7 @@ __all__ = [
     "data_encoded_for_src",
     "TimeseriesPlot",
     "mime_from_fn",
+    "TimeseriesGroups",
 ]
 
 
@@ -59,7 +62,7 @@ def get_basic_upright2(filename: str, area: RectangularArea, size=(1024, 768)):
     tx = 0 - origin[0] * s
     ty = (space[1] + origin[1]) * s
 
-    base = drawing.g(transform="translate(%s, %s) scale(%s) scale(+1,-1)" % (tx, ty, s))
+    base = drawing.g(transform=f"translate({tx}, {ty}) scale({s}) scale(+1,-1)")
     base.attribs["id"] = "base"
     i0 = int(math.floor(area.pmin[0]))
     j0 = int(math.floor(area.pmin[1]))
@@ -152,6 +155,7 @@ def draw_static(
     timeseries_groups: "Dict[str, TimeseriesGroups]" = None,
     height_of_stored_images: Optional[int] = None,
     main_robot_name: Optional[str] = None,
+    dt: float = None,
 ) -> Sequence[str]:
     from duckietown_world.world_duckietown import get_sampling_points, ChooseTime
 
@@ -168,8 +172,15 @@ def draw_static(
     if len(timestamps) == 0:
         keyframes = SampledSequence[Timestamp]([0], [0])
     else:
+
+        start, end = timestamps[0], timestamps[-1]
+        if dt is None:
+            dt = 0.1
+
+        n = int((end - start) / dt)
+        timestamps = [start + _ * dt for _ in range(n)] + [end]
+
         keyframes = SampledSequence[Timestamp](range(len(timestamps)), timestamps)
-    # nkeyframes = len(keyframes)
 
     if area is None:
         areas = []
@@ -184,7 +195,7 @@ def draw_static(
             areas.append(rarea)
         area = reduce(RectangularArea.join, areas)
 
-    logger.info("area: %s" % area)
+    logger.info(area=area)
     drawing, base = get_basic_upright2(fn_svg, area, pixel_size)
     # drawing.add(drawing.defs())
     gmg = drawing.g()
@@ -208,10 +219,12 @@ def draw_static(
         imagename2div[name] = Tag(name="div")
         obs_div.append(imagename2div[name])
 
-    # logger.debug('dynamic: %s' % dynamic)
+    # logger.debug(dynamic=dynamic, static=static)
     for i, t in keyframes:
+        i = int(i)
+        # logger.debug(i=i, t=t)
         g_t = drawing.g()
-        g_t.attribs["class"] = "keyframe keyframe%d" % i
+        g_t.attribs["class"] = f"keyframe keyframe{int(i)}"
 
         dm_t = dm.copy()
         dm_t.apply_operator(ChooseTime(t), UndefinedAtTime)
@@ -237,7 +250,7 @@ def draw_static(
                 data = get_resized_image(data, height_of_stored_images)
             img.attrs["src"] = data_encoded_for_src(data, "image/jpeg")
             # print('image %s %s: %.4fMB ' % (i, t, len(resized) / (1024 * 1024.0)))
-            img.attrs["class"] = "keyframe keyframe%d" % i
+            img.attrs["class"] = f"keyframe keyframe{int(i)}"
             img.attrs["visualize"] = "hide"
             img.attrs["updated"] = int(updated)
             imagename2div[name].append(img)
@@ -361,8 +374,8 @@ def draw_static(
         div_timeseries=div_timeseries,
         visualize_controls=visualize_controls,
     )
-    with open(fn_html, "w") as f:
-        f.write(html)
+
+    write_ustring_to_utf8_file(html, fn_html)
 
     # language=css
     style = """
@@ -377,13 +390,12 @@ def draw_static(
     drawing.defs.add(drawing.style(style))
 
     drawing.save(pretty=True)
-    logger.info("Written SVG to %s" % fn_svg)
-    logger.info("Written HTML to %s" % fn_html)
+    logger.info("Written SVG", fn_svg=fn_svg)
 
     return [fn_svg, fn_html]
 
 
-def get_resized_image(bytes_content, width):
+def get_resized_image(bytes_content: bytes, width: int) -> bytes:
     idata = BytesIO(bytes_content)
     with Image.open(idata) as _:
         image = _.convert("RGB")
@@ -507,7 +519,14 @@ def make_groups(
     tabs: Dict[str, Tab], timeseries_groups: Optional[Dict[str, TimeseriesGroups]]
 ) -> Dict[str, TabGroup]:
     if timeseries_groups:
-        raise NotImplementedError()
+        logger.info(tabs=list(tabs), timeseries_groups=timeseries_groups)
+        tab_groups = {}
+        for k, v in timeseries_groups.items():
+            mytabs = {kk: tabs[kk] for kk in v.contains}
+            tab_groups[k] = TabGroup(v.title, tabs=mytabs)
+
+        return tab_groups
+        # raise NotImplementedError()
     else:
         groups = {}
         for tid, tab in tabs.items():
@@ -525,7 +544,6 @@ def make_groups(
 
 
 def render_tabs(groups: Dict[str, TabGroup]) -> Tag:
-
     div_buttons = Tag(name="div")
     div_buttons.attrs["class"] = "tab"
     div_content = Tag(name="div")
@@ -544,7 +562,7 @@ def render_tabs(groups: Dict[str, TabGroup]) -> Tag:
         for name, tab in group.tabs.items():
             assert isinstance(tab, Tab), tab
 
-            tid = f"tab{i}"
+            tid = f"tab{int(i)}"
             button = Tag(name="button")
             button.attrs["class"] = "tablinks"
             button.attrs["onclick"] = f"open_tab(event,'{tid}')"
@@ -723,9 +741,9 @@ def make_html_slider(drawing, keyframes, obs_div, other, div_timeseries, visuali
     assert valbox is not None
     for i, timestamp in keyframes:
         t = Tag(name="span")
-        t.attrs["class"] = "keyframe keyframe%d" % i
+        t.attrs["class"] = f"keyframe keyframe{int(i)}"
         t.attrs["visualize"] = "hide"
-        t.append("t = %.2f" % timestamp)
+        t.append(f"t = {timestamp:.2f}")
 
         valbox.append(t)
 
@@ -802,13 +820,29 @@ def data_encoded_for_src(data, mime):
 
 
 def draw_axes(drawing, g, L=0.1, stroke_width=0.01, klass="axes"):
+    ID = f"axes-{L}-{stroke_width}"
+    for element in drawing.defs.elements:
+        if element.attribs.get("id", None) == ID:
+            break
+    else:
+        template = drawing.g(id=ID)
+        line = drawing.line(start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red")
+        template.add(line)
+        line = drawing.line(start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green")
+        template.add(line)
+        drawing.defs.add(template)
+
     g2 = drawing.g()
     g2.attribs["class"] = klass
-    line = drawing.line(start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red")
-    g2.add(line)
 
-    line = drawing.line(start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green")
-    g2.add(line)
+    use = Use(f"#{ID}")
+    g2.add(use)
+    #
+    # line = drawing.line(start=(0, 0), end=(L, 0), stroke_width=stroke_width, stroke="red")
+    # g2.add(line)
+    #
+    # line = drawing.line(start=(0, 0), end=(0, L), stroke_width=stroke_width, stroke="green")
+    # g2.add(line)
 
     g.add(g2)
 

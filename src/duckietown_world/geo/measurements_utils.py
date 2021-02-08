@@ -1,7 +1,10 @@
 import numpy as np
+import networkx as nx
 from dataclasses import dataclass
-from typing import List, Tuple, Callable, Iterator
 from functools import reduce
+from duckietown_world.seqs import GenericSequence
+from networkx import MultiDiGraph
+from typing import Callable, Generic, Iterator, List, Tuple, Type, TypeVar
 
 from .placed_object import FQN, PlacedObject, SpatialRelation
 from .rectangular_area import RectangularArea
@@ -25,6 +28,17 @@ def frame2transforms(frame: "_Frame") -> List["Transform"]:
         return [se2]
     else:
         return [se2, Scale2D(frame.scale)]
+
+
+def iterate_measurements_relations(po_name: FQN, po: PlacedObject) -> Iterator[Tuple[FQN, SpatialRelation]]:
+    assert isinstance(po_name, tuple)
+    for sr_name, sr in po.spatial_relations.items():
+        a = po_name + sr.a
+        b = po_name + sr.b
+        klass = type(sr)
+        # noinspection PyArgumentList
+        s = klass(a=a, b=b, transform=sr.transform)
+        yield po_name + (sr_name,), s
 
 
 def get_transform_sequence(dm: "IBaseMap", frame: "_Frame") -> "TransformSequence":
@@ -54,15 +68,53 @@ def get_static_and_dynamic(dm: "IBaseMap") -> Tuple[List[Tuple[str, type]], List
     return static, dynamic
 
 
+def get_flattened_measurement_graph(po: PlacedObject, include_root_to_self: bool = False) -> nx.DiGraph:
+    from duckietown_world import TransformSequence
+    from duckietown_world import SE2Transform
+
+    G = get_meausurements_graph(po)
+    G2 = nx.DiGraph()
+    root_name = ()
+    for name in G.nodes():
+        if name == root_name:
+            continue
+        path = nx.shortest_path(G, (), name)
+        transforms = []
+        for i in range(len(path) - 1):
+            a = path[i]
+            b = path[i + 1]
+            edges = G.get_edge_data(a, b)
+
+            k = list(edges)[0]
+            v = edges[k]
+            sr = v["attr_dict"]["sr"].transform
+
+            transforms.append(sr)
+
+        if any(isinstance(_, GenericSequence) for _ in transforms):
+            res = VariableTransformSequence(transforms)
+        else:
+            res = TransformSequence(transforms)
+        G2.add_edge(root_name, name, transform_sequence=res)
+
+    if include_root_to_self:
+        transform_sequence = SE2Transform.identity()
+        G2.add_edge(root_name, root_name, transform_sequence=transform_sequence)
+
+    return G2
+
+
+X = TypeVar("X")
+
 @dataclass
-class IterateByTestResult:
+class IterateByTestResult(Generic[X]):
     fqn: Tuple[str, ...]
     transform_sequence: TransformSequence
-    object: PlacedObject
+    object: X
     parents: Tuple[PlacedObject, ...]
 
 
-def iterate_by_class(po: PlacedObject, klass: type) -> Iterator[IterateByTestResult]:
+def iterate_by_class(po: PlacedObject, klass: Type[X]) -> Iterator[IterateByTestResult]:
     t = lambda _: isinstance(_, klass)
     yield from iterate_by_test(po, t)
 

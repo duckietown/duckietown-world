@@ -1,0 +1,133 @@
+# This map is a closed loop: it has multiple left and right turns but no
+# intersections. The map also includes many white distractor objects trying
+# to confuse the detection of road edges. The purpose of this map is to act
+# as a torture-test for lane-following.
+
+tiles:
+- [floor, floor       , floor         , floor         , floor         , floor        , floor         , floor,       floor]
+- [floor, curve_left/W, straight/W  , curve_left/N         , floor  , curve_left/W   , straight/W    , curve_left/N, floor]
+- [floor, straight/S  , floor         , curve_right/W    , straight/W , curve_right/S        , floor         , straight/N, floor]
+- [floor, curve_left/S  , curve_left/N,          floor         , floor         , floor        , curve_right/N , curve_left/E,        floor]
+- [floor, floor  , straight/S         , floor         , curve_right/N , straight/E   , curve_left/E  , floor,        floor]
+- [floor, curve_right/N  , curve_right/S         , curve_right/N , curve_left/E  , floor        , floor         , floor, floor]
+- [floor, straight/S  , floor         , straight/N    , floor         , floor        , floor         , floor, floor]
+- [floor, curve_left/S, straight/E    , curve_left/E  , floor         , floor        , floor         , floor, floor]
+- [floor, floor       , floor         , floor         , floor         , floor        , floor         , floor, floor]
+objects:
+
+  # Top row
+  bus1:
+    kind: bus
+    place:
+      tile: [0, 8]
+      relative:
+        ~SE2Transform:
+          p: [0.2,0]
+          theta_deg: 20
+
+    height: 0.18
+    optional: true
+  bus2:
+    kind: bus
+    place:
+      tile: [2, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: -12
+    rotate: -10
+    height: 0.18
+    optional: true
+  bus3:
+    kind: bus
+    place:
+      tile: [4, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 6
+    rotate: -5
+    height: 0.19
+    optional: true
+  bus4:
+    kind: bus
+    place:
+      tile: [6, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: -8
+    rotate: 0
+    height: 0.18
+    optional: true
+  truck1:
+    kind: truck
+    place:
+      tile: [7, 8]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 2
+    rotate: 180
+    height: 0.2
+    optional: true
+
+  # Right-hand side
+  bus5:
+    kind: bus
+    place:
+      tile: [8, 7]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 80
+    height: 0.22
+    optional: true
+  bus6:
+    kind: bus
+    place:
+      tile: [8, 5]
+      relative:
+        ~SE2Transform:
+          p: [0,0]
+          theta_deg: 110
+    height: 0.21
+    optional: true
+
+  # Bottom row
+  truck2:
+    kind: truck
+    place:
+      tile: [0, 0]
+      relative:
+        ~SE2Transform:
+          p: [0, 0]
+          theta_deg: -30
+
+    height: 0.25
+    optional: true
+
+  # Miscellaneous objects
+#  tree1:
+#    kind: tree
+#    place:
+#      tile: [2, 3]
+#      relative:
+#        ~SE2Transform:
+#          p: [0,0]
+#          theta_deg: 2
+#    height: 0.25
+#    optional: true
+  sign12:
+    kind: sign_blank
+    place:
+      tile: [5, 5]
+      relative:
+        ~SE2Transform:
+          p: [0.2,0]
+          theta_deg: 2
+    rotate: -20
+    height: 0.18
+    optional: true
+
+tile_size: 0.585

@@ -1,13 +1,15 @@
 # coding=utf-8
-__version__ = "6.0.24"
+__version__ = "6.2.7"
 
 import logging
 
-logging.basicConfig()
-logger = logging.getLogger("dt-world")
-logger.setLevel(logging.DEBUG)
+from zuper_commons.logs import ZLogger
 
-logger.info("duckietown-world %s" % __version__)
+logger = ZLogger(__name__)
+import os
+
+path = os.path.dirname(os.path.dirname(__file__))
+logger.debug(f"duckietown-world version {__version__} path {path}")
 
 # remove noisy logging
 from duckietown_serialization_ds1 import logger as dslogger
@@ -20,5 +22,6 @@ disable_all()
 
 from .geo import *
 from .seqs import *
+from .resources import *
 from .svg_drawing import *
 from .world_duckietown import *

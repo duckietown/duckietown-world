@@ -2,20 +2,18 @@
 import itertools
 import os
 import traceback
-from functools import lru_cache
-from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
 
-import geometry as geo
 import numpy as np
 import oyaml as yaml
-from zuper_commons.fs import locate_files
-from zuper_commons.types import ZKeyError
+from zuper_commons.fs import FilePath
+from zuper_commons.types import ZKeyError, ZValueError
 
 from duckietown_serialization_ds1 import Serializable
 from . import logger
 from .duckiebot import DB18
 from .duckietown_map import DuckietownMap
+from .old_map_format import MapFormat1Object
 from .other_objects import (
     Barrier,
     Building,
@@ -42,14 +40,13 @@ from ..geo.measurements_utils import iterate_by_class
 
 __all__ = [
     "create_map",
-    "list_maps",
     "construct_map",
     "load_map",
     "get_texture_file",
-    "_get_map_yaml",
-    "get_resource_path",
-    "load_map_layers"
+    "_get_map_yaml"
 ]
+
+from ..resources import get_data_resources, get_maps_dir
 
 
 def create_map(H: int = 3, W: int = 3) -> TileMap:
@@ -62,71 +59,11 @@ def create_map(H: int = 3, W: int = 3) -> TileMap:
     return tile_map
 
 
-def list_maps() -> List[str]:
-    maps_dir = get_maps_dir()
-
-    def f():
-        for map_file in os.listdir(maps_dir):
-            map_name = map_file.split(".")[0]
-            yield map_name
-
-    return list(f())
-
-
-def get_maps_dir() -> str:
-    abs_path_module = os.path.realpath(__file__)
-    module_dir = os.path.dirname(abs_path_module)
-    d = os.path.join(module_dir, "../data/gd1/maps")
-    assert os.path.exists(d), d
-    return d
-
-
-def get_data_dir() -> str:
-    """ location of data dir """
-    abs_path_module = os.path.realpath(__file__)
-    module_dir = Path(os.path.dirname(abs_path_module))
-    return str(module_dir.parent / "data")
-
-
-@lru_cache(maxsize=None)
-def get_data_resources() -> Tuple[Dict[str, str], List[str]]:
-    data = get_data_dir()
-    logger.info(data=data)
-    files = locate_files(data, pattern=["*.png", "*.jpg", "*.yaml", "*.gltf"])
-    res2 = []
-    res1 = {}
-    for f in files:
-        basename = os.path.basename(f)
-        if basename in res1:
-            msg = "Double basename."
-            # logger.warning(msg, basename=basename, f1=f, f2=res1[basename])
-        else:
-            res1[basename] = f
-        res2.append(f)
-
-    # logger.info(resources=res2, res1=list(res1))
-    return res1, res2
-
-
-def get_resource_path(basename: str) -> str:
-    res1, res2 = get_data_resources()
-    if "/" in basename:
-        for v in res2:
-            if v.endswith(basename):
-                return v
-
-    else:
-        if basename in res1:
-            return res1[basename]
-    msg = f"Could not find resource {basename!r}."
-    raise ZKeyError(msg, known=sorted(res2), res1=sorted(res1))
-
-
 def _get_map_yaml(map_name: str) -> str:
     maps_dir = get_maps_dir()
     fn = os.path.join(maps_dir, map_name + ".yaml")
     if not os.path.exists(fn):
-        msg = "Could not find file %s" % fn
+        msg = f"Could not find file {fn}"
         raise ValueError(msg)
     with open(fn) as _:
         data = _.read()
@@ -352,16 +289,16 @@ def construct_map(yaml_data: dict) -> DuckietownMap:
 
             tm.add_tile(b, (A - 1) - a, orient, tile)
 
-    def go(obj_name, desc):
-        obj = get_object(desc)
-        transform = get_transform(desc, tm, tile_size)
-        dm.set_object(obj_name, obj, ground_truth=transform)
+    def go(obj_name0: str, desc0: MapFormat1Object):
+        obj = get_object(desc0)
+        transform = get_transform(desc0, tm.W, tile_size)
+        dm.set_object(obj_name0, obj, ground_truth=transform)
 
     objects = yaml_data.get("objects", [])
     if isinstance(objects, list):
         for obj_idx, desc in enumerate(objects):
             kind = desc["kind"]
-            obj_name = "ob%02d-%s" % (obj_idx, kind)
+            obj_name = f"ob{obj_idx:02d}-{kind}"
             go(obj_name, desc)
     elif isinstance(objects, dict):
         for obj_name, desc in objects.items():
@@ -383,7 +320,7 @@ def construct_map(yaml_data: dict) -> DuckietownMap:
     return dm
 
 
-def get_object(desc):
+def get_object(desc: MapFormat1Object):
     kind = desc["kind"]
 
     attrs = {}
@@ -418,13 +355,13 @@ def get_object(desc):
         klass = kind2klass[kind]
         try:
             obj = klass(**attrs)
-        except TypeError:
+        except TypeError as e:
             msg = "Could not initialize %s with attrs %s:\n%s" % (
                 klass.__name__,
                 attrs,
                 traceback.format_exc(),
             )
-            raise Exception(msg)
+            raise Exception(msg) from e
 
     else:
         logger.debug("Do not know special kind %s" % kind)
@@ -432,43 +369,56 @@ def get_object(desc):
     return obj
 
 
-def get_transform(desc, tm, tile_size):
+def get_transform(desc: MapFormat1Object, W: int, tile_size: float) -> SE2Transform:
     rotate_deg = desc.get("rotate", 0)
     rotate = np.deg2rad(rotate_deg)
-
     if "pos" in desc:
+
         pos = desc["pos"]
         x = float(pos[0]) * tile_size
         # account for non-righthanded
-        y = float(tm.W - pos[1]) * tile_size
+        y = float(W - 1 - pos[1]) * tile_size
         # account for non-righthanded
         rotate = -rotate
         transform = SE2Transform([x, y], rotate)
         return transform
 
+    elif "pose" in desc:
+        # noinspection PyTypedDict
+        pose = Serializable.from_json_dict(desc["pose"])
+        return pose
+    elif "place" in desc:
+        # noinspection PyTypedDict
+        place = desc["place"]
+        tile_coords = tuple(place["tile"])
+        relative = Serializable.from_json_dict(place["relative"])
+        p, theta = relative.p, relative.theta
+        i, j = tile_coords
+
+        fx = (i + 0.5) * tile_size + p[0]
+        fy = (j + 0.5) * tile_size + p[1]
+        transform = SE2Transform([fx, fy], theta)
+        # logger.info(tile_coords=tile_coords, tile_size=tile_size, transform=transform)
+        return transform
+
+    elif "attach" in desc:
+        # noinspection PyTypedDict
+        attach = desc["attach"]
+        tile_coords = tuple(attach["tile"])
+        slot = str(attach["slot"])
+
+        x, y = get_xy_slot(slot)
+        i, j = tile_coords
+
+        u, v = (x + i) * tile_size, (y + j) * tile_size
+        transform = SE2Transform([u, v], rotate)
+
+        q = transform.as_SE2()
+
+        return SE2Transform.from_SE2(q)
     else:
-
-        if "pose" in desc:
-            pose = Serializable.from_json_dict(desc["pose"])
-        else:
-            pose = SE2Transform.identity()
-
-        if "attach" in desc:
-            attach = desc["attach"]
-            tile_coords = tuple(attach["tile"])
-            slot = str(attach["slot"])
-
-            x, y = get_xy_slot(slot)
-            i, j = tile_coords
-
-            u, v = (x + i) * tile_size, (y + j) * tile_size
-            transform = SE2Transform([u, v], rotate)
-
-            q = geo.SE2.multiply(transform.as_SE2(), pose.as_SE2())
-
-            return SE2Transform.from_SE2(q)
-        else:
-            return pose
+        msg = "Cannot find positiong"
+        raise ZValueError(msg, desc=desc)
 
 
 def get_xy_slot(i):
@@ -493,20 +443,33 @@ def get_xy_slot(i):
     return x, y
 
 
-def get_texture_file(tex_name: str) -> str:
-    resources, _ = get_data_resources()
-    res = []
+def get_texture_file(tex_name: str) -> List[FilePath]:
+    if tex_name.endswith(".png"):
+        logger.warn(f"do not provide extension: {tex_name}")
+        tex_name = tex_name.replace(".png", "")
+    if tex_name.endswith(".jpg"):
+        logger.warn(f"do not provide extension: {tex_name}")
+        tex_name = tex_name.replace(".jpg", "")
+
+    resources, res2 = get_data_resources()
+    res: List[FilePath] = []
     tried = []
 
     suffixes = ["", "_1", "_2", "_3", "_4"]
-    extensions = [".jpg", ".png"]
+    extensions = [".jpg", ".png", ".tga", ".bmp"]
     for s, e in itertools.product(suffixes, extensions):
         basename = f"{tex_name}{s}{e}"
-        if basename in resources:
-            return resources[basename]
+
+        for v in res2:
+            if v.endswith(basename):
+                res.append(v)
+        #
+        #
+        # if basename in resources:
+        #     return resources[basename]
         tried.append(basename)
 
     if not res:
         msg = f"Could not find any texture for {tex_name}"
         raise ZKeyError(msg, tried=tried)
-    return res[0]
+    return res

@@ -1,4 +1,7 @@
-map_name: udem1
+#map_name: ETH_small_loop_2_bordered
+map_name: zigzag_dists_bordered
+#map_name: ETHZ_loop_bordered
+#map_name: ETHZ_autolab_technical_track_bordered
 robots_npcs: [npc1, npc2]
 robots_pcs: [ego1, ego2]
 robots_parked: []
@@ -8,6 +11,8 @@ min_dist: 0.5
 delta_y_m: 0.04
 only_straight: false
 nduckies: 10
-duckie_min_dist_from_other_duckie: 0.04
-duckie_min_dist_from_robot: 0.3
-duckie_y_bounds: [-0.1, -0.2]
+duckie_min_dist_from_other_duckie: 0.3
+duckie_min_dist_from_robot: 0.4
+duckie_y_bounds: [-0.1, -0.04]
+npc_robot_protocol: PROTOCOL_FULL
+pc_robot_protocol: PROTOCOL_NORMAL

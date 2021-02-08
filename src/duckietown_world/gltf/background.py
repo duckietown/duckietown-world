@@ -1,19 +1,14 @@
 import numpy as np
 from geometry import SE3_roty, SE3_rotz, SE3_trans
 
-from gltflib import Node
+from gltflib import GLTF, Node
+from . import logger
+from ..resources import get_resource_path
 
 __all__ = ["add_background"]
 
-from gltflib import GLTF
-
-from . import logger
-from ..world_duckietown.map_loading import get_resource_path
-
 
 def add_background(gltf: GLTF) -> int:
-    model = gltf.model
-    resources = gltf.resources
     root = "pannello %02d.pdf.jpg"
     found = []
     for i in range(1, 27):
@@ -36,7 +31,7 @@ def add_background(gltf: GLTF) -> int:
     from .export import gm
 
     dist = 30
-    fov_y = np.deg2rad(45)
+    # fov_y = np.deg2rad(45)
     nodes_panels = []
     for i, fn in enumerate(found):
         # if i > 5:

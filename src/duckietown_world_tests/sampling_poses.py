@@ -48,6 +48,8 @@ def test_scenario_making1():
         duckie_min_dist_from_other_duckie=0.1,
         duckie_min_dist_from_robot=0.4,
         duckie_y_bounds=[-0.1, -0.3],
+        tree_density=0.0,
+        tree_min_dist=0.2,
     )
     logger.info(s=s)
 
