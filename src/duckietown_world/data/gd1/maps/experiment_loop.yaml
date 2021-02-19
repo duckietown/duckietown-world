@@ -1,5 +1,4 @@
-# This is a closed loop (no intersections) with a few obstacles directly
-# on the road, which have to be avoided.
+# This is a closed loop (no intersections) used for simulator usefulness evaluation
 
 tiles:
 - [curve_left/W , straight/W    , curve_left/N  , floor]
