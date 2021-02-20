@@ -10,10 +10,14 @@ class DuckietownMap(IBaseMap, ABC):
     _layers: Dict[str, "AbstractLayer"]
     _items: Dict[Tuple[str, type], "_Object"]
     _layer_classes: Dict[str, type]
+    _context_current: str
+    _contexts: List[str]
 
     def __init__(self, yaml_data: Dict[str, Dict[str, Any]], layer_classes: Dict[str, type]):
         self._layers = {}
         self._items = {}
+        self._contexts = []
+
         self._layer_classes = layer_classes.copy()
         for layer_key, layer_content in yaml_data.items():
             layer_class = self._layer_classes[layer_key]
@@ -21,12 +25,18 @@ class DuckietownMap(IBaseMap, ABC):
             layer, layer_items = layer_class.deserialize(layer_content, self)
             self._layers[layer_key] = layer
             self._items.update(layer_items)
+            # TODO: necessary to remove binding to the layer
+            if layer_key == "tile_maps":
+                for (nm, tp), obj in layer:
+                    self._contexts.append(nm)
+                self._contexts.sort()
+                self._context_current = self._contexts[0]
+
         for _, layer in self._layers.items():
             new_items = layer.items_to_update(self)
             self._items.update(new_items)
 
     def __getattr__(self, item: str) -> "AbstractLayer":
-        #print(self._layers)
         return self._layers.get(item, None)
 
     def add(self, co: ConstructedObject) -> None:
@@ -36,6 +46,17 @@ class DuckietownMap(IBaseMap, ABC):
         self._items[(co.name, tp)].dm = self
         self._items[(co.name, _Frame)] = co.frame
         self._items[(co.name, _Frame)].dm = self
+
+    def get_context(self) -> str:
+        return self._context_current
+
+    def all_contexts(self) -> List[str]:
+        return self._contexts
+
+    def set_context(self, new_context: str) -> bool:
+        if new_context in self._contexts:
+            self._context_current = new_context
+            return True
 
     def copy(self) -> "DuckietownMap":
         yaml_data = self.serialize(self)

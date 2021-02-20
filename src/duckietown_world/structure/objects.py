@@ -31,7 +31,7 @@ class _Tile(_PlacedObject):
     i: int = 0
     j: int = 0
     type: str = 'floor'
-    orientation: Optional[str] = None
+    orientation: Optional[str] = 'S'
 
     def dict(self) -> Dict[str, Any]:
         return {'i': self.i, 'j': self.j, 'type': self.type, 'orientation': self.orientation}
