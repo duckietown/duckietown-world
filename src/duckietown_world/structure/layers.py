@@ -4,7 +4,7 @@ from re import search
 import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
-from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign
+from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -62,7 +62,7 @@ class LayerTiles(AbstractLayer, ABC):
                 tile_frames[(nm, _Frame)] = _Frame({'x': x, 'y': y, 'yaw': yaw}, relative_to=parent_nm, dm=dm)
 
         # invert y axes
-        #if tile_frames:
+        # if tile_frames:
         #    w = max([ob.pose.y for _, ob in tile_frames.items()]) - 0.5
         #    for _, ob in tile_frames.items():
         #        ob.pose.y = w - (ob.pose.y - 0.5) + 0.5
@@ -108,3 +108,9 @@ class LayerGroundTags(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _GroundTag
+
+
+class LayerVehicles(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _Vehicle

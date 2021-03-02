@@ -1,5 +1,6 @@
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from svgwrite.drawing import Drawing as DrawingSVG
 from svgwrite.container import Group as GroupSVG
@@ -9,7 +10,7 @@ from duckietown_world.world_duckietown.tile import Tile as old_tile
 from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
 __all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen', '_TrafficSign', '_GroundTag',
-           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile']
+           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle"]
 
 
 @dataclass
@@ -47,6 +48,7 @@ class _Tile(_PlacedObject):
 @dataclass
 class _Watchtower(_PlacedObject):
     configuration: str = 'WT18'
+    id: Union[None, str] = None
 
     def dict(self) -> Dict[str, Any]:
         return {'configuration': self.configuration}
@@ -108,6 +110,48 @@ class _GroundTag(_PlacedObject):
         g.add(rect)
 
 
+@dataclass
+class _Vehicle(_PlacedObject):
+    configuration: str = "DB19"
+    id: Optional[str] = ""
+    color: str = "#fff"
+
+    def dict(self) -> Dict[str, Any]:
+        return {"configuration": self.configuration, "id": self.id, "color": self.color}
+
+    def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
+        s = 0.1
+        rect = drawing.rect(insert=(-s / 2, -s / 2), size=(s, s), fill='red', stroke='yellow', stroke_width=0.01)
+        g.add(rect)
+
+
+@dataclass
+# TODO: add a camera, when create vehicle,watchtower
+class _Camera(_Object):
+    camera_matrix: Optional[List[List[float]]] = None  # TODO:  type check need
+    distortion_parameters: List[float] = None
+    width: int = 0
+    height: int = 0
+    framerate: int = 0
+
+    def dict(self) -> Dict[str, Any]:
+        return {"camera_matrix": self.camera_matrix, "distortion_parameters": self.distortion_parameters,
+                "width": self.width, "height": self.height, "framerate": self.framerate
+                }
+
+
+class Camera(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Camera
+
+
+class Vehicle(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Vehicle
+
+
 class Watchtower(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
@@ -130,6 +174,7 @@ class GroundTag(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _GroundTag
+
 
 class Tile(ConstructedObject):
     @classmethod

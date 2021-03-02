@@ -4,6 +4,7 @@ from abc import ABC
 from duckietown_world.dt_yaml import DTYaml, DTYamlLayer
 
 from .bases import _Object, _PlacedObject, _Frame, ConstructedObject, IBaseMap, AbstractLayer
+from .utils import get_degree_for_orientation
 
 
 class DuckietownMap(IBaseMap, ABC):
@@ -94,6 +95,12 @@ class DuckietownMap(IBaseMap, ABC):
 
     @staticmethod
     def dump(dm: "DuckietownMap") -> Dict[str, str]:
+        # Todo: need to remove changing yaw from here
+        for ((nm, _), tile) in dm.tiles:
+            orientation = tile.orientation
+            frame = dm.get_frame_by_name(nm)
+            frame.pose.yaw = get_degree_for_orientation(orientation)
+
         layers = DuckietownMap.serialize(dm)['main']
         layers['main'] = {key: DTYamlLayer('%s.yaml' % key) for key in layers}
         return {key: DTYaml.dump({key: layer}) for key, layer in layers.items()}
