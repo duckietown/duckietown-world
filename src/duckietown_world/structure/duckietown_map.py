@@ -97,8 +97,14 @@ class DuckietownMap(IBaseMap, ABC):
     def dump(dm: "DuckietownMap") -> Dict[str, str]:
         # Todo: need to remove changing yaw from here
         for ((nm, _), tile) in dm.tiles:
+            tile_size = 0
+            for ((_, _), tile_map) in dm.tile_maps:
+                tile_size = tile_map.x
             orientation = tile.orientation
+            i, j = tile.i, tile.j
             frame = dm.get_frame_by_name(nm)
+            frame.pose.x = i * tile_size + tile_size / 2
+            frame.pose.y = j * tile_size + tile_size / 2
             frame.pose.yaw = get_degree_for_orientation(orientation)
 
         layers = DuckietownMap.serialize(dm)['main']
