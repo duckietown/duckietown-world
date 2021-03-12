@@ -1,0 +1,9 @@
+vehicles:
+  map_1/vehicle_597:
+    configuration: DB19
+    id: ''
+    color: '#fff'
+  map_1/vehicle_825:
+    configuration: DB19
+    id: ''
+    color: '#fff'

@@ -21,7 +21,7 @@ __all__ = [
 
 
 def frame2transforms(frame: "_Frame") -> List["Transform"]:
-    print([frame.pose.x, frame.pose.y])
+    print([frame.pose.x, frame.pose.y], (frame.pose.yaw+np.pi/2))
     se2 = SE2Transform(p=[frame.pose.x, frame.pose.y], theta=frame.pose.yaw)
     #else:
     #    se2 = SE2Transform(p=[frame.pose.x/0.585, frame.pose.y/0.585], theta=frame.pose.yaw)

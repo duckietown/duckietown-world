@@ -5,6 +5,7 @@ from duckietown_world.dt_yaml import DTYaml, DTYamlLayer
 
 from .bases import _Object, _PlacedObject, _Frame, ConstructedObject, IBaseMap, AbstractLayer
 from .utils import get_degree_for_orientation
+import numpy as np
 
 
 class DuckietownMap(IBaseMap, ABC):
@@ -105,7 +106,7 @@ class DuckietownMap(IBaseMap, ABC):
             frame = dm.get_frame_by_name(nm)
             frame.pose.x = i * tile_size + tile_size / 2
             frame.pose.y = j * tile_size + tile_size / 2
-            frame.pose.yaw = get_degree_for_orientation(orientation)
+            frame.pose.yaw = get_degree_for_orientation(orientation) * np.pi / 180
 
         layers = DuckietownMap.serialize(dm)['main']
         layers['main'] = {key: DTYamlLayer('%s.yaml' % key) for key in layers}
