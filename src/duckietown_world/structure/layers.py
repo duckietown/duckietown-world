@@ -4,7 +4,7 @@ from re import search
 import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
-from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle
+from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle, _Camera
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -114,3 +114,9 @@ class LayerVehicles(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _Vehicle
+
+
+class LayerCameras(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _Camera

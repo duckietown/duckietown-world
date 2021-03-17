@@ -128,7 +128,7 @@ class _Vehicle(_PlacedObject):
 @dataclass
 # TODO: add a camera, when create vehicle,watchtower
 class _Camera(_Object):
-    camera_matrix: Optional[List[List[float]]] = None  # TODO:  type check need
+    camera_matrix: List[float] = None  # TODO:  type check need
     distortion_parameters: List[float] = None
     width: int = 0
     height: int = 0

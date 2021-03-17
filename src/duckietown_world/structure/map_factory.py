@@ -6,7 +6,7 @@ from duckietown_world.dt_yaml.dt_yaml import DTYaml
 
 from .duckietown_map import DuckietownMap
 from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerWatchtowers, LayerGroups, LayerCitizens,\
-    LayerTrafficSigns, LayerGroundTags, LayerVehicles
+    LayerTrafficSigns, LayerGroundTags, LayerVehicles, LayerCameras
 
 
 def get_existing_map_path(map_name: str) -> str:
@@ -36,7 +36,8 @@ class MapFactory:
         'citizens': LayerCitizens,
         'groundtags': LayerGroundTags,
         'trafficsigns': LayerTrafficSigns,
-        'vehicles': LayerVehicles
+        'vehicles': LayerVehicles,
+        'cameras': LayerCameras
     })
 
     @classmethod
