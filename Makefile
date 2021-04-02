@@ -104,3 +104,13 @@ black:
 export:
 	dt-world-export-gltf --map udem1 --out out-udem1
 	scp -r out-udem1 @sandy:dev/duckietown-rendering-pyrender/code
+
+notebooks-in-docker:
+	docker run -p 8888:8888 --rm -it -v $(PWD):$(PWD) -w $(PWD) -e USER=$(USER) -v /tmp:/tmp -e HOME=/tmp/fake --user $(shell id -u):$(shell id -g)  python:3.8 bash
+
+	# export PATH=~/.local/bin:$PATH
+	# pip install duckietown-world-daffy jupyter
+	# jupyter notebook
+
+notebooks-in-docker2:
+	docker run -p 8888:8888 --rm -it -v $(PWD):$(PWD) -w $(PWD) -e USER=$(USER) -v /tmp:/tmp -e HOME=/tmp/fake --user $(shell id -u):$(shell id -g)  jupyter/scipy-notebook
