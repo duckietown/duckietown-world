@@ -17,6 +17,7 @@ __all__ = [
     "get_static_and_dynamic",
     "iterate_by_class",
     "IterateByTestResult",
+    "iterate_by_test",
 ]
 
 
