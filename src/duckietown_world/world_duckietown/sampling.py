@@ -208,7 +208,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
     if True:
         for robot_name, robot_spec in s.robots.items():
             pose = cast(g.SE2value, robot_spec.configuration.pose)
-            gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
+            # gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
             gt = dw.SE2Transform.from_SE2(pose)
             ob = dw.DB18(color=robot_spec.color)
             # noinspection PyTypeChecker
@@ -218,7 +218,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
         for duckie_name, duckie_spec in s.duckies.items():
             pose = cast(g.SE2value, duckie_spec.pose)
 
-            gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
+            # gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
 
             gt = dw.SE2Transform.from_SE2(pose)
 
