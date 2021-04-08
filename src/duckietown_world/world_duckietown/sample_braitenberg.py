@@ -71,7 +71,6 @@ def sample_duckies(
 
 
 def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int) -> Scenario:
-
     tile_size = 0.585
     themap = {"tiles": [], "tile_size": tile_size}
     themap["tiles"] = [["asphalt"] * ntiles] * ntiles
@@ -79,7 +78,9 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int) -> Scenari
 
     robots = {}
 
-    x = y = tile_size * (ntiles / 2)
+    L = tile_size * (ntiles / 2)
+    x = L / 8
+    y = L / 2
 
     pose = SE2_from_xytheta([x, y, 0])
     vel = np.zeros((3, 3))
@@ -91,12 +92,11 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int) -> Scenari
         description="",
     )
     yaml_str = yaml.dump(themap)
-    nduckies = 10
     duckie_poses = sample_duckies(
         nduckies,
         [robots["ego0"].configuration.pose],
-        min_dist_from_robot=1.0,
-        min_dist_from_other_duckie=0.2,
+        min_dist_from_robot=0.4,
+        min_dist_from_other_duckie=0.3,
         bounds=area,
     )
 
