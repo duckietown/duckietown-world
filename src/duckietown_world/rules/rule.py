@@ -119,6 +119,7 @@ def evaluate_rules(
     from duckietown_world.rules import DrivenLength
     from duckietown_world.rules import DrivenLengthConsecutive
     from duckietown_world.rules import SurvivalTime
+    from duckietown_world.rules import DistanceFromStart
 
     rules = {}
     rules["deviation-heading"] = DeviationHeading()
@@ -127,6 +128,7 @@ def evaluate_rules(
     rules["driving-distance"] = DrivenLength()
     rules["driving-distance-consecutive"] = DrivenLengthConsecutive()
     rules["survival_time"] = SurvivalTime()
+    rules["distance-from-start"] = DistanceFromStart()
 
     context = RuleEvaluationContext(
         interval=interval,

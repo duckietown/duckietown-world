@@ -1,12 +1,12 @@
 import textwrap
 
+import geometry as geo
 import numpy as np
 
-import geometry as geo
 from duckietown_world.seqs import iterate_with_dt, SampledSequence, UndefinedAtTime
 from duckietown_world.seqs.tsequence import SampledSequenceBuilder, Timestamp
 from duckietown_world.world_duckietown import GetLanePoseResult, LanePose
-from ..world_duckietown.utils import relative_pose
+from duckietown_world.world_duckietown.utils import relative_pose
 from .rule import Rule, RuleEvaluationContext, RuleEvaluationResult
 
 __all__ = [
@@ -16,6 +16,7 @@ __all__ = [
     "DrivenLength",
     "DrivenLengthConsecutive",
     "SurvivalTime",
+    "DistanceFromStart",
 ]
 
 
@@ -225,9 +226,9 @@ class InDrivableLane(Rule):
         description = textwrap.dedent(
             """\
             This metric computes whether the robot was in a drivable area.
-            
-            Note that we check that the robot is in the lane in a correct heading 
-            (up to 90deg deviation from the lane direction). 
+
+            Note that we check that the robot is in the lane in a correct heading
+            (up to 90deg deviation from the lane direction).
         """
         )
 
@@ -235,6 +236,49 @@ class InDrivableLane(Rule):
             name=(),
             total=dtot,
             incremental=sequence,
+            title=title,
+            description=description,
+            cumulative=cumulative,
+        )
+
+
+class DistanceFromStart(Rule):
+    def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
+        poses = context.get_ego_pose_global()
+        p0 = poses.values[0].as_SE2()
+
+        values = []
+        timestamps = []
+        values_improv = []
+        d_max = 0.0
+        for timestamp, v in poses:
+            r = relative_pose(p0, v.as_SE2())
+            t = geo.translation_from_SE2(r)
+            di = float(np.linalg.norm(t))
+            # print(d_max, di)
+            improvement = max(di - d_max, 0.0)
+            d_max = max(d_max, di)
+
+            values_improv.append(improvement)
+            values.append(d_max)
+            timestamps.append(timestamp)
+
+        cumulative = SampledSequence[float](timestamps, values)
+        incremental = SampledSequence[float](timestamps, values_improv)
+
+        d_tot = d_max
+
+        title = "Distance from initial point"
+        description = textwrap.dedent(
+            """\
+            Distance from the starting point.
+        """
+        )
+
+        result.set_metric(
+            name=(),
+            total=d_tot,
+            incremental=incremental,
             title=title,
             description=description,
             cumulative=cumulative,
