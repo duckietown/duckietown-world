@@ -245,23 +245,23 @@ class InDrivableLane(Rule):
 class DistanceFromStart(Rule):
     def evaluate(self, context: RuleEvaluationContext, result: RuleEvaluationResult):
         poses = context.get_ego_pose_global()
-        p0 = poses.values[0]
+        p0 = poses.values[0].as_SE2()
 
         values = []
         timestamps = []
         values_improv = []
         d_max = 0.0
-        for t, v in poses:
-            r = relative_pose(p0, v)
+        for timestamp, v in poses:
+            r = relative_pose(p0, v.as_SE2())
             t = geo.translation_from_SE2(r)
-            di = np.linalg.norm(t)
-
+            di = float(np.linalg.norm(t))
+            # print(d_max, di)
             improvement = max(di - d_max, 0.0)
             d_max = max(d_max, di)
 
             values_improv.append(improvement)
             values.append(d_max)
-            timestamps.append(t)
+            timestamps.append(timestamp)
 
         cumulative = SampledSequence[float](timestamps, values)
         incremental = SampledSequence[float](timestamps, values_improv)
