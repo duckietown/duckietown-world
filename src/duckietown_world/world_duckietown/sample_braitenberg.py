@@ -23,11 +23,13 @@ def main():
     parser.add_argument("--nduckies", type=int, required=True)
     parser.add_argument("--ntiles", type=int, required=True)
     parser.add_argument("--scenario-name", type=str, required=True)
+    parser.add_argument("--duckie-duckie-dist", type=float, default=0.3)
     parsed = parser.parse_args()
 
     scenario_name = parsed.scenario_name
 
-    scenario = get_base_scenario(scenario_name=scenario_name, nduckies=parsed.nduckies, ntiles=parsed.ntiles)
+    scenario = get_base_scenario(scenario_name=scenario_name, nduckies=parsed.nduckies, ntiles=parsed.ntiles,
+                                 min_dist_from_other_duckie=parsed.duckie_duckie_dist)
     scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
     scenario_yaml = yaml.dump(scenario_struct)
     filename = parsed.output
@@ -70,7 +72,7 @@ def sample_duckies(
     return poses
 
 
-def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int) -> Scenario:
+def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_from_other_duckie: float) -> Scenario:
     tile_size = 0.585
     themap = {"tiles": [], "tile_size": tile_size}
     themap["tiles"] = [["asphalt"] * ntiles] * ntiles
@@ -96,7 +98,7 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int) -> Scenari
         nduckies,
         [robots["ego0"].configuration.pose],
         min_dist_from_robot=0.4,
-        min_dist_from_other_duckie=0.3,
+        min_dist_from_other_duckie=min_dist_from_other_duckie,
         bounds=area,
     )
 

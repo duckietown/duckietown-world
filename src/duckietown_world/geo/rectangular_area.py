@@ -9,7 +9,7 @@ from duckietown_serialization_ds1 import Serializable
 
 from .region import Region
 
-__all__ = ["RectangularArea"]
+__all__ = ["RectangularArea", "sample_in_rect"]
 
 
 class RectangularArea(Serializable, Region):
