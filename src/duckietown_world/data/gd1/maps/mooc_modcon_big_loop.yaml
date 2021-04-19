@@ -1,0 +1,26 @@
+# The following section defines the grid layout.
+#
+# Each row is an array of tiles descriptions.
+# The top-left tile in this file maps to coordinates (0, 0) in the world
+# Each tile contains a string with the kind of tile and its orientation.
+# The orientations are North, South, East, West. This is the direction in
+# which the agent is expected to drive when going onto this tile.
+
+
+tiles:
+  - [grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass]
+  - [grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass]
+  - [grass, curve_left/W, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, straight/E, curve_left/N, grass]
+  - [grass, straight/N, grass, grass,   grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, straight/S, grass]
+  - [grass, curve_left/S, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, straight/W, curve_left/E, grass]
+  - [grass, grass, grass, grass, grass,  grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass]
+  - [grass, grass, grass, grass, grass,  grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass, grass]
+
+
+tile_size: 0.595
+
+# Always start on the drivable tile
+start_tile: [2, 2]
+
+# Fixed initial pose
+# start_pose: [[1.40, 0, 1.4825], 0]
