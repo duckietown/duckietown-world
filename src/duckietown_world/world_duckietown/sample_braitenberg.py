@@ -84,7 +84,7 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_f
     x = L / 8
     y = L / 2
 
-    pose = SE2_from_xytheta([x, y, 0])
+    pose = SE2_from_xytheta([0.2, 0.2, np.deg2rad(45)])
     vel = np.zeros((3, 3))
     robots["ego0"] = ScenarioRobotSpec(
         color="blue",
