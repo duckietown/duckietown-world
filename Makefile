@@ -114,3 +114,8 @@ notebooks-in-docker:
 
 notebooks-in-docker2:
 	docker run -p 8888:8888 --rm -it -v $(PWD):$(PWD) -w $(PWD) -e USER=$(USER) -v /tmp:/tmp -e HOME=/tmp/fake --user $(shell id -u):$(shell id -g)  jupyter/scipy-notebook
+
+
+notebooks-in-docker3:
+	docker build -t duckietown/duckietown-world-notebooks -f ./Dockerfile.notebook ./
+	docker run -p 8888:8888 --rm -it -v $(PWD):$(PWD) -w $(PWD) -e USER=$(USER) -v /tmp:/tmp -e HOME=/tmp/fake --user $(shell id -u):$(shell id -g) duckietown/duckietown-world-notebooks

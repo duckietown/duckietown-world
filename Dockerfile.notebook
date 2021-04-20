@@ -1,0 +1,5 @@
+FROM jupyter/scipy-notebook
+
+RUN pip3 install duckietown-world-daffy
+
+CMD ["jupyter", "notebook", "--NotebookApp.ip=0.0.0.0"]
