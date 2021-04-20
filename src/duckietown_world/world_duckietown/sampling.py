@@ -29,9 +29,10 @@ from aido_schemas import (
     ScenarioDuckieSpec,
     ScenarioRobotSpec,
 )
-from aido_schemas.protocol_simulator import ProtocolDesc
+from aido_schemas.protocol_simulator import FriendlyVelocity, ProtocolDesc
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
+from .utils import friendly_from_pose
 from ..geo.measurements_utils import iterate_by_class, iterate_by_test
 from ..gltf.export import export_gltf
 from ..utils.images import save_rgb_to_jpg, save_rgb_to_png
@@ -127,6 +128,7 @@ def make_scenario_main(args=None):
                     from gym_duckietown.simulator import Simulator
                 except ImportError:
                     logger.warning(traceback.format_exc())
+                    # noinspection PyUnusedLocal
                     Simulator = None
                 else:
                     sim = Simulator(
@@ -287,9 +289,9 @@ def make_scenario(
     robots = {}
     for i, robot_name in enumerate(robots_pcs):
         pose = poses_pcs[i]
-        vel = g.se2_from_linear_angular([0, 0], 0)
-
-        configuration = RobotConfiguration(pose=pose, velocity=vel)
+        fpose = friendly_from_pose(pose)
+        velocity = FriendlyVelocity(0.0, 0.0, 0.0)
+        configuration = RobotConfiguration(fpose, velocity)
 
         color = COLORS_PLAYABLE[i % len(COLORS_PLAYABLE)]
         robots[robot_name] = ScenarioRobotSpec(
@@ -303,9 +305,10 @@ def make_scenario(
 
     for i, robot_name in enumerate(robots_npcs):
         pose = poses_npcs[i]
-        vel = g.se2_from_linear_angular([0, 0], 0)
 
-        configuration = RobotConfiguration(pose=pose, velocity=vel)
+        fpose = friendly_from_pose(pose)
+        velocity = FriendlyVelocity(0.0, 0.0, 0.0)
+        configuration = RobotConfiguration(fpose, velocity)
 
         robots[robot_name] = ScenarioRobotSpec(
             description=f"NPC robot {robot_name}",
@@ -317,9 +320,10 @@ def make_scenario(
 
     for i, robot_name in enumerate(robots_parked):
         pose = poses_parked[i]
-        vel = g.se2_from_linear_angular([0, 0], 0)
 
-        configuration = RobotConfiguration(pose=pose, velocity=vel)
+        fpose = friendly_from_pose(pose)
+        velocity = FriendlyVelocity(0.0, 0.0, 0.0)
+        configuration = RobotConfiguration(fpose, velocity)
 
         robots[robot_name] = ScenarioRobotSpec(
             description=f"Parked robot {robot_name}",
@@ -340,7 +344,7 @@ def make_scenario(
         from_side_bounds=(duckie_y_bounds[0], duckie_y_bounds[1]),
         delta_theta_rad=np.pi,
     )
-    d = [ScenarioDuckieSpec("yellow", _) for _ in poses]
+    d = [ScenarioDuckieSpec("yellow", friendly_from_pose(_)) for _ in poses]
     duckies = dict(zip(names, d))
 
     trees = sample_trees(po, tree_density, tree_min_dist)
@@ -353,8 +357,9 @@ def make_scenario(
 
     yaml_str = yaml.dump(yaml_data)
     # logger.info(trees=trees)
-
+    payload = {"info": "fill here the yaml"}
     ms = Scenario(
+        payload_yaml=yaml.dump(payload),
         scenario_name=scenario_name,
         environment=yaml_str,
         robots=robots,
@@ -419,7 +424,7 @@ def add_signs(po: dw.PlacedObject, objects):
             i += 1
 
             q = SE2_from_translation_angle(rel, np.deg2rad(theta_deg))
-            logger.info(tile.transform_sequence)
+            # logger.info(tile.transform_sequence)
             m1 = tile.transform_sequence.asmatrix2d().m
             pose = m1 @ q
             st = dw.SE2Transform.from_SE2(pose)

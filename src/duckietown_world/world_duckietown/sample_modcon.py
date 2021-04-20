@@ -1,31 +1,34 @@
 import argparse
 import time
+from dataclasses import dataclass
 from typing import List
 
 import geometry as g
 import numpy as np
 import yaml
-from dataclasses import dataclass
 from geometry import SE2_from_xytheta, SE2value
 from zuper_commons.fs import write_ustring_to_utf8_file
 from zuper_commons.types import ZException
 from zuper_ipce import ipce_from_object
 
 import duckietown_world as dw
-from aido_schemas import PROTOCOL_NORMAL, RobotConfiguration, Scenario, ScenarioDuckieSpec, ScenarioRobotSpec
+from aido_schemas import (
+    FriendlyVelocity,
+    PROTOCOL_NORMAL,
+    RobotConfiguration,
+    Scenario,
+    ScenarioDuckieSpec,
+    ScenarioRobotSpec,
+)
 from duckietown_world.geo.rectangular_area import RectangularArea, sample_in_rect
-from duckietown_world.world_duckietown.sampling import distance_poses, ieso
+from .sampling import distance_poses, ieso
+from .utils import friendly_from_pose, pose_from_friendly
 
 episodes = {
-    'ep1': {
-        'y': 0,
-        'theta_deg': 0
-    },
-    'ep2': {
-        'y': 0.01,
-        'theta_deg': 0
-    },
+    "ep1": {"y": 0, "theta_deg": 0},
+    "ep2": {"y": 0.01, "theta_deg": 0},
 }
+
 
 @dataclass
 class EpSpec:
@@ -47,8 +50,12 @@ def main():
 
     scenario_name = parsed.scenario_name
 
-    scenario = get_base_scenario(scenario_name=scenario_name, nduckies=parsed.nduckies, ntiles=parsed.ntiles,
-                                 min_dist_from_other_duckie=parsed.duckie_duckie_dist)
+    scenario = get_base_scenario(
+        scenario_name=scenario_name,
+        nduckies=parsed.nduckies,
+        ntiles=parsed.ntiles,
+        min_dist_from_other_duckie=parsed.duckie_duckie_dist,
+    )
     scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
     scenario_yaml = yaml.dump(scenario_struct)
     filename = parsed.output
@@ -91,7 +98,9 @@ def sample_duckies(
     return poses
 
 
-def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_from_other_duckie: float) -> Scenario:
+def get_base_scenario(
+    scenario_name: str, nduckies: int, ntiles: int, min_dist_from_other_duckie: float
+) -> Scenario:
     tile_size = 0.585
     themap = {"tiles": [], "tile_size": tile_size}
     themap["tiles"] = [["asphalt"] * ntiles] * ntiles
@@ -100,11 +109,12 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_f
     robots = {}
 
     L = tile_size * (ntiles / 2)
-    x = L / 8
-    y = L / 2
+    # x = L / 8
+    # y = L / 2
 
     pose = SE2_from_xytheta([0.2, 0.2, np.deg2rad(45)])
-    vel = np.zeros((3, 3))
+
+    vel = FriendlyVelocity(0.0, 0.0, 0.0)
     robots["ego0"] = ScenarioRobotSpec(
         color="blue",
         configuration=RobotConfiguration(pose, vel),
@@ -115,7 +125,7 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_f
     yaml_str = yaml.dump(themap)
     duckie_poses = sample_duckies(
         nduckies,
-        [robots["ego0"].configuration.pose],
+        [pose_from_friendly(robots["ego0"].configuration.pose)],
         min_dist_from_robot=0.4,
         min_dist_from_other_duckie=min_dist_from_other_duckie,
         bounds=area,
@@ -123,8 +133,11 @@ def get_base_scenario(scenario_name: str, nduckies: int, ntiles: int, min_dist_f
 
     duckies = {}
     for i, pose in enumerate(duckie_poses):
-        duckies[f"duckie{i}"] = ScenarioDuckieSpec("yellow", pose)
+        fpose = friendly_from_pose(pose)
+        duckies[f"duckie{i}"] = ScenarioDuckieSpec("yellow", fpose)
+    payload = {"info": "fill here the yaml"}
     ms = Scenario(
+        payload_yaml=yaml.dump(payload),
         scenario_name=scenario_name,
         environment=yaml_str,
         robots=robots,
