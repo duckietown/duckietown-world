@@ -62,15 +62,15 @@ tests-maps-coverage:
 
 tests-coverage-single-nocontracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=1 $(coverage_run)  `which compmake` $(out)  -c "rmake"
+	-DISABLE_CONTRACTS=1 $(coverage_run) -m compmake $(out)  -c "rmake"
 
 tests-coverage-single-contracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rmake"
+	-DISABLE_CONTRACTS=0 $(coverage_run)  -m compmake $(out) --contracts -c "rmake"
 
 tests-coverage-parallel-contracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit" $(package)
-	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rparmake"
+	-DISABLE_CONTRACTS=0 $(coverage_run)  -m compmake $(out) --contracts -c "rparmake"
 
 coverage-report:
 	coverage combine
