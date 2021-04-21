@@ -51,13 +51,13 @@ tests-coverage:
 	$(MAKE) coverage-report
 	$(MAKE) coverage-coveralls
 
-tests-LFV-coverage:
-	mkdir -p artifacts
-	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
+# tests-LFV-coverage:
+# 	mkdir -p artifacts
+# 	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
 
 tests-maps-coverage:
 	mkdir -p artifacts
-	$(coverage_run) `which dt-world-draw-maps` --output artifacts/maps
+	$(coverage_run) -m duckietown_world.svg_drawing.dt_draw_maps --output artifacts/maps
 
 
 tests-coverage-single-nocontracts:
