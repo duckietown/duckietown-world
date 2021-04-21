@@ -21,8 +21,8 @@ __all__ = [
 
 
 def integrate(sequence: SampledSequence[float]) -> SampledSequence[float]:
-    """ Integrates with respect to time.
-        That is, it multiplies the value with the Delta T. """
+    """Integrates with respect to time.
+    That is, it multiplies the value with the Delta T."""
     if not sequence:
         msg = "Cannot integrate empty sequence."
         raise ValueError(msg)
@@ -41,8 +41,8 @@ def integrate(sequence: SampledSequence[float]) -> SampledSequence[float]:
 
 
 def accumulate(sequence: SampledSequence[float]) -> SampledSequence[float]:
-    """ Integrates with respect to time.
-        Sums the values along the horizontal. """
+    """Integrates with respect to time.
+    Sums the values along the horizontal."""
     total = 0.0
     timestamps = []
     values = []

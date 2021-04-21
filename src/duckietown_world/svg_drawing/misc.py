@@ -457,7 +457,10 @@ def make_tabs(
             assert isinstance(sequence, SampledSequence)
 
             trace = go.Scatter(
-                x=sequence.timestamps, y=sequence.values, mode="lines+markers", name=name_sequence,
+                x=sequence.timestamps,
+                y=sequence.values,
+                mode="lines+markers",
+                name=name_sequence,
             )
             scatters.append(trace)
 
@@ -477,7 +480,12 @@ def make_tabs(
 
             # include_plotlyjs = True if i == 0 else False
 
-            res = offline.plot(fig, output_type="div", show_link=False, include_plotlyjs=include_plotlyjs,)
+            res = offline.plot(
+                fig,
+                output_type="div",
+                show_link=False,
+                include_plotlyjs=include_plotlyjs,
+            )
             include_plotlyjs = False
             td.append(bs(res))
             i += 1
@@ -800,10 +808,10 @@ def mime_from_fn(fn):
 
 
 def data_encoded_for_src(data, mime):
-    """ data =
-        ext = png, jpg, ...
+    """data =
+    ext = png, jpg, ...
 
-        returns "data: ... " sttring
+    returns "data: ... " sttring
     """
     encoded = base64.b64encode(data).decode()
     link = ("data:%s;base64," % mime) + encoded
@@ -852,8 +860,8 @@ def get_jpeg_bytes(fn):
 
 
 def bs(fragment: str):
-    """ Returns the contents wrapped in an element called "fragment".
-        Expects fragment as a str in utf-8 """
+    """Returns the contents wrapped in an element called "fragment".
+    Expects fragment as a str in utf-8"""
 
     s = "<fragment>%s</fragment>" % fragment
 

@@ -110,7 +110,8 @@ class GLTF(GLTF0):
 def gltf_export_main(args: Optional[List[str]] = None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--map", type=str,
+        "--map",
+        type=str,
     )
 
     parser.add_argument("--output", type=str)

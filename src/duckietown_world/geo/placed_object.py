@@ -220,7 +220,10 @@ def get_child_transform(po: PlacedObject, child: str) -> Transform:
 
 
 def get_object_tree(
-    po: PlacedObject, levels: int = 100, spatial_relations: bool = False, attributes: bool = False,
+    po: PlacedObject,
+    levels: int = 100,
+    spatial_relations: bool = False,
+    attributes: bool = False,
 ) -> str:
     ss = [f"{type(po).__name__}"]
     d = po.params_to_json_dict()
@@ -229,7 +232,13 @@ def get_object_tree(
 
     if attributes:
         if d:
-            ds = yaml.safe_dump(d, encoding="utf-8", indent=4, allow_unicode=True, default_flow_style=False,)
+            ds = yaml.safe_dump(
+                d,
+                encoding="utf-8",
+                indent=4,
+                allow_unicode=True,
+                default_flow_style=False,
+            )
             if isinstance(ds, bytes):
                 ds = ds.decode("utf-8")
             ss.append("\n" + indent(ds, " "))
@@ -246,7 +255,10 @@ def get_object_tree(
                 prefix1 = "└ %s ┐ " % child_name
                 prefix2 = "  %s │ " % (" " * len(child_name))
             c = get_object_tree(
-                child, attributes=attributes, spatial_relations=spatial_relations, levels=levels - 1,
+                child,
+                attributes=attributes,
+                spatial_relations=spatial_relations,
+                levels=levels - 1,
             )
             sc = indent(c, prefix2, prefix1)
             n = max(len(_) for _ in sc.split("\n"))
