@@ -63,10 +63,10 @@ class GenericSequence(Generic[X]):
     @abstractmethod
     def get_sampling_points(self) -> Union[str, typing.Sequence[Timestamp]]:
         """
-            Returns the lists of interesting points.
+        Returns the lists of interesting points.
 
-            Returns the special value CONTINUOUS if
-            dense sampling is possible
+        Returns the special value CONTINUOUS if
+        dense sampling is possible
         """
 
 

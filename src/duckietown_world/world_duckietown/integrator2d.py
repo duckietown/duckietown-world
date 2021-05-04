@@ -11,9 +11,9 @@ __all__ = ["Integrator2D"]
 
 class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
     """
-        This represents the dynamics of a 2D integrator.
+    This represents the dynamics of a 2D integrator.
 
-        Commands are sequences of 2 numbers / array of two numbers.
+    Commands are sequences of 2 numbers / array of two numbers.
 
     """
 
@@ -21,7 +21,7 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
     @contract(c0="TSE2")
     def initialize(cls, c0, t0=0, seed=None):
         """
-            This class initializes the dynamics at a given configuration
+        This class initializes the dynamics at a given configuration
         """
         # pose, velocity in SE(2), se(2)
         q, v = c0
@@ -45,11 +45,11 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
 
     def integrate(self, dt, commands):
         """
-            Returns the next state after applying commands for time dt.
+        Returns the next state after applying commands for time dt.
 
-            :param dt: for how long to apply the commands
-            :param commands: sequences of two numbers
-            :return: another Integrator2D
+        :param dt: for how long to apply the commands
+        :param commands: sequences of two numbers
+        :return: another Integrator2D
         """
         # convert things to float, array
         dt = float(dt)
@@ -66,8 +66,8 @@ class Integrator2D(PlatformDynamicsFactory, PlatformDynamics, Serializable):
     @contract(returns="TSE2")
     def TSE2_from_state(self):
         """
-            For visualization purposes, this function gets a configuration in SE2
-            from the internal state.
+        For visualization purposes, this function gets a configuration in SE2
+        from the internal state.
         """
         # pose
         q = geo.SE2_from_R2(self.p0)

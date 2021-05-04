@@ -442,7 +442,12 @@ class ACGvGen(object):
                     last_cluster_str = "None"
                 print(
                     "/* e[parent] = %s, last_cluster = %s, last_level = %d, opened_braces: %s */"
-                    % (parent_str, last_cluster_str, last_level, str(self.__opened_braces),)
+                    % (
+                        parent_str,
+                        last_cluster_str,
+                        last_level,
+                        str(self.__opened_braces),
+                    )
                 )
 
             # Write children/parent with properties
@@ -499,7 +504,7 @@ class ACGvGen(object):
 
     def browse2_(self, G, id_node, cb, level):
         """
-            cb(level, node_data, children_results)
+        cb(level, node_data, children_results)
         """
         children_result = {}
         children = G.successors(id_node)

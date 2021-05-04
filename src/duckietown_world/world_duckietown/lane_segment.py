@@ -351,7 +351,11 @@ class LaneSegment(PlacedObject):
         center_points = self.center_line_points(points_per_segment=10)
         center_points = [geo.translation_angle_from_SE2(_)[0] for _ in center_points]
         p = drawing.polyline(
-            points=center_points, stroke=fill, fill="none", stroke_dasharray="0.02", stroke_width=0.01,
+            points=center_points,
+            stroke=fill,
+            fill="none",
+            stroke_dasharray="0.02",
+            stroke_width=0.01,
         )
         glane.add(p)
 
@@ -365,7 +369,10 @@ class LaneSegment(PlacedObject):
             gp = drawing.g()
             gp.attribs["class"] = "control-point"
             l = drawing.line(
-                start=p1.tolist(), end=p2.tolist(), stroke="black", stroke_width=self.width / 20.0,
+                start=p1.tolist(),
+                end=p2.tolist(),
+                stroke="black",
+                stroke_width=self.width / 20.0,
             )
             gp.add(l)
             c = drawing.circle(

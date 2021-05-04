@@ -67,7 +67,9 @@ def dd_test():
     radius_right = radius
     wheel_distance = 0.5
     dddp = DifferentialDriveDynamicsParameters(
-        radius_left=radius_left, radius_right=radius_right, wheel_distance=wheel_distance,
+        radius_left=radius_left,
+        radius_right=radius_right,
+        wheel_distance=wheel_distance,
     )
     q0 = geo.SE2_from_translation_angle([0, 0], 0)
     v0 = geo.se2.zero()
