@@ -47,7 +47,6 @@ install_requires = [
     "gltflib",
     "pyrender",
     "coloredlogs",
-    "colorama",
     "aido-protocols-daffy",
 ]
 tests_require = ["comptests-z6", "compmake-z6>=6.1.1"]

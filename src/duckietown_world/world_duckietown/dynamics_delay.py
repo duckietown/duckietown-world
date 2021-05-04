@@ -1,3 +1,5 @@
+import bisect
+
 import math
 from typing import Any, Tuple
 
@@ -50,8 +52,11 @@ class DelayedDynamics(PlatformDynamics):
         if t < self.timestamps[0]:
             return 0, 0, self.u0
 
-        a = np.array(self.timestamps)
-        idx = np.searchsorted(a, t, side="left")
+        # a = np.array(self.timestamps)
+        a = self.timestamps
+        idx = bisect.bisect_left(a, t)
+        # idx2 = np.searchsorted(a, t, side="left")
+        # assert idx==idx2, (idx, idx2)
 
         if idx > 0 and (idx == len(a) or math.fabs(t - a[idx - 1]) < math.fabs(t - a[idx])):
             return idx, a[idx], self.commands[idx - 1]
@@ -69,6 +74,7 @@ class DelayedDynamics(PlatformDynamics):
         self.commands.append(commands)
         self.timestamps.append(self.t)
         self.t += dt
+
         i, told, use_commands = self.get_commands_at(self.t - self.delay)
         # print(f't = {self.t}, t old = {told}'  )
         state2 = self.state.integrate(dt, use_commands)

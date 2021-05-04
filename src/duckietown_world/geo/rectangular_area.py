@@ -53,4 +53,4 @@ def sample_in_rect(a: RectangularArea) -> Tuple[float, float]:
     x = random.uniform(a.pmin[0], a.pmax[0])
     y = random.uniform(a.pmin[1], a.pmax[1])
 
-    return x, y
+    return float(x), float(y)
