@@ -21,18 +21,19 @@ from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
 
 import duckietown_world as dw
 from aido_schemas import (
+    FriendlyVelocity,
     PROTOCOL_FULL,
     PROTOCOL_NORMAL,
+    ProtocolDesc,
     RobotConfiguration,
     RobotName,
     Scenario,
     ScenarioDuckieSpec,
     ScenarioRobotSpec,
 )
-from aido_schemas.protocol_simulator import FriendlyVelocity, ProtocolDesc
 from .map_loading import _get_map_yaml, construct_map
 from .sampling_poses import sample_good_starting_pose
-from .utils import friendly_from_pose
+from .utils import friendly_from_pose, pose_from_friendly
 from ..geo.measurements_utils import iterate_by_class, iterate_by_test
 from ..gltf.export import export_gltf
 from ..utils.images import save_rgb_to_jpg, save_rgb_to_png
@@ -151,19 +152,22 @@ def make_scenario_main(args=None):
                     obs: Dict[str, object] = m["objects"]
 
                     for robot_name, srobot in scenario.robots.items():
-                        st = dw.SE2Transform.from_SE2(srobot.configuration.pose)
+                        p = pose_from_friendly(srobot.configuration.pose)
+                        st = dw.SE2Transform.from_SE2(p)
 
                         obs[robot_name] = dict(
                             kind="duckiebot", pose=st.as_json_dict(), height=0.12, color=srobot.color
                         )
 
                     for duckie_name, duckie in scenario.duckies.items():
-                        st = dw.SE2Transform.from_SE2(duckie.pose)
+                        p = pose_from_friendly(duckie.pose)
+                        st = dw.SE2Transform.from_SE2(p)
                         obs[duckie_name] = dict(
                             kind="duckie", pose=st.as_json_dict(), height=0.08, color=duckie.color
                         )
 
                     sim._interpret_map(m)
+                    sim.start_pose = None
                     sim.reset()
                     logger.info("rendering obs")
                     img = sim.render_obs()
@@ -209,7 +213,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
     dm = construct_map(y)
     if True:
         for robot_name, robot_spec in s.robots.items():
-            pose = cast(g.SE2value, robot_spec.configuration.pose)
+            pose = pose_from_friendly(robot_spec.configuration.pose)
             # gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
             gt = dw.SE2Transform.from_SE2(pose)
             ob = dw.DB18(color=robot_spec.color)
@@ -218,7 +222,7 @@ def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
 
     if True:
         for duckie_name, duckie_spec in s.duckies.items():
-            pose = cast(g.SE2value, duckie_spec.pose)
+            pose = pose_from_friendly(duckie_spec.pose)
 
             # gt = dw.Constant[dw.SE2Transform](dw.SE2Transform.from_SE2(pose))
 
@@ -453,14 +457,16 @@ def sample_trees(po: dw.PlacedObject, tree_density: float, tree_min_dist: float)
     if tree_density == 0:
         return []
 
+    good_tile_types = ["floor", "grass"]
+
     def choose_grass(x: dw.PlacedObject) -> bool:
-        if isinstance(x, dw.Tile) and x.kind == "floor":
+        if isinstance(x, dw.Tile) and x.kind in good_tile_types:
             return True
         else:
             return False
 
     def the_others(x: dw.PlacedObject) -> bool:
-        if isinstance(x, dw.Tile) and x.kind != "floor":
+        if isinstance(x, dw.Tile) and x.kind not in good_tile_types:
             return True
         else:
             return False
