@@ -180,3 +180,9 @@ class Tile(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _Tile
+
+
+class Group(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Group
