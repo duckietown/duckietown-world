@@ -1,0 +1,11 @@
+main:
+  frames: !include 'frames.yaml'
+  tiles: !include 'tiles.yaml'
+  tile_maps: !include 'tile_maps.yaml'
+  watchtowers: !include 'watchtowers.yaml'
+  citizens: !include 'citizens.yaml'
+  trafficsigns: !include 'trafficsigns.yaml'
+  groundtags: !include 'groundtags.yaml'
+  vehicles: !include 'vehicles.yaml'
+  cameras: !include 'cameras.yaml'
+  groups: !include 'groups.yaml'

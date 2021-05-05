@@ -1,0 +1,7 @@
+trafficsigns:
+  map_1/sign_stop_53:
+    id: 1
+    type: sign_stop
+  map_1/sign_stop_591:
+    id: 1
+    type: sign_stop
