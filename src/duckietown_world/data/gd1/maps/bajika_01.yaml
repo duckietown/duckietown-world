@@ -1,0 +1,9 @@
+# 4x10 fast track - ETHZ autolab
+tiles:
+- [asphalt,      asphalt,      curve_left/W,  straight/W,   straight/W,     asphalt,     asphalt]
+- [curve_left/W, straight/W,   3way_left/W,   asphalt,      curve_right/W,  straight/W,  curve_left/N]
+- [straight/N,   asphalt,      straight/N,    asphalt,      asphalt,        asphalt,     straight/N]
+- [3way_left/S,  straight/W,   4way/N,        straight/W,   4way/W,         straight/W,  curve_left/E]
+- [straight/N,  asphalt,      straight/N,    asphalt,      straight/N,     asphalt,     asphalt]
+- [curve_left/N, straight/W,   3way_left/W,   straight/W,   curve_left/E,   asphalt,     asphalt]
+tile_size: 0.585
