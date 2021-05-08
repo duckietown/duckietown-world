@@ -1,0 +1,5 @@
+tile_maps:
+  map_1:
+    tile_size:
+      x: 0.5851
+      y: 0.5851

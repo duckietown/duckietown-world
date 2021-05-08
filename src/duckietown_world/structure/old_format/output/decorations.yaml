@@ -1,0 +1,36 @@
+decorations:
+  map_1/tree1:
+    type: tree
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/house1:
+    type: house
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/truck1:
+    type: truck
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/bus1:
+    type: bus
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/bus2:
+    type: bus
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/bus3:
+    type: bus
+    colors:
+      trunk: brown
+      foliage: green
+  map_1/truck3:
+    type: truck
+    colors:
+      trunk: brown
+      foliage: green

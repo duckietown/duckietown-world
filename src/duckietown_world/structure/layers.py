@@ -1,10 +1,12 @@
 from abc import ABC
-from typing import Tuple, Dict, Optional, List, Iterator
 from re import search
+from typing import Tuple, Dict, List
+
 import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
-from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle, _Camera
+from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle, _Camera, \
+    _Decoration
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -120,3 +122,9 @@ class LayerCameras(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _Camera
+
+
+class LayerDecorations(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _Decoration

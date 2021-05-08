@@ -126,7 +126,6 @@ class _Vehicle(_PlacedObject):
 
 
 @dataclass
-# TODO: add a camera, when create vehicle,watchtower
 class _Camera(_Object):
     camera_matrix: List[float] = None  # TODO:  type check need
     distortion_parameters: List[float] = None
@@ -138,6 +137,15 @@ class _Camera(_Object):
         return {"camera_matrix": self.camera_matrix, "distortion_parameters": self.distortion_parameters,
                 "width": self.width, "height": self.height, "framerate": self.framerate
                 }
+
+
+@dataclass
+class _Decoration(_PlacedObject):
+    type: str = "tree"
+    colors: dict = field(default={"trunk": "brown", "foliage": "green"})
+
+    def dict(self) -> Dict[str, Any]:
+        return {"type": self.type, "colors": self.colors}
 
 
 class Camera(ConstructedObject):
@@ -186,3 +194,9 @@ class Group(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _Group
+
+
+class Decoration(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Decoration

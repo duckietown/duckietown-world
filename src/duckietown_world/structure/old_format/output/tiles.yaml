@@ -1,0 +1,337 @@
+tiles:
+  map_1/tile-0-0:
+    i: 0
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-1:
+    i: 0
+    j: 1
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-2:
+    i: 0
+    j: 2
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-3:
+    i: 0
+    j: 3
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-4:
+    i: 0
+    j: 4
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-5:
+    i: 0
+    j: 5
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-6:
+    i: 0
+    j: 6
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-0-7:
+    i: 0
+    j: 7
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-1-0:
+    i: 1
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-1-1:
+    i: 1
+    j: 1
+    k: 0
+    orientation: W
+    type: curve_left
+  map_1/tile-1-2:
+    i: 1
+    j: 2
+    k: 0
+    orientation: W
+    type: straight
+  map_1/tile-1-3:
+    i: 1
+    j: 3
+    k: 0
+    orientation: W
+    type: 3way_left
+  map_1/tile-1-4:
+    i: 1
+    j: 4
+    k: 0
+    orientation: W
+    type: straight
+  map_1/tile-1-5:
+    i: 1
+    j: 5
+    k: 0
+    orientation: W
+    type: straight
+  map_1/tile-1-6:
+    i: 1
+    j: 6
+    k: 0
+    orientation: N
+    type: curve_left
+  map_1/tile-1-7:
+    i: 1
+    j: 7
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-2-0:
+    i: 2
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-2-1:
+    i: 2
+    j: 1
+    k: 0
+    orientation: S
+    type: straight
+  map_1/tile-2-2:
+    i: 2
+    j: 2
+    k: 0
+    orientation: E
+    type: grass
+  map_1/tile-2-3:
+    i: 2
+    j: 3
+    k: 0
+    orientation: N
+    type: straight
+  map_1/tile-2-4:
+    i: 2
+    j: 4
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-2-5:
+    i: 2
+    j: 5
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-2-6:
+    i: 2
+    j: 6
+    k: 0
+    orientation: N
+    type: straight
+  map_1/tile-2-7:
+    i: 2
+    j: 7
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-3-0:
+    i: 3
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-3-1:
+    i: 3
+    j: 1
+    k: 0
+    orientation: S
+    type: 3way_left
+  map_1/tile-3-2:
+    i: 3
+    j: 2
+    k: 0
+    orientation: W
+    type: straight
+  map_1/tile-3-3:
+    i: 3
+    j: 3
+    k: 0
+    orientation: N
+    type: 3way_left
+  map_1/tile-3-4:
+    i: 3
+    j: 4
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-3-5:
+    i: 3
+    j: 5
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-3-6:
+    i: 3
+    j: 6
+    k: 0
+    orientation: N
+    type: straight
+  map_1/tile-3-7:
+    i: 3
+    j: 7
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-4-0:
+    i: 4
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-4-1:
+    i: 4
+    j: 1
+    k: 0
+    orientation: S
+    type: straight
+  map_1/tile-4-2:
+    i: 4
+    j: 2
+    k: 0
+    orientation: E
+    type: grass
+  map_1/tile-4-3:
+    i: 4
+    j: 3
+    k: 0
+    orientation: N
+    type: straight
+  map_1/tile-4-4:
+    i: 4
+    j: 4
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-4-5:
+    i: 4
+    j: 5
+    k: 0
+    orientation: N
+    type: curve_right
+  map_1/tile-4-6:
+    i: 4
+    j: 6
+    k: 0
+    orientation: E
+    type: curve_left
+  map_1/tile-4-7:
+    i: 4
+    j: 7
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-5-0:
+    i: 5
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-5-1:
+    i: 5
+    j: 1
+    k: 0
+    orientation: S
+    type: curve_left
+  map_1/tile-5-2:
+    i: 5
+    j: 2
+    k: 0
+    orientation: E
+    type: straight
+  map_1/tile-5-3:
+    i: 5
+    j: 3
+    k: 0
+    orientation: E
+    type: 3way_left
+  map_1/tile-5-4:
+    i: 5
+    j: 4
+    k: 0
+    orientation: E
+    type: straight
+  map_1/tile-5-5:
+    i: 5
+    j: 5
+    k: 0
+    orientation: E
+    type: curve_left
+  map_1/tile-5-6:
+    i: 5
+    j: 6
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-5-7:
+    i: 5
+    j: 7
+    k: 0
+    orientation: E
+    type: asphalt
+  map_1/tile-6-0:
+    i: 6
+    j: 0
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-1:
+    i: 6
+    j: 1
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-2:
+    i: 6
+    j: 2
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-3:
+    i: 6
+    j: 3
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-4:
+    i: 6
+    j: 4
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-5:
+    i: 6
+    j: 5
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-6:
+    i: 6
+    j: 6
+    k: 0
+    orientation: E
+    type: floor
+  map_1/tile-6-7:
+    i: 6
+    j: 7
+    k: 0
+    orientation: E
+    type: floor
