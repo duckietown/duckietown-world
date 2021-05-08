@@ -138,7 +138,10 @@ def iterate_by_test(po: PlacedObject, testf: Callable[[PlacedObject], bool]) -> 
             parents = get_parents(po, name)
 
             yield IterateByTestResult(
-                fqn=name, transform_sequence=transform_sequence, object=ob, parents=parents,
+                fqn=name,
+                transform_sequence=transform_sequence,
+                object=ob,
+                parents=parents,
             )
 
 

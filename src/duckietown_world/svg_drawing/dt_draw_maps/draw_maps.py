@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from duckietown_world.world_duckietown import DuckietownMap
 
 from duckietown_world import logger
-from .misc import draw_static
+from ..misc import draw_static
 
 __all__ = ["draw_maps_main"]
 

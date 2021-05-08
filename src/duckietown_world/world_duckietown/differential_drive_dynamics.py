@@ -15,12 +15,12 @@ __all__ = [
 
 class WheelVelocityCommands(Serializable):
     """
-        This represents the velocity commands for differential drive
-        kinematics.
+    This represents the velocity commands for differential drive
+    kinematics.
 
-        These are expressed in rad/s.
+    These are expressed in rad/s.
 
-        For both wheels, positive = moves forward.
+    For both wheels, positive = moves forward.
 
     """
 
@@ -34,10 +34,10 @@ class WheelVelocityCommands(Serializable):
 
 class DifferentialDriveDynamicsParameters(PlatformDynamicsFactory, Serializable):
     """
-        This class represents the parameters of the ideal differential drive dynamics.
+    This class represents the parameters of the ideal differential drive dynamics.
 
-        radius_left, radius_right: wheels radii
-        wheel_distance: distance between two wheels
+    radius_left, radius_right: wheels radii
+    wheel_distance: distance between two wheels
 
     """
 
@@ -56,9 +56,9 @@ class DifferentialDriveDynamicsParameters(PlatformDynamicsFactory, Serializable)
 
 class DifferentialDriveDynamics(GenericKinematicsSE2):
     """
-        This represents the state of differential drive.
+    This represents the state of differential drive.
 
-        This is a particular case of GenericKinematicsSE2.
+    This is a particular case of GenericKinematicsSE2.
 
     """
 

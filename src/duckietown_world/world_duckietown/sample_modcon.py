@@ -1,5 +1,6 @@
 import argparse
 import time
+from dataclasses import dataclass
 from typing import List
 
 import geometry as g
@@ -23,13 +24,26 @@ from duckietown_world.geo.rectangular_area import RectangularArea, sample_in_rec
 from .sampling import distance_poses, ieso
 from .utils import friendly_from_pose, pose_from_friendly
 
+episodes = {
+    "ep1": {"y": 0, "theta_deg": 0},
+    "ep2": {"y": 0.01, "theta_deg": 0},
+}
+
+
+@dataclass
+class EpSpec:
+    y: float
+    theta_deg: float
+
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--output", "-o", required=True)
-    parser.add_argument("--nduckies", type=int, required=True)
-    parser.add_argument("--ntiles", type=int, required=True)
+    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--seed", type=int, required=True)
+    parser.add_argument("--ntilesx", type=int, required=True)
+    parser.add_argument("--ntilesy", type=int, required=True)
     parser.add_argument("--scenario-name", type=str, required=True)
     parser.add_argument("--duckie-duckie-dist", type=float, default=0.3)
     parsed = parser.parse_args()
@@ -55,7 +69,7 @@ def sample_duckies(
     min_dist_from_other_duckie: float,
     bounds: dw.RectangularArea,
     timeout: float = 10,
-) -> List[SE2value]:
+) -> List[np.ndarray]:
     poses: List[SE2value] = []
 
     def far_enough(pose_: SE2value) -> bool:
@@ -94,15 +108,16 @@ def get_base_scenario(
 
     robots = {}
 
-    # L = tile_size * (ntiles / 2)
+    L = tile_size * (ntiles / 2)
+    # x = L / 8
+    # y = L / 2
 
-    pose: SE2value = SE2_from_xytheta([0.2, 0.2, np.deg2rad(45)])
-    fpose = friendly_from_pose(pose)
-    # vel = np.zeros((3, 3))
+    pose = SE2_from_xytheta([0.2, 0.2, np.deg2rad(45)])
+
     vel = FriendlyVelocity(0.0, 0.0, 0.0)
     robots["ego0"] = ScenarioRobotSpec(
         color="blue",
-        configuration=RobotConfiguration(fpose, vel),
+        configuration=RobotConfiguration(pose, vel),
         controllable=True,
         protocol=PROTOCOL_NORMAL,
         description="",

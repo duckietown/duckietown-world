@@ -85,7 +85,11 @@ class Bus(Vehicle):
     def draw_svg(self, drawing, g):
         L, W = 0.3, 0.2
         c = drawing.rect(
-            insert=(-L / 2, -W / 2), fill="grey", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
+            insert=(-L / 2, -W / 2),
+            fill="grey",
+            size=(L, W),
+            stroke_width="0.01",
+            stroke="#eeeeee",
         )
         g.add(c)
 
@@ -94,7 +98,11 @@ class Truck(Vehicle):
     def draw_svg(self, drawing, g):
         L, W = 0.4, 0.2
         c = drawing.rect(
-            insert=(-L / 2, -W / 2), fill="blue", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
+            insert=(-L / 2, -W / 2),
+            fill="blue",
+            size=(L, W),
+            stroke_width="0.01",
+            stroke="#eeeeee",
         )
         g.add(c)
 
@@ -103,7 +111,11 @@ class House(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2), fill="red", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
+            insert=(-L / 2, -W / 2),
+            fill="red",
+            size=(L, W),
+            stroke_width="0.01",
+            stroke="#eeeeee",
         )
         g.add(c)
 
@@ -112,7 +124,11 @@ class Barrier(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2), fill="pink", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
+            insert=(-L / 2, -W / 2),
+            fill="pink",
+            size=(L, W),
+            stroke_width="0.01",
+            stroke="#eeeeee",
         )
         g.add(c)
 
@@ -122,7 +138,11 @@ class Building(Decoration):
     def draw_svg(self, drawing, g):
         L, W = 0.5, 0.25
         c = drawing.rect(
-            insert=(-L / 2, -W / 2), fill="red", size=(L, W), stroke_width="0.01", stroke="#eeeeee",
+            insert=(-L / 2, -W / 2),
+            fill="red",
+            size=(L, W),
+            stroke_width="0.01",
+            stroke="#eeeeee",
         )
         g.add(c)
 

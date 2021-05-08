@@ -51,26 +51,26 @@ tests-coverage:
 	$(MAKE) coverage-report
 	$(MAKE) coverage-coveralls
 
-tests-LFV-coverage:
-	mkdir -p artifacts
-	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
+# tests-LFV-coverage:
+# 	mkdir -p artifacts
+# 	$(coverage_run) `which dt-world-draw-log` --filename test-data/LFV.json --output artifacts/LFV
 
 tests-maps-coverage:
 	mkdir -p artifacts
-	$(coverage_run) `which dt-world-draw-maps` --output artifacts/maps
+	$(coverage_run) -m duckietown_world.svg_drawing.dt_draw_maps --output artifacts/maps
 
 
 tests-coverage-single-nocontracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=1 $(coverage_run)  `which compmake` $(out)  -c "rmake"
+	-DISABLE_CONTRACTS=1 $(coverage_run) -m compmake $(out)  -c "rmake"
 
 tests-coverage-single-contracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit"  $(comptest_package)
-	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rmake"
+	-DISABLE_CONTRACTS=0 $(coverage_run)  -m compmake $(out) --contracts -c "rmake"
 
 tests-coverage-parallel-contracts:
 	-DISABLE_CONTRACTS=1 comptests -o $(out) --nonose -c "exit" $(package)
-	-DISABLE_CONTRACTS=0 $(coverage_run)  `which compmake` $(out) --contracts -c "rparmake"
+	-DISABLE_CONTRACTS=0 $(coverage_run)  -m compmake $(out) --contracts -c "rparmake"
 
 coverage-report:
 	coverage combine
