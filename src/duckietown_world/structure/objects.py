@@ -147,6 +147,12 @@ class _Decoration(_PlacedObject):
     def dict(self) -> Dict[str, Any]:
         return {"type": self.type, "colors": self.colors}
 
+    def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
+        s = 0.1
+        rect = drawing.rect(insert=(-s / 2, -s / 2), size=(s, s), fill=self.colors["trunk"],
+                            stroke=self.colors["foliage"], stroke_width=0.01)
+        g.add(rect)
+
 
 class Camera(ConstructedObject):
     @classmethod
