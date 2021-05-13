@@ -192,7 +192,7 @@ class Apriltag_measurer:
 
     def update_apriltags(self):
         result_map_yaml = self.map_yaml
-        choice = int(input("Read at from file (0) or enter manually (1): "))
+        choice = int(input("Read Apriltag measurements from a csv file (0) or enter manually (1): "))
         if choice == 0:
             self.read_at_data_from_csv(
                 filepath=input("Please provide the absolute path to the csv file: "),
