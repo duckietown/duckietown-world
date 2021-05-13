@@ -1,7 +1,10 @@
+import numpy as np
+import pandas as pd
+
 import argparse
 import os
 import pprint
-
+import csv
 import yaml
 
 
@@ -96,7 +99,7 @@ class Apriltag:
         return {
             "kind": "floor_tag",
             "pose": {"~SE2Transform": {"p": [self.x, self.y], "theta_deg": self.angle}},
-            "tag": {"~TagInstance": {"family": "36h11", "size": 0.08, "tag_id": self.tag_id}},
+            "tag": {"~TagInstance": {"family": "36h11", "size": 0.065, "tag_id": self.tag_id}},
         }
 
 
@@ -128,6 +131,12 @@ class Apriltag_measurer:
 
         return apriltag_dict
 
+    def get_at_dict_csv(self, Id, x_coord, y_coord, x_measure, y_measure, angle_measure):
+        complete_x = self.tile_size * x_coord + x_measure + self.x_offset
+        complete_y = self.tile_size * y_coord + y_measure + self.y_offset
+        apriltag = Apriltag(Id, complete_x, complete_y, angle_measure)
+        return apriltag.to_dict()
+
     def get_at_dict(self, at_number):
         x_count = input_int("give x coordinate of tile (first tile at origin is (0,0)) : ")
         if x_count is not None:
@@ -147,49 +156,89 @@ class Apriltag_measurer:
                             return apriltag.to_dict()
         return {}
 
+    def read_at_data_from_csv(self, filepath,map_yaml):
+        while True:
+            try:
+                data = pd.read_csv(filepath)
+            except:
+                print("\nwrong file path or format!")
+                filepath=input("Please provide the absolute path to the csv file: ")
+                continue
+            break
+        Id = data[['Id']].to_numpy()
+        x_coord = data[['x_coord']].to_numpy()
+        y_coord = data[['y_coord']].to_numpy()
+        x_measure = data[['x_measure']].to_numpy()
+        y_measure = data[['y_measure']].to_numpy()
+        angle_measure = data[['angle']].to_numpy()
+        for i in range(len(Id)):
+            at_dict_csv = self.get_at_dict_csv(int(Id[i]), float(x_coord[i]), float(y_coord[i]), float(x_measure[i]), float(y_measure[i]), int(angle_measure[i]))
+            new_name = "tag%i" % int(Id[i])
+            if int(Id[i]) in self.ground_tag_dict: 
+                map_yaml["objects"].pop(self.ground_tag_dict[int(Id[i])])
+            map_yaml["objects"][new_name] = at_dict_csv
+            self.ground_tag_dict[int(Id[i])] = new_name   
+        
+        set_map_diff_csv = set(self.ground_tag_dict.keys()) - set(Id.flatten())
+        if len(set_map_diff_csv) >0: 
+            print("These april tags are present:")
+            for tag_id in sorted(set_map_diff_csv):
+                print(tag_id)
+            modify = input("Do you want to keep them? (y/n) : ")
+            if modify == "n":
+                for tag_id in set_map_diff_csv:
+                    map_yaml["objects"].pop(self.ground_tag_dict[tag_id])
+        
+        return map_yaml
+
     def update_apriltags(self):
         result_map_yaml = self.map_yaml
-        while True:
-            header("Measure a new april tag. Enter -1 to exit ")
-            at_number = input("April tag id : ")
-            try:
-                at_number = int(at_number)
-            except Exception as e:
-                error("Error : %s " % e)
-                continue
-            if at_number < 0:
-                break
-            if at_number < 300 or at_number >= 400:
-                warning("This april tag number (%i) is not in the 300-399 range" % at_number)
-                continue_anyway = input("Are you sure you want to proceed? (y/n) : ")
-                if continue_anyway != "y":
+        choice = int(input("Read at from file (0) or enter manually (1): "))
+        if choice == 0:
+            self.read_at_data_from_csv(
+                filepath=input("Please provide the absolute path to the csv file: "),
+                map_yaml=result_map_yaml,
+            )
+        else:
+            while True:
+                header("Measure a new april tag. Enter -1 to exit ")
+                at_number = input("April tag id : ")
+                try:
+                    at_number = int(at_number)
+                except Exception as e:
+                    error("Error : %s " % e)
                     continue
+                if at_number < 0:
+                    break
+                if at_number < 300 or at_number >= 400:
+                    warning("This april tag number (%i) is not in the 300-399 range" % at_number)
+                    continue_anyway = input("Are you sure you want to proceed? (y/n) : ")
+                    if continue_anyway != "y":
+                        continue
 
-            if at_number in self.ground_tag_dict:
-                print("The april tag %i is already present" % at_number)
-                modify = input("Do you want to modify its coordinates ? (y/n) : ")
-                if modify == "y":
-                    print("modifying april tag %i" % at_number)
+                if at_number in self.ground_tag_dict:
+                    print("The april tag %i is already present" % at_number)
+                    modify = input("Do you want to modify its coordinates ? (y/n) : ")
+                    if modify == "y":
+                        at_dict = self.get_at_dict(at_number)
+                        new_name = "tag%i" % at_number
+                        result_map_yaml["objects"].pop(self.ground_tag_dict[at_number])
+                        result_map_yaml["objects"][new_name] = at_dict
+                        self.ground_tag_dict[at_number] = new_name
+
+                    else:
+                        print("not modifying april tag %i" % at_number)
+                        continue
+                else:
+                    print("Adding new april tag %i" % at_number)
                     at_dict = self.get_at_dict(at_number)
                     new_name = "tag%i" % at_number
-                    result_map_yaml["objects"].pop(self.ground_tag_dict[at_number])
                     result_map_yaml["objects"][new_name] = at_dict
                     self.ground_tag_dict[at_number] = new_name
-
-                else:
-                    print("not modifying april tag %i" % at_number)
-                    continue
-            else:
-                print("Adding new april tag %i" % at_number)
-                at_dict = self.get_at_dict(at_number)
-                new_name = "tag%i" % at_number
-                result_map_yaml["objects"][new_name] = at_dict
-                self.ground_tag_dict[at_number] = new_name
         return result_map_yaml
 
 
 MAP_PATH = "src/duckietown_world/data/gd1/maps"
-
 
 def main():
     parser = argparse.ArgumentParser(description="")
