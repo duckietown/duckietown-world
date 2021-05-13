@@ -184,7 +184,7 @@ class Apriltag_measurer:
             for tag_id in sorted(set_map_diff_csv):
                 print(tag_id)
             overwrite = input("Do you want to complete overwrite the existing map (i.e. will remove tags not in the csv)? (y/n) : ")
-            if modify == "n":
+            if overwrite == "y":
                 for tag_id in set_map_diff_csv:
                     map_yaml["objects"].pop(self.ground_tag_dict[tag_id])
         
