@@ -183,7 +183,7 @@ class Apriltag_measurer:
             print("These april tags were in the existing map file, but not in the csv file:")
             for tag_id in sorted(set_map_diff_csv):
                 print(tag_id)
-            modify = input("Do you want to keep them? (y/n) : ")
+            overwrite = input("Do you want to complete overwrite the existing map (i.e. will remove tags not in the csv)? (y/n) : ")
             if modify == "n":
                 for tag_id in set_map_diff_csv:
                     map_yaml["objects"].pop(self.ground_tag_dict[tag_id])
