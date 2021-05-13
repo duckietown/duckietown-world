@@ -180,7 +180,7 @@ class Apriltag_measurer:
         
         set_map_diff_csv = set(self.ground_tag_dict.keys()) - set(Id.flatten())
         if len(set_map_diff_csv) >0: 
-            print("These april tags are present:")
+            print("These april tags were in the existing map file, but not in the csv file:")
             for tag_id in sorted(set_map_diff_csv):
                 print(tag_id)
             modify = input("Do you want to keep them? (y/n) : ")
