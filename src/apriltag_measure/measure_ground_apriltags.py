@@ -4,7 +4,6 @@ import pandas as pd
 import argparse
 import os
 import pprint
-import csv
 import yaml
 
 
