@@ -142,7 +142,7 @@ class _Camera(_Object):
 @dataclass
 class _Decoration(_PlacedObject):
     type: str = "tree"
-    colors: dict = field(default={"trunk": "brown", "foliage": "green"})
+    colors: dict = field(default_factory={"trunk": "brown", "foliage": "green"})
 
     def dict(self) -> Dict[str, Any]:
         return {"type": self.type, "colors": self.colors}

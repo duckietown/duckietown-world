@@ -1,6 +1,8 @@
 from typing import Optional
 
-from duckietown_world.structure.utils import get_canonical_sign_name
+# from duckietown_world.structure.utils import get_canonical_sign_name
+from duckietown_world.world_duckietown.other_objects import get_canonical_sign_name
+from duckietown_world.resources import get_data_resources, get_resource_path, get_data_dir
 from pprint import pprint
 import numpy as np
 import shutil
@@ -22,7 +24,7 @@ LAYERS_NAME = [CITIZENS, DECORATIONS, FRAMES, TILES, TILE_MAP, TILES, TAGS, SIGN
 
 
 def get_id_by_type(type_of_obj: str) -> Optional[int]:
-    with open("./apriltagsDB.yaml") as file:
+    with open(f"{get_data_dir()}/apriltagsDB.yaml") as file:
         content = yaml.safe_load(file)
         for tag in content:
             if tag['traffic_sign_type'] == type_of_obj:
@@ -32,8 +34,11 @@ def get_id_by_type(type_of_obj: str) -> Optional[int]:
 
 def load() -> dict:
     layers: dict = {}
+    # print(os.getcwd())
+    # print(get_data_resources())
+    print(get_data_dir())
     for layer_name in LAYERS_NAME:
-        with open(f"./empty/{layer_name}.yaml") as file:
+        with open(f"{get_data_dir()}/maps/empty/{layer_name}.yaml") as file:
             layers[layer_name] = yaml.safe_load(file)
             print(layers[layer_name])
             if layers[layer_name][layer_name] is None:
@@ -43,12 +48,12 @@ def load() -> dict:
 
 
 def dump(new_format: dict):
-    #shutil.rmtree('./output')
-    #os.makedirs("./output")
+    # shutil.rmtree('./output')
+    # os.makedirs("./output")
     print(new_format)
     for layer_name in LAYERS_NAME:
-        #new_format[layer_name].pop(layer_name)
-        with open(f"./output/{layer_name}.yaml", "w") as file:
+        # new_format[layer_name].pop(layer_name)
+        with open(f"{os.getcwd()}/output/{layer_name}.yaml", "w") as file:
             file.write(yaml.dump(new_format[layer_name], Dumper=yaml.Dumper))
 
 
@@ -70,15 +75,14 @@ def convert_new_format(map_data: str):
     for i in range(len(tiles)):
         for j in range(len(tiles[0])):
             name_tile = tiles[i][j]
-            new_name_of_tile = f"{ROOT_OF_MAP}/tile-{i}-{j}"
+            new_name_of_tile = f"{ROOT_OF_MAP}/tile-{j}-{i}"
             if "/" in name_tile:
                 type_tile, orientation = name_tile.split("/")
             else:
-                type_tile, orientation = name_tile, "E"
+                type_tile, orientation = name_tile, "N"
             new_tiles[new_name_of_tile] = {
-                "i": i,
-                "j": j,
-                "k": 0,
+                "i": j,
+                "j": i,
                 "orientation": orientation,
                 "type": type_tile
             }
@@ -116,7 +120,7 @@ def convert_new_format(map_data: str):
                 "z": 0,
                 "roll": 0,
                 "pitch": 0,
-                "yaw": rotate
+                "yaw": float(rotate)
             }
         }
 
@@ -124,7 +128,7 @@ def convert_new_format(map_data: str):
             type_sign = kind.split("_")[1]
             id = get_id_by_type(type_sign)
             nf[SIGNS][SIGNS][new_name_obj] = {
-                "type": get_canonical_sign_name(type_sign),
+                "type": get_canonical_sign_name(kind),  # get_canonical_sign_name(type_sign),
                 "id": id
             }
         elif kind == "duckie":

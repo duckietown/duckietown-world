@@ -157,6 +157,7 @@ class AbstractLayer(metaclass=ABCMeta):
         layer = cls(dm)
         obj_type = cls.item_type()
         if data:
+            print(data)
             layer_items = {(name, obj_type): obj_type(**desc, dm=dm) for name, desc in data.items()}
         else:
             return layer, {}
