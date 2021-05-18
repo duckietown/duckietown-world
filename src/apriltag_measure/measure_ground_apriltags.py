@@ -1,11 +1,8 @@
-import numpy as np
-import pandas as pd
-
 import argparse
 import os
 import pprint
 import yaml
-
+import csv
 
 class bcolors:
     HEADER = "\033[95m"
@@ -156,29 +153,35 @@ class Apriltag_measurer:
         return {}
 
     def read_at_data_from_csv(self, filepath,map_yaml):
+        data = []
         while True:
             try:
-                data = pd.read_csv(filepath)
+                with open (filepath) as csvfile:
+                    file = csv.reader(csvfile)
+                    for row in file:
+                        data.append(row)
             except:
                 print("\nwrong file path or format!")
                 filepath=input("Please provide the absolute path to the csv file: ")
                 continue
             break
-        Id = data[['Id']].to_numpy()
-        x_coord = data[['x_coord']].to_numpy()
-        y_coord = data[['y_coord']].to_numpy()
-        x_measure = data[['x_measure']].to_numpy()
-        y_measure = data[['y_measure']].to_numpy()
-        angle_measure = data[['angle']].to_numpy()
-        for i in range(len(Id)):
-            at_dict_csv = self.get_at_dict_csv(int(Id[i]), float(x_coord[i]), float(y_coord[i]), float(x_measure[i]), float(y_measure[i]), int(angle_measure[i]))
-            new_name = "tag%i" % int(Id[i])
-            if int(Id[i]) in self.ground_tag_dict: 
-                map_yaml["objects"].pop(self.ground_tag_dict[int(Id[i])])
+        tag_set = set()
+        for d in data:
+            tag_id = int(d[0])
+            x_coord = int(d[1])
+            y_coord = int(d[2])
+            x_measure = float(d[3])
+            y_measure = float(d[4])
+            angle = int(d[5])
+            tag_set.add(tag_id)
+            at_dict_csv = self.get_at_dict_csv(tag_id, x_coord, y_coord, x_measure, y_measure, angle)
+            new_name = "tag%i" % tag_id
+            if tag_id in self.ground_tag_dict: 
+                map_yaml["objects"].pop(self.ground_tag_dict[tag_id])
             map_yaml["objects"][new_name] = at_dict_csv
-            self.ground_tag_dict[int(Id[i])] = new_name   
+            self.ground_tag_dict[tag_id] = new_name   
         
-        set_map_diff_csv = set(self.ground_tag_dict.keys()) - set(Id.flatten())
+        set_map_diff_csv = set(self.ground_tag_dict.keys()) - tag_set
         if len(set_map_diff_csv) >0: 
             print("These april tags were in the existing map file, but not in the csv file:")
             for tag_id in sorted(set_map_diff_csv):
