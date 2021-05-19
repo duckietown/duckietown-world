@@ -20,8 +20,8 @@ tiles:
 #      that (1.5, 2.5) would be exactly in the middle of tile (1, 2)
 # height: Objects can be scaled according to their real-world height in meters
 #         Duckietown tiles are 61cm, or 0.61 meter
-# rotate: the rotation angle determine the object's orientation
-#         a positive rotation angle corresponds to a counter-clockwise
+  # rotate: the rotation angle determine the object's orientation
+  #         a positive rotation angle corresponds to a counter-clockwise
 #         (leftward) rotation. The angles are in degrees.
 #         Models should, at angle 0, face towards the positive X axis.
 objects:
@@ -104,4 +104,4 @@ objects:
   height: 0.2
   optional: true
 
-tile_size: 0.5851
+tile_size: 0.585

@@ -79,10 +79,10 @@ def convert_new_format(map_data: str):
             if "/" in name_tile:
                 type_tile, orientation = name_tile.split("/")
             else:
-                type_tile, orientation = name_tile, "N"
+                type_tile, orientation = name_tile, "E"
             new_tiles[new_name_of_tile] = {
-                "i": j,
-                "j": i,
+                "i": i,
+                "j": j,
                 "orientation": orientation,
                 "type": type_tile
             }
