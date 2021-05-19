@@ -1,13 +1,12 @@
+import os
 from typing import Optional
 
+import numpy as np
+import yaml
+
+from duckietown_world.resources import get_data_dir
 # from duckietown_world.structure.utils import get_canonical_sign_name
 from duckietown_world.world_duckietown.other_objects import get_canonical_sign_name
-from duckietown_world.resources import get_data_resources, get_resource_path, get_data_dir
-from pprint import pprint
-import numpy as np
-import shutil
-import yaml
-import os
 
 CITIZENS = 'citizens'
 DECORATIONS = 'decorations'
@@ -34,9 +33,6 @@ def get_id_by_type(type_of_obj: str) -> Optional[int]:
 
 def load() -> dict:
     layers: dict = {}
-    # print(os.getcwd())
-    # print(get_data_resources())
-    print(get_data_dir())
     for layer_name in LAYERS_NAME:
         with open(f"{get_data_dir()}/maps/empty/{layer_name}.yaml") as file:
             layers[layer_name] = yaml.safe_load(file)
@@ -48,9 +44,6 @@ def load() -> dict:
 
 
 def dump(new_format: dict):
-    # shutil.rmtree('./output')
-    # os.makedirs("./output")
-    print(new_format)
     for layer_name in LAYERS_NAME:
         # new_format[layer_name].pop(layer_name)
         with open(f"{os.getcwd()}/output/{layer_name}.yaml", "w") as file:
@@ -61,7 +54,6 @@ def convert_new_format(map_data: str):
     old_format_data = yaml.load(map_data, Loader=yaml.Loader)
     nf = load()
     frames = nf[FRAMES][FRAMES]
-    pprint(nf)
 
     # tile maps layer
     tile_size = float(old_format_data['tile_size'])
@@ -100,7 +92,6 @@ def convert_new_format(map_data: str):
 
     # objects
     objects = old_format_data["objects"]
-    print(objects)
     for key in objects:
         obj: dict = objects[key]
         kind: str = obj["kind"]
@@ -150,13 +141,10 @@ def convert_new_format(map_data: str):
                 }
             }
 
-    # print('----------------------------')
-    # pprint(old_format_data)
     return nf
 
 
 if __name__ == '__main__':
     with open("udem.yaml") as file:
         new_format_map = convert_new_format(file.read())
-        print()
         dump(new_format_map)
