@@ -40,3 +40,6 @@ pyrender
 colorama
 coloredlogs
 aido-protocols-daffy
+
+# Allow compatibility with Python versions < 3.8
+typing_extensions
