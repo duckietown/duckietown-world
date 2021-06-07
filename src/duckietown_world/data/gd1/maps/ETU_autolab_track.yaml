@@ -1,16 +1,15 @@
-# 11x7 tiles for SPbETU Demo
+# 11x7 tiles for ETU_autolab_track Demo
 tiles:
-- [asphalt,asphalt,       asphalt,       asphalt,        asphalt,       asphalt,    asphalt]
-- [asphalt,asphalt,       asphalt,       asphalt,        curve_right/S, straight/S, curve_right/W]
-- [asphalt,asphalt,       asphalt,       curve_right/S,  curve_left/E,  asphalt,    straight/E]
-- [asphalt,asphalt,       asphalt,       straight/E,     asphalt,       asphalt,    straight/E]
-- [asphalt,asphalt,       curve_right/S, curve_left/E,   asphalt,       asphalt,    straight/E]
-- [asphalt,asphalt,       straight/E,    asphalt,        asphalt,       asphalt,    straight/E]
-- [asphalt,curve_right/S, curve_left/E,  asphalt,        asphalt,       asphalt,    straight/E]
-- [asphalt,straight/E,    asphalt,       asphalt,        asphalt,       asphalt,    straight/E]
-- [asphalt,straight/E,    asphalt,       asphalt,        asphalt,       asphalt,    straight/E]
-- [asphalt,straight/E,    asphalt,       asphalt,        asphalt,       asphalt,    straight/E]
-- [asphalt,curve_left/S,  straight/S,    straight/S,     straight/S,    straight/S, curve_left/E]
+- [asphalt,asphalt,       asphalt,       asphalt,        curve_right/N,straight/E,curve_right/E]
+- [asphalt,asphalt,       asphalt,       curve_right/N, curve_left/E,  asphalt,    straight/S]
+- [asphalt,asphalt,       asphalt,       straight/N,    asphalt,       asphalt,    straight/S]
+- [asphalt,asphalt,       curve_right/N,curve_left/E,   asphalt,       asphalt,    straight/S]
+- [asphalt,asphalt,       straight/N,    asphalt,        asphalt,       asphalt,    straight/S]
+- [asphalt,curve_right/N, curve_left/E,  asphalt,        asphalt,       asphalt,    straight/S]
+- [asphalt,straight/N,   asphalt,       asphalt,        asphalt,       asphalt,    straight/S]
+- [asphalt,straight/N,   asphalt,       asphalt,        asphalt,       asphalt,    straight/S]
+- [asphalt,straight/N,   asphalt,       asphalt,        asphalt,       asphalt,    straight/S]
+- [asphalt,curve_right/W,  straight/W,   straight/W,    straight/W,   straight/W,curve_right/S]
 
 tile_size: 0.542
 objects:
@@ -29,11 +28,11 @@ objects:
         tag_id: 300
   tag301:
     kind: floor_tag
-    pose:
+    pose: 
       ~SE2Transform:
         p:
-        - 1.609
-        - 0.59
+        - 1.559
+        - 0.47
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -45,8 +44,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.126
-        - 0.595
+        - 2.076
+        - 0.475
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -58,8 +57,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.598
-        - 0.59
+        - 2.548
+        - 0.47
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -71,8 +70,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.159
-        - 1.005
+        - 3.109
+        - 0.676
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -84,8 +83,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.177
-        - 1.51
+        - 3.127
+        - 1.385
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -97,8 +96,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.177
-        - 2.110
+        - 3.127
+        - 4.9910000000000005
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -110,8 +109,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.179
-        - 2.652
+        - 3.1290000000000004
+        - 4.524
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -123,8 +122,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.165
-        - 3.211
+        - 3.115
+        - 3.077
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -136,8 +135,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.183
-        - 3.837
+        - 3.133
+        - 3.7279999999999998
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -149,8 +148,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.175
-        - 4.323
+        - 3.125
+        - 4.212000000000001
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -162,21 +161,21 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.173
-        - 4.732
+        - 3.123
+        - 4.62
         theta_deg: 90
     tag:
       ~TagInstance:
         family: 36h11
         size: 0.065
-        tag_id: 311
+        tag_id: 334
   tag312:
     kind: floor_tag
     pose:
       ~SE2Transform:
         p:
-        - 2.801
-        - 4.810
+        - 2.7510000000000003
+        - 4.711
         theta_deg: 180
     tag:
       ~TagInstance:
@@ -188,8 +187,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.561
-        - 5.455
+        - 2.511
+        - 5.335
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -201,8 +200,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.654
-        - 4.369
+        - 2.7540000000000004
+        - 4.349
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -214,8 +213,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.099
-        - 4.913
+        - 2.2199999999999998
+        - 4.793
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -227,7 +226,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.270
+        - 2.3609999999999998
         - 4.067
         theta_deg: 270
     tag:
@@ -240,8 +239,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.608
-        - 4.085
+        - 1.728
+        - 4.059
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -253,8 +252,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.143
-        - 3.328
+        - 2.233
+        - 3.3289999999999997
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -266,8 +265,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.221
-        - 3.612
+        - 1.321
+        - 3.5679999999999996
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -280,7 +279,7 @@ objects:
       ~SE2Transform:
         p:
         - 1.812
-        - 3.195
+        - 3.1279999999999997
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -292,8 +291,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.062
-        - 2.766
+        - 1.1520000000000001
+        - 2.706
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -306,7 +305,7 @@ objects:
       ~SE2Transform:
         p:
         - 1.162
-        - 2.135
+        - 2.073
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -318,8 +317,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.563
-        - 2.465
+        - 0.583
+        - 2.4229999999999996
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -331,7 +330,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.458
+        - 0.493
         - 1.73
         theta_deg: 90
     tag:
@@ -344,8 +343,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.113
-        - 1.517
+        - 1.142
+        - 1.5170000000000001
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -357,7 +356,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.457
+        - 0.492
         - 1.008
         theta_deg: 90
     tag:
@@ -370,7 +369,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.483
+        - 0.503
         - 0.75
         theta_deg: 90
     tag:
@@ -383,8 +382,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.725
-        - 0.082
+        - 0.7250000000000001
+        - 0.08
         theta_deg: 135
     tag:
       ~TagInstance:
@@ -397,7 +396,7 @@ objects:
       ~SE2Transform:
         p:
         - 3.268
-        - 5.488
+        - 5.2780000000000005
         theta_deg: 0
     tag:
       ~TagInstance:
