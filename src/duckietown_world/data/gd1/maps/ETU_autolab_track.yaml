@@ -1,5 +1,6 @@
 # 11x7 tiles for ETU_autolab_track Demo
 tiles:
+- [asphalt,asphalt,       asphalt,       asphalt,        asphalt,       asphalt,    asphalt]
 - [asphalt,asphalt,       asphalt,       asphalt,        curve_right/N,straight/E,curve_right/E]
 - [asphalt,asphalt,       asphalt,       curve_right/N, curve_left/E,  asphalt,    straight/S]
 - [asphalt,asphalt,       asphalt,       straight/N,    asphalt,       asphalt,    straight/S]
@@ -28,11 +29,11 @@ objects:
         tag_id: 300
   tag301:
     kind: floor_tag
-    pose: 
+    pose:
       ~SE2Transform:
         p:
-        - 1.559
-        - 0.47
+        - 1.609
+        - 0.59
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -44,8 +45,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.076
-        - 0.475
+        - 2.126
+        - 0.595
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -57,8 +58,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.548
-        - 0.47
+        - 2.598
+        - 0.59
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -70,8 +71,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.109
-        - 0.676
+        - 3.159
+        - 1.005
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -83,8 +84,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.127
-        - 1.385
+        - 3.177
+        - 1.51
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -96,8 +97,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.127
-        - 4.9910000000000005
+        - 3.177
+        - 2.110
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -109,8 +110,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.1290000000000004
-        - 4.524
+        - 3.179
+        - 2.652
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -122,8 +123,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.115
-        - 3.077
+        - 3.165
+        - 3.211
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -135,8 +136,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.133
-        - 3.7279999999999998
+        - 3.183
+        - 3.837
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -148,8 +149,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.125
-        - 4.212000000000001
+        - 3.175
+        - 4.323
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -161,21 +162,21 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.123
-        - 4.62
+        - 3.173
+        - 4.732
         theta_deg: 90
     tag:
       ~TagInstance:
         family: 36h11
         size: 0.065
-        tag_id: 334
+        tag_id: 311
   tag312:
     kind: floor_tag
     pose:
       ~SE2Transform:
         p:
-        - 2.7510000000000003
-        - 4.711
+        - 2.801
+        - 4.810
         theta_deg: 180
     tag:
       ~TagInstance:
@@ -187,8 +188,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.511
-        - 5.335
+        - 2.561
+        - 5.455
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -200,8 +201,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.7540000000000004
-        - 4.349
+        - 2.654
+        - 4.369
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -213,8 +214,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.2199999999999998
-        - 4.793
+        - 2.099
+        - 4.913
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -226,8 +227,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.3609999999999998
-        - 4.067
+        - 2.270
+        - 4.167
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -239,8 +240,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.728
-        - 4.059
+        - 1.608
+        - 4.085
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -252,8 +253,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.233
-        - 3.3289999999999997
+        - 2.143
+        - 3.328
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -265,8 +266,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.321
-        - 3.5679999999999996
+        - 1.221
+        - 3.612
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -279,7 +280,7 @@ objects:
       ~SE2Transform:
         p:
         - 1.812
-        - 3.1279999999999997
+        - 3.195
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -291,8 +292,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.1520000000000001
-        - 2.706
+        - 1.062
+        - 2.766
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -305,7 +306,7 @@ objects:
       ~SE2Transform:
         p:
         - 1.162
-        - 2.073
+        - 2.135
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -317,8 +318,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.583
-        - 2.4229999999999996
+        - 0.563
+        - 2.465
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -330,7 +331,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.493
+        - 0.458
         - 1.73
         theta_deg: 90
     tag:
@@ -343,8 +344,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.142
-        - 1.5170000000000001
+        - 1.113
+        - 1.517
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -356,7 +357,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.492
+        - 0.457
         - 1.008
         theta_deg: 90
     tag:
@@ -369,7 +370,7 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.503
+        - 0.483
         - 0.75
         theta_deg: 90
     tag:
@@ -382,8 +383,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.7250000000000001
-        - 0.08
+        - 0.725
+        - 0.082
         theta_deg: 135
     tag:
       ~TagInstance:
@@ -396,7 +397,7 @@ objects:
       ~SE2Transform:
         p:
         - 3.268
-        - 5.2780000000000005
+        - 5.488
         theta_deg: 0
     tag:
       ~TagInstance:
