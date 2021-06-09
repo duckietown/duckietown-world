@@ -140,6 +140,20 @@ class _Camera(_Object):
 
 
 @dataclass
+class _Environment(_Object):
+    date: str = ""
+    location: str = ""
+    weather: str = ""
+
+    def dict(self) -> Dict[str, Any]:
+        return {
+            "date": self.date,
+            "location": self.location,
+            "weather": self.weather
+        }
+
+
+@dataclass
 class _Decoration(_PlacedObject):
     type: str = "tree"
     colors: dict = field(default_factory={"trunk": "brown", "foliage": "green"})
@@ -206,3 +220,9 @@ class Decoration(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _Decoration
+
+
+class Environment(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Environment
