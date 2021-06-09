@@ -41,13 +41,17 @@ install_requires = [
     "zuper-ipce-z6",
     "aido-protocols-daffy",
     "zuper-typing-z6>=6.0.66",
+    "zuper-commons-z6",
+    "six",
+    "PyContracts3",
     "trimesh",
     "gltflib",
     "pyrender",
     "coloredlogs",
     "colorama",
+    "aido-protocols-daffy",
 ]
-tests_require = ["comptests-z6"]
+tests_require = ["comptests-z6", "compmake-z6>=6.1.1"]
 system_version = tuple(sys.version_info)[:3]
 
 if system_version < (3, 7):

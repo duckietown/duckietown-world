@@ -3,10 +3,16 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-3.7:
+      - test-3.8-staging:
           context: pip-staging
-      - test-3.8:
-          context: pip-staging
+          filters:
+            branches:
+              only: /daffy-staging.*/
+      - test-3.8-production:
+          context: production
+          filters:
+            branches:
+              ignore: /daffy-staging.*/
 
 jobs:
   test-3.6: &test-template
@@ -133,7 +139,11 @@ jobs:
     <<: *test-template
     docker:
       - image: python:3.7.6
-  test-3.8:
+  test-3.8-production:
+    <<: *test-template
+    docker:
+    - image: python:3.8
+  test-3.8-staging:
     <<: *test-template
     docker:
     - image: python:3.8

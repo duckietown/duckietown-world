@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from duckietown_world.structure.bases import IBaseMap
 from duckietown_world import logger
 
-from .misc import draw_static
+from ..misc import draw_static
 
 __all__ = ["draw_maps_main"]
 

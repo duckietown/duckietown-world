@@ -1,4 +1,7 @@
 # coding=utf-8
+import random
+from typing import Tuple
+
 import math
 
 import numpy as np
@@ -6,7 +9,7 @@ from duckietown_serialization_ds1 import Serializable
 
 from .region import Region
 
-__all__ = ["RectangularArea"]
+__all__ = ["RectangularArea", "sample_in_rect"]
 
 
 class RectangularArea(Serializable, Region):
@@ -44,3 +47,10 @@ class RectangularArea(Serializable, Region):
             d1 = d0 = min(abs(pmin[1] - p[1]), abs(pmax[1] - p[1]))
 
         return math.hypot(d0, d1)
+
+
+def sample_in_rect(a: RectangularArea) -> Tuple[float, float]:
+    x = random.uniform(a.pmin[0], a.pmax[0])
+    y = random.uniform(a.pmin[1], a.pmax[1])
+
+    return x, y

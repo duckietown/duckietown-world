@@ -1,0 +1,308 @@
+objects:
+  tag323:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.156999999999999
+        - -0.054000000000000006
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 323
+  tag340:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.396
+        - -0.0537
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 340
+  tag343:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.3689999999999998
+        - 1.7785
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 343
+  tag346:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.0204999999999997
+        - 0.638
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 346
+  tag348:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.6375
+        - 1.1179999999999999
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 348
+  tag349:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.618399999999999
+        - 0.638
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 349
+  tag354:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.3575
+        - 1.729
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 354
+  tag355:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.579
+        - 1.1195
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 355
+  tag356:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 0.637
+        - 0.635
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 356
+  tag357:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.618999999999999
+        - 2.282
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 357
+  tag358:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.180999999999999
+        - 2.98
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 358
+  tag359:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 3.5669999999999997
+        - 1.982
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 359
+  tag361:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.2288
+        - -0.023499999999999997
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 361
+  tag373:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 4.036
+        - 1.811
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 373
+  tag374:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.8655
+        - 1.06
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 374
+  tag375:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 3.5637999999999996
+        - 0.7105
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 375
+  tag376:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.632
+        - 2.3945
+        theta_deg: 90
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 376
+  tag396:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 2.901
+        - 1.9569999999999999
+        theta_deg: 270
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 396
+  tag398:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 5.316999999999999
+        - 2.097
+        theta_deg: 180
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 398
+  tag399:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.992
+        - 1.236
+        theta_deg: 225
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 399
+tile_size: 0.585
+tiles:
+- - asphalt
+  - asphalt
+  - asphalt
+  - asphalt
+  - asphalt
+  - curve_left/W
+  - straight/W
+  - straight/W
+  - curve_left/N
+- - asphalt
+  - curve_left/W
+  - straight/W
+  - curve_left/N
+  - asphalt
+  - straight/S
+  - asphalt
+  - asphalt
+  - straight/S
+- - curve_left/W
+  - curve_left/E
+  - asphalt
+  - curve_left/S
+  - straight/W
+  - 4way/N
+  - straight/W
+  - straight/W
+  - 3way_left/N
+- - straight/S
+  - asphalt
+  - asphalt
+  - asphalt
+  - asphalt
+  - straight/S
+  - asphalt
+  - asphalt
+  - straight/S
+- - curve_left/S
+  - straight/W
+  - straight/W
+  - straight/W
+  - straight/W
+  - 3way_left/E
+  - straight/W
+  - straight/W
+  - curve_left/E

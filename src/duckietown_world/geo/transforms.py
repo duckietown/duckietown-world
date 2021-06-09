@@ -80,6 +80,9 @@ class VariableTransformSequence(TransformSequence, GenericSequence[Transform]): 
 
 
 class SE2Transform(Transform, Serializable):
+    p: np.ndarray
+    theta: float
+
     @contract(p="seq[2](float|int)")
     def __init__(self, p: Sequence[float], theta: float):
         self.p = np.array(p, dtype="float64")

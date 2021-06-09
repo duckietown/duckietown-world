@@ -17,3 +17,4 @@ src/duckietown_world/data/gd1/meshes/duckiebot.glb
 src/duckietown_world/data/gd1/meshes/tree.blend1
 test-scenarios/scene1/
 *pxd
+notebooks/*.html

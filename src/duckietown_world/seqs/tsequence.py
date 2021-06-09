@@ -12,6 +12,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    TYPE_CHECKING,
 )
 
 from zuper_commons.types import ZException, ZValueError
@@ -27,6 +28,11 @@ __all__ = [
     "SampledSequenceBuilder",
     "downsample",
 ]
+
+
+if TYPE_CHECKING:
+    from dataclasses import dataclass
+    from typing import Generic
 
 
 class UndefinedAtTime(ZException):
@@ -57,10 +63,10 @@ class GenericSequence(Generic[X]):
     @abstractmethod
     def get_sampling_points(self) -> Union[str, typing.Sequence[Timestamp]]:
         """
-            Returns the lists of interesting points.
+        Returns the lists of interesting points.
 
-            Returns the special value CONTINUOUS if
-            dense sampling is possible
+        Returns the special value CONTINUOUS if
+        dense sampling is possible
         """
 
 

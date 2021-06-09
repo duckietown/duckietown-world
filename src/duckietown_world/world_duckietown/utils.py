@@ -1,19 +1,29 @@
+from typing import Dict
+
+import geometry
 import geometry as geo
 import numpy as np
-from geometry import SE2, SE2value
+from geometry import (
+    linear_angular_from_se2,
+    SE2,
+    se2_from_linear_angular,
+    SE2_from_translation_angle,
+    SE2value,
+    se2value,
+)
 
+from aido_schemas import FriendlyPose, FriendlyVelocity
+from ..seqs import SampledSequence, SampledSequenceBuilder
 from ..svg_drawing import TimeseriesPlot
-from ..seqs import SampledSequence
-from ..seqs import SampledSequenceBuilder
-
-from geometry import se2value, linear_angular_from_se2
-from typing import Dict
 
 __all__ = [
     "get_velocities_from_sequence",
     "velocity_from_poses",
     "relative_pose",
     "timeseries_robot_velocity",
+    "friendly_from_pose",
+    "pose_from_friendly",
+    "vel_from_friendly",
 ]
 
 
@@ -80,3 +90,17 @@ Velocities in body frame. Given in m/s and deg/s.
     """
     timeseries["velocity"] = TimeseriesPlot("Velocities in body frame", long_description, sequences)
     return timeseries
+
+
+def friendly_from_pose(a: SE2value) -> FriendlyPose:
+    t, theta = geometry.translation_angle_from_SE2(a)
+    theta_deg = np.rad2deg(theta)
+    return FriendlyPose(float(t[0]), float(t[1]), float(theta_deg))
+
+
+def pose_from_friendly(p: FriendlyPose) -> SE2value:
+    return SE2_from_translation_angle([p.x, p.y], np.deg2rad(p.theta_deg))
+
+
+def vel_from_friendly(p: FriendlyVelocity) -> se2value:
+    return se2_from_linear_angular([p.x, p.y], np.deg2rad(p.theta_deg))

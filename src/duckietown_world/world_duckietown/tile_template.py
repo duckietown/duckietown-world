@@ -15,7 +15,7 @@ data = """
 go_right: &go_right
     ~LaneSegment:
       width: &width 0.376
-      control_points: 
+      control_points:
         - ~SE2Transform:
             p: [-0.50, -0.22]
             theta_deg: 0
@@ -29,7 +29,7 @@ go_right: &go_right
 go_straight: &go_straight
     ~LaneSegment:
       width: *width
-      control_points: 
+      control_points:
         - ~SE2Transform:
             p: [-0.5, -0.22]
             theta_deg: 0
@@ -40,20 +40,20 @@ go_straight: &go_straight
 go_left: &go_left
     ~LaneSegment:
       width: *width
-      control_points: 
+      control_points:
         - ~SE2Transform:
             p: [-0.5, -0.22]
-            theta_deg: 0 
+            theta_deg: 0
 
         - ~SE2Transform:
             p: [0.0, 0.0]
             theta_deg: 45
- 
+
         - ~SE2Transform:
             p: [+0.22, +0.50]
-            theta_deg: 90 
+            theta_deg: 90
 
-            
+
 straight:
     ~PlacedObject:
         children:
@@ -76,9 +76,9 @@ curve_left: &curve_left
     ~PlacedObject:
         children:
             curve: *curve_right
-        spatial_relations: 
+        spatial_relations:
             curve: {~SE2Transform: {theta_deg: 270}}
-             
+
 
 1way: &1way
      ~PlacedObject:
@@ -86,7 +86,7 @@ curve_left: &curve_left
             go_right: *go_right
             go_left: *go_left
             go_straight: *go_straight
-            
+
 4way:
     ~PlacedObject:
         children:
@@ -99,10 +99,10 @@ curve_left: &curve_left
             b: {~SE2Transform: {theta_deg: 90}}
             c: {~SE2Transform: {theta_deg: 180}}
             d: {~SE2Transform: {theta_deg: 270}}
-            
-#    |    |        
+
+#    |    |
 # ---      ----
-#  
+#
 # -----------
 
 3way_left: &3way_left
@@ -123,13 +123,13 @@ curve_left: &curve_left
             east_go_straight: {~SE2Transform: {theta_deg: 180}}
 
 3way_right:
-    ~PlacedObject:  
+    ~PlacedObject:
         children:
-            template: *3way_left           
+            template: *3way_left
         spatial_relations:
-            template: {~SE2Transform: {theta_deg: 180}}   
-            
- 
+            template: {~SE2Transform: {theta_deg: 180}}
+
+
 
 """
 
