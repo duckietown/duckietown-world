@@ -404,3 +404,29 @@ objects:
         family: 36h11
         size: 0.065
         tag_id: 329
+  tag330:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 1.149
+        - 0.60
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 330
+  tag331:
+    kind: floor_tag
+    pose:
+      ~SE2Transform:
+        p:
+        - 3.176
+        - 0.60
+        theta_deg: 0
+    tag:
+      ~TagInstance:
+        family: 36h11
+        size: 0.065
+        tag_id: 331
