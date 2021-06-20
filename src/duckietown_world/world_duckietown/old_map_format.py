@@ -1,4 +1,11 @@
-from typing import Dict, List, NewType, TypedDict, Union
+import sys
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module
+else:
+    from typing_extensions import TypedDict
+
+from typing import Dict, List, NewType, Union
 
 __all__ = ["MapFormat1", "MapFormat1Object", "MapFormat1Constants"]
 
