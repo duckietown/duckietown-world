@@ -2,14 +2,14 @@ FROM python:3.6
 
 WORKDIR /project
 
-RUN pip3 install -U "pip>=20.2"
+RUN python3 -m pip install -U "pip>=20.2"
 COPY requirements.* ./
 RUN cat requirements.* > .requirements.txt
-RUN  pip3 install  -r .requirements.txt
+RUN python3 -m pip install  -r .requirements.txt
 
 
 COPY src .
 COPY setup.py .
-RUN pip install --no-deps .
+RUN python3 -m pip install --no-deps .
 
 RUN make tests
