@@ -22,8 +22,6 @@ from zuper_ipce import IEDO, IESO, ipce_from_object, object_from_ipce
 import duckietown_world as dw
 from aido_schemas import (
     FriendlyVelocity,
-    PROTOCOL_FULL,
-    PROTOCOL_NORMAL,
     ProtocolDesc,
     RobotConfiguration,
     RobotName,
@@ -71,6 +69,17 @@ class ScenarioGenerationParam:
     tree_min_dist: float = 0.4
 
 
+@dataclass
+class MultiConfigEntry:
+    repeat: int
+    config: ScenarioGenerationParam
+
+
+@dataclass
+class MultiConfig:
+    sample: Dict[str, MultiConfigEntry]
+
+
 iedo = IEDO(use_remembered_classes=True, remember_deserialized_classes=True)
 ieso = IESO(with_schema=False)
 
@@ -81,6 +90,7 @@ def make_scenario_main(args=None):
 
     # parser.add_argument("--config", help="Configuration", required=True)
     parser.add_argument("-o", "--output", help="Destination directory", required=True)
+    parser.add_argument("--seed", default=0, type=int)
     parser.add_argument("-n", "--num", type=int, help="Number of scenarios to generate", required=True)
     parser.add_argument(
         "--styles",
@@ -93,121 +103,131 @@ def make_scenario_main(args=None):
         styles = ["synthetic", "synthetic-F", "photos", "smooth"]
     else:
         styles = parsed.styles.split(",")
+
+    if not rest:
+        msg = "Need to provide at least one config file"
+        raise Exception(msg)
     for config in rest:
-        basename = os.path.basename(config).split(".")[0]
+        # basename = os.path.basename(config).split(".")[0]
         data = read_ustring_from_utf8_file(config)
         interpreted = yaml.load(data, Loader=yaml.Loader)
-        n: int = parsed.num
+        # n: int = parsed.num
         output: str = parsed.output
-        params: ScenarioGenerationParam = object_from_ipce(interpreted, ScenarioGenerationParam, iedo=iedo)
-        for i in range(n):
-            scenario_name = f"{basename}-{i:03d}"
-            yaml_str = _get_map_yaml(params.map_name)
-            scenario = make_scenario(
-                yaml_str=yaml_str,
-                scenario_name=scenario_name,
-                only_straight=params.only_straight,
-                min_dist=params.min_dist,
-                delta_y_m=params.delta_y_m,
-                robots_npcs=params.robots_npcs,
-                robots_parked=params.robots_parked,
-                robots_pcs=params.robots_pcs,
-                nduckies=params.nduckies,
-                duckie_min_dist_from_other_duckie=params.duckie_min_dist_from_other_duckie,
-                duckie_min_dist_from_robot=params.duckie_min_dist_from_robot,
-                duckie_y_bounds=params.duckie_y_bounds,
-                delta_theta_rad=np.deg2rad(params.theta_tol_deg),
-                pc_robot_protocol=params.pc_robot_protocol,
-                npc_robot_protocol=params.npc_robot_protocol,
-                tree_density=params.tree_density,
-                tree_min_dist=params.tree_min_dist,
-            )
+        multi: MultiConfig = object_from_ipce(interpreted, MultiConfig, iedo=iedo)
 
-            # styles = ['smooth']
-            for style in styles:
-                try:
-                    from gym_duckietown.simulator import Simulator
-                except ImportError:
-                    logger.warning(traceback.format_exc())
-                    # noinspection PyUnusedLocal
-                    Simulator = None
-                else:
-                    sim = Simulator(
-                        "4way",
-                        enable_leds=True,
-                        domain_rand=False,
-                        num_tris_distractors=0,
-                        camera_width=640,
-                        camera_height=480,
-                        # distortion=True,
-                        color_ground=[0, 0.3, 0],  # green
-                        style=style,
-                    )
-                    logger.info("resetting")
-                    sim.reset()
-                    m = cast(dw.MapFormat1, yaml.load(scenario.environment, Loader=yaml.Loader))
+        tosample = multi.sample
+        for k, v in tosample.items():
+            n = parsed.num * v.repeat
+            params = v.config
+            for i in range(n):
+                scenario_name = f"{k}-{i:03d}"
+                yaml_str = _get_map_yaml(params.map_name)
+                scenario = make_scenario(
+                    seed=parsed.seed + i * 10000,
+                    yaml_str=yaml_str,
+                    scenario_name=scenario_name,
+                    only_straight=params.only_straight,
+                    min_dist=params.min_dist,
+                    delta_y_m=params.delta_y_m,
+                    robots_npcs=params.robots_npcs,
+                    robots_parked=params.robots_parked,
+                    robots_pcs=params.robots_pcs,
+                    nduckies=params.nduckies,
+                    duckie_min_dist_from_other_duckie=params.duckie_min_dist_from_other_duckie,
+                    duckie_min_dist_from_robot=params.duckie_min_dist_from_robot,
+                    duckie_y_bounds=params.duckie_y_bounds,
+                    delta_theta_rad=np.deg2rad(params.theta_tol_deg),
+                    pc_robot_protocol=params.pc_robot_protocol,
+                    npc_robot_protocol=params.npc_robot_protocol,
+                    tree_density=params.tree_density,
+                    tree_min_dist=params.tree_min_dist,
+                )
 
-                    if "objects" not in m:
-                        m["objects"] = {}
-                    obs: Dict[str, object] = m["objects"]
-
-                    for robot_name, srobot in scenario.robots.items():
-                        p = pose_from_friendly(srobot.configuration.pose)
-                        st = dw.SE2Transform.from_SE2(p)
-
-                        obs[robot_name] = dict(
-                            kind="duckiebot", pose=st.as_json_dict(), height=0.12, color=srobot.color
+                # styles = ['smooth']
+                for style in styles:
+                    try:
+                        from gym_duckietown.simulator import Simulator
+                    except ImportError:
+                        logger.warning(traceback.format_exc())
+                        # noinspection PyUnusedLocal
+                        Simulator = None
+                    else:
+                        sim = Simulator(
+                            "4way",
+                            enable_leds=True,
+                            domain_rand=False,
+                            num_tris_distractors=0,
+                            camera_width=640,
+                            camera_height=480,
+                            # distortion=True,
+                            color_ground=[0, 0.3, 0],  # green
+                            style=style,
                         )
+                        logger.info("resetting")
+                        sim.reset()
+                        m = cast(dw.MapFormat1, yaml.load(scenario.environment, Loader=yaml.Loader))
 
-                    for duckie_name, duckie in scenario.duckies.items():
-                        p = pose_from_friendly(duckie.pose)
-                        st = dw.SE2Transform.from_SE2(p)
-                        obs[duckie_name] = dict(
-                            kind="duckie", pose=st.as_json_dict(), height=0.08, color=duckie.color
+                        if "objects" not in m:
+                            m["objects"] = {}
+                        obs: Dict[str, object] = m["objects"]
+
+                        for robot_name, srobot in scenario.robots.items():
+                            p = pose_from_friendly(srobot.configuration.pose)
+                            st = dw.SE2Transform.from_SE2(p)
+
+                            obs[robot_name] = dict(
+                                kind="duckiebot", pose=st.as_json_dict(), height=0.12, color=srobot.color
+                            )
+
+                        for duckie_name, duckie in scenario.duckies.items():
+                            p = pose_from_friendly(duckie.pose)
+                            st = dw.SE2Transform.from_SE2(p)
+                            obs[duckie_name] = dict(
+                                kind="duckie", pose=st.as_json_dict(), height=0.08, color=duckie.color
+                            )
+
+                        sim._interpret_map(m)
+                        sim.start_pose = None
+                        sim.reset()
+                        logger.info("rendering obs")
+                        img = sim.render_obs()
+                        out = os.path.join(output, scenario_name, style, "cam.png")
+                        save_rgb_to_png(img, out)
+                        out = os.path.join(output, scenario_name, style, "cam.jpg")
+                        save_rgb_to_jpg(img, out)
+
+                        sim.cur_pos = [-100.0, -100.0, -100.0]
+                        from gym_duckietown.simulator import FrameBufferMemory
+
+                        td = FrameBufferMemory(width=1024, height=1024)
+                        horiz = sim._render_img(
+                            width=td.width,
+                            height=td.height,
+                            multi_fbo=td.multi_fbo,
+                            final_fbo=td.final_fbo,
+                            img_array=td.img_array,
+                            top_down=True,
                         )
+                        # img = sim.render("top_down")
+                        out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.jpg"))
+                        save_rgb_to_jpg(horiz, out)
+                        out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.png"))
+                        save_rgb_to_png(horiz, out)
 
-                    sim._interpret_map(m)
-                    sim.start_pose = None
-                    sim.reset()
-                    logger.info("rendering obs")
-                    img = sim.render_obs()
-                    out = os.path.join(output, scenario_name, style, "cam.png")
-                    save_rgb_to_png(img, out)
-                    out = os.path.join(output, scenario_name, style, "cam.jpg")
-                    save_rgb_to_jpg(img, out)
+                        dw.Tile.style = style
+                        dm = interpret_scenario(scenario)
+                        output_dir = os.path.join(output, scenario_name, style)
+                        dw.draw_static(dm, output_dir=output_dir)
+                        export_gltf(dm, output_dir, background=False)
 
-                    sim.cur_pos = [-100.0, -100.0, -100.0]
-                    from gym_duckietown.simulator import FrameBufferMemory
-
-                    td = FrameBufferMemory(width=1024, height=1024)
-                    horiz = sim._render_img(
-                        width=td.width,
-                        height=td.height,
-                        multi_fbo=td.multi_fbo,
-                        final_fbo=td.final_fbo,
-                        img_array=td.img_array,
-                        top_down=True,
-                    )
-                    # img = sim.render("top_down")
-                    out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.jpg"))
-                    save_rgb_to_jpg(horiz, out)
-                    out = cast(FilePath, os.path.join(output, scenario_name, style, "top_down.png"))
-                    save_rgb_to_png(horiz, out)
-
-                    dw.Tile.style = style
-                    dm = interpret_scenario(scenario)
-                    output_dir = os.path.join(output, scenario_name, style)
-                    dw.draw_static(dm, output_dir=output_dir)
-                    export_gltf(dm, output_dir, background=False)
-
-            scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
-            scenario_yaml = yaml.dump(scenario_struct)
-            filename = os.path.join(output, scenario_name, f"scenario.yaml")
-            write_ustring_to_utf8_file(scenario_yaml, filename)
+                scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
+                scenario_yaml = yaml.dump(scenario_struct)
+                filename = os.path.join(output, scenario_name, f"scenario.yaml")
+                write_ustring_to_utf8_file(scenario_yaml, filename)
 
 
 def interpret_scenario(s: Scenario) -> dw.DuckietownMap:
-    """  """
+    """ """
     y = yaml.load(s.environment, Loader=yaml.SafeLoader)
 
     dm = construct_map(y)
@@ -251,9 +271,11 @@ def make_scenario(
     tree_density: float,
     tree_min_dist: float,
     duckie_y_bounds: Sequence[float],
-    pc_robot_protocol: ProtocolDesc = PROTOCOL_NORMAL,
-    npc_robot_protocol: ProtocolDesc = PROTOCOL_FULL,
+    pc_robot_protocol: ProtocolDesc,
+    npc_robot_protocol: ProtocolDesc,
+    seed: int,
 ) -> Scenario:
+    np.random.seed(seed)
     yaml_data = yaml.load(yaml_str, Loader=yaml.SafeLoader)
     if "objects" not in yaml_data:
         yaml_data["objects"] = {}
