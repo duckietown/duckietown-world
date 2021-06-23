@@ -1,8 +1,8 @@
-FROM python:3.6
+FROM python:3.8
 
 WORKDIR /project
 
-RUN python3 -m pip install -U "pip>=20.2"
+RUN python3 -m pip install -U "pip>=21"
 COPY requirements.* ./
 RUN cat requirements.* > .requirements.txt
 RUN python3 -m pip install  -r .requirements.txt
