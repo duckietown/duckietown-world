@@ -51,7 +51,7 @@ class _Watchtower(_PlacedObject):
     id: Union[None, str] = None
 
     def dict(self) -> Dict[str, Any]:
-        return {'configuration': self.configuration}
+        return {'configuration': self.configuration, 'id': self.id}
 
     def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
         s = 0.1
@@ -114,7 +114,7 @@ class _GroundTag(_PlacedObject):
 class _Vehicle(_PlacedObject):
     configuration: str = "DB19"
     id: Optional[str] = ""
-    color: str = "#fff"
+    color: str = ""
 
     def dict(self) -> Dict[str, Any]:
         return {"configuration": self.configuration, "id": self.id, "color": self.color}
