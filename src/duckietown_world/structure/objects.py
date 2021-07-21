@@ -9,8 +9,8 @@ from duckietown_world.world_duckietown.tile import Tile as old_tile
 
 from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
-__all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen', '_TrafficSign', '_GroundTag',
-           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle"]
+__all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen', '_TrafficSign', '_GroundTag', "_VehicleTag",
+           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle", "VehicleTag"]
 
 
 @dataclass
@@ -85,9 +85,10 @@ class _Group(_Object):
 class _TrafficSign(_PlacedObject):
     id: int = 0
     type: str = 'stop'
+    family: str = '36h11'
 
     def dict(self) -> Dict[str, Any]:
-        return {'id': self.id, 'type': self.type}
+        return {'id': self.id, 'type': self.type, 'family': self.family}
 
     def draw_svg(self, drawing: "DrawingSVG", g: "GroupSVG") -> None:
         s = 0.1
@@ -108,6 +109,11 @@ class _GroundTag(_PlacedObject):
         s = 0.1
         rect = drawing.rect(insert=(-s / 2, -s / 2), size=(s, s), fill='black', stroke='red', stroke_width=0.01)
         g.add(rect)
+
+
+@dataclass
+class _VehicleTag(_GroundTag):
+    pass
 
 
 @dataclass
@@ -204,6 +210,12 @@ class GroundTag(ConstructedObject):
         return _GroundTag
 
 
+class VehicleTag(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Vehicle
+
+
 class Tile(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
@@ -226,3 +238,4 @@ class Environment(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _Environment
+

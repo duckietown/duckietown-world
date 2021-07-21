@@ -6,7 +6,7 @@ import numpy as np
 
 from .bases import _Object, _Frame, IBaseMap, AbstractLayer
 from .objects import _Tile, _Group, _TileMap, _Watchtower, _Citizen, _GroundTag, _TrafficSign, _Vehicle, _Camera, \
-    _Decoration, _Environment
+    _Decoration, _Environment, _VehicleTag
 
 
 class LayerGeneral(AbstractLayer, ABC):
@@ -110,6 +110,12 @@ class LayerGroundTags(AbstractLayer, ABC):
     @classmethod
     def item_type(cls) -> type:
         return _GroundTag
+
+
+class LayerVehicleTags(AbstractLayer, ABC):
+    @classmethod
+    def item_type(cls) -> type:
+        return _VehicleTag
 
 
 class LayerVehicles(AbstractLayer, ABC):
