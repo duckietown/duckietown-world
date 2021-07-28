@@ -99,7 +99,7 @@ class _TrafficSign(_PlacedObject):
 
 @dataclass
 class _GroundTag(_PlacedObject):
-    size: int = 0.15
+    size: int = 0.065
     family: str = '36h11'
     id: int = 300
 
@@ -163,7 +163,7 @@ class _Environment(_Object):
 @dataclass
 class _Decoration(_PlacedObject):
     type: str = "tree"
-    colors: dict = None#field(default_factory={"trunk": "brown", "foliage": "green"})
+    colors: dict = None
 
     def dict(self) -> Dict[str, Any]:
         return {"type": self.type, "colors": self.colors}
