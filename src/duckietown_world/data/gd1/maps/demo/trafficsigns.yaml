@@ -1,0 +1,10 @@
+trafficsigns:
+  map_1/sign_stop_322:
+    id: 1
+    type: sign_stop
+  map_1/sign_right_T_intersect_402:
+    id: 9
+    type: sign_right_T_intersect
+  map_1/sign_T_intersect_978:
+    id: 11
+    type: sign_T_intersect

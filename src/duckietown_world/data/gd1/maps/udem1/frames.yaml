@@ -1,0 +1,505 @@
+frames:
+  map_1:
+    relative_to: ~
+    pose:
+      x: 0.0
+      y: 0.0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+  map_1/watchtower1:
+    relative_to: map_1
+    pose:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+  map_1/tile_0_0:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_0_1:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_0_2:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_0_3:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_0_4:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_1_0:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 3.141592653589793
+  map_1/tile_1_1:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_1_2:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 3.141592653589793
+  map_1/tile_1_3:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_1_4:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_2_0:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_2_1:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_2_2:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_2_3:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_2_4:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_3_0:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_3_1:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_3_2:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_3_3:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_3_4:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_4_0:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_4_1:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_4_2:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_4_3:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_4_4:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_5_0:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 1.5707963267948966
+  map_1/tile_5_1:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_5_2:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_5_3:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_5_4:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 4.71238898038469
+  map_1/tile_6_0:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_6_1:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 1.5707963267948966
+  map_1/tile_6_2:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_6_3:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_6_4:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_0:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 0.2925
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_1:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 0.8775
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_2:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 1.4625
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_3:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 2.0475
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_4:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 2.6325
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_0_5:
+    relative_to: map_1
+    pose:
+      x: 0.2925
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_1_5:
+    relative_to: map_1
+    pose:
+      x: 0.8775
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_2_5:
+    relative_to: map_1
+    pose:
+      x: 1.4625
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_3_5:
+    relative_to: map_1
+    pose:
+      x: 2.0475
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_4_5:
+    relative_to: map_1
+    pose:
+      x: 2.6325
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_5_5:
+    relative_to: map_1
+    pose:
+      x: 3.2175
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_6_5:
+    relative_to: map_1
+    pose:
+      x: 3.8024999999999998
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/tile_7_5:
+    relative_to: map_1
+    pose:
+      x: 4.387499999999999
+      y: 3.2175
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/duckie_814:
+    relative_to: map_1
+    pose:
+      x: 3.241037700285376
+      y: 1.629095962043784
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+  map_1/grountag_565:
+    relative_to: map_1
+    pose:
+      x: 2.22
+      y: 1.2200000000000004
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/sign_stop_53:
+    relative_to: map_1
+    pose:
+      x: 2.95
+      y: 1.8000000000000003
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+  map_1/sign_stop_591:
+    relative_to: map_1
+    pose:
+      x: 2.9650000000000003
+      y: 1.0500000000000003
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+  map_1/grountag_670:
+    relative_to: map_1
+    pose:
+      x: 3.49
+      y: 1.8900000000000001
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0
+  map_1/grountag_186:
+    relative_to: map_1
+    pose:
+      x: 2.1900000000000004
+      y: 2.21
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0.0

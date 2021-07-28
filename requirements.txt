@@ -26,10 +26,8 @@ compmake-z6>=6.1.1
 coverage
 coveralls
 
-
 jupyter
 nbconvert
-dataclasses==0.6; python_version < '3.7'
 zuper-typing-z6
 zuper-ipce-z6
 codecov
@@ -37,6 +35,7 @@ pipdeptree
 trimesh
 gltflib
 pyrender
+pyyaml-include==1.2
 colorama
 coloredlogs
 aido-protocols-daffy

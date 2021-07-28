@@ -30,5 +30,9 @@ class DuckietownMap(PlacedObject):
 
     def get_drawing_children(self):
         children = sorted(self.children)
-        children.remove("tilemap")
-        return ["tilemap"] + children
+        if "tilemap" in children:
+            children.remove("tilemap")
+            return ["tilemap"] + children
+        if "tilemap_wrapper" in children:
+            children.remove("tilemap_wrapper")
+            return ["tilemap_wrapper"] + children

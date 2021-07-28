@@ -3,8 +3,9 @@ from typing import List
 
 from duckietown_world import GenericSequence, PlacedObject, TransformSequence
 
-from duckietown_world.seqs.tsequence import Timestamp
+from duckietown_world.seqs.tsequence import UndefinedAtTime
 from zuper_commons.types import ZValueError
+from duckietown_world.structure.bases import _Object, IBaseMap
 
 __all__ = [
     "ChooseTime",
@@ -117,22 +118,16 @@ def is_static(transform):
 #             return ob
 
 
-def get_sampling_points(ob0: PlacedObject) -> List[Timestamp]:
+def get_sampling_points(dm: "IBaseMap"):
     points = set()
 
-    def f(ob: PlacedObject) -> PlacedObject:
-        # print(ob)
+    def accept(ob: "_Object") -> None:
         if hasattr(ob, "get_sampling_points"):
             if not isinstance(ob, GenericSequence):
                 raise ZValueError(ob=ob)
             sp = ob.get_sampling_points()
-            if sp == GenericSequence.CONTINUOUS:
-                pass
-            else:
+            if sp != GenericSequence.CONTINUOUS:
                 points.update(sp)
-        # else:
-        #     logger.info(f'not a seq: {type(ob)}')
-        return ob
 
-    ob0.filter_all(f)
+    dm.apply_consumer(accept, UndefinedAtTime)
     return sorted(points)

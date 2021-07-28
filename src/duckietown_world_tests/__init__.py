@@ -13,6 +13,7 @@ from .sampling_poses import *
 from .pwm_dynamics import *
 from .lane_at_point import *
 from .typing_tests import *
+from .layers_example import *
 
 #
 # def jobs_comptests(context):

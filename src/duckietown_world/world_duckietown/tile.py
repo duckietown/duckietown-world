@@ -23,7 +23,7 @@ from duckietown_world.geo.measurements_utils import (
     IterateByTestResult,
 )
 from duckietown_world.seqs import SampledSequence
-from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes, draw_children
+from duckietown_world.svg_drawing import data_encoded_for_src, draw_axes
 from duckietown_world.svg_drawing.misc import mime_from_fn
 from . import logger
 from .lane_segment import LanePose, LaneSegment
@@ -421,8 +421,8 @@ class Tile(PlacedObject):
 
     def draw_svg(self, drawing, g):
         T = 0.562 / 0.585
-        T = 1
-        S = 1.0
+        T = 0.585#1
+        S = 0.585#1.0
         rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="#0a0", stroke="none")
         g.add(rect)
 
@@ -463,8 +463,6 @@ class Tile(PlacedObject):
         #         g.add(line)
 
         draw_axes(drawing, g)
-
-        draw_children(drawing, self, g)
 
 
 @dataclass

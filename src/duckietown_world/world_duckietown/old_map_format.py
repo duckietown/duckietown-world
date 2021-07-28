@@ -19,7 +19,7 @@ class MapFormat1Constants:
     KIND_CHECKERBOARD = ObjectKind("checkerboard")
 
 
-class MapFormat1Object(TypedDict, total=False):
+class MapFormat1Object(Dict):
     kind: MapFormat1Constants.ObjectKind
 
     pos: List[float]
@@ -49,7 +49,7 @@ class MapFormat1Object(TypedDict, total=False):
 #     attache: object
 
 
-class MapFormat1(TypedDict, total=False):
+class MapFormat1(Dict):
     tiles: List[List[str]]
 
     tile_size: float

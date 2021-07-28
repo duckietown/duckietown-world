@@ -1,0 +1,254 @@
+tiles:
+  map_1/tile_0_0:
+    i: 0
+    j: 0
+    type: floor
+  map_1/tile_0_1:
+    i: 0
+    j: 1
+    type: floor
+  map_1/tile_0_2:
+    i: 0
+    j: 2
+    type: floor
+  map_1/tile_0_3:
+    i: 0
+    j: 3
+    type: floor
+  map_1/tile_0_4:
+    i: 0
+    j: 4
+    type: floor
+  map_1/tile_0_5:
+    i: 0
+    j: 5
+    type: floor
+  map_1/tile_0_6:
+    i: 0
+    j: 6
+    type: floor
+
+  map_1/tile_1_0:
+    i: 1
+    j: 0
+    type: floor
+  map_1/tile_1_1:
+    i: 1
+    j: 1
+    orientation: W
+    type: curve_left
+  map_1/tile_1_2:
+    i: 1
+    j: 2
+    orientation: S
+    type: straight
+  map_1/tile_1_3:
+    i: 1
+    j: 3
+    orientation: S
+    type: 3way_left
+  map_1/tile_1_4:
+    i: 1
+    j: 4
+    orientation: S
+    type: straight
+  map_1/tile_1_5:
+    i: 1
+    j: 5
+    orientation: S
+    type: curve_left
+  map_1/tile_1_6:
+    i: 1
+    j: 6
+    type: floor
+
+  map_1/tile_2_0:
+    i: 2
+    j: 0
+    type: floor
+  map_1/tile_2_1:
+    i: 2
+    j: 1
+    orientation: W
+    type: straight
+  map_1/tile_2_2:
+    i: 2
+    j: 2
+    type: grass
+  map_1/tile_2_3:
+    i: 2
+    j: 3
+    orientation: W
+    type: straight
+  map_1/tile_2_4:
+    i: 2
+    j: 4
+    type: grass
+  map_1/tile_2_5:
+    i: 2
+    j: 5
+    orientation: E
+    type: straight
+  map_1/tile_2_6:
+    i: 2
+    j: 6
+    type: floor
+
+  map_1/tile_3_0:
+    i: 3
+    j: 0
+    type: floor
+  map_1/tile_3_1:
+    i: 3
+    j: 1
+    orientation: W
+    type: 3way_left
+  map_1/tile_3_2:
+    i: 3
+    j: 2
+    orientation: N
+    type: straight
+  map_1/tile_3_3:
+    i: 3
+    j: 3
+    orientation: N
+    type: 3way_left
+  map_1/tile_3_4:
+    i: 3
+    j: 4
+    orientation: N
+    type: straight
+  map_1/tile_3_5:
+    i: 3
+    j: 5
+    orientation: E
+    type: 3way_left
+  map_1/tile_3_6:
+    i: 3
+    j: 6
+    type: floor
+
+  map_1/tile_4_0:
+    i: 4
+    j: 0
+    type: floor
+  map_1/tile_4_1:
+    i: 4
+    j: 1
+    orientation: W
+    type: straight
+  map_1/tile_4_2:
+    i: 4
+    j: 2
+    type: asphalt
+  map_1/tile_4_3:
+    i: 4
+    j: 3
+    type: asphalt
+  map_1/tile_4_4:
+    i: 4
+    j: 4
+    type: asphalt
+  map_1/tile_4_5:
+    i: 4
+    j: 5
+    orientation: E
+    type: straight
+  map_1/tile_4_6:
+    i: 4
+    j: 6
+    type: floor
+
+  map_1/tile_5_0:
+    i: 5
+    j: 0
+    type: floor
+  map_1/tile_5_1:
+    i: 5
+    j: 1
+    orientation: W
+    type: straight
+  map_1/tile_5_2:
+    i: 5
+    j: 2
+    type: asphalt
+  map_1/tile_5_3:
+    i: 5
+    j: 3
+    type: asphalt
+  map_1/tile_5_4:
+    i: 5
+    j: 4
+    orientation: N
+    type: curve_right
+  map_1/tile_5_5:
+    i: 5
+    j: 5
+    orientation: E
+    type: curve_left
+  map_1/tile_5_6:
+    i: 5
+    j: 6
+    type: floor
+
+  map_1/tile_6_0:
+    i: 6
+    j: 0
+    type: floor
+  map_1/tile_6_1:
+    i: 6
+    j: 1
+    orientation: N
+    type: curve_left
+  map_1/tile_6_2:
+    i: 6
+    j: 2
+    orientation: N
+    type: straight
+  map_1/tile_6_3:
+    i: 6
+    j: 3
+    orientation: N
+    type: straight
+  map_1/tile_6_4:
+    i: 6
+    j: 4
+    orientation: E
+    type: curve_left
+  map_1/tile_6_5:
+    i: 6
+    j: 5
+    type: asphalt
+  map_1/tile_6_6:
+    i: 6
+    j: 6
+    type: floor
+
+  map_1/tile_7_0:
+    i: 7
+    j: 0
+    type: floor
+  map_1/tile_7_1:
+    i: 7
+    j: 1
+    type: asphalt
+  map_1/tile_7_2:
+    i: 7
+    j: 2
+    type: asphalt
+  map_1/tile_7_3:
+    i: 7
+    j: 3
+    type: asphalt
+  map_1/tile_7_4:
+    i: 7
+    j: 4
+    type: asphalt
+  map_1/tile_7_5:
+    i: 7
+    j: 5
+    type: asphalt
+  map_1/tile_7_6:
+    i: 7
+    j: 6
+    type: floor

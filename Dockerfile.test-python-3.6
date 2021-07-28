@@ -14,4 +14,4 @@ COPY setup.py setup.py
 RUN pip install --no-deps .
 COPY .compmake.rc .
 COPY Makefile Makefile
-CMD make tests
+CMD export PYTHONPATH=$PYTHONPATH:/project/src/ && make tests

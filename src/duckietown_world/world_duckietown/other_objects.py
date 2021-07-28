@@ -336,6 +336,53 @@ SIGNS_ALIASES = {
 }
 
 
+class Watchtower(PlacedObject):
+    def __init__(self, hostname=None, **kwargs):
+        PlacedObject.__init__(self, **kwargs)
+        self.hostname = hostname
+
+    def draw_svg(self, drawing, g):
+        S = 0.1
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill="brown", stroke="black", stroke_width=0.01)
+        g.add(rect)
+
+
+class Region(PlacedObject):
+    def __init__(self, kind=None, **kwargs):
+        PlacedObject.__init__(self, **kwargs)
+        self.kind = kind
+
+    def draw_svg_color(self, drawing, g, color):
+        S = 0.8
+        rect = drawing.rect(insert=(-S / 2, -S / 2), size=(S, S), fill=color, stroke="none", opacity="0.3")
+        g.add(rect)
+
+
+class Parking(Region):
+    def draw_svg(self, drawing, g):
+        self.draw_svg_color(drawing, g, "lightgrey")
+
+
+class Actor(PlacedObject):
+    def __init__(self, kind=None, ID=None, **kwargs):
+        PlacedObject.__init__(self, **kwargs)
+        self.kind = kind
+        self.ID = ID
+
+
+class DuckiebotDB18(Actor):
+    pass
+
+
+REGIONS = {
+    "parking": Parking
+}
+
+ACTORS = {
+    "duckiebot/DB18": DuckiebotDB18
+}
+
+
 def get_canonical_sign_name(sign_name):
     if sign_name in SIGNS:
         return sign_name

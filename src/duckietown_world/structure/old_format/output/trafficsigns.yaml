@@ -1,0 +1,19 @@
+trafficsigns:
+  map_1/sign1:
+    type: sign_stop
+    id: 1
+  map_1/sign2:
+    type: sign_left_T_intersect
+    id: 0
+  map_1/sign3:
+    type: sign_stop
+    id: 1
+  map_1/sign4:
+    type: sign_right_T_intersect
+    id: 0
+  map_1/sign5:
+    type: sign_stop
+    id: 1
+  map_1/sign6:
+    type: sign_T_intersect
+    id: 0
