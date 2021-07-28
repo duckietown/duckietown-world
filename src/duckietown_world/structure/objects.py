@@ -10,7 +10,8 @@ from duckietown_world.world_duckietown.tile import Tile as old_tile
 from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
 __all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen', '_TrafficSign', '_GroundTag', "_VehicleTag",
-           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle", "VehicleTag"]
+           'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle", "VehicleTag",
+           "Decoration", "_Decoration"]
 
 
 @dataclass
