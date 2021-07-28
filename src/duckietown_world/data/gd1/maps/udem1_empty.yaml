@@ -1,0 +1,18 @@
+# The following section defines the grid layout.
+#
+# Each row is an array of tiles descriptions.
+# The top-left tile in this file maps to coordinates (0, 0) in the world
+# Each tile contains a string with the kind of tile and its orientation.
+# The orientations are North, South, East, West. This is the direction in
+# which the agent is expected to drive when going onto this tile.
+tiles:
+- [floor    , floor         , floor     , floor         , floor     , floor         , floor         , floor]
+- [floor    , curve_left/W  , straight/W, 3way_left/W   , straight/W, straight/W    , curve_left/N  , floor]
+- [floor    , straight/S    , grass     , straight/N    , floor   , floor       , straight/N    , floor]
+- [floor    , 3way_left/S   , straight/W, 3way_left/N   , floor   , floor       , straight/N    , floor]
+- [floor    , straight/S    , grass     , straight/N    , floor   , curve_right/N , curve_left/E  , floor]
+- [floor    , curve_left/S  , straight/E, 3way_left/E   , straight/E, curve_left/E  , asphalt       , floor]
+- [floor    , floor         , floor     , floor         , floor     , floor         , floor         , floor]
+
+
+tile_size: 0.585

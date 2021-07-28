@@ -11,12 +11,12 @@ objects:
   attach:
     tile: [0, 0]
     slot: 2
-    
-    
+
+
 tiles:
 - [ asphalt, straight/S, asphalt]
 - [ straight/E, 4way, straight/W]
-- [ asphalt, straight/N, asphal]  
+- [ asphalt, straight/N, asphal]
 - [ asphalt, curve_right/W, straight/W]
 
 tile_size: 0.61

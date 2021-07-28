@@ -9,7 +9,7 @@ from zuper_commons.text import indent
 from zuper_commons.types import check_isinstance
 
 from duckietown_serialization_ds1 import Serializable
-from duckietown_world.seqs import UndefinedAtTime
+from duckietown_world.seqs import SampledSequence, UndefinedAtTime
 from .rectangular_area import RectangularArea
 from .transforms import Transform
 
@@ -183,7 +183,9 @@ class PlacedObject(Serializable):
 
         return res
 
-    def set_object(self, name: str, ob: "PlacedObject", **transforms: SpatialRelation):
+    def set_object(
+        self, name: str, ob: "PlacedObject", **transforms: Union[Transform, SpatialRelation, SampledSequence]
+    ):
         assert self is not ob
         self.children[name] = ob
         type2klass = {"ground_truth": GroundTruth}
@@ -218,17 +220,25 @@ def get_child_transform(po: PlacedObject, child: str) -> Transform:
 
 
 def get_object_tree(
-    po: PlacedObject, levels: int = 100, spatial_relations: bool = False, attributes: bool = False,
+    po: PlacedObject,
+    levels: int = 100,
+    spatial_relations: bool = False,
+    attributes: bool = False,
 ) -> str:
-    ss = []
-    ss.append("%s" % type(po).__name__)
+    ss = [f"{type(po).__name__}"]
     d = po.params_to_json_dict()
     d.pop("children", None)
     d.pop("spatial_relations", None)
 
     if attributes:
         if d:
-            ds = yaml.safe_dump(d, encoding="utf-8", indent=4, allow_unicode=True, default_flow_style=False,)
+            ds = yaml.safe_dump(
+                d,
+                encoding="utf-8",
+                indent=4,
+                allow_unicode=True,
+                default_flow_style=False,
+            )
             if isinstance(ds, bytes):
                 ds = ds.decode("utf-8")
             ss.append("\n" + indent(ds, " "))
@@ -245,7 +255,10 @@ def get_object_tree(
                 prefix1 = "└ %s ┐ " % child_name
                 prefix2 = "  %s │ " % (" " * len(child_name))
             c = get_object_tree(
-                child, attributes=attributes, spatial_relations=spatial_relations, levels=levels - 1,
+                child,
+                attributes=attributes,
+                spatial_relations=spatial_relations,
+                levels=levels - 1,
             )
             sc = indent(c, prefix2, prefix1)
             n = max(len(_) for _ in sc.split("\n"))

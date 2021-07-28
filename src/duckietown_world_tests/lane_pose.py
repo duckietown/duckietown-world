@@ -182,7 +182,10 @@ def lane_pose_test1():
     # Rule evaluation (do not touch)
     interval = SampledSequence.from_iterator(enumerate(commands_sequence.timestamps))
     evaluated = evaluate_rules(
-        poses_sequence=transforms_sequence, interval=interval, world=dw, ego_name=ego_name,
+        poses_sequence=transforms_sequence,
+        interval=interval,
+        world=dw,
+        ego_name=ego_name,
     )
     timeseries = make_timeseries(evaluated)
     # Drawing
@@ -225,7 +228,9 @@ def reasonable_duckiebot():
     radius_right = radius
     wheel_distance = 0.5
     dddp = DifferentialDriveDynamicsParameters(
-        radius_left=radius_left, radius_right=radius_right, wheel_distance=wheel_distance,
+        radius_left=radius_left,
+        radius_right=radius_right,
+        wheel_distance=wheel_distance,
     )
     return dddp
 

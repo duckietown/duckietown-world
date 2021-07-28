@@ -9,13 +9,19 @@ from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 from .types import TSE2value
 
-__all__ = ["DynamicModelParameters", "DynamicModel", "PWMCommands", "get_DB18_nominal"]
+__all__ = [
+    "DynamicModelParameters",
+    "DynamicModel",
+    "PWMCommands",
+    "get_DB18_nominal",
+    "get_DB18_uncalibrated",
+]
 
 
 @dataclass
 class PWMCommands:
     """
-        PWM commands are floats between -1 and 1.
+    PWM commands are floats between -1 and 1.
     """
 
     motor_left: float
@@ -107,7 +113,7 @@ def get_DB18_uncalibrated(delay: float, trim: float = 0) -> PlatformDynamicsFact
 
 class DynamicModel(GenericKinematicsSE2):
     """
-        This represents a dynamical formulation of of a differential-drive vehicle.
+    This represents a dynamical formulation of of a differential-drive vehicle.
     """
 
     parameters: DynamicModelParameters

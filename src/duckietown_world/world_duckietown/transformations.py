@@ -12,17 +12,33 @@ __all__ = [
     # 'RemoveStatic',
     "get_sampling_points",
     "is_static",
+    "ChooseTimeOrPrevious",
 ]
 
 
 class ChooseTime:
-    def __init__(self, t):
+    def __init__(self, t: float):
         self.t = t
 
     def __call__(self, ob):
         # if isinstance(ob, Sequence):
         if hasattr(ob, "at"):
+            # noinspection PyCallingNonCallable
             ob = ob.at(self.t)
+            return ob
+        else:
+            return ob
+
+
+class ChooseTimeOrPrevious:
+    def __init__(self, t: float):
+        self.t = t
+
+    def __call__(self, ob):
+        # if isinstance(ob, Sequence):
+        if hasattr(ob, "at_or_previous"):
+            # noinspection PyCallingNonCallable
+            ob = ob.at_or_previous(self.t)
             return ob
         else:
             return ob

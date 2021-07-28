@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 from comptests import comptest, run_module_tests, get_comptests_output_dir
+from zuper_commons.fs import mkdirs_thread_safe
 
 from duckietown_world.geo import PlacedObject, SE2Transform, get_meausurements_graph
 from duckietown_world.seqs import Constant
@@ -92,8 +93,7 @@ def pairwise(iterable):
 
 def plot_measurement_graph(root, G, out):
     d = os.path.dirname(out)
-    if not os.path.exists(d):
-        os.makedirs(d)
+    mkdirs_thread_safe(d)
     gg = ACGvGen()
 
     node2item = {}

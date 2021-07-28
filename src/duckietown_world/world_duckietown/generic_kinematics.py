@@ -11,9 +11,9 @@ __all__ = ["GenericKinematicsSE2"]
 
 class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializable):
     """
-        Any dynamics on SE(2)
+    Any dynamics on SE(2)
 
-        Commands = velocities in se(2)
+    Commands = velocities in se(2)
     """
 
     @classmethod

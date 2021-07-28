@@ -1,9 +1,8 @@
-import os
 import argparse
-from pathlib import Path
 import os
-import yaml
 import pprint
+
+import yaml
 
 
 class bcolors:
@@ -41,7 +40,7 @@ def header(string: str):
 
 
 def separater(string: str = None):
-    if string == None:
+    if string is None:
         warning("--------------------------------------------------------------------------------------")
     else:
         warning(

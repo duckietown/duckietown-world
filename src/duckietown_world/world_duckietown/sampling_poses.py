@@ -17,16 +17,6 @@ from duckietown_world import (
 __all__ = ["sample_good_starting_pose"]
 
 
-# @dataclass
-# class SampledPose:
-#     # pose
-#     q: np.ndarray
-#     # pose as an SE2Transform
-#     qt: SE2Transform
-#     # corresponding  tile
-#     tile: Any
-
-
 def sample_good_starting_pose(m: PlacedObject, only_straight: bool, along_lane: float) -> geo.SE2value:
     """ Samples a good starting pose on a straight lane """
     choices = list(iterate_by_class(m, LaneSegment))

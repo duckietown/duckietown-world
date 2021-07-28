@@ -94,7 +94,8 @@ for entry in data:
     rotation = int(rotation)
 
     sign = dict(
-        kind="floor_tag", tag={"~TagInstance": dict(tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE)},
+        kind="floor_tag",
+        tag={"~TagInstance": dict(tag_id=int(tag_ID), family="36h11", size=APRIL_TAG_SIZE)},
     )
     sign["pose"] = SE2Transform([x, y], np.deg2rad(rotation)).as_json_dict()
 
