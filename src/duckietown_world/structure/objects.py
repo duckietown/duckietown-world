@@ -11,7 +11,7 @@ from .bases import _Object, _PlacedObject, ConstructedObject, IBaseMap
 
 __all__ = ['_TileMap', '_Tile', '_Watchtower', '_Group', '_Citizen', '_TrafficSign', '_GroundTag', "_VehicleTag",
            'Watchtower', 'Citizen', 'TrafficSign', 'TrafficSign', 'Tile', '_Vehicle', "Vehicle", "VehicleTag",
-           "Decoration", "_Decoration"]
+           "Decoration", "_Decoration", "_Light", "Light"]
 
 
 @dataclass
@@ -147,6 +147,24 @@ class _Camera(_Object):
 
 
 @dataclass
+class _Light(_Object):
+    type: str = ""
+    intensity: float = 0
+    range: float = 0
+    angle: float = 0
+    color: str = ""
+
+    def dict(self) -> Dict[str, Any]:
+        return {
+            "type": self.type,
+            "intensity": self.intensity,
+            "range": self.range,
+            "angle": self.angle,
+            "color": self.color
+        }
+
+
+@dataclass
 class _Environment(_Object):
     date: str = ""
     location: str = ""
@@ -203,6 +221,12 @@ class TrafficSign(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
         return _TrafficSign
+
+
+class Light(ConstructedObject):
+    @classmethod
+    def object_type(cls) -> type:
+        return _Light
 
 
 class GroundTag(ConstructedObject):
