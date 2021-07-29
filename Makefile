@@ -13,7 +13,7 @@ bump: # v2
 upload: # v3
 	dts build_utils check-not-dirty
 	dts build_utils check-tagged
-	dts build_utils check-need-upload --package duckietown-world-daffy make upload-do
+	dts build_utils check-need-upload --package duckietown-world-ente make upload-do
 
 upload-do:
 	rm -f dist/*
@@ -109,7 +109,7 @@ notebooks-in-docker:
 	docker run -p 8888:8888 --rm -it -v $(PWD):$(PWD) -w $(PWD) -e USER=$(USER) -v /tmp:/tmp -e HOME=/tmp/fake --user $(shell id -u):$(shell id -g)  python:3.8 bash
 
 	# export PATH=~/.local/bin:$PATH
-	# pip install duckietown-world-daffy jupyter
+	# pip install duckietown-world-ente jupyter
 	# jupyter notebook
 
 notebooks-in-docker2:

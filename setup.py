@@ -39,7 +39,7 @@ install_requires = [
     "oyaml",
     "markdown",
     "zuper-ipce-z6",
-    "aido-protocols-daffy",
+    "aido-protocols-ente",
     "zuper-typing-z6>=6.0.66",
     "zuper-commons-z6",
     "six",
@@ -49,7 +49,7 @@ install_requires = [
     "pyrender",
     "coloredlogs",
     "colorama",
-    "aido-protocols-daffy",
+    "aido-protocols-ente",
 ]
 tests_require = ["comptests-z6", "compmake-z6>=6.1.1"]
 system_version = tuple(sys.version_info)[:3]
@@ -57,7 +57,7 @@ system_version = tuple(sys.version_info)[:3]
 if system_version < (3, 7):
     install_requires.append("dataclasses")
 
-line = "daffy"
+line = "ente"
 
 setup(
     name=f"duckietown-world-{line}",

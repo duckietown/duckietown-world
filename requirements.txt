@@ -38,7 +38,7 @@ pyrender
 pyyaml-include==1.2
 colorama
 coloredlogs
-aido-protocols-daffy
+aido-protocols-ente
 
 # Allow compatibility with Python versions < 3.8
 typing_extensions

@@ -7,12 +7,12 @@ workflows:
           context: pip-staging
           filters:
             branches:
-              only: /daffy-staging.*/
+              only: /ente-staging.*/
       - test-3.8-production:
           context: production
           filters:
             branches:
-              ignore: /daffy-staging.*/
+              ignore: /ente-staging.*/
 
 jobs:
   test-3.6: &test-template
