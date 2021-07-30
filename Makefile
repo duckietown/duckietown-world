@@ -35,7 +35,7 @@ junit:
 	comptests-to-junit $(out)/compmake > $(out)/junit/junit.xml
 
 tests:
-	comptests --nonose $(comptest_package)
+	comptests --nonose $(comptest_package) -c "rparmake n=4"
 
 tests-contracts:
 	comptests --contracts --nonose  $(comptest_package)
