@@ -40,19 +40,19 @@ jobs:
           name: Install deps
           command: |
             echo PATH=$PATH
-            pip install -q --user --upgrade -r requirements.txt
+            python3 -m pip install -q --user --upgrade -r requirements.txt
 
       - run:
           name: List deps
           command: |
             mkdir -p artifacts
-            pip freeze | tee artifacts/pip-freeze.txt
+            python3 -m pip freeze | tee artifacts/pip-freeze.txt
             pipdeptree | tee artifacts/pipdeptree.txt
 
       - run:
           name: setup.py develop
           command: |
-            python setup.py develop --prefix ~/.local --no-deps
+            python3 -m pip install -e . --prefix ~/.local --no-deps
 
       - run:
           name: Run tests
@@ -87,11 +87,7 @@ jobs:
           command: |
             make coverage-report
 
-      - run:
-          name: Coveralls submission
-          when: always
-          command: |
-            make coverage-coveralls
+
       - run:
           name: Codecov
           when: always

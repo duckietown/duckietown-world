@@ -25,7 +25,6 @@ comptest_package=duckietown_world_tests
 out=out-comptests
 coverage_dir=out-coverage
 coverage_include='*src/duckietown_world*'
-coveralls_repo_token=Yp4i32KwzL4s6C76DfjJ3e6NqUgkXsv0X
 coverage_run=coverage run
 
 tests-clean:
@@ -44,12 +43,10 @@ tests-contracts:
 tests-contracts-coverage:
 	$(MAKE) tests-coverage-single-contracts
 	$(MAKE) coverage-report
-	$(MAKE) coverage-coveralls
 
 tests-coverage:
 	$(MAKE) tests-coverage-single-nocontracts
 	$(MAKE) coverage-report
-	$(MAKE) coverage-coveralls
 
 # tests-LFV-coverage:
 # 	mkdir -p artifacts
@@ -76,25 +73,21 @@ coverage-report:
 	coverage combine
 	coverage html -d $(coverage_dir)
 
-coverage-coveralls:
-	# without --nogit, coveralls does not find the source code
-	COVERALLS_REPO_TOKEN=$(coveralls_repo_token) coveralls
-
-
-tag_36=duckietown-world-test-python-3.6
-
-build-python-3.6:
-	docker build -f Dockerfile.test-python-3.6 -t $(tag_36) .
-
-test-python-3.6: build-python-3.6
-	docker run -it $(tag_36)
-
-test-python-3.6-local: build-python-3.6
-
-	docker run -it \
-		-v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro \
-		-v ${DT_ENV_DEVELOPER}/src/zuper-utils/src/zuper_json:/usr/local/lib/python3.6/site-packages/zuper_json:ro \
-		$(tag_36)
+#
+#tag=duckietown-world-test-python
+#
+#build-python:
+#	docker build -f Dockerfile -t $(tag) .
+#
+#test-python: build-python
+#	docker run -it $(tag_36)
+#
+#test-python: build-python
+#
+#	docker run -it \
+#		-v ${DT_ENV_DEVELOPER}/src/duckietown-serialization/src/duckietown_serialization_ds1:/usr/local/lib/python3.6/site-packages/duckietown_serialization_ds1:ro \
+#		-v ${DT_ENV_DEVELOPER}/src/zuper-utils/src/zuper_json:/usr/local/lib/python3.6/site-packages/zuper_json:ro \
+#		$(tag_36)
 
 
 black:
