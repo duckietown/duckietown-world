@@ -5,7 +5,7 @@ from collections import defaultdict
 from duckietown_world.dt_yaml.dt_yaml import DTYaml
 
 from .duckietown_map import DuckietownMap
-from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerWatchtowers, LayerGroups, LayerCitizens, \
+from .layers import LayerGeneral, LayerFrames, LayerTileMaps, LayerTiles, LayerWatchtowers, LayerGroups, LayerCitizens,\
     LayerTrafficSigns, LayerGroundTags, LayerVehicles, LayerCameras, LayerDecorations, LayerEnvironment, \
     LayerVehicleTags, LayerLights
 
