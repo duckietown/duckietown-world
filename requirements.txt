@@ -10,7 +10,7 @@ duckietown-serialization-ds1>=1.0.9,<2
 
 PyGeometry-z6
 
-beautifulsoup4>=4.8.2
+beautifulsoup4>=4.6.3,<=4.7.1
 lxml==4.5.0
 future
 scipy
@@ -37,7 +37,6 @@ pipdeptree
 trimesh
 gltflib
 pyrender
-colorama
 coloredlogs
 aido-protocols-daffy
 
