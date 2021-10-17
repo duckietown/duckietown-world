@@ -3,7 +3,7 @@ import yaml
 from comptests import comptest, get_comptests_output_dir, run_module_tests
 from . import logger
 import duckietown_world as dw
-from aido_schemas import Scenario
+from aido_schemas import PROTOCOL_FULL, Scenario
 from duckietown_world import draw_static
 from duckietown_world.world_duckietown.map_loading import _get_map_yaml
 from duckietown_world.world_duckietown.sampling import make_scenario
@@ -50,6 +50,9 @@ def test_scenario_making1():
         duckie_y_bounds=[-0.1, -0.3],
         tree_density=0.0,
         tree_min_dist=0.2,
+        npc_robot_protocol=PROTOCOL_FULL,
+        pc_robot_protocol=PROTOCOL_FULL,
+        seed=10,
     )
     logger.info(s=s)
 
