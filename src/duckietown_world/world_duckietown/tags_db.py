@@ -81,7 +81,7 @@ def get_apriltagsDB_raw():
     fn = os.path.join(module_dir, "../data/apriltagsDB.yaml")
     with open(fn) as _:
         d = _.read()
-    return yaml.load(d)
+    return yaml.load(d, Loader=yaml.Loader)
 
 
 def get_sign_type_from_tag_id(tag_id):
