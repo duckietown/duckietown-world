@@ -53,7 +53,7 @@ def test_pwm1():
     tile_size: 0.61
     """
 
-    map_data = yaml.load(map_data_yaml)
+    map_data = yaml.load(map_data_yaml, Loader=yaml.Loader)
 
     root = construct_map(map_data)
 
