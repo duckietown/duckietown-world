@@ -1,0 +1,60 @@
+{
+  "install_requires": [
+    "Pillow",
+    "PyContracts3",
+    "PyGeometry-z6>=2.0.4",
+    "PyYAML",
+    "aido-protocols-daffy",
+    "beautifulsoup4>=4.6.3,<=4.7.1",
+    "coloredlogs",
+    "duckietown-serialization-ds1<2",
+    "frozendict",
+    "future",
+    "gltflib",
+    "jpeg4py",
+    "lxml",
+    "markdown",
+    "matplotlib",
+    "networkx>=2.2,<3",
+    "numpy",
+    "oyaml",
+    "pillow",
+    "plotly",
+    "pyrender",
+    "scipy",
+    "six",
+    "svgwrite",
+    "trimesh",
+    "typing_extensions",
+    "zuper-commons-z6",
+    "zuper-ipce-z6",
+    "zuper-typing-z6>=6.0.66"
+  ],
+  "tests_require": [
+    "compmake-z6>=6.1.1",
+    "comptests-z6"
+  ],
+  "srcdir": "src",
+  "package_name": "duckietown-world-daffy",
+  "entry_points": {
+    "console_scripts": []
+  },
+  "zip_safe": true,
+  "include_package_data": true,
+  "modules": [
+    "duckietown_world",
+    "duckietown_world.data",
+    "duckietown_world.geo",
+    "duckietown_world.gltf",
+    "duckietown_world.rules",
+    "duckietown_world.seqs",
+    "duckietown_world.svg_drawing",
+    "duckietown_world.svg_drawing.dt_draw_maps",
+    "duckietown_world.utils",
+    "duckietown_world.world_duckietown"
+  ],
+  "version": "6.2.34",
+  "author": "",
+  "author_email": "",
+  "url": ""
+}
