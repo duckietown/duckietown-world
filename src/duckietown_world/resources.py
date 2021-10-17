@@ -42,7 +42,7 @@ def get_maps_dir() -> AbsDirPath:
 
 
 def get_data_dir() -> AbsDirPath:
-    """ location of data dir """
+    """location of data dir"""
     abs_path_module = os.path.realpath(__file__)
     module_dir = Path(os.path.dirname(abs_path_module))
     return cast(DirPath, str(module_dir / "data"))
@@ -69,6 +69,8 @@ def get_data_resources() -> Tuple[Dict[str, FilePath], List[FilePath]]:
 
 
 def get_resource_path(basename: str) -> FilePath:
+    if os.path.exists(basename):
+        return basename
     res1, res2 = get_data_resources()
     if "/" in basename:
         for v in res2:
