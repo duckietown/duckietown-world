@@ -53,7 +53,16 @@ jobs:
           name: setup.py develop
           command: |
             python3 -m pip install -e . --prefix ~/.local --no-deps
-
+      - run:
+          name: Python stats
+          command: |
+            mkdir -p build-stats
+            env | sort | tee  build-stats/env.txt
+            pip list   | sort | tee  build-stats/pip-list.txt
+            pip freeze | sort | tee  build-stats/pip-freeze.txt
+      - store_artifacts:
+          path: build-stats
+          destination: build-stats
       - run:
           name: Run tests
           command: |
