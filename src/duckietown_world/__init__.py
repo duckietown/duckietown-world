@@ -1,5 +1,5 @@
 # coding=utf-8
-__version__ = "6.2.35"
+__version__ = "6.2.36"
 
 import logging
 
