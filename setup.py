@@ -48,10 +48,11 @@ install_requires = [
     "six",
     "svgwrite",
     "trimesh",
-    "typing_extensions",
+    "typing-extensions",
     "zuper-commons-z6",
     "zuper-ipce-z6",
     "zuper-typing-z6>=6.0.66",
+    "ipython",
 ]
 tests_require = ["comptests-z6", "compmake-z6>=6.1.1"]
 system_version = tuple(sys.version_info)[:3]
