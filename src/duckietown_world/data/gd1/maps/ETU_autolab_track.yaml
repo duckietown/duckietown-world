@@ -19,8 +19,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.1520000000000001
-        - 1.008
+        - 1.104
+        - 0.996
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -32,8 +32,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.609
-        - 0.59
+        - 1.612
+        - 0.584
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -45,8 +45,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.126
-        - 0.595
+        - 2.144
+        - 0.565
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -58,8 +58,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.598
-        - 0.59
+        - 2.616
+        - 0.549
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -71,8 +71,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.159
-        - 1.005
+        - 3.169
+        - 0.956
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -84,8 +84,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.177
-        - 1.51
+        - 3.195
+        - 1.467
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -97,8 +97,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.177
-        - 2.110
+        - 3.199
+        - 2.094
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -110,8 +110,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.179
-        - 2.652
+        - 3.197
+        - 2.606
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -123,8 +123,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.165
-        - 3.211
+        - 3.188
+        - 3.153
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -136,8 +136,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.183
-        - 3.837
+        - 3.209
+        - 3.809
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -149,8 +149,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.175
-        - 4.323
+        - 3.205
+        - 4.284
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -162,8 +162,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.173
-        - 4.732
+        - 3.202
+        - 4.689
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -175,8 +175,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.801
-        - 4.810
+        - 2.828
+        - 4.768
         theta_deg: 180
     tag:
       ~TagInstance:
@@ -188,8 +188,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.561
-        - 5.455
+        - 2.625
+        - 5.369
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -201,8 +201,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.654
-        - 4.369
+        - 2.548
+        - 4.401
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -214,8 +214,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.099
-        - 4.913
+        - 2.116
+        - 4.814
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -227,8 +227,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.270
-        - 4.167
+        - 2.167
+        - 4.111
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -240,8 +240,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.608
-        - 4.085
+        - 1.551
+        - 4.040
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -253,8 +253,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 2.143
-        - 3.328
+        - 2.045
+        - 3.367
         theta_deg: 225
     tag:
       ~TagInstance:
@@ -266,8 +266,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.221
-        - 3.612
+        - 1.138
+        - 3.572
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -279,8 +279,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.812
-        - 3.195
+        - 1.614
+        - 3.160
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -292,8 +292,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.062
-        - 2.766
+        - 0.99
+        - 2.714
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -305,8 +305,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.162
-        - 2.135
+        - 1.119
+        - 2.098 
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -318,8 +318,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.563
-        - 2.465
+        - 0.538
+        - 2.420 
         theta_deg: 45
     tag:
       ~TagInstance:
@@ -332,7 +332,7 @@ objects:
       ~SE2Transform:
         p:
         - 0.458
-        - 1.73
+        - 1.726
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -344,8 +344,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.113
-        - 1.517
+        - 1.108
+        - 1.532
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -357,8 +357,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.457
-        - 1.008
+        - 0.459
+        - 0.972
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -370,8 +370,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.483
-        - 0.75
+        - 0.462
+        - 0.702
         theta_deg: 90
     tag:
       ~TagInstance:
@@ -383,8 +383,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 0.725
-        - 0.082
+        - 0.694
+        - 0.041
         theta_deg: 135
     tag:
       ~TagInstance:
@@ -396,8 +396,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.268
-        - 5.488
+        - 3.315
+        - 5.371
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -409,8 +409,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 1.149
-        - 0.60
+        - 1.115
+        - 0.566
         theta_deg: 0
     tag:
       ~TagInstance:
@@ -422,8 +422,8 @@ objects:
     pose:
       ~SE2Transform:
         p:
-        - 3.176
-        - 0.60
+        - 3.135
+        - 0.57
         theta_deg: 0
     tag:
       ~TagInstance:
