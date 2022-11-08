@@ -187,7 +187,7 @@ class Sign(PlacedObject):
         else:
             with open(fn, "rb") as _:
                 texture = _.read()
-            from duckietown_world.world_duckietown.tile import data_encoded_for_src
+            from .tile import data_encoded_for_src
 
             href = data_encoded_for_src(texture, mime_from_fn(fn))
 

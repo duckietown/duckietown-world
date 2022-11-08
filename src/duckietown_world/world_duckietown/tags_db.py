@@ -22,7 +22,7 @@ class TagInstance(Serializable):
         f = family.replace("h", "_")
         texture = f"tag{f}_{tag_id:05d}"
         try:
-            from duckietown_world.world_duckietown.map_loading import get_texture_file
+            from .map_loading import get_texture_file
 
             self.fn = get_texture_file(texture)[0]
         except KeyError:

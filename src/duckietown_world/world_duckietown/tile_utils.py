@@ -66,7 +66,7 @@ class ComponentFootprint:
 
 
 def get_map_components(m: DuckietownMap) -> Dict[str, ComponentFootprint]:
-    from duckietown_world.world_duckietown.segmentify import MeetingPoint
+    from .segmentify import MeetingPoint
 
     sk2 = get_skeleton_graph(m)
     G0 = sk2.G0
@@ -94,7 +94,7 @@ def contained(a: Tuple[int, int], b: Tuple[int, int], c: Tuple[int, int]) -> boo
 
 
 def get_interest_map(m: DuckietownMap, q: SE2value) -> DuckietownMap:
-    """ Returns the map of interest given a pose. """
+    """Returns the map of interest given a pose."""
     components = get_map_components(m)
     r = get_tile_at_point(m, q)
     tile = r.i, r.j
