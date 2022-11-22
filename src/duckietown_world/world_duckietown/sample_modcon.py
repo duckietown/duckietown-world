@@ -1,7 +1,7 @@
 import argparse
 import time
 from dataclasses import dataclass
-from typing import List
+from typing import Any, Dict, List
 
 import geometry as g
 import numpy as np
@@ -50,11 +50,16 @@ def main():
 
     scenario_name = parsed.scenario_name
 
+    dynamics: str = "duckietown_world.world_duckietown.pwm_dynamics.get_DB18_nominal"
+    dynamics_params = {"delay": 0.15}
+
     scenario = get_base_scenario(
         scenario_name=scenario_name,
         nduckies=parsed.nduckies,
         ntiles=parsed.ntiles,
         min_dist_from_other_duckie=parsed.duckie_duckie_dist,
+        dynamics=dynamics,
+        dynamics_params=dynamics_params,
     )
     scenario_struct = ipce_from_object(scenario, Scenario, ieso=ieso)
     scenario_yaml = yaml.dump(scenario_struct)
@@ -99,7 +104,12 @@ def sample_duckies(
 
 
 def get_base_scenario(
-    scenario_name: str, nduckies: int, ntiles: int, min_dist_from_other_duckie: float
+    scenario_name: str,
+    nduckies: int,
+    ntiles: int,
+    min_dist_from_other_duckie: float,
+    dynamics: str,
+    dynamics_params: Dict[str, Any],
 ) -> Scenario:
     tile_size = 0.585
     themap = {"tiles": [], "tile_size": tile_size}
@@ -115,12 +125,15 @@ def get_base_scenario(
     pose = SE2_from_xytheta([0.2, 0.2, np.deg2rad(45)])
 
     vel = FriendlyVelocity(0.0, 0.0, 0.0)
+
     robots["ego0"] = ScenarioRobotSpec(
         color="blue",
         configuration=RobotConfiguration(pose, vel),
         controllable=True,
         protocol=PROTOCOL_NORMAL,
         description="",
+        dynamics=dynamics,
+        dynamics_params=dynamics_params,
     )
     yaml_str = yaml.dump(themap)
     duckie_poses = sample_duckies(

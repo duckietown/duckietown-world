@@ -186,6 +186,7 @@ def make_scenario_main(args=None):
                                 kind="duckie", pose=st.as_json_dict(), height=0.08, color=duckie.color
                             )
 
+                        # noinspection PyProtectedMember
                         sim._interpret_map(m)
                         sim.start_pose = None
                         sim.reset()
@@ -200,6 +201,7 @@ def make_scenario_main(args=None):
                         from gym_duckietown.simulator import FrameBufferMemory
 
                         td = FrameBufferMemory(width=1024, height=1024)
+                        # noinspection PyProtectedMember
                         horiz = sim._render_img(
                             width=td.width,
                             height=td.height,
@@ -313,6 +315,8 @@ def make_scenario(
     COLOR_NPC = "blue"
     COLOR_PARKED = "grey"
     robots = {}
+    dynamics: str = "duckietown_world.world_duckietown.pwm_dynamics.get_DB18_nominal"
+    dynamics_params = {"delay": 0.15}
     for i, robot_name in enumerate(robots_pcs):
         pose = poses_pcs[i]
         fpose = friendly_from_pose(pose)
@@ -327,6 +331,8 @@ def make_scenario(
             # motion=None,
             color=color,
             protocol=pc_robot_protocol,
+            dynamics=dynamics,
+            dynamics_params=dynamics_params,
         )
 
     for i, robot_name in enumerate(robots_npcs):
@@ -342,6 +348,8 @@ def make_scenario(
             configuration=configuration,
             color=COLOR_NPC,
             protocol=npc_robot_protocol,
+            dynamics=dynamics,
+            dynamics_params=dynamics_params,
         )
 
     for i, robot_name in enumerate(robots_parked):
@@ -358,6 +366,8 @@ def make_scenario(
             # motion=MOTION_PARKED,
             color=COLOR_PARKED,
             protocol=None,
+            dynamics=dynamics,
+            dynamics_params=dynamics_params,
         )
     # logger.info(duckie_y_bounds=duckie_y_bounds)
     names = [f"duckie{i:02d}" for i in range(nduckies)]
