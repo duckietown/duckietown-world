@@ -22,12 +22,14 @@ def get_version(filename):
 
 version = get_version(filename="src/duckietown_world/__init__.py")
 
+line = "daffy"
+
 install_requires = [
     "Pillow",
     "PyContracts3",
     "PyGeometry-z6>=2.0.4",
     "PyYAML",
-    "aido-protocols-daffy",
+    f"aido-protocols-{line}",
     "beautifulsoup4>=4.6.3,<=4.7.1",
     "coloredlogs",
     "duckietown-serialization-ds1<2",
