@@ -19,7 +19,7 @@ __all__ = ["LaneSegment", "LanePose"]
 
 
 class LanePose(Serializable):
-    """ Very detailed information about the "position in the lane". """
+    """Very detailed information about the "position in the lane"."""
 
     ### Am I inside the lane? If not why not?
 

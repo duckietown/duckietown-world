@@ -33,7 +33,7 @@ class PlatformDynamics(metaclass=ABCMeta):
 
     @abstractmethod
     def TSE2_from_state(self) -> TSE2value:
-        """ Returns pose, velocity for the state. """
+        """Returns pose, velocity for the state."""
 
 
 class PlatformDynamicsFactory(metaclass=ABCMeta):

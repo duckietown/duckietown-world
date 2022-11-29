@@ -18,7 +18,7 @@ __all__ = ["sample_good_starting_pose"]
 
 
 def sample_good_starting_pose(m: PlacedObject, only_straight: bool, along_lane: float) -> geo.SE2value:
-    """ Samples a good starting pose on a straight lane """
+    """Samples a good starting pose on a straight lane"""
     choices = list(iterate_by_class(m, LaneSegment))
 
     if only_straight:

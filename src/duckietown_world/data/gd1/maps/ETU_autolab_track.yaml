@@ -306,7 +306,7 @@ objects:
       ~SE2Transform:
         p:
         - 1.119
-        - 2.098 
+        - 2.098
         theta_deg: 270
     tag:
       ~TagInstance:
@@ -319,7 +319,7 @@ objects:
       ~SE2Transform:
         p:
         - 0.538
-        - 2.420 
+        - 2.420
         theta_deg: 45
     tag:
       ~TagInstance:

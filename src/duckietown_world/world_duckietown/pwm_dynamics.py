@@ -144,7 +144,7 @@ class DynamicModel(GenericKinematicsSE2):
 
     @staticmethod
     def model(commands: PWMCommands, parameters: DynamicModelParameters, u=None, w=None):
-        """ Returns the second derivative of x"""
+        """Returns the second derivative of x"""
         ## Unpack Inputs
         U = np.array([commands.motor_right, commands.motor_left])
         V = U.reshape(U.size, 1)
@@ -164,7 +164,7 @@ class DynamicModel(GenericKinematicsSE2):
 
         ## Calculate Dynamics
         # nonlinear Dynamics - autonomous response
-        f_dynamic = np.array([[-u1 * u - u2 * w + u3 * w ** 2], [-w1 * w - w2 * u - w3 * u * w]])  #
+        f_dynamic = np.array([[-u1 * u - u2 * w + u3 * w**2], [-w1 * w - w2 * u - w3 * u * w]])  #
         # input Matrix
         B = np.array([[u_alpha_r, u_alpha_l], [w_alpha_r, -w_alpha_l]])  #
         # forced response

@@ -30,11 +30,11 @@ class RuleEvaluationContext:
     pose_seq: SampledSequence[SE2Transform]
 
     def get_interval(self) -> SampledSequence[Timestamp]:
-        """ Returns the interval over which to evaluate the rule. """
+        """Returns the interval over which to evaluate the rule."""
         return self.interval
 
     def get_world(self) -> PlacedObject:
-        """ Returns the world object. """
+        """Returns the world object."""
         return self.world
 
     def get_ego_name(self) -> str:
@@ -48,7 +48,7 @@ class RuleEvaluationContext:
         return self.lane_pose_seq
 
     def get_ego_pose_global(self) -> SampledSequence[SE2Transform]:
-        """ Returns the global pose of the vehicle. """
+        """Returns the global pose of the vehicle."""
         return self.pose_seq
 
 

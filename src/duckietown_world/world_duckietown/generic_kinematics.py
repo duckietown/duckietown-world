@@ -30,7 +30,7 @@ class GenericKinematicsSE2(PlatformDynamicsFactory, PlatformDynamics, Serializab
         self.q0 = q0
 
     def integrate(self, dt: float, commands: geo.se2value) -> "GenericKinematicsSE2":
-        """ commands = velocity in body frame """
+        """commands = velocity in body frame"""
         # convert to float
         dt = float(dt)
         # the commands must belong to se(2)

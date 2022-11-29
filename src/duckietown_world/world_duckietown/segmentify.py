@@ -74,7 +74,7 @@ def graph_for_meeting_points(mp: Dict[PointLabel, MeetingPoint]) -> DiGraph:
 
 
 def get_skeleton_graph(po: DuckietownMap) -> SkeletonGraphResult:
-    """ Returns a graph with the lane segments of the map """
+    """Returns a graph with the lane segments of the map"""
 
     root = PlacedObject()
 

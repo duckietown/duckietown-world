@@ -50,15 +50,15 @@ class GenericSequence(Generic[X]):
 
     @abstractmethod
     def at(self, t: Timestamp) -> Generic:
-        """ Raises UndefinedAtTime if not defined at t. """
+        """Raises UndefinedAtTime if not defined at t."""
 
     @abstractmethod
     def get_start(self) -> Optional[Timestamp]:
-        """ Returns the timestamp for start, or None if -infinity. """
+        """Returns the timestamp for start, or None if -infinity."""
 
     @abstractmethod
     def get_end(self) -> Optional[Timestamp]:
-        """ Returns the timestamp for start, or None if +infinity. """
+        """Returns the timestamp for start, or None if +infinity."""
 
     @abstractmethod
     def get_sampling_points(self) -> Union[str, typing.Sequence[Timestamp]]:
@@ -75,7 +75,7 @@ Sequence = GenericSequence
 
 @dataclass
 class SampledSequence(GenericSequence):
-    """ A sampled time sequence. Only defined at certain points. """
+    """A sampled time sequence. Only defined at certain points."""
 
     timestamps: List[Timestamp]
     values: List[X]
@@ -223,7 +223,7 @@ class IterateDT(Generic[Y]):
 
 
 def iterate_with_dt(sequence: SampledSequence[X]) -> Iterator[IterateDT[X]]:
-    """ yields t0, t1, dt, v0, v1 """
+    """yields t0, t1, dt, v0, v1"""
     timestamps = sequence.timestamps
     values = sequence.values
     for i in range(len(timestamps) - 1):

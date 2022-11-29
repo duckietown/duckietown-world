@@ -40,7 +40,7 @@ __all__ = [
 
 
 class SignSlot(PlacedObject):
-    """ Represents a slot where you can put a sign. """
+    """Represents a slot where you can put a sign."""
 
     L = 0.065 / 0.61
 
@@ -551,7 +551,7 @@ def get_lane_poses(dw: PlacedObject, q: SE2value, tol: float = 0.000001) -> Iter
 
 
 def translation_from_O3(pose) -> np.ndarray:
-    """ Returns a 2x array """
+    """Returns a 2x array"""
     _, t, _, _ = extract_pieces(pose)
     return t
 

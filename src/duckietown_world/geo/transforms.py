@@ -98,7 +98,7 @@ class SE2Transform(Transform, Serializable):
 
     @classmethod
     def from_SE2(cls, q: SE2value) -> "SE2Transform":
-        """ From a matrix """
+        """From a matrix"""
         translation, angle = geo.translation_angle_from_SE2(q)
         return SE2Transform(translation, angle)
 
