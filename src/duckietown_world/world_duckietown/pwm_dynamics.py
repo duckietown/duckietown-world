@@ -8,6 +8,7 @@ from .dynamics_delay import ApplyDelay
 from .generic_kinematics import GenericKinematicsSE2
 from .platform_dynamics import PlatformDynamicsFactory
 from .types import TSE2value
+from typing import Tuple
 
 __all__ = [
     "DynamicModelParameters",
@@ -225,3 +226,14 @@ class DynamicModel(GenericKinematicsSE2):
         return DynamicModel(
             self.parameters, c1, t1, axis_left_rad=axis_left_rad, axis_right_rad=axis_right_rad
         )
+
+def wheel_speed_from_pwm_commands(pwm_l : float,pwm_r : float, k = 27.0) -> Tuple[float, float]:
+    """
+    Returns:
+    - omega_l, omega_r      wheels angular speed [rad/s]
+    """
+    # conversion from duty cycle to motor rotation rate
+    omega_l = pwm_l*k
+    omega_r = pwm_r*k
+
+    return omega_l, omega_r
