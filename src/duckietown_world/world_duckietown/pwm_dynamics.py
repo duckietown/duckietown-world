@@ -16,6 +16,7 @@ __all__ = [
     "PWMCommands",
     "get_DB18_nominal",
     "get_DB18_uncalibrated",
+    "wheel_speed_from_pwm_commands"
 ]
 
 
