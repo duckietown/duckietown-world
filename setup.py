@@ -23,7 +23,7 @@ def get_version(filename):
 version = get_version(filename="src/duckietown_world/__init__.py")
 
 install_requires = [
-    "pyyaml-include==1.2",
+    "pyyaml-include>=1.2,<2",
     "numpy",
     "PyYAML",
     "networkx>=2.2,<3",
