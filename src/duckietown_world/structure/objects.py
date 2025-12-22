@@ -114,7 +114,7 @@ class _GroundTag(_PlacedObject):
 
 @dataclass
 class _VehicleTag(_GroundTag):
-    pass
+    id: int = 400
 
 
 @dataclass
@@ -238,7 +238,7 @@ class GroundTag(ConstructedObject):
 class VehicleTag(ConstructedObject):
     @classmethod
     def object_type(cls) -> type:
-        return _Vehicle
+        return _VehicleTag
 
 
 class Tile(ConstructedObject):
